@@ -1,6 +1,5 @@
 """Offline fixtures. Live API calls require --run-integration."""
 
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -130,8 +129,3 @@ def pdf_document(config, doc_provider, extraction_service):
 @pytest.fixture
 def pdf_converter(config, model_dict):
     return PdfConverter(model_dict, config=config)
-
-
-@pytest.fixture
-def sample_pdf():
-    return Path(__file__).parent / "data/olmocr_bench/pdfs/multi_column_page1.pdf"

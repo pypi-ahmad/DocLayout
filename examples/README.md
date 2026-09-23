@@ -1,12 +1,12 @@
 # DocLayout deployment example
 
-[doclayout_modal_deployment.py](doclayout_modal_deployment.py) builds this checkout and
-serves the local FastAPI application on Modal using CPU compute.
+[doclayout_modal_deployment.py](doclayout_modal_deployment.py) builds the current
+checkout and serves its FastAPI application on Modal with CPU compute.
 
 Create a Modal secret named `doclayout-openai` containing `OPENAI_API_KEY` and,
 if needed, `OPENAI_BASE_URL`. See [endpoint requirements](../docs/configuration.md#credentials-and-environment).
-The Modal secret supplies the deployed process environment. Local configuration
-files do not supply those values to the deployment.
+The deployment reads that secret from its process environment. A `.env` file on
+your machine is not copied into the image.
 
 For local setup and package checks, see [development](../docs/development.md).
 The Modal CLI is an optional separate tool, outside the project dependency groups.
@@ -24,9 +24,8 @@ Page extraction and extra refinement incur API charges. This example has no
 authentication layer; add access controls before exposing sensitive documents.
 It needs no GPU or model-cache volume. The deployment has not been tested live.
 
-The example image installs the development group, which includes server dependencies,
-and supports the base PDF/image
-workflow. Additional document formats need the `full` extra and native WeasyPrint
+The example image installs the development group, including server dependencies.
+It supports PDFs and images. Other document formats need the `full` extra and native WeasyPrint
 libraries added to the image before use. The example does not serve the Streamlit
 workbench, document chat, annotations, or ZIP downloads.
 

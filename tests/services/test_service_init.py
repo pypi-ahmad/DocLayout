@@ -26,6 +26,8 @@ def test_sdk_reads_process_environment(monkeypatch):
 
 
 def service(monkeypatch, response):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://example.invalid/v1")
     client = Mock()
     client.with_options.return_value = client
     client.responses.parse.return_value = response
@@ -55,8 +57,8 @@ def test_responses_contract(monkeypatch):
         "877e99bf83095f25fd037bc6f35db33edef803bd11ac3e6a25e6d157409e605d"
     )
     assert kwargs["input"][1]["content"][1]["type"] == "input_image"
-    assert "api_key" not in factory.call_args.kwargs
-    assert "base_url" not in factory.call_args.kwargs
+    assert factory.call_args.kwargs["api_key"] == "test-key"
+    assert factory.call_args.kwargs["base_url"] == "https://example.invalid/v1"
 
 
 @pytest.mark.parametrize(

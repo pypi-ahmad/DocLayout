@@ -3,6 +3,7 @@
 import json
 from pathlib import Path, PurePosixPath
 
+from doclayout.filenames import export_filename, name_result
 from doclayout.renderers.chunk import ChunkRenderer
 from doclayout.renderers.json import JSONRenderer
 from doclayout.renderers.markdown import MarkdownRenderer
@@ -49,7 +50,7 @@ def output_targets(directory, source, names):
     return targets
 
 
-def document_exports(document, config, formats):
+def document_exports(document, config, formats, basename=None):
     """Return only requested files as bytes; a ZIP contains the full GUI bundle."""
     formats = set(formats)
     needed = ALL_FORMATS if "zip" in formats else formats
@@ -59,8 +60,10 @@ def document_exports(document, config, formats):
         "images": markdown.images,
         "metadata": markdown.metadata,
     }
+    if basename is not None:
+        name_result(result, basename)
     if "html" in needed:
-        result["html"] = markdown_html(markdown.markdown, markdown.images)
+        result["html"] = markdown_html(result["markdown"], result["images"])
     if "json" in needed:
         result["json"] = JSONRenderer(config)(document).model_dump_json(indent=2)
     if "chunks" in needed:
@@ -70,20 +73,27 @@ def document_exports(document, config, formats):
 
     outputs = {}
     for kind in formats & {"markdown", "html", "json", "chunks"}:
-        outputs[EXPORT_FILES[kind]] = result[kind].encode("utf-8")
+        outputs[export_filename(basename, EXPORT_FILES[kind])] = result[kind].encode(
+            "utf-8"
+        )
     if "metadata" in formats:
-        outputs[EXPORT_FILES["metadata"]] = json.dumps(
+        outputs[export_filename(basename, EXPORT_FILES["metadata"])] = json.dumps(
             result["metadata"], indent=2
         ).encode("utf-8")
     if "annotated_pdf" in formats:
-        outputs[EXPORT_FILES["annotated_pdf"]] = result["annotations"]["pdf"]
+        outputs[export_filename(basename, EXPORT_FILES["annotated_pdf"])] = result[
+            "annotations"
+        ]["pdf"]
     if "annotated_images" in formats:
         for page, image in result["annotations"]["pages"].items():
-            outputs[f"annotations/page-{page}.png"] = image_bytes(image)
+            outputs[export_filename(basename, f"annotations/page-{page}.png")] = (
+                image_bytes(image)
+            )
     if {"markdown", "images"} & formats:
         for name, image in result["images"].items():
             if name.casefold() in {
-                value.casefold() for value in EXPORT_FILES.values()
+                export_filename(basename, value).casefold()
+                for value in EXPORT_FILES.values()
             } or name.startswith("annotations/"):
                 raise ValueError("Image filename collides with a document export")
             image_format = (
@@ -93,7 +103,7 @@ def document_exports(document, config, formats):
             )
             outputs[name] = image_bytes(image, image_format)
     if "zip" in formats:
-        outputs[EXPORT_FILES["zip"]] = output_zip(result)
+        outputs[export_filename(basename, EXPORT_FILES["zip"])] = output_zip(result)
     return outputs
 
 

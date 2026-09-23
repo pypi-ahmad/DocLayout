@@ -6,9 +6,12 @@ import os
 
 import streamlit as st
 
+from doclayout.credentials import CredentialsError
+from doclayout.filenames import export_basename, export_filename, name_result
 from doclayout.scripts.common import load_models, parse_args
 from doclayout.ui.chat import answer_document_question
 from doclayout.ui.clipboard import copy_buttons
+from doclayout.ui.costs import show_costs
 from doclayout.ui.documents import page_range, prepare_upload, preview, run_document
 from doclayout.ui.exports import (
     annotations,
@@ -22,6 +25,9 @@ os.environ["IN_STREAMLIT"] = "true"
 st.set_page_config(page_title="DocLayout", layout="wide")
 st.title("DocLayout")
 st.caption("From scans and images to structured Markdown.")
+session_usage = st.session_state.setdefault("session_usage", [])
+cost_panel = st.sidebar.empty()
+show_costs(cost_panel, session_usage)
 uploaded = st.sidebar.file_uploader(
     "PDF, document, or image file",
     type=["pdf", "png", "jpg", "jpeg", "gif", "pptx", "docx", "xlsx", "html", "epub"],
@@ -89,15 +95,22 @@ if st.sidebar.button("Run DocLayout", type="primary", disabled=not valid):
     try:
         options["page_range"] = page_range(start, end, upload.count)
         with st.spinner("Extracting selected pages…"):
-            result = run_document(upload, options, load_models())
+            result = run_document(
+                upload, options, load_models(), usage_entries=session_usage
+            )
+            name_result(result, export_basename(uploaded.name))
             result["html"] = markdown_html(result["markdown"], result["images"])
             result["annotations"] = annotations(result["document"])
             result["zip"] = output_zip(result)
             st.session_state.result = result
+    except CredentialsError as exc:
+        st.error(str(exc))
     except Exception:  # noqa: BLE001 - do not disclose provider error payloads
         st.error(
             "Conversion failed. Check API availability, credentials, and the selected document. No result was retained."
         )
+    finally:
+        show_costs(cost_panel, session_usage)
 
 result = st.session_state.get("result")
 tabs = st.tabs(
@@ -121,13 +134,11 @@ with tabs[0]:
 if not result:
     st.info("Select a page range and run DocLayout to create results.")
     st.stop()
-st.sidebar.success(
-    f"OCR complete · {len(result['document'].pages)} page(s) · GPT-6 Sol"
-)
+st.sidebar.success(f"OCR complete · {len(result['document'].pages)} page(s)")
 st.sidebar.download_button(
     "Download ZIP",
     result["zip"],
-    "doclayout-output.zip",
+    export_filename(result["export_base"], "document.zip"),
     "application/zip",
     on_click="ignore",
 )
@@ -140,7 +151,7 @@ with tabs[1]:
         st.download_button(
             "Download Markdown",
             result["markdown"],
-            "document.md",
+            export_filename(result["export_base"], "document.md"),
             "text/markdown",
             on_click="ignore",
         )
@@ -159,7 +170,7 @@ with tabs[2]:
         st.download_button(
             "Download HTML",
             result["html"],
-            "document.html",
+            export_filename(result["export_base"], "document.html"),
             "text/html",
             on_click="ignore",
         )
@@ -173,7 +184,7 @@ with tabs[3]:
         st.download_button(
             "Download annotated PDF",
             annotated["pdf"],
-            "annotated.pdf",
+            export_filename(result["export_base"], "annotated.pdf"),
             "application/pdf",
             on_click="ignore",
         )
@@ -182,7 +193,7 @@ with tabs[3]:
         st.download_button(
             "Download page PNG",
             image_bytes(annotated["pages"][selected]),
-            f"page-{selected}.png",
+            export_filename(result["export_base"], f"page-{selected}.png"),
             "image/png",
             on_click="ignore",
         )
@@ -196,7 +207,10 @@ for tab, field, label in ((tabs[4], "json", "JSON"), (tabs[5], "chunks", "Chunks
             st.download_button(
                 f"Download {label}",
                 result[field],
-                f"{field}.json",
+                export_filename(
+                    result["export_base"],
+                    "document.json" if field == "json" else "chunks.json",
+                ),
                 "application/json",
                 on_click="ignore",
             )
@@ -228,6 +242,8 @@ with tabs[6]:
                 {"question": question, "answer": answer.answer, "status": answer.status}
             )
             st.session_state.setdefault("chat_usage", []).extend(answer.usage)
+            session_usage.extend(answer.usage)
+            show_costs(cost_panel, session_usage)
         with st.expander("Chat usage"):
             st.json(st.session_state.get("chat_usage", []))
 if debug:

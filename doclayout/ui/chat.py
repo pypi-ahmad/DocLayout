@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 from dataclasses import dataclass, field
 from importlib.resources import files
@@ -11,6 +10,8 @@ from typing import Literal
 
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
+
+from doclayout.credentials import CredentialsError, openai_credentials
 
 CHAT_MODEL = "gpt-6-luna"
 
@@ -210,11 +211,12 @@ def answer_document_question(
                 "context_limit",
             )
         if owned:
-            if not os.environ.get("OPENAI_API_KEY"):
-                return ChatResult("OPENAI_API_KEY is not set.", "configuration_error")
+            try:
+                credentials = openai_credentials()
+            except CredentialsError as exc:
+                return ChatResult(str(exc), "configuration_error")
             client = OpenAI(
-                api_key=os.environ["OPENAI_API_KEY"],
-                base_url=os.environ.get("OPENAI_BASE_URL") or None,
+                **credentials,
                 max_retries=0,
                 timeout=60,
             )

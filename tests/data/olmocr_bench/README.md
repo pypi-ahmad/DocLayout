@@ -1,10 +1,31 @@
-# Vendored olmOCR-bench pages
+# Optional local olmOCR-bench pages
 
-This directory contains three single-page PDFs from
+This guide describes three single-page PDFs from
 [olmOCR-bench](https://huggingface.co/datasets/allenai/olmOCR-bench)
-(allenai, Apache-2.0) and the benchmark tests that apply to them.
-`tests/converters/test_olmocr_bench.py` uses them for an end-to-end quality
-integration test: DocLayout converts each page, then checks that all vendored rules pass.
+(allenai, Apache-2.0) and the benchmark tests that apply to them. The PDFs and
+JSONL records are local-only and excluded from fresh clones and package builds.
+Existing local copies can remain here. `tests/converters/test_olmocr_bench.py`
+converts each page and checks its local rules.
+
+## Local setup
+
+Obtain the benchmark data separately and keep it in an ignored folder or outside
+the repository. The test expects a `pdfs/` directory and a `tests.jsonl` manifest.
+Each JSONL record needs `pdf` (a path relative to `pdfs/`), `type`, and the
+corresponding rule fields: `text` for present/absent or `before` and `after` for
+order. Baseline rules need no additional text fields.
+
+By default, the integration test uses this directory. To use another location:
+
+```powershell
+$env:DOCLAYOUT_BENCH_DIR = "D:\datasets\olmocr-bench"
+uv run --no-sync pytest tests/converters/test_olmocr_bench.py --run-integration
+```
+
+Missing data is skipped before creating an API client. Offline tests generate
+their own temporary documents and need no downloaded input files.
+
+## Original three-page sample
 
 | local file | source (olmOCR-bench `pdfs/`) | tests |
 |---|---|---|
@@ -14,11 +35,10 @@ integration test: DocLayout converts each page, then checks that all vendored ru
 
 `tests.jsonl` holds one record per test; each record's `source` field records the
 original benchmark PDF path. Only the `present`/`absent`/`order`/`baseline` rule
-types are vendored. The `table`/`math` types need olmOCR-bench's own KaTeX +
+types are supported. The `table`/`math` types need olmOCR-bench's own KaTeX +
 table-parsing checker, which is not reimplemented here.
 
-These pages check for regressions on a small sample. They cannot establish a
-complete benchmark score.
+These pages check a small sample. They cannot establish a complete benchmark score.
 See the [dated validation report](../../../docs/gpt6-validation.md) for observed
 results and the header/footer limitation, and [live evaluation instructions](../../../docs/development.md#live-evaluation)
 for running the fixture tests. Default tests skip live inference.

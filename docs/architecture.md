@@ -38,7 +38,7 @@ The model returns ordered blocks with type, HTML, and estimated bounds normalize
 to 0 to 1000. Pydantic validation rejects invalid geometry and inconsistent blank
 pages. The app sanitizes HTML and maps coordinates into page space. Structure
 processors then prepare the document for rendering. Optional refinement uses the
-same Sol service. If refinement fails, the app keeps the baseline content and records errors;
+same Sol service. If refinement fails, the app keeps the extracted content and records errors;
 page extraction failures abort that document.
 
 ## Rendering and output ownership
@@ -60,18 +60,21 @@ command writes a separate metadata file only when selected, while its JSON and
 chunks representations include metadata.
 
 The document model stores pages, blocks, reading order, images, and metadata.
+It also carries reported extraction and refinement usage into rendered metadata.
+Local code prices that usage at the configured rates. Chat keeps a separate
+usage record, and the GUI adds both models' costs across the browser session.
 Geometry is estimated, without character-level positions or calibrated
 confidence scores. The rendered structure depends on the quality of extraction and subsequent
 processing.
 
 ## Frontend state and chat
 
-Only Run DocLayout triggers page extraction. The active result belongs to the current upload and processing
-settings. Changing either clears results and chat.
+Only Run DocLayout triggers page extraction. The active result belongs to the
+current upload and settings. Changing either clears results and chat.
 Preview, raw/rendered switching, clipboard actions, and downloads reuse the
 completed result. The GUI keeps artifacts in memory and has no persistent run store.
 
-Chat uses a separate Luna client and token-usage record. The draft schema contains
+Chat uses a separate Luna client and token usage record. The draft schema contains
 statements and supporting page quotes. The application checks that each quote
 exists in the identified page text after whitespace normalization, validates
 answer length/style, and requests independent verification. Only approved
@@ -94,8 +97,7 @@ included in the built package. `.gitattributes` preserves their bytes, and tests
 check prompt fingerprints against the original strings. See [prompt-change practices](development.md#preserve-extraction-behavior)
 before editing prompt content or its fingerprint expectations.
 
-Schemas and request logic remain in Python. The app uses the prompt files at runtime.
-Leave their contents unchanged when editing documentation.
+Schemas and request logic remain in Python. The app loads the prompt files at runtime.
 
 ## Code map and extension boundaries
 

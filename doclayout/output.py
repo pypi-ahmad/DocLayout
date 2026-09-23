@@ -1,11 +1,14 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
 import json
 import os
+import re
+from pathlib import Path
 
 from bs4 import BeautifulSoup, Tag
 from PIL import Image
 from pydantic import BaseModel
 
+from doclayout.filenames import export_basename, rename_images, source_stem
 from doclayout.renderers import CONTENT_REF_RE
 from doclayout.renderers.html import HTMLOutput
 from doclayout.renderers.json import JSONBlockOutput, JSONOutput
@@ -53,7 +56,15 @@ def output_exists(output_dir: str, fname_base: str):
     for ext in exts:
         if os.path.exists(os.path.join(output_dir, f"{fname_base}.{ext}")):
             return True
-    return False
+    pattern = re.compile(
+        re.escape(source_stem(fname_base + ".source"))
+        + r"_\d{8}_\d{6}(?:_\d{6})?\.(md|html|json)$"
+    )
+    return (
+        any(pattern.fullmatch(path.name) for path in Path(output_dir).iterdir())
+        if Path(output_dir).is_dir()
+        else False
+    )
 
 
 def text_from_rendered(rendered: BaseModel):
@@ -81,6 +92,8 @@ def convert_if_not_rgb(image: Image.Image) -> Image.Image:
 
 def save_output(rendered: BaseModel, output_dir: str, fname_base: str):
     text, ext, images = text_from_rendered(rendered)
+    fname_base = export_basename(fname_base + ".source")
+    text, images = rename_images(text, images, fname_base)
     text = text.encode(settings.OUTPUT_ENCODING, errors="replace").decode(
         settings.OUTPUT_ENCODING
     )
@@ -92,7 +105,7 @@ def save_output(rendered: BaseModel, output_dir: str, fname_base: str):
     ) as f:
         f.write(text)
     with open(
-        os.path.join(output_dir, f"{fname_base}_meta.json"),
+        os.path.join(output_dir, f"{fname_base}_metadata.json"),
         "w+",
         encoding=settings.OUTPUT_ENCODING,
     ) as f:

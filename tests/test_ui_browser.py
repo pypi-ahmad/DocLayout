@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -107,6 +108,11 @@ runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="_
                     page.get_by_role(
                         "button", name="Download Markdown", exact=True
                     ).click()
+                markdown_name = download.value.suggested_filename
+                assert re.fullmatch(
+                    re.escape(Path(temp_doc.name).stem) + r"_\d{8}_\d{6}\.md",
+                    markdown_name,
+                )
                 assert Path(download.value.path()).read_text(encoding="utf-8") == raw
                 for label, control in (
                     ("HTML", "Download HTML"),
@@ -121,11 +127,14 @@ runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="_
                     ).to_be_visible()
                 with page.expect_download() as download:
                     page.get_by_role("button", name="Download ZIP", exact=True).click()
+                assert download.value.suggested_filename == markdown_name[:-3] + ".zip"
                 with ZipFile(
                     io.BytesIO(Path(download.value.path()).read_bytes())
                 ) as archive:
-                    assert archive.read("document.md").decode() == raw
-                    assert json.loads(archive.read("document.json"))["children"]
+                    assert archive.read(markdown_name).decode() == raw
+                    assert json.loads(archive.read(markdown_name[:-3] + ".json"))[
+                        "children"
+                    ]
                 assert calls.read_text().splitlines() == ["call", "call"]
                 page.get_by_label("Start page", exact=True).fill("2")
                 page.get_by_label("Start page", exact=True).press("Enter")

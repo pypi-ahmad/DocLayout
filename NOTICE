@@ -12,6 +12,6 @@ GPT-6 Luna document chat, session-based document previews and exports,
 Markdown prompt resources, Windows launcher, configuration, tests, and
 documentation. DocLayout does not imply endorsement by the original authors.
 
-The vendored olmOCR-bench test pages and rules are attributed separately in
+The optional local olmOCR-bench test pages and rules are attributed separately in
 tests/data/olmocr_bench/README.md. Third-party dependencies retain their own
 licenses.

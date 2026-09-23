@@ -119,7 +119,11 @@ class BaseRenderer:
         return page_stats
 
     def generate_document_metadata(self, document: Document, document_output):
+        from doclayout.usage import cost_summary
+
         metadata = {
+            "usage": document.usage,
+            "cost": cost_summary(document.usage),
             "extraction": {
                 "method": "openai",
                 "model": "gpt-6-sol",

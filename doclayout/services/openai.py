@@ -3,13 +3,15 @@
 
 from copy import copy
 from importlib.resources import files
-from threading import BoundedSemaphore
+from threading import BoundedSemaphore, Lock
 from typing import Annotated, ClassVar
 
 from openai import OpenAI
 
 from doclayout.config.validation import validate_config
+from doclayout.credentials import CredentialsError, openai_credentials
 from doclayout.services import BaseService
+from doclayout.usage import response_usage
 from doclayout.util import assign_config
 
 SYSTEM_PROMPT = (
@@ -37,12 +39,24 @@ class OpenAIService(BaseService):
             raise ValueError(
                 "API timeout/output limits must be positive; retries nonnegative"
             )
-        self.client = OpenAI(timeout=self.timeout, max_retries=self.max_retries)
+        self.usage = []
+        self._usage_lock = Lock()
+        credentials = openai_credentials()
+        try:
+            self.client = OpenAI(
+                **credentials, timeout=self.timeout, max_retries=self.max_retries
+            )
+        except Exception:
+            raise CredentialsError(
+                "Could not initialize the API client. Check OPENAI_API_KEY and OPENAI_BASE_URL."
+            ) from None
 
     def configured(self, config):
         """Share the HTTP client without mutating another converter's settings."""
         validate_config(config)
         service = copy(self)
+        service.usage = []
+        service._usage_lock = Lock()
         assign_config(service, config)
         if (
             service.timeout <= 0
@@ -72,6 +86,7 @@ class OpenAIService(BaseService):
         )
         if block is not None:
             block.update_metadata(llm_request_count=1)
+        response = None
         try:
             with self._requests:
                 response = client.responses.parse(
@@ -109,6 +124,11 @@ class OpenAIService(BaseService):
             raise ExtractionError(
                 f"GPT-6 Sol request failed: {type(exc).__name__}"
             ) from None
+
+        finally:
+            entry = response_usage(getattr(response, "usage", None), self.model)
+            with self._usage_lock:
+                self.usage.append(entry)
 
     def close(self):
         self.client.close()
