@@ -55,10 +55,10 @@ The endpoint must support Responses, image input, and structured output for
 `gpt-6-sol`; document chat also requires `gpt-6-luna`. Credentials do not belong
 in CLI flags, configuration JSON, source code, or Git.
 
-Application `Settings` uses Pydantic Settings to read environment variables and
-a discovered `local.env` file. Environment values take precedence. Reading the
-file does not export its contents into the process environment. Putting
-`OPENAI_API_KEY` in `local.env` alone does not configure the application clients.
+Application `Settings` reads environment variables and a discovered `local.env`
+file through Pydantic Settings. Environment values take precedence. Reading the
+file does not export its contents into the process environment, so
+`OPENAI_API_KEY` in `local.env` alone does not configure the API clients.
 
 Common application settings from [settings.py](../doclayout/settings.py):
 
@@ -118,9 +118,8 @@ Sources: [document builder](../doclayout/builders/document.py),
 [base renderer](../doclayout/renderers/__init__.py), and
 [Markdown renderer](../doclayout/renderers/markdown.py).
 
-The service caps all Sol requests at three concurrent requests per process,
-including refinement. Increasing folder workers creates additional processes;
-it does not increase that per-process cap.
+The service permits up to three concurrent Sol requests per process, including
+refinement. More folder workers create more processes, each with the same limit.
 
 ## CLI and JSON configuration
 
@@ -238,8 +237,8 @@ Missing input/output usage, invalid totals, and unpriced models make the estimat
 partial. The displayed amount then covers only requests with usable usage.
 Reported usage from incomplete or refused responses is retained. SDK retries
 and charges absent from endpoint usage cannot be reconstructed. The table above
-contains the rates supplied for this project. They have not been checked against
-current provider pricing, and the estimate is not a provider invoice.
+uses rates supplied for this project. They have not been checked against current
+provider pricing, and the estimate is not a provider invoice.
 
 ## Advanced configuration
 

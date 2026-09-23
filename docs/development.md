@@ -61,10 +61,9 @@ uv run --no-sync pytest tests/test_ui.py tests/test_ui_browser.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's
-pre-commit configuration also runs autofixes and formatting, using its own pinned
-Ruff version. Review those changes, especially around prompt literals. Leave
-unrelated formatting alone. When reporting a focused type check, name the paths
-checked.
+pre-commit configuration also fixes and formats files with its pinned Ruff
+version. Review those changes, especially around prompt literals. When reporting
+a focused type check, name the paths checked.
 
 ## Live evaluation
 
@@ -91,7 +90,7 @@ other model variation.
 Keep document inputs in `input/` or `inputs/`, and results in `output/`,
 `outputs/`, or `conversion_results/`. These folders, common document formats,
 datasets, and timestamped exports are ignored. Source Markdown and JSON remain
-eligible for Git, so arbitrary document exports must stay in ignored folders.
+eligible for Git. Keep document exports in ignored folders.
 Review `git diff --cached --name-only` before publication and do not force-add
 input or output files. Ignore rules cannot remove files from earlier Git history
 or previously published release assets.
@@ -156,6 +155,6 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Benchmark/example/fixture guides | Their specific workflows and provenance |
 
 Link to the guide that covers a topic instead of copying its tables. Record
-current changes under Unreleased in the changelog, and keep historical
-measurements dated. Check links, anchors, and executable examples. Live requests
-need a separate, explicit evaluation.
+changes awaiting a release under Unreleased in the changelog, and date historical
+measurements. Check links, anchors, and executable examples. Run live requests
+only as part of an explicit evaluation.

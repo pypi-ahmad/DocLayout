@@ -4,7 +4,7 @@ This report separates live extraction observations from offline application
 checks. See [development](development.md) for verification commands,
 [usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
 
-## Current checkout checks (2026-09-23)
+## Checks for changes now on main (2026-09-23)
 
 - With `DOCLAYOUT_BENCH_DIR` pointing to an empty local directory, the offline
   suite passed: **155 passed, 1 skipped**. The optional live benchmark skipped
@@ -17,8 +17,8 @@ checks. See [development](development.md) for verification commands,
 - Cost tests cover both supplied rate tables, cached tokens, incomplete usage,
   failed requests, per-conversion isolation, and GUI session totals.
 
-The live observations below predate these checkout changes. The current
-checkout has not been published as a new GitHub release.
+The live observations below predate these changes. They are on `main`, but have
+not been published as a new GitHub release.
 
 ## Version 2.1.0 installation and CLI checks (2026-09-23)
 
