@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:04fa26372af5bc61bb61693995b28dbca8263aa44a11b75f7cbfd1a4f108234b",
+  "claims": [
+    {
+      "id": "claim_b920202005254a3485d3412fe5a8d261",
+      "statement": "The main CLI supports mutually exclusive file export selection modes and validates a file destination before conversion, while folder mode can partition sorted files and use spawned worker processes.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/convert.py#L99-L236",
+          "version": "repo-lines-v1:sha256:543b64d3b616ba4fef463730368afdd6781c913b634a79bc3d04624734d90b54:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMGY4ZjAyZjhiNzE1MTIzMjIzY2FiOTVjMWFjYWY4ZDA4NjM4YjQwZGEyZWE4YjU3MmI2ODlmNzEyMzdjZjUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNzYxOWZjZjNiYjQzODk2YWE2YTYwMGI1MzJjN2ZmMTY2MThiM2I2YjgxMGQ0ZWZiN2Q3YWRiMDg1N2VhYTI0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNmFkNjhkMzI2MGI2YzFkMmRmODIyZTMxOWJjNDc2NjNiNjZiMGJhNzgwNzBlODM1Y2JlNWVmNWE2NDZlOGE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_09fd7674033d41629f88aaa6d3f5ceae",
+      "statement": "Each CLI conversion owns and closes its service artifact in a finally block and reports API cost when an OpenAIService was constructed.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/convert.py#L20-L61",
+          "version": "repo-lines-v1:sha256:bd3e92e3d4636386b1873392c11ca404e6e8dc97ce33312f0550b27ebd81c32b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMzMzMjNjYWFiZTdhNmUzNGI5MTJjOWExODNhMjZmNTRjNjA5ZTUzY2UxZTVhMGQ1ZGI1YWE0NDdhOGViZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzMTkxMDRiMzFlOGQxZDI5MTljYzY1YTJkOTA3ZDVlYzY3ZmQwYTY4NzQ5MWNmZWEzNWQyZWQ2ZWFiMzZmM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYWI1MDIzODY3ZGNjZTYyMjQ0ZWMyNDdhYTgzMDgzODZjMzlhN2JlNGZlMjBlNDE5ZjQzNzY4NDcxMDY5NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3MzViYWRlMzgyYjIyYWI5NWU3OTM4ZDIxOWU2YmY3Y2RjN2Q0NGQzNGViNjkyZTAxODUwOTA2YzZkMDdkNDMifQ"
+        },
+        {
+          "resource": "repo://doclayout/scripts/convert_single.py#L12-L38",
+          "version": "repo-lines-v1:sha256:09f4199bf31dd2f971703843d5b96308cbb27e3476282465392006d4c2f225ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4OTFiMTQwNDE3YzQxZDZlOGE0NjQ1ZDVlY2IzNjQzNzJkYzMyM2ZlODRiMmQ5NDRkNjdhNzg0NzIwY2IxYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ZGVkYzcwZDQ4NDRlOWMzZjIzOTk1NGM0MzVmYWE1YjYzNDg2OGJlYjQ1Nzc2ZjI4ODM3YzMwYWE1ZDNmOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYWI1MDIzODY3ZGNjZTYyMjQ0ZWMyNDdhYTgzMDgzODZjMzlhN2JlNGZlMjBlNDE5ZjQzNzY4NDcxMDY5NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_792c879e1afe485a924c9182aef8ef34",
+      "statement": "The Streamlit application hashes each upload and invalidates extraction and chat state when the upload or extraction scope changes; only the explicit run button starts conversion.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/streamlit_app.py#L31-L113",
+          "version": "repo-lines-v1:sha256:22e2a58b561ddb200878b8102eba2c5d73276a64c2d178d747ec4c7e541631ec:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOGE1ODFjZTI0NGUzNDNhMTc3MDJmNmM0NGVmMjE1ODU1ZTYyYTQ3NTcxOTA2M2FlMDAwNjU4OGNlYzMwYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NzM0OTlhZmUwNTMwNTM1YTNhZTE0YTllNWUwZWY5ODVkYzg2MGUzODFlNmYwZjg2MDBlODRmYWVlMTg4NDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzOWQwYmM1MDg0MDhjMDc2ZjY3OTU2MzUxYjkxZGZlMzgxYTRmOGJmNGQ4OTAxZmI1ZDU4NjA2Y2QwOTkxZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMWJiZGIyZjEzYTEwOGZmMjI2YmY3MDMwODA0NDY3OGVhMTVjYjgzZmFkZmIxM2VkZTJkYjgyZGUzMWM3MmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e45aaed28f484e698ee01a7d4066cf10",
+      "statement": "Streamlit upload preparation detects and counts the source, persists normalized PDF bytes for converted document formats, and run_document creates all main rendered forms from one extracted Document in a temporary workspace.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/ui/documents.py#L22-L37",
+          "version": "repo-lines-v1:sha256:f040d871f4b4024ab028f02e990c88ec516ba992fe744a9da8b850b53bd4f5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0OGU5NjU0NDY0ODZjMThjM2FiMWMyNDY1ZDQ4MmNkNmRhMTBmMWMwZDM0ZTUwNTVhNDZhZjM3NGNjMzhiNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMzMyZGQyNWYzMGU2NDM0ZDQ1NTA3MDEyMTZhNWQzZjUyMDIxNjhjZTczZTg2ZmUyZTY2YTI1ODc3NGU1Y2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiYWU2OTQ0N2YxMGNlMGMwMzdjZDljOWU4ZjkwYTRkYTU5Y2Q0ZjA3MDdjOWJhNmU5ZDY4MmFjNmU2ZmY2NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NjU4ZGM2NmJkZDUzMzNkNjE0MjY5ZjBkYjIxMGRjYmM2OTI5ZWQ0ZTVkMDc0MGNlMzU0ZTFiODc5ZjNjMTkifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/documents.py#L58-L104",
+          "version": "repo-lines-v1:sha256:06e140bd26eb8403910b040f410893be3a79b8c9eb21be5753662b8baaa0a16b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYjYzZDlkM2Q4ZDk0NmMzMjY1NGJlYjAyOTA3MzI0NzVkMTcwNDgyNGM4ZjNiODk3Njk3MmZjZTIzMmU0MWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwODIzOTdmOGQ4M2FjN2E5YzkwODY3MTE5MDQzYzdhZGIyMmU3Y2Q4NWZmZDc1ODk1M2QwMWI4NzIzOWQyZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_01836906986544ed8781e0de4c4f2dba",
+      "statement": "The FastAPI lifespan owns one shared service and conversion lock; its upload endpoint ignores the supplied filename as a path and writes the upload under a fixed temporary name.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/server.py#L23-L37",
+          "version": "repo-lines-v1:sha256:2a567b58aa6759e6c82a7318162e99784a76047b5f10eb69a94b094f2315cdc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1YTE5ZGVkZjQxNDQyZDg4ZTNlNmYwYjQzMjc3ZWI5MDZjNTU0N2Y5ZDZiZmZhOWM3MjIwYzM4ODlmNDExN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMzQ1ZTk5M2FmODM3YWI4MTUyMGYyNTZhZjhmZjA2ZjBiMTc0OGEyNjc2MzQ1NzVlNGY0MTk0ODJmNDM2ODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhYWNkYjc1MmNhY2UwM2EzNmUyNTg4ZDNkZjZlNTUxOTlmZTgxMzU3NGU2NmJhNDgzZWVmNGVkMGQ5NDFmNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMGUxZjBkYzk3OGE1ZGUyYTBmMTdkNDQyNTE1MjdiY2IyM2JjYzVjYzRjZDA3Y2FmN2FiODU4NGYzYzdmY2YifQ"
+        },
+        {
+          "resource": "repo://doclayout/scripts/server.py#L81-L107",
+          "version": "repo-lines-v1:sha256:501c616d5c495ed8404b639f28a43d119ab80ddd73d3778a692b13b84809c9f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxYzk5NWQxMWFiNjY3ODZmNzIzMWQyNjQ1ZGNkZDVhZGM1ZTFlNWQwZDUwZDY2YTVjMjllZWQyYTRiNDc5ZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNGExNjcyMTc3NTU1MjQzOTM1YWQ2MDAyNzM5ZGQzOWJhMjE4YmRlMTJmNDNiYTBkOTllYjY4Y2Q2OGNhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhMWZlMTFlZTc1NGEzNGNiYzZlYjFmN2U3YTMzOTQyNTkyZmNkOWM0ZTAwNjMyMmVhMDhiOTEyYWI2MjU4ODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NjBkYjFiMDU4Njk0NGIyZjY1MjNjOGVhNmNiYzE0MmQ2NTFlNzYwZTE0YTg2MGE4MDc1OTEwY2FjZGY2YTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a175db1cbc7412c992796ca5e9903b6",
+      "statement": "The browser smoke test verifies that export navigation and downloads do not repeat extraction and that a changed page scope removes the prior downloadable result before another run.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_ui_browser.py#L83-L144",
+          "version": "repo-lines-v1:sha256:45179cb65bcc2fb5e9bb90ff817cbd13e807c00953e62bbdea6c141c74f63c8b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNTVkZTcyYjNjYjNjMDg1OGRiYWE3ZjQwZjI2YzhhM2Q4MWViMzZiODUyMGY0ZTIyNTNlYmQwMmQ0YTdkZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlODVhNzRhMmNmMDRmYWQ4M2NhNTFiN2M4NGMzMzI5MzlkOTk2MWM4NTA4NDljNzBhNzlmY2Q1ZDRjMTViODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkZGFjNjUzMjQ4YmVjOTVlMmQzNTMzZDZmMGU5NjQ2NDY5NDZkYTQwMDdmMzQ4OWYzN2UxYTRjYzc5MTY1YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmYmYzZjk0YWUxZWMyNjY5ZWJmZGM1MDAwZDg2MDAwY2I1OTc5NDdjMWE2MGZhMDcwMjFjZTk4YzI0NzQ1NmEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-23T13:33:56.448Z"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e4d2a3c5783f4e7827f975ad259cb2f1ed61918b6e3c4157a4d68f9e812ae775",
+  "claims": [
+    {
+      "id": "claim_af587d3789d94298b6c2dc1b9963336c",
+      "statement": "The documented clone setup uses uv sync with the locked development group and full extra, then runs checkout commands through uv run.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L57-L75",
+          "version": "repo-lines-v1:sha256:aab5dad9b7c303ff6c2782fcb965f6957d9895014e93fa82fd8fc3497b85245c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1NDc1YjE3ODEwZGEwYjk5YTZhMzRkNjYzNzhjZTEzYWU2YTEzNWJiMDY2MzhmN2I5MzM3Yjc2NDAyMjM3ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOTU4ZjM0YTdlMDhlYjFmYzNkMTg2YjBlMGVlMjA0OTBkN2EzMzAwZjA1YzFkNGMwMmJhYThlODU0ZTBjNGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkODA5NGY1YzIwYzNmZTNjMzExYWFjMzJlNTk5NDk4MTVhYjgwZjBhMjMzZDg5NzcwMjFlYjVkNjZiNmU5NDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiM2YwY2JkODkyZWRiNzNiYzY5ZTg0NzRlMTU3MmIzZjk3ZGM2ODZjY2YwODdlNmZjNjM3Yjk3ZTllNWJiNzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ea69790c1c694182ad3b3bc35eaaf96d",
+      "statement": "DocLayout resolves API credentials from environment values first and otherwise from .env in the launch folder, with independent precedence for each variable.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L111-L137",
+          "version": "repo-lines-v1:sha256:ca79ecbbbc46dd48b865fd1501487fd5ffb5f4494ca21aa592bbad4ff2a973c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZWE3NjU1ZTEwYjAxMDM1Y2YyMmQzNDhlZWZlYzg2ZDA3NjdlNTIzNDNhNzYwMTc0NDEwYzU2MWNjODZlMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyNjc0N2U1Y2M4M2MzMTVjMTEyNmU2Y2U2Yjk2ZjE0YmI2NGE5OTlmNjBhNTgyOWNiYTY3NDk3ZDI1YmI0NWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMTg5NzJlZGE4YjQ2NzMwM2U0OWE4MGUyN2YzOTAyNTdmNDI3YzE1ZjMwNTUzYzk4ZGRlYjM5NTQ2ZTBjMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjMWE2OWRkMzNhZjg4MzM4NzQ4MTcyMTM1Njc2NTg2ZjFmN2UyYzRlNzNmYzZlOGVjY2FlNWY1NWRlMzY4YTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d1a0dc13646646528a60c0ce579bda6c",
+      "statement": "The default file CLI output is Markdown with image crops, while --all produces every GUI export and a ZIP from one extraction per selected page.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L142-L159",
+          "version": "repo-lines-v1:sha256:239828d7fcc29cebcdff0e6bb0aba052cb1fd4de83e660ecfc8103316143a2e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzMjhkZTBlOWFjOTJmZDkwYjZiNmI5M2E5M2VkZWYzYzM0N2Y1MGNmMTE2MTY4OWM5OTQ5ZWJmMDdjM2Q3YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NzM0ZWE3NGFjMDRiZjZiZWVlOWJmZWI3MmQyYTNiNGFlM2U2MWY5MGE2ZmY4YmQ5YzkyNjQ5NmE2MDFjNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1YjM2NzU1YTM4ZWJiNmFhODNmMjJjZmE1Y2NjNWFhZmJhOWNiM2ZiNmNmNzcxYWE5MGEwNTBhZDMxYWVjNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4NjA0M2QxYmQxODRiMjA3NTVlYmE1NjM2MWZhMWIwNGFkYjcxODJiODMxZmZjMjI4NWNkZGRmZWZmNjk4OGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_63a3b5b85fa045c087c7fbbd6edb22db",
+      "statement": "The package defines installed entrypoints for the main CLI, legacy single-file CLI, Streamlit GUI, and FastAPI server.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L78-L82",
+          "version": "repo-lines-v1:sha256:a357b94f073da135aa4a64505ddb75cfab8f01821e00a6ecb4bc576ac47cfc5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDQ1Njk5NDZhYzliYmU3Y2IyY2RlYzNmOGJlY2YzNDM3NTBjNThiOWIzMjFlYzIxOTViZmJhYWIyYWE4YzRiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNjMGU3MjM4ZjBiMThjYmU2YTQ2NjY0MWZkY2Q1OTQ4NTI0NDhkZGY3ZmY4OGQwYTlmNDk1MGVhZGVjMzkzZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWJlZTEyNzZhMzViMWQ5MDU0ZjkzNTRlYmM0OTVmODAzZjYzMWIxZjhhNDYwNzc2NGFiNGRjN2U0ZmMxYTM0MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjgzMzI5NjFiMTI1MGU2YTgwMDc3YTJiNGE2Y2VmMTdmY2RhOTA2NzhhMzA0ZWY4NzUwNjFmNjZmYThjNjc5YyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa97a292847045b58709275a093650ab",
+      "statement": "The FastAPI server exposes generated documentation and supports both path-based JSON conversion and multipart upload conversion.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/server.py#L37-L107",
+          "version": "repo-lines-v1:sha256:88198438a0151732bceaddc09980cbdd6735d51cfd87a85fdd908af243651428:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMzQ1ZTk5M2FmODM3YWI4MTUyMGYyNTZhZjhmZjA2ZjBiMTc0OGEyNjc2MzQ1NzVlNGY0MTk0ODJmNDM2ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNGExNjcyMTc3NTU1MjQzOTM1YWQ2MDAyNzM5ZGQzOWJhMjE4YmRlMTJmNDNiYTBkOTllYjY4Y2Q2OGNhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3NTk5NzcxN2MzN2JlMDAxYmY0NjI5ODVmYTc1MmFmNWMzMjIzNjBiYWIyZmI2ZWVjYjZmZTBkNDcyYzA1NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NjBkYjFiMDU4Njk0NGIyZjY1MjNjOGVhNmNiYzE0MmQ2NTFlNzYwZTE0YTg2MGE4MDc1OTEwY2FjZGY2YTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f603041ddd164db899b6de0d1f64b6b6",
+      "statement": "Offline tests block live OpenAI Responses calls unless tests are explicitly marked integration and run with --run-integration.",
+      "evidence": [
+        {
+          "resource": "repo://tests/conftest.py#L14-L43",
+          "version": "repo-lines-v1:sha256:a760c43bc6cc216b1f7840fb70aa840b1c3f4e90143a4a03acc926acf707dc9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5OWRlODg3N2JkMjlmMmUwOTZmNzE3NDlhMGQ5MzU4NDg1MGI4NjFhNTM2MDgxYjg0NzhkMmIyMjE0YTcxN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNTE2ODUwYTA2YzljZjI5ZDQ3YjBlNjJkYmJkOTBmZGVkYTAwMmExOWQyODBmYTVkMjkwYTgwNjBiZWNiYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzE0MjZiZWE3ZmFiYTA1YTEyYzFlMWM4NjBkYTY3YzYxNzM4ZmZjY2NjYTRmNjc2ZTRiOTI2ZGVhNjZlMDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-23T13:33:56.448Z"
+  }
+}

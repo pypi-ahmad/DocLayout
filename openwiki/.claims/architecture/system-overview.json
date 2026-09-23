@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:51dde8889711a118179e3600f80af56f6c4f185054ade003996197568a8dd2dd",
+  "claims": [
+    {
+      "id": "claim_75f4601415c944348358e3c597583764",
+      "statement": "PdfConverter requires an extraction_service artifact, selects MarkdownRenderer by default, initializes its processors, then builds, processes, sanitizes, and renders a typed Document.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/converters/pdf.py#L78-L151",
+          "version": "repo-lines-v1:sha256:ebbafb67921231b737b6338be2ba823a57d63f6205b0b1f5f318e4e4416d6c3a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1ZTI5MmEwOTJlMmVkMmYyOTdmYTcxYjk3ZmFlYmZmZjZkYjljMzRmZGVkZTY3NWFjZWYxMDcwNzhkNzAzZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZTVlM2M0MDkwODQzYmE4NzI4MmUyY2I1NGZiZWU0NDMxNGE3ZTFlNjRjZDEzMjM0MDM3NzgyN2Y4NTg5ZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNjRlNjg0ZDYyMzRiMDM5ZjU1M2U0NTU5ODk1MDk1MjRhMGQ4NzJhYjIyYjY5OGJjMTVlNWU0N2UzOGIzNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMTJmZjExMDM0NWZhM2YxMzhjMjVjY2ZiY2JjNTk5NjZlNmMyZGJlYjA0MjcyNTk4NmFiZGUwYWZmZDg1MWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_21c284abf7764e268619b335c00fa776",
+      "statement": "create_model_dict constructs one OpenAIService artifact and shutdown_models closes that service.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/models.py#L7-L14",
+          "version": "repo-lines-v1:sha256:b50e47af40469221dd45ce55a3b8d3323bbea770f97c8c2d46ce5023eea6eb85:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY3M2NlY2IyMWRjYTM5ZDIzYWZlMWRlZDY1ZGUzYWU1NTE5ODA1OTcyMzc4MzA1NjJiYzIxODNmY2JiYTVmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTViMDgwZDgxNGI2YTg3ODhmZjE1MmNlYWQzYjY4MGRhYTFiNTQzY2YzOWY4YTZmOWQzNzcyZGEyNWIzZTgwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjAyZDA5YjFhNTRiMmIzYjUyZGQ5YTU5NjQ1MGY1Mjc4YzhiNDg0YzkyNjYyYjk5OWFlOGYwMGZlMjQ2ZDc2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2d19626aed6440a893d5d88eb97451b",
+      "statement": "DocumentBuilder renders pages on the caller thread, submits at most three structured extraction requests concurrently, validates ExtractedPage responses, and builds typed page blocks.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L16-L65",
+          "version": "repo-lines-v1:sha256:cf914f57313a6dba6aa2b821409aa8bccfc1f13cdea16d8b7a40035d32a76fb5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0N2IzY2YxMTE1YWJkN2I4YzdlNjk1NDgwMTM4MzY0NjEyNTYyMWQ1ZDdmZWQ5YzZkMDM4MDBmYjM1OGRlZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4ODBhMGRhNjMyOTA3NTgxODBmZmVjZDYxODllMjczZWZlM2U0MWEzNjJiODRiMDYyMjIxYzAwYjJmZDgyMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkODAwNWVjYjUxYTRkNGY1ZDJhNzE3ODcxMGI4ZWVjYWMwZDQ2MGZiM2IzNWUyNTJiMWFlYWY5YzIwZmE3Y2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_020fa9386adf4fd2929bfa4eaad53c05",
+      "statement": "BaseConverter resolves constructor dependencies from configuration and the artifact dictionary, and consolidates simple LLM processors into a meta-processor while preserving the remaining order.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/converters/__init__.py#L19-L75",
+          "version": "repo-lines-v1:sha256:8dc0ea197d3f1b3b4b9c85794ccde4d1ac15442b14b4e041362364fdbc56a5a2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNTAxMzVkZWM1ZTcwMjQxOTczYzFjM2Q0ODNkODMxMmE1YzE4NGZhMWYzY2FkMTEyYzViM2QyOWNlYTY3YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1Y2RlMmIzNzdhN2UzYzZkNDJjOGRjMjJhM2JiNmZiZWEyOWQ2MmQzOTIyNTI4NGQ0NzJkM2JmZmVlMTA4ZjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjNDk0NmNmMWZlNGNlMGY3MWE4Njc0OTJlZDczYmQwMWQwZWYyNTU0ODE3M2MxMmFjYTQ3ZDUwZmNjNjUxNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_02f1c9a30f794d299b2fabc6bbcfd27c",
+      "statement": "The FastAPI lifespan owns the shared service and an asyncio lock, and conversion requests acquire that lock before converter construction and execution.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/server.py#L23-L78",
+          "version": "repo-lines-v1:sha256:761d46888ba6ab9d7829885be673084f275f14ab93dc24c36e822de8a2afc4b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1YTE5ZGVkZjQxNDQyZDg4ZTNlNmYwYjQzMjc3ZWI5MDZjNTU0N2Y5ZDZiZmZhOWM3MjIwYzM4ODlmNDExN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmYzFkMDE5YzRkMjEzZjk2ZjFmMWQyZjA5Mzc5YjEwMDc2Y2Y4NjQ2YjU5NjliNTk0NGQ1M2JiMTA2MTU3NjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhYWNkYjc1MmNhY2UwM2EzNmUyNTg4ZDNkZjZlNTUxOTlmZTgxMzU3NGU2NmJhNDgzZWVmNGVkMGQ5NDFmNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0MzlhNTdiZTY1NmM0MzM2MTdiOGM1ZmU3YTRmZWM4OWVjZGVhMWFiOTQzOGU2NWFlOGZiMGE4MTAxNjAwN2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_70fbdeca4ee3454ba5810c5d6504ee38",
+      "statement": "Tests establish that a failed conversion does not save output and that batch conversion continues to later inputs after a per-file failure.",
+      "evidence": [
+        {
+          "resource": "repo://tests/converters/test_pdf_converter.py#L46-L81",
+          "version": "repo-lines-v1:sha256:85ce13690c6243626d0c6fbe18739b85977e342da7e53d9c3a9c3ac68848be92:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNmEzZjcwNTQ1YmI2MTY4MDY3ODg4ZWZkMWZlYmVjNjJiNDgyYzM1ZmIwM2I3ZDdiMjk1MmIzNTQzYTEyMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZTFiNzNiYTVjMjI1ZDg1YmIzYzBiZWM3NDFlOWI3MjdjYTRjYjU3Y2I4NWE0NDVkYThkMzE4ZGQ4YzhhMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhODJlYmU5ZWQ0MDdjM2E2YmE0YjAwMzQyOTJiYWE1MmMxMWNlNWFlMjg2MTA3NDAyZGU0NzkyZWVlY2FjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.5.2",
+    "at": "2026-09-23T13:33:56.448Z"
+  }
+}
