@@ -27,10 +27,10 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
 needed for GitHub-source installs. The package declares Python `>=3.10,<4`;
-Windows checks use Python 3.14. PyPI publication is deferred. The commands below
-install the published v2.1.0 release from GitHub or a release wheel. The
-[Unreleased changes](CHANGELOG.md#unreleased) are local to this checkout until
-they are published. Commands pinned to the v2.1.0 tag install the earlier release.
+Windows checks use Python 3.14. PyPI publication is deferred. The Git commands
+below install the current `main` branch, including the
+[Unreleased changes](CHANGELOG.md#unreleased). The release wheel installs the
+earlier `v2.1.0` tag.
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -39,14 +39,14 @@ Before running conversion, [configure API access](#configure-api-access).
 For the CLI and all export formats:
 
 ```powershell
-uv tool install "git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+uv tool install "git+https://github.com/pypi-ahmad/DocLayout.git@main"
 doclayout input.pdf output --all
 ```
 
 To include the browser app, use this installation instead:
 
 ```powershell
-uv tool install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+uv tool install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
 doclayout_gui
 ```
 
@@ -80,11 +80,12 @@ Use the Python environment where you want the commands installed. With uv,
 create one first if needed using `uv venv`. Choose one installer:
 
 ```powershell
-uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
-python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
+python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
 ```
 
-A release wheel avoids the Git requirement. Either installer can use this URL:
+The `v2.1.0` release wheel avoids the Git requirement. Either installer can use
+this URL:
 
 ```powershell
 uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v2.1.0/doclayout-2.1.0-py3-none-any.whl"
@@ -109,7 +110,7 @@ Tool-installed commands run directly as `doclayout ...`. Inside a clone,
 
 ## Configure API access
 
-In the current source, DocLayout reads environment variables first. If a value
+DocLayout reads environment variables first. If a value
 is absent, it reads `.env` in the launch folder. Each variable follows that order
 independently. The GUI, CLI, Python library, and API server share this behavior.
 
@@ -201,7 +202,7 @@ confidence scores. Small text, complex tables, equations, and header/footer
 classification need review. Document chat verification can also miss mistakes.
 There is no claim of perfect accuracy or a general benchmark ranking.
 
-The browser keeps results in session memory, so download them before closing the
+The browser keeps results in session memory. Download them before closing the
 session. CLI conversion writes files. The GUI and file command generate HTML
 from Markdown. The legacy single-file command, folder conversion, and API render
 HTML from document blocks.

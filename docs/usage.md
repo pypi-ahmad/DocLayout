@@ -8,8 +8,9 @@ Follow the [README installation steps](../README.md#installation) for uv tool,
 manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
-The commands pinned to v2.1.0 install the published release. Changes listed as
-[Unreleased](../CHANGELOG.md#unreleased) currently exist only in this checkout.
+The Git commands in the README install the current `main` branch. The release
+wheel installs `v2.1.0`; [Unreleased](../CHANGELOG.md#unreleased) changes are
+already on `main` but are not part of that release.
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
@@ -38,7 +39,7 @@ available package index or local cache even when DocLayout comes from GitHub.
 
 ## Credentials and model settings
 
-Configure credentials before running extraction. The current source accepts
+Configure credentials before running extraction. DocLayout accepts
 environment variables or `.env` in the launch folder. See the
 [configuration guide](configuration.md#credentials-and-environment) for precedence,
 model choices, request defaults, and controls. Extra refinement is optional;
@@ -48,8 +49,8 @@ page extraction always uses Sol.
 
 In the source checkout, run `launch.cmd` for the browser on port 8471. It stops
 the previous port listener before launching. The `doclayout_gui` command also
-starts the GUI, but uses Streamlit's default server settings; it does not provide
-the launcher's port cleanup. It forwards extra arguments to the app without
+starts the GUI with Streamlit's default server settings. It leaves port cleanup
+to the caller and forwards extra arguments to the app without
 interpreting them as Streamlit server flags.
 
 1. Upload a PDF, PNG, JPEG, GIF, DOCX, PPTX, XLSX, HTML, or EPUB file.
@@ -158,10 +159,11 @@ set of outputs. A run cannot overwrite its own input document.
 
 ### Output filenames
 
-For `report.pdf`, an extraction might produce
+For `report.pdf`, one extraction might produce
 `report_20260923_143052.md`, `report_20260923_143052.html`,
 `report_20260923_143052.json`, and `report_20260923_143052.zip`. The UTC timestamp
-has seconds precision. GUI downloads keep the same timestamp across reruns.
+has seconds precision. Downloads from one completed GUI result keep the same
+timestamp when Streamlit redraws the page.
 
 Chunks and metadata add `_chunks.json` and `_metadata.json`; the annotated PDF
 adds `_annotated.pdf`. Annotated images use `annotations/BASE_page-N.png` inside

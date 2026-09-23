@@ -1,10 +1,12 @@
 # Changelog
 
-This changelog records published releases and changes still in the checkout.
+This changelog records published releases and changes on `main` awaiting a release.
 GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+- Added a data flow image to the README and downloadable interactive data flow
+  and system architecture diagrams to the architecture guide.
 - Removed benchmark input files from Git tracking and package builds while
   retaining local copies. Added document/export ignore rules and optional local
   benchmark setup; tests collect without downloaded data.
