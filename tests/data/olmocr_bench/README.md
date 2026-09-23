@@ -1,9 +1,10 @@
 # Vendored olmOCR-bench pages
 
-Three single-page PDFs from [olmOCR-bench](https://huggingface.co/datasets/allenai/olmOCR-bench)
-(allenai, Apache-2.0), with the subset of that benchmark's own tests that apply
-to them. Used by `tests/converters/test_olmocr_bench.py` as an end-to-end quality
-integration test: DocLayout converts each page and the vendored rules must pass.
+This directory contains three single-page PDFs from
+[olmOCR-bench](https://huggingface.co/datasets/allenai/olmOCR-bench)
+(allenai, Apache-2.0) and the benchmark tests that apply to them.
+`tests/converters/test_olmocr_bench.py` uses them for an end-to-end quality
+integration test: DocLayout converts each page, then checks that all vendored rules pass.
 
 | local file | source (olmOCR-bench `pdfs/`) | tests |
 |---|---|---|
@@ -13,13 +14,14 @@ integration test: DocLayout converts each page and the vendored rules must pass.
 
 `tests.jsonl` holds one record per test; each record's `source` field records the
 original benchmark PDF path. Only the `present`/`absent`/`order`/`baseline` rule
-types are vendored — the `table`/`math` types need olmOCR-bench's own KaTeX +
-table-parsing checker and aren't reimplemented here.
+types are vendored. The `table`/`math` types need olmOCR-bench's own KaTeX +
+table-parsing checker, which is not reimplemented here.
 
-These pages provide bounded regression checks, not a complete benchmark score.
-The recorded DocLayout live run passed 13 of 14 rules; a retained copyright line
-caused the header/footer failure. See the [dated validation report](../../../docs/gpt6-validation.md).
-Default tests skip live inference unless `--run-integration` is explicitly set.
+These pages check for regressions on a small sample. They cannot establish a
+complete benchmark score.
+See the [dated validation report](../../../docs/gpt6-validation.md) for observed
+results and the header/footer limitation, and [live evaluation instructions](../../../docs/development.md#live-evaluation)
+for running the fixture tests. Default tests skip live inference.
 To expand the evaluation, use the [benchmark harness](../../../benchmarks/README.md)
 with the complete dataset. Keep original source paths and rules intact when
 updating these fixtures.

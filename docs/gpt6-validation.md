@@ -1,13 +1,16 @@
 # DocLayout validation
 
-This document separates dated model observations from offline application checks.
-See [usage](usage.md) for current commands and [architecture](architecture.md) for
-the pipeline. Model accuracy and deterministic software tests are different evidence.
+The results below record live model observations and offline application checks
+separately.
+See [development](development.md) for current verification commands,
+[usage](usage.md) for application workflows, and [architecture](architecture.md)
+for the pipeline. The model observations describe extraction quality; the
+offline tests check deterministic application behavior.
 
 ## Recorded live run
 
-Bounded live run on 2026-09-23, using the configured OpenAI-compatible endpoint.
-This is a smoke test, not a general accuracy benchmark.
+A limited live smoke test ran on 2026-09-23 using the configured
+OpenAI-compatible endpoint. It does not establish general extraction accuracy.
 
 - A generated image containing "MARKER OCR TEST 4827" transcribed exactly through
   Responses with a Pydantic structured output.
@@ -25,10 +28,10 @@ This is a smoke test, not a general accuracy benchmark.
 | multi_column_page1.pdf | 16 | 16.2 | 5/5 |
 
 The header/footer sample retained a copyright line classified as Text.
-The evaluator expected that line to be absent. Thus 13 of 14 rules passed;
+The evaluator expected that line to be absent, so 13 of 14 rules passed;
 header/footer classification remains a quality limitation. No new model call was
 made to tune this result. Times include extraction and rendering on this machine
-and endpoint and should not be treated as throughput guarantees.
+and endpoint. They do not guarantee throughput elsewhere.
 
 Generated smoke artifacts are under the ignored
 `conversion_results/gpt6_validation/` directory. Default tests mock API calls.
@@ -44,19 +47,18 @@ known classification limitation or other model variation.
 - Existing document-provider PDF handoffs were tested with generated local
   PDFs. Full Office/HTML/EPUB conversion and Modal deployment were not live-tested.
 - Ruff correctness/import rules (E4, E7, E9, F, I) passed on changed Python files.
-  Broad modernization rules were not used as a repository-wide gate.
+  The checks did not require the whole repository to pass broad modernization rules.
 - Focused ty checks passed for the new extraction, service, configuration,
   PDF provider, converters, OCR renderer, and batch/API entrypoints.
 - `uv lock --check`, `uv build`, compile checks and Git whitespace checks passed.
 - Runtime import checks confirmed Surya, Torch, Transformers, google-genai and
   Anthropic are absent from the environment.
 
-These original check results are historical, not a current test-count claim.
+These counts describe the original checks.
 The current offline suite also covers prompt-resource fingerprints, session
 invalidation, chat verification, export artifacts, clipboard operations, and
 browser downloads with mocked extraction. It does not establish live endpoint
-availability or current OCR accuracy. No new live run is implied by a
-documentation update.
+availability or current OCR accuracy. Updating documentation does not rerun those live checks.
 
 ## Documentation and publication checks (2026-09-23)
 
@@ -79,3 +81,40 @@ documentation update.
   generated indexes, credentials, and conversion outputs.
 - Runtime syntax for all 120 application Python files matched the pre-update
   baseline. All four Markdown prompt files remained byte-identical.
+
+## Cleanup verification (2026-09-23)
+
+After the [unused-code cleanup](../CHANGELOG.md#unreleased):
+
+- The complete offline suite passed in a fresh environment: **102 passed,
+  3 skipped**. The three remaining skips are explicitly enabled, billable
+  integration tests; the permanently skipped legacy ignore-text test was removed.
+- Ruff correctness/import checks (`F,E9`), Git whitespace checks, and isolated
+  dependency consistency checks passed.
+- The wheel built and installed successfully. All four console entry points
+  imported, both conversion CLI help commands passed, prompt resources matched
+  source, and retired modules were absent from the wheel.
+- All four Markdown prompts stayed byte-identical. Embedded refinement prompt
+  string values were unchanged. No retained dependency versions were upgraded.
+- Exact sync of the existing environment encountered a locked `psutil` binary.
+  An inexact sync kept extra packages there. The suite also passed in the fresh
+  environment using only the reduced declared dependency set.
+
+The cleanup checks covered offline application and packaging behavior. They
+included no live model evaluation; the earlier live measurements remain historical.
+Follow the [development guide](development.md) to repeat checks.
+
+## Documentation reorganization checks (2026-09-23)
+
+- Focused configuration, service, prompt, and entry-point tests: **26 passed**.
+- All 10 documentation files passed local link/anchor checks; Python/JSON
+  examples parsed, and 21 PowerShell examples passed syntax checks.
+- CLI help and the component inventory ran successfully. Offline checks verified
+  the documented defaults, JSON/flag argument-order behavior, explicit false
+  values, and the Python usage example with mocked conversion.
+- A before/after snapshot confirmed that all 171 existing non-documentation
+  files and runtime prompts present at the start of this documentation task
+  remained unchanged. Earlier cleanup deletions were preserved.
+
+These checks made no live model calls and did not repeat the complete suite;
+the full-suite result above belongs to the cleanup verification.

@@ -1,6 +1,6 @@
 # Using DocLayout
 
-[Back to README](../README.md)
+[Back to README](../README.md) · [Configuration](configuration.md) · [Development](development.md)
 
 ## Installation
 
@@ -13,8 +13,8 @@ uv sync --group dev --extra full
 ```
 
 The `dev` group includes the GUI, API server, and test tools. The `full` extra
-adds document-format converters. For PDFs and images alone, the base package
-contains the conversion dependencies; those formats need no local GPU model.
+adds document-format converters. The base package has the dependencies
+for PDF and image conversion. These formats need no local GPU model.
 
 WeasyPrint also requires native libraries for Office/HTML/EPUB conversion.
 Follow its [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
@@ -42,8 +42,8 @@ python -m pip install "git+https://github.com/pypi-ahmad/DocLayout.git"
 ```
 
 These commands install the base CLI/library. A wheel or ordinary package install
-does **not** install the development group. Add the GUI or server dependencies
-when needed, using the same installer/environment:
+leaves out the development group. Add GUI or server dependencies as needed,
+using the same installer and environment:
 
 ```powershell
 # GUI:
@@ -54,9 +54,9 @@ uv pip install "fastapi>=0.115.4" "uvicorn>=0.32.0" "python-multipart>=0.0.16"
 uv pip install ".[full]"
 ```
 
-With pip, replace `uv pip install` with `python -m pip install`. No PyPI release
-is assumed: installing `doclayout` by name alone is not an instruction to install
-this repository's version. A locally built wheel is another supported option:
+With pip, replace `uv pip install` with `python -m pip install`. These instructions do not assume a PyPI release,
+so installing `doclayout` by name alone may not give you this repository's version.
+You can also install a wheel built locally. See [build checks](development.md#build-and-package-checks):
 
 ```powershell
 uv build --wheel
@@ -68,25 +68,18 @@ source checkout, `uv run` handles the environment for the examples below.
 
 ## Credentials and model settings
 
-Configure `OPENAI_API_KEY` and, when applicable, `OPENAI_BASE_URL` in the process
-environment. A compatible endpoint must support Responses, image input, and
-structured output. Do not pass credentials through command-line flags or JSON.
-
-| Task | Model | Defaults |
-| --- | --- | --- |
-| Page extraction and optional refinement | `gpt-6-sol` | Medium reasoning, 32,768 output tokens, 180-second timeout, two SDK retries |
-| Chat draft and independent verification | `gpt-6-luna` | Medium reasoning, 8,192 output tokens per call, 60-second timeout, no retries |
-
-Model choices are fixed in this application. `use_llm=False` disables additional
-refinement, not page extraction. There is no local OCR fallback.
+Configure credentials before running extraction. See the
+[configuration guide](configuration.md#credentials-and-environment) for the
+process environment, fixed model choices, request defaults, and available
+controls. Extra refinement is optional; page extraction always uses Sol.
 
 ## Browser workbench
 
 In the source checkout, run `launch.cmd` for the browser on port 8471. It stops
 the previous port listener before launching. The `doclayout_gui` command also
 starts the GUI, but uses Streamlit's default server settings; it does not provide
-the launcher's port cleanup. Its extra arguments are forwarded to the app, not
-interpreted as Streamlit server flags.
+the launcher's port cleanup. It forwards extra arguments to the app without
+interpreting them as Streamlit server flags.
 
 1. Upload a PDF, PNG, JPEG, GIF, DOCX, PPTX, XLSX, HTML, or EPUB file.
 2. Choose Start page and End page. Both are inclusive and numbered from 1; the
@@ -105,17 +98,17 @@ interpreted as Streamlit server flags.
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
 
-Markdown and HTML previews intentionally look different. Exported HTML embeds
+The Markdown and HTML previews use different styles. Exported HTML embeds
 known image crops and converts supported LaTeX to MathML; failed conversions
-retain readable LaTeX. Formatted copying uses the generated HTML representation.
+retain readable LaTeX. Formatted copying uses the generated HTML.
 Clipboard operations require browser support and permission on localhost/HTTPS.
 
 The ZIP contains `document.md`, `document.html`, `document.json`, `chunks.json`,
 `metadata.json`, extracted crops, `annotated.pdf`, and `annotations/page-N.png`.
 It excludes the uploaded source and chat. Annotations are raster copies with
-estimated boxes, not a searchable PDF text layer.
+estimated boxes. They contain no searchable PDF text layer.
 
-Completed results survive tab changes and downloads without new OCR calls.
+Switching tabs and downloading files keeps the completed results and makes no new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
 results and chat. Running extraction again also starts a fresh result. Debug
 shows metadata and raw output; it does not save a GUI run history.
@@ -123,15 +116,14 @@ shows metadata and raw output; it does not save a GUI run history.
 ### Document chat
 
 Chat sends parsed text, the question, and up to six accepted previous turns.
-It does not send page images, browse the web, or use tools. Quotes are checked
+It does not send page images, browse the web, or use tools. The app checks quotes
 locally before a second model verifies the candidate answer.
 
-Questions are limited to 2,000 characters. Accepted answers are limited to 120
-words and 2,000 characters. Serialized requests are limited to 200 KB, with
-30 KB reserved when checking the initial context for verification overhead.
-Select a smaller page range if the context is too large. Missing, out-of-scope,
-unverified, and unavailable answers use fixed status messages. Chat usage is
-separate from extraction metadata; Clear chat removes its local history and usage.
+See [fixed chat limits](configuration.md#fixed-chat-limits) for question,
+answer, history, and context limits. Select a smaller page range if the context
+is too large. Missing, out-of-scope, unverified, and unavailable answers use fixed
+status messages. Chat usage is separate from extraction metadata; Clear chat
+removes its local history and usage.
 
 ## Command-line conversion
 
@@ -150,27 +142,14 @@ contains the selected representation, a separate `_meta.json` file, and crops
 when the renderer produces them. `--disable_image_extraction` omits crops.
 
 Folder conversion processes files directly inside the input folder; it does not
-recurse or filter out unsupported files. The default is one worker process.
+recurse or filter out unsupported files. For partitioning and process defaults, see
+[folder options](configuration.md#cli-and-json-configuration).
 `--skip_existing` skips a document if an output representation already exists.
 Failures are reported, other files continue, and the command exits nonzero if
-any failed. Each worker permits up to three concurrent API requests.
+any failed. Concurrency limits are documented in the configuration guide.
 
-Configuration JSON can set supported options such as:
-
-```json
-{
-  "timeout": 180,
-  "max_retries": 2,
-  "max_output_tokens": 32768,
-  "highres_image_dpi": 192,
-  "page_concurrency": 3
-}
-```
-
-Pass it with `--config_json config.json`. Page concurrency must be 1–3. Use
-`--help` for supported component options and full `doclayout.*` class paths for
-custom converters/processors. Retired controls such as `force_ocr`, `disable_ocr`,
-`mode`, local inference/device settings, and model/credential overrides are rejected.
+For JSON examples, flag defaults, argument-order precedence, batch controls,
+and advanced component options, see [configuration](configuration.md#cli-and-json-configuration).
 
 ## Python library
 
@@ -195,7 +174,7 @@ finally:
 `PdfConverter` accepts a filepath or PDF `BytesIO`. Its default renderer returns
 Markdown, images, and metadata. `TableConverter` selects tables, forms, and
 tables of contents; `OCRConverter` returns ordered blocks with HTML and estimated
-geometry. Other renderers can be selected through their full class paths.
+geometry. Select other renderers by their full class paths.
 Invalid configuration raises `ValueError`; failed model extraction raises
 `ExtractionError`. Close shared models after use to release the HTTP client.
 
@@ -221,20 +200,14 @@ Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8000/doclayout' -ContentTy
 curl.exe -X POST http://127.0.0.1:8000/doclayout/upload -F 'file=@document.pdf' -F 'page_range=0-1' -F 'output_format=markdown'
 ```
 
-| Field | Type | Default/meaning |
-| --- | --- | --- |
-| `filepath` | String | Server-side file for the JSON endpoint; uploads supply the file instead |
-| `page_range` | String or null | Zero-based comma/range selection; null means all pages |
-| `use_llm` | Boolean | False; enable additional refinement |
-| `paginate_output` | Boolean | False; request page separation in compatible outputs |
-| `output_format` | String | `markdown`; also `html`, `json`, `chunks` |
+See the [API field reference](configuration.md#gui-api-and-python-differences)
+for accepted fields, defaults, and page-range syntax. Unknown fields are rejected.
 
 Successful responses contain `success`, `format`, `output`, `images`, and
 `metadata`. `output` is a string, including serialized JSON for JSON/chunks;
 image values are base64 strings. Conversion failures return HTTP 200 with
 `success: false` and `error`; clients must check `success`. Invalid fields and
-request validation errors return HTTP 422. Conversion is serialized in the API
-process. GUI chat, annotations, and ZIP downloads are not HTTP endpoints.
+request validation errors return HTTP 422. The API process runs one conversion at a time. GUI chat, annotations, and ZIP downloads are not HTTP endpoints.
 
 ## Troubleshooting
 

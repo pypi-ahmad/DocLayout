@@ -3,9 +3,9 @@
 **From scans and images to structured Markdown.**
 
 DocLayout converts PDFs, scans, images, and office documents into readable,
-structured content. Use the browser workbench to inspect pages, copy results,
-download document outputs, and ask questions about extracted text. A CLI,
-Python library, and local HTTP API support scripted workflows.
+structured content. In the browser workbench, you can inspect pages, copy or download results,
+and ask questions about the extracted text. For scripts, use the CLI, Python
+library, or local HTTP API.
 
 ## Features
 
@@ -14,7 +14,7 @@ Python library, and local HTTP API support scripted workflows.
 - Markdown has a native rendered view and an exact raw view. The separate HTML
   preview uses a white page, serif typography, embedded crops, and MathML.
 - Download Markdown, HTML, JSON, chunks, annotated page images, or an annotated
-  PDF. The ZIP groups document outputs without the source upload or chat history.
+  PDF. The ZIP contains document outputs and excludes the source upload and chat history.
 - GPT-6 Luna answers document questions with source-quote checks and a second
   verification request before displaying accepted answers.
 - Preview navigation, copying, and downloads reuse completed session results
@@ -31,14 +31,10 @@ cd DocLayout
 uv sync --group dev --extra full
 ```
 
-DocLayout requires Python 3.10 or newer within the declared dependency limits;
-the current Windows checks use Python 3.14. Configure `OPENAI_API_KEY` in the
-process environment. The SDK also reads `OPENAI_BASE_URL` for a compatible
-endpoint. Do not put credentials in code, configuration JSON, or Git.
-
-If you configured Windows user environment variables, open a new terminal so
-the launcher receives them. The endpoint must support Responses, image inputs,
-and structured outputs for `gpt-6-sol`; document chat also needs `gpt-6-luna`.
+For supported Python versions and document-format prerequisites, see
+[installation](docs/usage.md#installation). Configure API credentials in the
+[process environment](docs/configuration.md#credentials-and-environment), then
+launch the workbench:
 
 ```powershell
 .\launch.cmd
@@ -66,7 +62,10 @@ GUI Start/End pages are **1-based and inclusive**. CLI and API page ranges are
 
 | Guide | Contents |
 | --- | --- |
-| [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, configuration, troubleshooting |
+| [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, troubleshooting |
+| [Configuration](docs/configuration.md) | Settings, defaults, limits, environment, precedence |
+| [Development](docs/development.md) | Setup, tests, builds, extension and prompt-change practices |
+| [Changelog](CHANGELOG.md) | Current changes and compatibility history |
 | [Architecture](docs/architecture.md) | Extraction pipeline, model calls, renderers, prompts, session state |
 | [Validation](docs/gpt6-validation.md) | Dated live observations, offline checks, known limitations |
 | [Benchmarks](benchmarks/README.md) | Running a bounded extraction evaluation |
@@ -74,7 +73,7 @@ GUI Start/End pages are **1-based and inclusive**. CLI and API page ranges are
 
 ## Accuracy, privacy, and cost
 
-Page images are sent to the configured API endpoint. Chat sends extracted page
+DocLayout sends page images to the configured API endpoint. Chat sends extracted page
 text and recent accepted conversation turns. Requests use `store=False`, which
 does not replace the endpoint provider's own data-handling policy.
 
@@ -83,29 +82,18 @@ confidence scores. Small text, complex tables, equations, and header/footer
 classification need review. Document chat verification can also miss mistakes.
 There is no claim of perfect accuracy or a general benchmark ranking.
 
-Browser results live in session memory; download them before closing or losing
-the session. CLI conversion writes output files. GUI HTML is generated from
-Markdown; CLI/API HTML is rendered directly from document blocks.
+The browser keeps results in session memory. Download them before closing or
+losing the session. CLI conversion writes output files. The GUI generates HTML
+from Markdown; the CLI and API render HTML directly from document blocks.
 
-## Development checks
+## Development
 
-```powershell
-uv run playwright install chromium --only-shell
-uv run pytest
-uv lock --check
-uv build
-```
+See the [development guide](docs/development.md) for environment setup, offline
+and browser checks, explicit live evaluation, package builds, and prompt-change
+practices. The [changelog](CHANGELOG.md) records additions and retired interfaces.
 
-Default tests mock model calls. Explicit live tests are billable:
-
-```powershell
-uv run pytest tests/converters/test_olmocr_bench.py --run-integration
-```
-
-Keep changes to prompts separate from organizational refactors. Prompt
-fingerprint tests protect exact request text. Report problems through
-[DocLayout issues](https://github.com/pypi-ahmad/DocLayout/issues), with secrets
-and private document contents removed.
+Report problems through [DocLayout issues](https://github.com/pypi-ahmad/DocLayout/issues),
+after removing secrets and private document contents.
 
 ## References and attribution
 

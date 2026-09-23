@@ -4,10 +4,13 @@
 serves the local FastAPI application on Modal using CPU compute.
 
 Create a Modal secret named `doclayout-openai` containing `OPENAI_API_KEY` and,
-if needed, `OPENAI_BASE_URL`. The endpoint must support GPT-6 Sol image input,
-Responses and structured outputs. Do not place credentials in source files.
+if needed, `OPENAI_BASE_URL`. See [endpoint requirements](../docs/configuration.md#credentials-and-environment).
+The Modal secret supplies the deployed process environment. Local configuration
+files do not supply those values to the deployment.
 
-With the optional Modal CLI installed, deployment is explicit:
+For local setup and package checks, see [development](../docs/development.md).
+The Modal CLI is an optional separate tool, outside the project dependency groups.
+Once it is installed, run this command to deploy:
 
 ```powershell
 modal deploy examples/doclayout_modal_deployment.py
@@ -19,13 +22,13 @@ For uploads, send a multipart `file` and optional `page_range`,
 
 Page extraction and extra refinement incur API charges. This example has no
 authentication layer; add access controls before exposing sensitive documents.
-It needs no GPU or model-cache volume. Deployment has not been live-verified.
+It needs no GPU or model-cache volume. The deployment has not been tested live.
 
 The example image installs the development group and supports the base PDF/image
 workflow. Additional document formats need the `full` extra and native WeasyPrint
 libraries added to the image before use. The example does not serve the Streamlit
 workbench, document chat, annotations, or ZIP downloads.
 
-The root `LICENSE` must be present because the image copies it. API clients should
+Keep the root `LICENSE` file; the image copies it. API clients should
 check the response's `success` field even after HTTP 200; conversion errors are
 returned in the response body. See [API usage](../docs/usage.md#http-api).

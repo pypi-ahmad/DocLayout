@@ -1,6 +1,6 @@
 # DocLayout architecture
 
-[Back to README](../README.md)
+[Back to README](../README.md) · [Configuration](configuration.md) · [Development](development.md)
 
 ## Data flow
 
@@ -26,19 +26,19 @@ flowchart TD
 ## Extraction
 
 Providers handle input formats. Office, HTML, and EPUB inputs become temporary
-PDFs. The GUI retains prepared PDF bytes in session memory so preview and
-extraction reuse that preparation.
+PDFs. The GUI keeps the prepared PDF bytes in session memory so preview and
+extraction can reuse them.
 
 The document builder renders each selected page at 192 DPI by default. PDFium
-rendering is serialized. A bounded thread pool sends page images for extraction;
+renders pages one at a time. A limited thread pool sends page images for extraction;
 the shared Sol service permits at most three concurrent requests per process.
 Embedded PDF text never bypasses page extraction.
 
 The model returns ordered blocks with type, HTML, and estimated bounds normalized
-to 0–1000. Pydantic validation rejects invalid geometry and inconsistent blank
-pages. HTML is sanitized, coordinates are mapped into page space, and structure
-processors prepare the document for rendering. Optional refinement uses the
-same Sol service. Refinement failures retain baseline content and record errors;
+to 0 to 1000. Pydantic validation rejects invalid geometry and inconsistent blank
+pages. The app sanitizes HTML and maps coordinates into page space. Structure
+processors then prepare the document for rendering. Optional refinement uses the
+same Sol service. If refinement fails, the app keeps the baseline content and records errors;
 page extraction failures abort that document.
 
 ## Rendering and output ownership
@@ -48,28 +48,28 @@ chunks from it. Local code generates styled HTML from the resulting Markdown,
 draws estimated boxes on copies of source images, creates a raster PDF, and
 assembles the ZIP. These operations do not call a model.
 
-The CLI and API select one document renderer. Their HTML renderer operates on
-document blocks; it is not the GUI's Markdown-to-HTML exporter. The CLI writes
+The CLI and API select one document renderer. They render HTML from
+document blocks. The GUI's exporter generates HTML from Markdown. The CLI writes
 metadata separately, while the API returns it alongside the serialized output.
 
 The document model stores pages, blocks, reading order, images, and metadata.
 Geometry is estimated, without character-level positions or calibrated
-confidence scores. Rendering can preserve structure only as well as extraction
-and subsequent processing provide it.
+confidence scores. The rendered structure depends on the quality of extraction and subsequent
+processing.
 
 ## Frontend state and chat
 
-Only Run DocLayout triggers page extraction. Upload identity and processing
-settings define the active result; changing either clears results and chat.
+Only Run DocLayout triggers page extraction. The active result belongs to the current upload and processing
+settings. Changing either clears results and chat.
 Preview, raw/rendered switching, clipboard actions, and downloads reuse the
-completed result. GUI artifacts stay in memory rather than a persistent run store.
+completed result. The GUI keeps artifacts in memory and has no persistent run store.
 
 Chat uses a separate Luna client and token-usage record. The draft schema contains
 statements and supporting page quotes. The application checks that each quote
 exists in the identified page text after whitespace normalization, validates
 answer length/style, and requests independent verification. Only approved
-answers receive application-generated page citations. This reduces unsupported
-answers but is not a guarantee of correctness.
+answers receive application-generated page citations. These checks reduce unsupported
+answers, though mistakes can still pass verification.
 
 ## Prompts and schemas
 
@@ -84,12 +84,11 @@ answers but is not a guarantee of correctness.
 Markdown resources are loaded once when their modules are imported using
 `importlib.resources`. Restart the application after editing them. They are
 included in the built package. `.gitattributes` preserves their bytes, and tests
-check prompt fingerprints against the original strings. Organizational changes
-must not alter whitespace or placeholders. Intentional prompt changes require
-separate review and evaluation before updating those fingerprints.
+check prompt fingerprints against the original strings. See [prompt-change practices](development.md#preserve-extraction-behavior)
+before editing prompt content or its fingerprint expectations.
 
-Schemas and request logic remain in Python. The prompt files are runtime input,
-not user documentation; documentation edits must leave them unchanged.
+Schemas and request logic remain in Python. The app uses the prompt files at runtime.
+Leave their contents unchanged when editing documentation.
 
 ## Code map and extension boundaries
 
@@ -105,8 +104,14 @@ not user documentation; documentation edits must leave them unchanged.
 | `scripts` | CLI, Streamlit, and HTTP entry points |
 | `config` | Configuration parsing, discovery, and retired-option rejection |
 
-Keep frontend/export changes outside extraction prompts and processors unless
-the intended task explicitly changes extraction behavior. Rendering, chat,
-and model inference need separate tests. Offline tests establish contracts and
-regression behavior; live model accuracy requires explicitly authorized,
-billable evaluation. See [validation](gpt6-validation.md).
+See [development practices](development.md#preserve-extraction-behavior) for
+extension checks and safe changes to extraction, rendering, and prompts.
+[Configuration](configuration.md) owns defaults and controls;
+[validation](gpt6-validation.md) records observed behavior and limitations.
+
+### Provider extension contract
+
+Providers supply prepared pages, rendering, bounds, references, and page
+selection. The builder creates blocks from structured model responses.
+The former provider-line and page-line merging interfaces have been removed;
+see the [changelog](../CHANGELOG.md#unreleased) for the complete retirement list.
