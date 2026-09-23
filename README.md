@@ -187,6 +187,14 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Benchmarks](benchmarks/README.md) | Running a bounded extraction evaluation |
 | [Deployment example](examples/README.md) | Optional Modal deployment and its verification limits |
 
+### Interactive diagrams
+
+- [Architecture](docs/diagrams/doclayout-architecture.html)
+- [Data flow](docs/diagrams/doclayout-dataflow.html)
+- [Lifecycle](docs/diagrams/doclayout-lifecycle.html)
+- [Sequence](docs/diagrams/doclayout-sequence.html)
+- [Workflow](docs/diagrams/doclayout-workflow.html)
+
 ## Accuracy, privacy, and cost
 
 DocLayout sends page images to the configured API endpoint. Chat sends extracted page
