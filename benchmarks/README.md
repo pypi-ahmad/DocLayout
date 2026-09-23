@@ -1,5 +1,9 @@
 # DocLayout extraction benchmark
 
+Install DocLayout using the [README instructions](../README.md#installation).
+The benchmark scripts run from a clone; the installed `doclayout` command is
+covered in the [CLI guide](../docs/usage.md#command-line-conversion).
+
 DocLayout uses GPT-6 Sol for every page. This harness evaluates the current
 application against a local olmOCR-bench dataset. Its results do not establish
 general accuracy or local GPU throughput.

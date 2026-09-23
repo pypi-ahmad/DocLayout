@@ -7,6 +7,28 @@ See [development](development.md) for current verification commands,
 for the pipeline. The model observations describe extraction quality; the
 offline tests check deterministic application behavior.
 
+## Version 2.1.0 installation and CLI checks (2026-09-23)
+
+- Offline suite: **130 passed, 3 skipped**. The skips require explicitly enabled,
+  billable integration calls. No live model calls were made for this release.
+- File-command tests cover individual exports, the full bundle, ZIP-only output,
+  GUI export parity, one extraction per page, overwrites, conflicting options,
+  input protection, and failures that preserve existing outputs.
+- Wheel and source builds passed. A base wheel installed outside the checkout
+  produced every CLI export with mocked extraction, without Streamlit or FastAPI.
+- Local wheel installation succeeded with pip, uv pip, and an isolated uv tool
+  directory. Dependency checks passed for base, GUI tool, and combined extras
+  environments. Installed command help and version checks passed.
+- The installed GUI tool returned a healthy Streamlit response. The installed
+  server returned its OpenAPI schema. These startup checks made no model calls.
+- Distributions include the license and attribution notice. All four Markdown
+  prompts match the original baseline byte for byte. Ruff correctness checks,
+  lockfile consistency, documentation links, and Git whitespace checks passed.
+
+These checks establish packaging and deterministic application behavior. They do
+not repeat the live extraction observations below or validate full Office
+conversion on a newly configured machine.
+
 ## Recorded live run
 
 A limited live smoke test ran on 2026-09-23 using the configured
@@ -84,7 +106,7 @@ availability or current OCR accuracy. Updating documentation does not rerun thos
 
 ## Cleanup verification (2026-09-23)
 
-After the [unused-code cleanup](../CHANGELOG.md#unreleased):
+After the [unused-code cleanup](../CHANGELOG.md#210-2026-09-23):
 
 - The complete offline suite passed in a fresh environment: **102 passed,
   3 skipped**. The three remaining skips are explicitly enabled, billable

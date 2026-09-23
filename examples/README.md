@@ -24,7 +24,8 @@ Page extraction and extra refinement incur API charges. This example has no
 authentication layer; add access controls before exposing sensitive documents.
 It needs no GPU or model-cache volume. The deployment has not been tested live.
 
-The example image installs the development group and supports the base PDF/image
+The example image installs the development group, which includes server dependencies,
+and supports the base PDF/image
 workflow. Additional document formats need the `full` extra and native WeasyPrint
 libraries added to the image before use. The example does not serve the Streamlit
 workbench, document chat, annotations, or ZIP downloads.

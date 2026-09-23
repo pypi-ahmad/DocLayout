@@ -488,13 +488,14 @@ wheels = [
 
 [[package]]
 name = "doclayout"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "bleach" },
     { name = "click" },
     { name = "filetype" },
+    { name = "latex2mathml" },
     { name = "markdown2" },
     { name = "markdownify" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -524,12 +525,19 @@ full = [
     { name = "python-pptx" },
     { name = "weasyprint" },
 ]
+gui = [
+    { name = "streamlit" },
+]
+server = [
+    { name = "fastapi" },
+    { name = "python-multipart" },
+    { name = "uvicorn" },
+]
 
 [package.dev-dependencies]
 dev = [
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "latex2mathml" },
     { name = "playwright" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -546,7 +554,9 @@ requires-dist = [
     { name = "bleach", specifier = ">=6.2,<7" },
     { name = "click", specifier = ">=8.2.0,<9" },
     { name = "ebooklib", marker = "extra == 'full'", specifier = ">=0.18,<0.19" },
+    { name = "fastapi", marker = "extra == 'server'", specifier = ">=0.115.4" },
     { name = "filetype", specifier = ">=1.2.0,<2" },
+    { name = "latex2mathml", specifier = ">=3.77.0" },
     { name = "mammoth", marker = "extra == 'full'", specifier = ">=1.9.0,<2" },
     { name = "markdown2", specifier = ">=2.5.2,<3" },
     { name = "markdownify", specifier = ">=1.1.0,<2" },
@@ -560,21 +570,23 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.0.3,<3" },
     { name = "pypdfium2", specifier = ">=4.30,<6" },
     { name = "python-dotenv", specifier = ">=1.0.0,<2" },
+    { name = "python-multipart", marker = "extra == 'server'", specifier = ">=0.0.16" },
     { name = "python-pptx", marker = "extra == 'full'", specifier = ">=1.0.2,<2" },
     { name = "rapidfuzz", specifier = ">=3.8.1,<4" },
     { name = "regex", specifier = ">=2024.4.28" },
     { name = "requests", specifier = ">=2.32,<3" },
     { name = "scikit-learn", specifier = ">=1.6.1,<2" },
+    { name = "streamlit", marker = "extra == 'gui'", specifier = ">=1.59,<2" },
     { name = "tqdm", specifier = ">=4.66.1,<5" },
+    { name = "uvicorn", marker = "extra == 'server'", specifier = ">=0.32.0" },
     { name = "weasyprint", marker = "extra == 'full'", specifier = ">=63.1,<64" },
 ]
-provides-extras = ["full"]
+provides-extras = ["full", "gui", "server"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "fastapi", specifier = ">=0.115.4" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "latex2mathml", specifier = ">=3.77.0" },
     { name = "playwright", specifier = ">=1.49.1" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "pytest", specifier = ">=8.3.3" },

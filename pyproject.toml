@@ -1,6 +1,6 @@
 [project]
 name = "doclayout"
-version = "2.0.0"
+version = "2.1.0"
 description = "From scans and images to structured Markdown."
 readme = "README.md"
 license = "Apache-2.0"
@@ -31,6 +31,7 @@ dependencies = [
     "pypdfium2>=4.30,<6",
     "requests>=2.32,<3",
     "bleach>=6.2,<7",
+    "latex2mathml>=3.77.0",
 ]
 
 [project.urls]
@@ -44,6 +45,14 @@ full = [
     "python-pptx>=1.0.2,<2",
     "ebooklib>=0.18,<0.19",
     "weasyprint>=63.1,<64",
+]
+gui = [
+    "streamlit>=1.59,<2",
+]
+server = [
+    "fastapi>=0.115.4",
+    "python-multipart>=0.0.16",
+    "uvicorn>=0.32.0",
 ]
 
 [project.scripts]
@@ -60,7 +69,6 @@ dev = [
     "uvicorn>=0.32.0",
     "python-multipart>=0.0.16",
     "pytest>=8.3.3",
-    "latex2mathml>=3.77.0",
     "playwright>=1.49.1",
     "ruff>=0.16.8",
     "ty>=0.0.83",

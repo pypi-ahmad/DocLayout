@@ -20,42 +20,133 @@ library, or local HTTP API.
 - Preview navigation, copying, and downloads reuse completed session results
   without repeating OCR.
 
-## Quick start on Windows
+## Installation
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Git,
-then open PowerShell:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
+needed for GitHub-source installs. The package declares Python `>=3.10,<4`;
+Windows checks use Python 3.14. PyPI publication is deferred. The commands below
+install this repository's version directly from GitHub or a release wheel.
+Dependencies still need a reachable package index or a populated local cache.
+Before running conversion, [configure API access](#configure-api-access).
+
+### Install as a uv tool
+
+For the CLI and all export formats:
+
+```powershell
+uv tool install "git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+doclayout input.pdf output --all
+```
+
+To include the browser app, use this installation instead:
+
+```powershell
+uv tool install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+doclayout_gui
+```
+
+If uv reports that its executable directory is missing from PATH, run
+`uv tool update-shell` and open a new terminal. Reinstalling with different extras
+may require `uv tool install --force` with the desired installation specifier.
+
+### Manual clone
 
 ```powershell
 git clone https://github.com/pypi-ahmad/DocLayout.git
 cd DocLayout
-uv sync --group dev --extra full
+uv sync --locked --group dev --extra full
 ```
 
-For supported Python versions and document-format prerequisites, see
-[installation](docs/usage.md#installation). Configure API credentials in the
-[process environment](docs/configuration.md#credentials-and-environment), then
-launch the workbench:
+This sets up the GUI, API, and development tools, plus optional document-format
+converters. After configuring credentials, run:
 
 ```powershell
+uv run doclayout input.pdf output --all
 .\launch.cmd
 ```
 
-The launcher opens **http://localhost:8471**, stopping any previous process
-listening on port 8471 first. It disables file watching; restart it after edits.
+The launcher opens **http://localhost:8471**, stopping the previous listener on
+port 8471 first. It disables file watching; restart it after edits.
+`doclayout_gui` uses Streamlit's defaults and does not stop a port listener.
 
-PDFs and images need no GPU or local model downloads. Office, HTML, and EPUB
-conversion also needs the `full` extra and WeasyPrint's native dependencies.
-See [installation and troubleshooting](docs/usage.md#installation).
+### pip or uv pip
 
-## Command-line example
+Use the Python environment where you want the commands installed. With uv,
+create one first if needed using `uv venv`. Choose one installer:
 
 ```powershell
-uv run doclayout_single document.pdf --output_dir output
-uv run doclayout_single document.pdf --page_range 0,2-4 --output_format markdown
-uv run doclayout documents --output_dir output --workers 1
+uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
+python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@v2.1.0"
 ```
 
-GUI Start/End pages are **1-based and inclusive**. CLI and API page ranges are
+A release wheel avoids the Git requirement. Either installer can use this URL:
+
+```powershell
+uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v2.1.0/doclayout-2.1.0-py3-none-any.whl"
+```
+
+The wheel command above installs the base CLI. To add extras to a downloaded
+wheel, use its local path, for example
+`uv pip install ".\doclayout-2.1.0-py3-none-any.whl[gui]"`.
+
+| Installation | Includes |
+| --- | --- |
+| Base package | CLI/library and every CLI export format |
+| `[gui]` | Streamlit workbench |
+| `[server]` | Local HTTP API, launched with `doclayout_server` |
+| `[full]` | Office/HTML/EPUB document-format converters |
+| `[gui,server,full]` | All of the above |
+
+PDFs and images need no GPU or local model downloads. Office/HTML/EPUB conversion
+also requires native WeasyPrint libraries; see [format prerequisites](docs/usage.md#installation).
+Tool-installed commands run directly as `doclayout ...`. Inside a clone,
+`uv run doclayout ...` uses the project's environment.
+
+## Configure API access
+
+Set these in the terminal that will launch DocLayout:
+
+```powershell
+$env:OPENAI_API_KEY = "your-api-key"
+# Optional: set this only for a custom compatible endpoint.
+$env:OPENAI_BASE_URL = "https://your-endpoint.example/v1"
+```
+
+The endpoint must support the app's models and request formats. See
+[credentials and persistent Windows setup](docs/configuration.md#credentials-and-environment).
+Configure credentials before running conversion or opening the app.
+
+## Command-line examples
+
+```powershell
+doclayout input.pdf output
+doclayout input.pdf output --all
+doclayout input.pdf output --markdown --html
+doclayout input.pdf output --json --chunks
+doclayout input.pdf output --annotated-pdf --annotated-images
+doclayout input.pdf output --zip
+doclayout input.pdf output --all --page_range 0,2-4
+doclayout --help
+```
+
+The default is Markdown with its image crops. `--all` writes every GUI export
+and a ZIP after one extraction per selected page. `--zip` alone writes only the
+complete archive. Individual format flags can be combined; see the
+[full output reference](docs/usage.md#command-line-conversion), including
+`--metadata` and `--images`.
+
+File outputs go directly into the requested directory. Successful conversion
+replaces generated files with the same names; unrelated files remain intact.
+Use a different output directory for each document you want to keep.
+
+Folder conversion and the legacy single-file command remain available:
+
+```powershell
+doclayout documents --output_dir output --workers 1
+doclayout_single input.pdf --output_dir output --output_format markdown
+```
+
+GUI Start/End pages are **1-based and inclusive**. CLI/API page ranges are
 **zero-based**. Extra refinement is optional; OCR always runs through Sol.
 
 ## Documentation
@@ -83,8 +174,9 @@ classification need review. Document chat verification can also miss mistakes.
 There is no claim of perfect accuracy or a general benchmark ranking.
 
 The browser keeps results in session memory. Download them before closing or
-losing the session. CLI conversion writes output files. The GUI generates HTML
-from Markdown; the CLI and API render HTML directly from document blocks.
+losing the session. CLI conversion writes output files. The GUI and the new file command generate HTML
+from Markdown. The legacy single-file command, folder conversion, and API render
+HTML directly from document blocks.
 
 ## Development
 

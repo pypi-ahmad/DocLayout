@@ -15,8 +15,8 @@ uv run playwright install chromium --only-shell
 
 The `dev` group supplies GUI, API, test, and development tools. The `full` extra
 adds Office/HTML/EPUB converters. Their native library requirements are covered
-in [installation](usage.md#installation). An ordinary wheel or pip install does
-not install dependency groups. Keep `pyproject.toml` and `uv.lock` together when
+in [installation](usage.md#installation). Use the `gui` and `server` extras for end-user installations. An ordinary
+wheel or pip install does not install dependency groups. Keep `pyproject.toml` and `uv.lock` together when
 changing dependencies; use `uv add` and `uv remove` without unrelated upgrades.
 
 Stop processes using this project's environment before an exact sync removes
@@ -48,6 +48,8 @@ Sync first, then use `--no-sync` to test that environment without
 changing its installed packages. Default tests block unrequested OpenAI calls.
 They cover providers, structured extraction contracts, rendering, configuration,
 API requests, GUI state, chat validation, prompt fingerprints, and exports.
+CLI export tests cover format selection, one extraction per page, GUI-equivalent
+HTML, ZIP contents, overwrite behavior, and input/output path protection.
 The browser test uses a real browser and local Streamlit process with mocked
 extraction; it verifies clipboard/download behavior and avoids repeated OCR.
 
@@ -94,13 +96,18 @@ checkout and install the freshly built wheel there. Run checks from outside the
 repository so source imports cannot hide missing package files. Verify:
 
 - `doclayout` and `doclayout_single` help commands;
-- the GUI/API entry-point imports after installing their required dependencies;
+- the GUI/API entry-point imports after installing the `gui` and `server` extras;
 - resource loading for all four prompts;
 - dependency consistency with `uv pip check --python <environment-python>`.
 
 See [package installation](usage.md#installing-the-application-package) for
 installation commands and dependency distinctions. Builds do not publish a
 release; the current package version alone does not show whether a PyPI release exists.
+
+GitHub releases include the wheel and source distribution. Before publishing,
+test the wheel outside the checkout with base, `gui`, and `server` installations
+and an isolated uv tool installation. Check the tag's commit and download assets
+back for verification. PyPI publication is deferred.
 
 ## Preserve extraction behavior
 
@@ -120,7 +127,7 @@ framework callbacks, and public imports. Check those paths before removing code.
 Providers supply page rendering, bounds, references, and page selection; the
 builder creates structured blocks from model responses. Use current base classes
 and implementations when extending the app. The old provider-line and page-line
-merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#unreleased).
+merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-2026-09-23).
 
 ## Documentation ownership
 

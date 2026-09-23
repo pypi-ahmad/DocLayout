@@ -4,67 +4,35 @@
 
 ## Installation
 
-### Working from the source checkout
+Follow the [README installation steps](../README.md#installation) for uv tool,
+manual cloning, pip, uv pip, and release wheels. The base package includes the
+CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
+API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
+An ordinary package install does not include the development group; see
+[development setup](development.md#environment) when working on the source.
 
-```powershell
-git clone https://github.com/pypi-ahmad/DocLayout.git
-cd DocLayout
-uv sync --group dev --extra full
-```
-
-The `dev` group includes the GUI, API server, and test tools. The `full` extra
-adds document-format converters. The base package has the dependencies
-for PDF and image conversion. These formats need no local GPU model.
-
-WeasyPrint also requires native libraries for Office/HTML/EPUB conversion.
-Follow its [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
-Installing Python dependencies alone may not provide those libraries.
-Document providers can download a font on first use.
+WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
+[Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
+Installing Python dependencies alone may not provide those libraries. Document
+providers can download a font on first use. PDF and image extraction needs no GPU
+or local model weights.
 
 ### Installing the application package
 
-Use an existing Python environment, or create a project-local environment with
-`uv venv`. Choose one installer:
+For local source or wheel installation, choose one installer in your intended
+Python environment:
 
 ```powershell
-# From the checkout, into an existing environment or .venv:
-uv pip install .
-# Alternatively, using that environment's Python:
-python -m pip install .
-```
-
-The GitHub source can also be installed directly:
-
-```powershell
-uv pip install "git+https://github.com/pypi-ahmad/DocLayout.git"
-# Or:
-python -m pip install "git+https://github.com/pypi-ahmad/DocLayout.git"
-```
-
-These commands install the base CLI/library. A wheel or ordinary package install
-leaves out the development group. Add GUI or server dependencies as needed,
-using the same installer and environment:
-
-```powershell
-# GUI:
-uv pip install "streamlit>=1.59,<2" "latex2mathml>=3.77.0"
-# HTTP API:
-uv pip install "fastapi>=0.115.4" "uvicorn>=0.32.0" "python-multipart>=0.0.16"
-# Additional document formats, from the checkout:
-uv pip install ".[full]"
-```
-
-With pip, replace `uv pip install` with `python -m pip install`. These instructions do not assume a PyPI release,
-so installing `doclayout` by name alone may not give you this repository's version.
-You can also install a wheel built locally. See [build checks](development.md#build-and-package-checks):
-
-```powershell
+uv pip install ".[gui]"
+python -m pip install ".[gui]"
 uv build --wheel
-uv pip install .\dist\doclayout-2.0.0-py3-none-any.whl
+uv pip install ".\dist\doclayout-2.1.0-py3-none-any.whl[gui]"
 ```
 
-Package commands must run in the environment where they were installed. In a
-source checkout, `uv run` handles the environment for the examples below.
+See [build checks](development.md#build-and-package-checks) for verification.
+Tool-installed commands run directly. In a checkout, prefix commands with
+`uv run` to use the project's environment. Python dependencies still need an
+available package index or local cache even when DocLayout comes from GitHub.
 
 ## Credentials and model settings
 
@@ -127,29 +95,75 @@ removes its local history and usage.
 
 ## Command-line conversion
 
+### File conversion
+
+From a clone:
+
 ```powershell
-uv run doclayout_single document.pdf --output_dir output
-uv run doclayout_single document.pdf --page_range 0,2-4 --output_format markdown
-uv run doclayout_single document.pdf --use_llm
-uv run doclayout_single document.pdf --keep_pageheader_in_output --keep_pagefooter_in_output
-uv run doclayout documents --output_dir output --workers 1 --skip_existing
-uv run doclayout_single --help
+uv run doclayout document.pdf output
+uv run doclayout document.pdf output --all
+uv run doclayout document.pdf output --markdown --html
+uv run doclayout document.pdf output --json --chunks --metadata
+uv run doclayout document.pdf output --annotated-pdf --annotated-images
+uv run doclayout document.pdf output --zip
+uv run doclayout document.pdf output --all --page_range 0,2-4 --use_llm
+uv run doclayout --help
 ```
 
-CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
-Formats are `markdown`, `html`, `json`, and `chunks`. A document's output folder
-contains the selected representation, a separate `_meta.json` file, and crops
-when the renderer produces them. `--disable_image_extraction` omits crops.
+After a uv tool install, run the same commands without `uv run`.
+The file command requires a destination, either the second positional argument
+or `--output_dir`. It builds one document and reuses it for every selected
+export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
+
+| Flag | Files written directly into the destination |
+| --- | --- |
+| No format flag, or `--markdown` | `document.md` and its extracted crops |
+| `--html` | `document.html`, generated from Markdown with embedded crops and MathML |
+| `--json` | `document.json`, hierarchical blocks with metadata |
+| `--chunks` | `chunks.json`, flattened blocks with metadata |
+| `--metadata` | `metadata.json` |
+| `--images` | Extracted crop files, when present and enabled |
+| `--annotated-pdf` | `annotated.pdf`, a raster PDF with estimated region boxes |
+| `--annotated-images` | `annotations/page-N.png`, using original one-based page numbers |
+| `--zip` | `document.zip`, containing the complete GUI bundle |
+| `--all` | Every file above, including the ZIP |
+
+Combine individual flags to select several outputs. Use `--all` on its own
+without other format flags. `--output_format markdown`, `html`, `json`, or
+`chunks` is also accepted as a single-format alternative, but cannot be combined
+with the selection flags. `--zip` alone creates no loose document files.
+`--disable_image_extraction` disables crops even in the full bundle.
+Text exports use UTF-8. JSON and chunks use distinct filenames, so they can
+coexist in one directory. The ZIP excludes the input document and chat history.
+
+A successful run overwrites generated files with matching names and leaves
+unrelated files intact. Use separate destinations to retain different documents.
+Extraction and export generation finish before output files are written; their
+failures preserve previous output. Filesystem write errors can leave a partial
+set of outputs. A run cannot overwrite its own input document.
+
+### Folder and legacy single-file conversion
+
+```powershell
+uv run doclayout documents --output_dir output --workers 1 --skip_existing
+uv run doclayout_single document.pdf --output_dir output --output_format markdown
+uv run doclayout_single document.pdf --page_range 0,2-4 --output_format html
+```
+
+These commands keep the existing per-document subdirectory and source-stem
+filenames, a separate `_meta.json` file, and renderer crops. Select one format
+with `--output_format`: `markdown`, `html`, `json`, or `chunks`. Their HTML comes
+from document blocks. The new file command's HTML comes from Markdown, matching
+the GUI. Export selection flags such as `--all` are for file input only.
 
 Folder conversion processes files directly inside the input folder; it does not
-recurse or filter out unsupported files. For partitioning and process defaults, see
-[folder options](configuration.md#cli-and-json-configuration).
-`--skip_existing` skips a document if an output representation already exists.
-Failures are reported, other files continue, and the command exits nonzero if
-any failed. Concurrency limits are documented in the configuration guide.
+recurse or filter out unsupported files. `--skip_existing` skips a document if an
+output representation already exists. Failures are reported, other files
+continue, and the command exits nonzero if any failed. Folder-only process and
+partition options are rejected for file input.
 
-For JSON examples, flag defaults, argument-order precedence, batch controls,
-and advanced component options, see [configuration](configuration.md#cli-and-json-configuration).
+For defaults, configuration JSON, argument-order precedence, and advanced
+component options, see [configuration](configuration.md#cli-and-json-configuration).
 
 ## Python library
 
@@ -216,7 +230,7 @@ request validation errors return HTTP 422. The API process runs one conversion a
 | Credentials unavailable | Restart the terminal after changing Windows user environment variables |
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
-| GUI/API command lacks a module | Install the corresponding dependencies above; base installation is CLI/library only |
+| GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
 | Port 8471 remains occupied | Check permission to stop its listener; the launcher reports failures |
 | Clipboard copy unavailable | Use localhost/HTTPS and allow clipboard access, or download the file |
 | Results disappear | Upload/processing changes invalidate them; a disconnected/replaced session can lose memory |

@@ -14,8 +14,17 @@ implementation and leave extraction prompts unchanged.
 | `OPENAI_BASE_URL` | Optional OpenAI-compatible endpoint; omitted uses the SDK default |
 
 Set credentials in the process environment. After changing Windows user
-environment variables, open a new terminal and restart DocLayout. Check presence
-without displaying values:
+environment variables, open a new terminal and restart DocLayout. For settings that last only for the current PowerShell session, use the
+[README example](../README.md#configure-api-access). To persist values for your
+Windows user account, replace these placeholders and open a new terminal afterward:
+
+```powershell
+[Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "your-api-key", "User")
+# Optional for a custom compatible endpoint.
+[Environment]::SetEnvironmentVariable("OPENAI_BASE_URL", "https://your-endpoint.example/v1", "User")
+```
+
+Check presence without displaying values:
 
 ```powershell
 [bool]$env:OPENAI_API_KEY
@@ -36,7 +45,7 @@ Common application settings from [settings.py](../doclayout/settings.py):
 | Setting | Default | Purpose |
 | --- | --- | --- |
 | `OUTPUT_DIR` | `conversion_results` under the package's parent directory | Default CLI output root |
-| `OUTPUT_ENCODING` | `utf-8` | Saved text and metadata encoding |
+| `OUTPUT_ENCODING` | `utf-8` | Legacy CLI text/metadata encoding; new file exports always use UTF-8 |
 | `OUTPUT_IMAGE_FORMAT` | `JPEG` | Saved crops and API image encoding |
 | `LOGLEVEL` | `INFO` | Application logging level |
 
@@ -96,6 +105,12 @@ it does not increase that per-process cap.
 
 ## CLI and JSON configuration
 
+The new `doclayout FILE OUTPUT_DIR` command accepts individual output flags or
+`--all`. See [file exports](usage.md#file-conversion) for the full selection table,
+filenames, and overwrite behavior. Folder conversion and `doclayout_single`
+retain the settings below. `--output_format` is a single-format alternative for
+file input and cannot be combined with new format flags.
+
 Save this as `config.json` in your working directory:
 
 ```json
@@ -126,7 +141,7 @@ booleans take a value, for example `--flatten_pdf false`.
 
 | CLI option | Default | Purpose |
 | --- | --- | --- |
-| `--output_dir` | `OUTPUT_DIR` | Root for per-document output folders |
+| `--output_dir` | `OUTPUT_DIR` for legacy/folder commands | Root for legacy per-document folders; explicit destination alternative for new file conversion |
 | `--output_format` | `markdown` | `markdown`, `html`, `json`, or `chunks` |
 | `--page_range` | All pages | Example: `0,2-4` selects physical pages 1, 3, 4, 5 |
 | `--disable_image_extraction` | Off | Sets `extract_images` to false |
@@ -209,6 +224,6 @@ Retired OCR routing, local inference, model-selection, and credential controls
 are rejected at configuration boundaries. Examples include `force_ocr`,
 `disable_ocr`, `mode`, `keep_chars`, `pdftext_workers`, and `openai_model`.
 See the [validator](../doclayout/config/validation.py) for the complete rejection
-list and the [changelog](../CHANGELOG.md#unreleased) for retired Python interfaces.
+list and the [changelog](../CHANGELOG.md#210-2026-09-23) for retired Python interfaces.
 Components can ignore other unknown Python/JSON keys. A setting may have no
 effect even when no error appears.

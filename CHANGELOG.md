@@ -1,10 +1,25 @@
 # Changelog
 
-Unreleased entries describe changes in the current working tree. Version headings do not imply publication to PyPI.
+This changelog records DocLayout releases and pending changes. GitHub release
+assets are separate from PyPI publication, which is deferred.
 
 ## Unreleased
 
+No pending changes.
+
+## 2.1.0 (2026-09-23)
+
 ### Added
+
+- `doclayout FILE OUTPUT_DIR` with selectable exports, `--all`, and a complete
+  GUI-compatible ZIP, generated from one extraction per selected page.
+- `gui` and `server` installation extras and base CLI support for HTML/MathML
+  exports. The GUI launcher uses its installed Python interpreter.
+- GitHub installation instructions for uv tool, manual clones, pip, uv pip,
+  and versioned release wheels. PyPI publication is deferred.
+- Offline CLI checks for output selection, overwrite behavior, failure handling,
+  path validation, and GUI-equivalent HTML.
+
 
 - Practical [configuration reference](docs/configuration.md) and
   [development guide](docs/development.md), with shared material moved out of

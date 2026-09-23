@@ -48,9 +48,16 @@ chunks from it. Local code generates styled HTML from the resulting Markdown,
 draws estimated boxes on copies of source images, creates a raster PDF, and
 assembles the ZIP. These operations do not call a model.
 
-The CLI and API select one document renderer. They render HTML from
-document blocks. The GUI's exporter generates HTML from Markdown. The CLI writes
-metadata separately, while the API returns it alongside the serialized output.
+The file command builds one document and uses the same Markdown-to-HTML,
+annotation, and ZIP helpers as the GUI. It renders the selected representations
+locally, with no extra inference for additional formats. File exports use UTF-8;
+Markdown includes its crops, and HTML embeds them.
+
+Folder conversion, the legacy single-file command, and the API select one
+renderer. Their HTML comes from document blocks. Legacy CLI output has separate
+metadata; the API returns metadata alongside the serialized output. The new file
+command writes a separate metadata file only when selected, while its JSON and
+chunks representations include metadata.
 
 The document model stores pages, blocks, reading order, images, and metadata.
 Geometry is estimated, without character-level positions or calibrated
@@ -114,4 +121,4 @@ extension checks and safe changes to extraction, rendering, and prompts.
 Providers supply prepared pages, rendering, bounds, references, and page
 selection. The builder creates blocks from structured model responses.
 The former provider-line and page-line merging interfaces have been removed;
-see the [changelog](../CHANGELOG.md#unreleased) for the complete retirement list.
+see the [changelog](../CHANGELOG.md#210-2026-09-23) for the complete retirement list.
