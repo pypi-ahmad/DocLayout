@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DocLayout System Architecture",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 560],
+    "views": [
+      {
+        "id": "ingest-and-extract",
+        "label": "Ingestion and extraction",
+        "focus": ["entrypoints", "providers", "sol_service", "validator", "builder"],
+        "note": "Page preparation, 192 DPI rendering, GPT-6 Sol vision extraction, and block validation."
+      },
+      {
+        "id": "model-and-processors",
+        "label": "Document processing",
+        "focus": ["builder", "processors", "doc_model"],
+        "note": "Structural refinement, line merging, and in-memory document tree construction."
+      },
+      {
+        "id": "render-and-chat",
+        "label": "Local outputs and chat",
+        "focus": ["doc_model", "renderers", "exports", "luna_service"],
+        "note": "Zero-inference local rendering alongside independent Luna chat draft verification."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "entrypoints",
+      "type": "frontend",
+      "label": "App Entry Points",
+      "sublabel": "CLI, GUI, FastAPI",
+      "pos": [60, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "providers",
+      "type": "backend",
+      "label": "Page Providers",
+      "sublabel": "PDFium rasterizer",
+      "pos": [260, 240],
+      "size": [140, 60],
+      "tag": "192 DPI"
+    },
+    {
+      "id": "sol_service",
+      "type": "cloud",
+      "label": "GPT-6 Sol",
+      "sublabel": "vision extraction",
+      "pos": [460, 80],
+      "size": [140, 60],
+      "tag": "concurrency <= 3"
+    },
+    {
+      "id": "validator",
+      "type": "security",
+      "label": "Block Validator",
+      "sublabel": "Pydantic sanitizer",
+      "pos": [460, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "builder",
+      "type": "backend",
+      "label": "Document Builder",
+      "sublabel": "assembly & bounds",
+      "pos": [660, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "processors",
+      "type": "backend",
+      "label": "Processors",
+      "sublabel": "reading order & layout",
+      "pos": [660, 390],
+      "size": [140, 60]
+    },
+    {
+      "id": "doc_model",
+      "type": "database",
+      "label": "Document Model",
+      "sublabel": "in-memory doc tree",
+      "pos": [860, 240],
+      "size": [140, 60],
+      "tag": "zero store"
+    },
+    {
+      "id": "luna_service",
+      "type": "cloud",
+      "label": "GPT-6 Luna",
+      "sublabel": "grounded chat verify",
+      "pos": [860, 80],
+      "size": [140, 60],
+      "tag": "quote checks"
+    },
+    {
+      "id": "renderers",
+      "type": "backend",
+      "label": "Local Renderers",
+      "sublabel": "MD, JSON, chunks",
+      "pos": [1060, 240],
+      "size": [140, 60]
+    },
+    {
+      "id": "exports",
+      "type": "frontend",
+      "label": "File Exports",
+      "sublabel": "HTML, PDF, ZIP",
+      "pos": [1060, 390],
+      "size": [140, 60]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "External Inference APIs",
+      "wraps": ["sol_service", "luna_service"]
+    },
+    {
+      "kind": "region",
+      "label": "Local DocLayout Engine",
+      "wraps": ["providers", "validator", "builder", "processors", "doc_model", "renderers", "exports"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "entry-to-providers",
+      "from": "entrypoints",
+      "to": "providers",
+      "variant": "emphasis"
+    },
+    {
+      "id": "providers-to-sol",
+      "from": "providers",
+      "to": "sol_service",
+      "fromSide": "top",
+      "toSide": "left",
+      "via": [[330, 110]]
+    },
+    {
+      "id": "sol-to-validator",
+      "from": "sol_service",
+      "to": "validator",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "validator-to-builder",
+      "from": "validator",
+      "to": "builder"
+    },
+    {
+      "id": "builder-to-processors",
+      "from": "builder",
+      "to": "processors",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "processors-to-model",
+      "from": "processors",
+      "to": "doc_model",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [[930, 420]]
+    },
+    {
+      "id": "model-to-renderers",
+      "from": "doc_model",
+      "to": "renderers",
+      "variant": "emphasis"
+    },
+    {
+      "id": "renderers-to-exports",
+      "from": "renderers",
+      "to": "exports",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "model-to-luna",
+      "from": "doc_model",
+      "to": "luna_service",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Local Processing Core",
+      "items": [
+        "Providers prepare files and rasterize pages one by one at 192 DPI",
+        "Document builder orchestrates block mapping and structural processors",
+        "In-memory document model holds all pages, blocks, and token usage"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Model Inference Boundaries",
+      "items": [
+        "Shared Sol client manages rate-limiting with at most 3 concurrent calls",
+        "Document chat uses a dedicated Luna service with independent verification",
+        "Rendering, annotation, and ZIP generation require no model calls"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Multi-Surface Ownership",
+      "items": [
+        "Streamlit GUI, CLI commands, and HTTP API share the same core pipeline",
+        "Session state is isolated in memory with no persistent document store",
+        "Local exports produce Markdown, hierarchical JSON, chunks, and styled HTML"
+      ]
+    }
+  ]
+}

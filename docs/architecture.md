@@ -23,6 +23,10 @@ flowchart TD
     O --> P[GPT-6 Luna verification]
 ```
 
+Interactive diagrams: [data flow](diagrams/doclayout-dataflow.html) and
+[system architecture](diagrams/doclayout-architecture.html). Download an HTML
+file to open its interactive view in a browser.
+
 ## Extraction
 
 Providers handle input formats. Office, HTML, and EPUB inputs become temporary
