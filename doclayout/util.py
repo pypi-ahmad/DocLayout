@@ -9,7 +9,6 @@ import numpy as np
 import requests
 from pydantic import BaseModel
 
-from doclayout.schema.polygon import PolygonBox
 from doclayout.settings import settings
 
 
@@ -103,25 +102,6 @@ def matrix_intersection_area(
     height = np.maximum(0, max_y - min_y)
 
     return width * height  # Shape: (N, M)
-
-
-def sort_text_lines(lines: List[PolygonBox], tolerance=1.25):
-    # Sorts in reading order.  Not 100% accurate, this should only
-    # be used as a starting point for more advanced sorting.
-    vertical_groups = {}
-    for line in lines:
-        group_key = round(line.bbox[1] / tolerance) * tolerance
-        if group_key not in vertical_groups:
-            vertical_groups[group_key] = []
-        vertical_groups[group_key].append(line)
-
-    # Sort each group horizontally and flatten the groups into a single list
-    sorted_lines = []
-    for _, group in sorted(vertical_groups.items()):
-        sorted_group = sorted(group, key=lambda x: x.bbox[0])
-        sorted_lines.extend(sorted_group)
-
-    return sorted_lines
 
 
 def download_font():

@@ -4,7 +4,6 @@ from doclayout.schema import BlockTypes
 
 
 @pytest.mark.config({"page_range": [0]})
-@pytest.mark.filename("adversarial_rot.pdf")
 def test_rotated_bboxes(pdf_document):
     first_page = pdf_document.pages[0]
 

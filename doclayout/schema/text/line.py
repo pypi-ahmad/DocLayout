@@ -1,5 +1,4 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-import html
 import re
 from typing import List, Literal
 
@@ -43,30 +42,6 @@ class Line(Block):
     formats: List[Literal["math"]] | None = (
         None  # Sometimes we want to set math format at the line level, not span
     )
-
-    def formatted_text(self, document, skip_urls=False):
-        text = ""
-        for block in self.contained_blocks(document, (BlockTypes.Span,)):
-            block_text = html.escape(block.text)
-
-            if block.has_superscript:
-                block_text = re.sub(r"^([0-9\W]+)(.*)", r"<sup>\1</sup>\2", block_text)
-                if "<sup>" not in block_text:
-                    block_text = f"<sup>{block_text}</sup>"
-
-            if block.url and not skip_urls:
-                block_text = f"<a href='{block.url}'>{block_text}</a>"
-
-            if block.italic:
-                text += f"<i>{block_text}</i>"
-            elif block.bold:
-                text += f"<b>{block_text}</b>"
-            elif block.math:
-                text += f"<math display='inline'>{block_text}</math>"
-            else:
-                text += block_text
-
-        return text
 
     def assemble_html(self, document, child_blocks, parent_structure, block_config):
         template = ""

@@ -1,6 +1,5 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-from copy import deepcopy
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from pdftext.schema import Reference
 from PIL import Image
@@ -8,44 +7,10 @@ from pydantic import BaseModel
 
 from doclayout.logger import configure_logging
 from doclayout.schema.polygon import PolygonBox
-from doclayout.schema.text import Span
-from doclayout.schema.text.char import Char
-from doclayout.schema.text.line import Line
 from doclayout.settings import settings
 from doclayout.util import assign_config
 
 configure_logging()
-
-
-class ProviderOutput(BaseModel):
-    line: Line
-    spans: List[Span]
-    chars: Optional[List[List[Char]]] = None
-
-    @property
-    def raw_text(self):
-        return "".join(span.text for span in self.spans)
-
-    def __hash__(self):
-        return hash(tuple(self.line.polygon.bbox))
-
-    def merge(self, other: "ProviderOutput"):
-        new_output = deepcopy(self)
-        other_copy = deepcopy(other)
-
-        new_output.spans.extend(other_copy.spans)
-        if new_output.chars is not None and other_copy.chars is not None:
-            new_output.chars.extend(other_copy.chars)
-        elif other_copy.chars is not None:
-            new_output.chars = other_copy.chars
-
-        new_output.line.polygon = new_output.line.polygon.merge(
-            [other_copy.line.polygon]
-        )
-        return new_output
-
-
-ProviderPageLines = Dict[int, List[ProviderOutput]]
 
 
 class BaseProvider:
@@ -60,9 +25,6 @@ class BaseProvider:
         pass
 
     def get_page_bbox(self, idx: int) -> PolygonBox | None:
-        pass
-
-    def get_page_lines(self, idx: int) -> List[Line]:
         pass
 
     def get_page_refs(self, idx: int) -> List[Reference]:

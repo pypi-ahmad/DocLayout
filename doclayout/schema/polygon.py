@@ -84,7 +84,7 @@ class PolygonBox(BaseModel):
     @cached_property
     def bbox(self) -> List[float]:
         # Cached: a PolygonBox's corners are never mutated in place (expand /
-        # rescale / merge / fit_to_bounds all return new instances), so bbox is
+        # rescale / merge all return new instances), so bbox is
         # immutable for the lifetime of an instance. bbox and the derived
         # width/height/area/center/x_start... accessors are the hottest
         # primitives in the pipeline (intersection matrices, line merge,
@@ -141,24 +141,6 @@ class PolygonBox(BaseModel):
         else:
             return 0
 
-    def center_distance(
-        self,
-        other: PolygonBox,
-        x_weight: float = 1,
-        y_weight: float = 1,
-        absolute=False,
-    ):
-        if not absolute:
-            return (
-                (self.center[0] - other.center[0]) ** 2 * x_weight
-                + (self.center[1] - other.center[1]) ** 2 * y_weight
-            ) ** 0.5
-        else:
-            return (
-                abs(self.center[0] - other.center[0]) * x_weight
-                + abs(self.center[1] - other.center[1]) * y_weight
-            )
-
     def rescale(self, old_size, new_size):
         # Point is in x, y format
         page_width, page_height = old_size
@@ -171,13 +153,6 @@ class PolygonBox(BaseModel):
         for corner in new_corners:
             corner[0] = corner[0] * width_scaler
             corner[1] = corner[1] * height_scaler
-        return PolygonBox(polygon=new_corners)
-
-    def fit_to_bounds(self, bounds):
-        new_corners = copy.deepcopy(self.polygon)
-        for corner in new_corners:
-            corner[0] = max(min(corner[0], bounds[2]), bounds[0])
-            corner[1] = max(min(corner[1], bounds[3]), bounds[1])
         return PolygonBox(polygon=new_corners)
 
     def overlap_x(self, other: PolygonBox):

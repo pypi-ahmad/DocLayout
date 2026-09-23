@@ -28,4 +28,3 @@ def test_converted_documents_use_render_provider(cls, method, temp_doc, monkeypa
     monkeypatch.setattr(cls, method, converted)
     provider = cls("source.document")
     assert provider.get_images([0], 72)[0].size == (512, 512)
-    assert provider.get_page_lines(0) == []

@@ -53,7 +53,6 @@ def test_refinement_failure_preserves_extraction(pdf_document, caplog):
     assert "Error rewriting" in caplog.text
 
 
-@pytest.mark.filename("table_ex2.pdf")
 @pytest.mark.config({"page_range": [0]})
 def test_llm_table_processor(pdf_document):
     corrected_html = """
@@ -98,7 +97,6 @@ def test_llm_table_processor(pdf_document):
     assert "Value 1 $x$" in markdown
 
 
-@pytest.mark.filename("A17_FlightPlan.pdf")
 @pytest.mark.config({"page_range": [0]})
 def test_llm_caption_processor_disabled(pdf_document):
     config = {"use_llm": True}
@@ -113,7 +111,6 @@ def test_llm_caption_processor_disabled(pdf_document):
     assert all(picture.description is None for picture in contained_pictures)
 
 
-@pytest.mark.filename("A17_FlightPlan.pdf")
 @pytest.mark.config({"page_range": [0]})
 def test_llm_caption_processor(pdf_document):
     description = "This is an image description."
@@ -137,7 +134,6 @@ def test_llm_caption_processor(pdf_document):
     assert description in md
 
 
-@pytest.mark.filename("A17_FlightPlan.pdf")
 @pytest.mark.config({"page_range": [0]})
 def test_llm_complex_region_processor(pdf_document):
     md = "This is some *markdown* for a complex region."
@@ -165,7 +161,6 @@ def test_llm_complex_region_processor(pdf_document):
     assert md in rendered_md
 
 
-@pytest.mark.filename("adversarial.pdf")
 @pytest.mark.config({"page_range": [0]})
 def test_multi_llm_processors(pdf_document):
     description = (

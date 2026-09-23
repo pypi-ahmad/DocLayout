@@ -4,9 +4,8 @@ from typing import Annotated, List
 from pdftext.schema import Reference
 from PIL import Image
 
-from doclayout.providers import BaseProvider, ProviderPageLines
+from doclayout.providers import BaseProvider
 from doclayout.schema.polygon import PolygonBox
-from doclayout.schema.text import Line
 
 
 class ImageProvider(BaseProvider):
@@ -22,7 +21,6 @@ class ImageProvider(BaseProvider):
         super().__init__(filepath, config)
 
         self.images = [Image.open(filepath)]
-        self.page_lines: ProviderPageLines = {i: [] for i in range(self.image_count)}
 
         if self.page_range is None:
             self.page_range = range(self.image_count)
@@ -60,9 +58,6 @@ class ImageProvider(BaseProvider):
         bbox = self.page_bboxes[idx]
         if bbox:
             return PolygonBox.from_bbox(bbox)
-
-    def get_page_lines(self, idx: int) -> List[Line]:
-        return self.page_lines[idx]
 
     def get_page_refs(self, idx: int) -> List[Reference]:
         return []

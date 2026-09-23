@@ -7,7 +7,6 @@ from doclayout.providers.pdf import PdfProvider
 def test_render_only(temp_doc):
     provider = PdfProvider(temp_doc.name)
     assert len(provider) == 2
-    assert provider.get_page_lines(0) == []
     assert provider.get_images([0], 72)[0].size == (512, 512)
 
 

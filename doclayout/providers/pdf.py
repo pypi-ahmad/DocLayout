@@ -76,8 +76,5 @@ class PdfProvider(BaseProvider):
     def get_page_bbox(self, idx):
         return PolygonBox.from_bbox(self.page_bboxes[idx])
 
-    def get_page_lines(self, idx):
-        return []
-
     def get_page_refs(self, idx):
         return []
