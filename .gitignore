@@ -15,6 +15,44 @@ conversion_results
 uploads
 /cache
 
+# Local document inputs and generated exports (at any directory depth)
+input/
+inputs/
+output/
+outputs/
+results/
+exports/
+
+# Input documents, dataset records, and rendered document artifacts
+*.[pP][dD][fF]
+*.[pP][nN][gG]
+*.[jJ][pP][gG]
+*.[jJ][pP][eE][gG]
+*.[gG][iI][fF]
+*.[tT][iI][fF]
+*.[tT][iI][fF][fF]
+*.[bB][mM][pP]
+*.[wW][eE][bB][pP]
+*.[dD][oO][cC]
+*.[dD][oO][cC][xX]
+*.[pP][pP][tT]
+*.[pP][pP][tT][xX]
+*.[xX][lL][sS]
+*.[xX][lL][sS][xX]
+*.[eE][pP][uU][bB]
+*.[hH][tT][mM]
+*.[hH][tT][mM][lL]
+*.[zZ][iI][pP]
+*.[cC][sS][vV]
+*.[pP][aA][rR][qQ][uU][eE][tT]
+*.[jJ][sS][oO][nN][lL]
+/tests/data/olmocr_bench/pdfs/
+/tests/data/olmocr_bench/tests.jsonl
+
+# Timestamped DocLayout exports, including variants and image crops
+*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].*
+*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]_*.*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,4 +1,4 @@
-"""End-to-end quality integration test on vendored olmOCR-bench pages.
+"""End-to-end quality integration test on optional local olmOCR-bench pages.
 
 DocLayout converts three real single-page PDFs (multi-column reading order, tiny
 text, headers/footers) and must pass every olmOCR-bench rule attached to them.
@@ -8,6 +8,7 @@ and `math` types, which need olmOCR-bench's own KaTeX/table checker, are skipped
 """
 
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -18,7 +19,10 @@ from rapidfuzz import fuzz
 from doclayout.converters.pdf import PdfConverter
 from doclayout.output import text_from_rendered
 
-DATA_DIR = Path(__file__).parent.parent / "data" / "olmocr_bench"
+DATA_DIR = Path(
+    os.environ.get("DOCLAYOUT_BENCH_DIR")
+    or Path(__file__).parent.parent / "data" / "olmocr_bench"
+)
 
 # Fancy punctuation -> ASCII, matching olmOCR-bench's normalizer so vendored
 # reference strings compare against DocLayout output the same way the real checker
@@ -108,6 +112,8 @@ def _check(test: dict, md: str) -> tuple[bool, str]:
 
 def _load_tests_by_pdf() -> dict[str, list[dict]]:
     grouped: dict[str, list[dict]] = {}
+    if not (DATA_DIR / "tests.jsonl").is_file():
+        return grouped
     with open(DATA_DIR / "tests.jsonl") as f:
         for line in f:
             record = json.loads(line)
@@ -119,9 +125,12 @@ TESTS_BY_PDF = _load_tests_by_pdf()
 
 
 @pytest.mark.integration
-@pytest.mark.parametrize("pdf_name", sorted(TESTS_BY_PDF))
+@pytest.mark.parametrize("pdf_name", sorted(TESTS_BY_PDF) or [None])
 def test_olmocr_bench_page(pdf_name):
     from doclayout.models import create_model_dict, shutdown_models
+
+    if pdf_name is None or not (DATA_DIR / "pdfs" / pdf_name).is_file():
+        pytest.skip("Optional benchmark data is absent; see tests/data/olmocr_bench/README.md")
 
     model_dict = create_model_dict()
     converter = PdfConverter(
