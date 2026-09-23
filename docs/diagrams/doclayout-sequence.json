@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "DocLayout Grounded Chat Verification",
+    "viewBox": [820, 720],
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "context-retrieval",
+        "label": "Context retrieval",
+        "focus": ["user", "ui", "doc_model"],
+        "note": "User question triggers retrieval of normalized page text from Document Model."
+      },
+      {
+        "id": "draft-and-quotes",
+        "label": "Draft and quotes",
+        "focus": ["ui", "luna_chat", "verifier"],
+        "note": "Luna generates draft answers with quotes verified against local page text."
+      },
+      {
+        "id": "audit-and-display",
+        "label": "Independent audit",
+        "focus": ["ui", "luna_judge", "user"],
+        "note": "Secondary Luna audit evaluates factual grounding before rendering."
+      }
+    ]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "browser session" },
+    { "id": "ui", "type": "frontend", "label": "Streamlit", "sublabel": "chat interface" },
+    { "id": "doc_model", "type": "database", "label": "Doc Model", "sublabel": "active page text" },
+    { "id": "luna_chat", "type": "cloud", "label": "Luna Chat", "sublabel": "draft generation" },
+    { "id": "verifier", "type": "security", "label": "Verifier", "sublabel": "exact substring" },
+    { "id": "luna_judge", "type": "cloud", "label": "Luna Judge", "sublabel": "audit verifier" }
+  ],
+  "segments": [
+    { "from": 150, "to": 280, "label": "Context Retrieval" },
+    { "from": 300, "to": 450, "label": "Draft & Local Matching" },
+    { "from": 470, "to": 630, "label": "Independent Audit & Display" }
+  ],
+  "messages": [
+    { "id": "submit-question", "from": "user", "to": "ui", "y": 180, "label": "ask question", "variant": "default" },
+    { "id": "fetch-context", "from": "ui", "to": "doc_model", "y": 220, "label": "get page text", "variant": "emphasis" },
+    { "id": "return-context", "from": "doc_model", "to": "ui", "y": 255, "label": "normalized text", "variant": "return" },
+    { "id": "request-draft", "from": "ui", "to": "luna_chat", "y": 320, "label": "prompt + text", "variant": "emphasis" },
+    { "id": "return-draft", "from": "luna_chat", "to": "ui", "y": 360, "label": "draft + citations", "variant": "return" },
+    { "id": "verify-quotes", "from": "ui", "to": "verifier", "y": 405, "label": "match substrings", "variant": "security" },
+    { "id": "quote-results", "from": "verifier", "to": "ui", "y": 440, "label": "matched quotes", "variant": "return" },
+    { "id": "request-audit", "from": "ui", "to": "luna_judge", "y": 495, "label": "audit draft & quotes", "variant": "security" },
+    { "id": "return-audit", "from": "luna_judge", "to": "ui", "y": 540, "label": "verification score", "variant": "return" },
+    { "id": "render-answer", "from": "ui", "to": "user", "y": 595, "label": "grounded response", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "ui", "from": 180, "to": 600, "type": "frontend" },
+    { "participant": "doc_model", "from": 220, "to": 260, "type": "database" },
+    { "participant": "luna_chat", "from": 320, "to": 365, "type": "cloud" },
+    { "participant": "verifier", "from": 405, "to": 445, "type": "security" },
+    { "participant": "luna_judge", "from": 495, "to": 545, "type": "cloud" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Context Retrieval",
+      "items": [
+        "Questions bind to the currently selected page in the Document Model",
+        "Page text is normalized in memory without external database calls"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Local Citation Check",
+      "items": [
+        "Luna Chat generates answers with explicit quote citations",
+        "Deterministic local verifier tests verbatim presence in source text"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Independent Audit",
+      "items": [
+        "Dedicated verification call validates factual claims against text",
+        "Responses display citation badges and audit confidence scores"
+      ]
+    }
+  ]
+}

@@ -23,9 +23,16 @@ flowchart TD
     O --> P[GPT-6 Luna verification]
 ```
 
-Download the [data flow](diagrams/doclayout-dataflow.html) or
-[system architecture](diagrams/doclayout-architecture.html) HTML file to explore
-the diagram in a browser.
+### Interactive Architecture & Workflow Diagrams
+
+Explore interactive, standalone HTML diagrams with guided views and showcase quality:
+
+- [System Architecture](diagrams/doclayout-architecture.html) (`architecture`): Local engine boundaries, builder/processors, and external Sol/Luna API isolation.
+- [Conversion Workflow](diagrams/doclayout-workflow.html) (`workflow`): Intake, 192 DPI rasterization, concurrency gate, block validation, and exports.
+- [Chat Verification Sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and audit scoring.
+- [Data Flow Pipeline](diagrams/doclayout-dataflow.html) (`dataflow`): 5-stage pipeline from raw inputs to zero-cost offline Markdown/JSON/HTML delivery.
+- [Processing Lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Linear conversion rail, concurrency throttling, recoverable schema repair, and terminal exits.
+
 
 ## Extraction
 
