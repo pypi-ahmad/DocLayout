@@ -23,9 +23,9 @@ flowchart TD
     O --> P[GPT-6 Luna verification]
 ```
 
-### Interactive Architecture & Workflow Diagrams
+### Interactive architecture and workflow diagrams
 
-Explore interactive, standalone HTML diagrams with guided views and showcase quality:
+Open these standalone HTML diagrams for guided views of the architecture and workflows:
 
 - [System Architecture](diagrams/doclayout-architecture.html) (`architecture`): Local engine boundaries, builder/processors, and external Sol/Luna API isolation.
 - [Conversion Workflow](diagrams/doclayout-workflow.html) (`workflow`): Intake, 192 DPI rasterization, concurrency gate, block validation, and exports.
