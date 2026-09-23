@@ -78,4 +78,4 @@ def test_batch_continues(
         convert_cli, [str(tmp_path), "--output_dir", str(tmp_path / "output")]
     )
     assert result.exit_code != 0
-    assert (tmp_path / "output/document/document.md").exists()
+    assert list((tmp_path / "output/document").glob("document_*.md"))

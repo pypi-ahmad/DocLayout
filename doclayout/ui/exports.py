@@ -13,6 +13,8 @@ import markdown2
 from bs4 import BeautifulSoup
 from PIL import ImageDraw
 
+from doclayout.filenames import export_filename
+
 STYLE = """
 body {background:white;color:black;font-family:Georgia,'Times New Roman',serif;
 max-width:800px;margin:0 auto;padding:24px;line-height:1.5;overflow-wrap:anywhere}
@@ -234,7 +236,7 @@ def output_zip(result):
             "metadata.json": json.dumps(result["metadata"], indent=2),
             "annotated.pdf": result["annotations"]["pdf"],
         }.items():
-            archive.writestr(name, data)
+            archive.writestr(export_filename(result.get("export_base"), name), data)
         reserved = set(archive.namelist())
         for name, image in result["images"].items():
             path = PurePosixPath(name)
@@ -250,5 +252,10 @@ def output_zip(result):
             format = "JPEG" if path.suffix.lower() in (".jpg", ".jpeg") else "PNG"
             archive.writestr(name, image_bytes(image, format))
         for page, image in result["annotations"]["pages"].items():
-            archive.writestr(f"annotations/page-{page}.png", image_bytes(image))
+            archive.writestr(
+                export_filename(
+                    result.get("export_base"), f"annotations/page-{page}.png"
+                ),
+                image_bytes(image),
+            )
     return buffer.getvalue()

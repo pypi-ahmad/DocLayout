@@ -55,7 +55,9 @@ def page_range(start: int, end: int, count: int) -> str:
     return f"{start - 1}-{end - 1}"
 
 
-def run_document(upload: Upload, options: dict, models: dict) -> dict:
+def run_document(
+    upload: Upload, options: dict, models: dict, usage_entries=None
+) -> dict:
     # Debug files must never escape the temporary session workspace.
     options = {**options, "output_format": "markdown", "debug": False}
     parser = ConfigParser(options)
@@ -71,7 +73,15 @@ def run_document(upload: Upload, options: dict, models: dict) -> dict:
             processor_list=parser.get_processors(),
             renderer=parser.get_renderer(),
         )
-        document = converter.build_document(str(path))
+        try:
+            document = converter.build_document(str(path))
+        finally:
+            from doclayout.services.openai import OpenAIService
+
+            if usage_entries is not None and isinstance(
+                converter.extraction_service, OpenAIService
+            ):
+                usage_entries.extend(converter.extraction_service.usage)
         markdown = MarkdownRenderer(config)(document)
         json_output = JSONRenderer(config)(document)
         chunks = ChunkRenderer(config)(document)

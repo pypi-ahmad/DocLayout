@@ -5,6 +5,8 @@ from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import save_output
+from doclayout.services.openai import OpenAIService
+from doclayout.usage import cost_message
 
 
 @click.command(cls=CustomClickPrinter, help="Convert a document using GPT-6 Sol.")
@@ -14,6 +16,7 @@ def convert_single_cli(fpath, **kwargs):
     parser = ConfigParser(kwargs)
     config = parser.generate_config_dict()
     models = create_model_dict()
+    converter = None
     try:
         converter = parser.get_converter_cls()(
             artifact_dict=models,
@@ -28,4 +31,8 @@ def convert_single_cli(fpath, **kwargs):
     except Exception as exc:
         raise click.ClickException(str(exc)) from exc
     finally:
+        if converter is not None and isinstance(
+            converter.extraction_service, OpenAIService
+        ):
+            click.echo(cost_message(converter.extraction_service.usage))
         shutdown_models(models)

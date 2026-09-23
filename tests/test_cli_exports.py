@@ -11,6 +11,7 @@ import pytest
 from click.testing import CliRunner
 
 from doclayout.exports import save_document_exports
+from doclayout.filenames import name_result
 from doclayout.scripts import convert, run_streamlit_app
 from doclayout.services.openai import ExtractionError
 from doclayout.ui.documents import prepare_upload, run_document
@@ -20,22 +21,34 @@ from doclayout.ui.exports import markdown_html
 @pytest.fixture
 def file_cli(model_dict, monkeypatch):
     monkeypatch.setattr(convert, "create_model_dict", lambda: model_dict)
+    monkeypatch.setattr(
+        convert, "export_basename", lambda _: "document_20260923_143052"
+    )
     return CliRunner()
 
 
 @pytest.mark.parametrize(
     "flags,expected",
     [
-        ([], {"document.md"}),
-        (["--markdown"], {"document.md"}),
-        (["--html"], {"document.html"}),
-        (["--json"], {"document.json"}),
-        (["--chunks"], {"chunks.json"}),
-        (["--metadata"], {"metadata.json"}),
-        (["--annotated-pdf"], {"annotated.pdf"}),
-        (["--annotated-images"], {"annotations/page-2.png"}),
-        (["--json", "--chunks"], {"document.json", "chunks.json"}),
-        (["--output_format", "html"], {"document.html"}),
+        ([], {"document_20260923_143052.md"}),
+        (["--markdown"], {"document_20260923_143052.md"}),
+        (["--html"], {"document_20260923_143052.html"}),
+        (["--json"], {"document_20260923_143052.json"}),
+        (["--chunks"], {"document_20260923_143052_chunks.json"}),
+        (["--metadata"], {"document_20260923_143052_metadata.json"}),
+        (["--annotated-pdf"], {"document_20260923_143052_annotated.pdf"}),
+        (
+            ["--annotated-images"],
+            {"annotations/document_20260923_143052_page-2.png"},
+        ),
+        (
+            ["--json", "--chunks"],
+            {
+                "document_20260923_143052.json",
+                "document_20260923_143052_chunks.json",
+            },
+        ),
+        (["--output_format", "html"], {"document_20260923_143052.html"}),
     ],
 )
 def test_selected_exports(
@@ -74,31 +87,40 @@ def test_all_matches_gui_and_zip(
     )
     assert result.exit_code == 0, result.output
     assert extraction_service.call_count == 2
-    with ZipFile(destination / "document.zip") as archive:
+    with ZipFile(destination / "document_20260923_143052.zip") as archive:
         names = set(archive.namelist())
         assert {
-            "document.md",
-            "document.html",
-            "document.json",
-            "chunks.json",
-            "metadata.json",
-            "annotated.pdf",
-            "annotations/page-1.png",
-            "annotations/page-2.png",
+            "document_20260923_143052.md",
+            "document_20260923_143052.html",
+            "document_20260923_143052.json",
+            "document_20260923_143052_chunks.json",
+            "document_20260923_143052_metadata.json",
+            "document_20260923_143052_annotated.pdf",
+            "annotations/document_20260923_143052_page-1.png",
+            "annotations/document_20260923_143052_page-2.png",
         } <= names
         for name in names:
             assert archive.read(name) == (destination / name).read_bytes()
         assert not any(
-            name.endswith(".pdf") and name != "annotated.pdf" for name in names
+            name.endswith(".pdf")
+            and name != "document_20260923_143052_annotated.pdf"
+            for name in names
         )
-    assert (destination / "annotated.pdf").read_bytes().startswith(b"%PDF")
+    assert (
+        (destination / "document_20260923_143052_annotated.pdf")
+        .read_bytes()
+        .startswith(b"%PDF")
+    )
     gui = run_document(
         prepare_upload(Path(temp_doc.name).read_bytes(), "document.pdf"), {}, model_dict
     )
-    assert (destination / "document.md").read_text(encoding="utf-8") == gui["markdown"]
-    assert (destination / "document.html").read_text(encoding="utf-8") == markdown_html(
-        gui["markdown"], gui["images"]
-    )
+    name_result(gui, "document_20260923_143052")
+    assert (destination / "document_20260923_143052.md").read_text(
+        encoding="utf-8"
+    ) == gui["markdown"]
+    assert (destination / "document_20260923_143052.html").read_text(
+        encoding="utf-8"
+    ) == markdown_html(gui["markdown"], gui["images"])
 
 
 def test_zip_only(file_cli, temp_doc, tmp_path, extraction_service):
@@ -107,11 +129,16 @@ def test_zip_only(file_cli, temp_doc, tmp_path, extraction_service):
         convert.convert_cli, [temp_doc.name, str(destination), "--zip"]
     )
     assert result.exit_code == 0, result.output
-    assert {p.name for p in destination.iterdir()} == {"document.zip"}
+    assert {p.name for p in destination.iterdir()} == {
+        "document_20260923_143052.zip"
+    }
     assert extraction_service.call_count == 2
-    with ZipFile(destination / "document.zip") as archive:
-        assert "document.html" in archive.namelist()
-        assert "annotations/page-2.png" in archive.namelist()
+    with ZipFile(destination / "document_20260923_143052.zip") as archive:
+        assert "document_20260923_143052.html" in archive.namelist()
+        assert (
+            "annotations/document_20260923_143052_page-2.png"
+            in archive.namelist()
+        )
 
 
 def test_markdown_and_image_crops(file_cli, temp_doc, tmp_path):
@@ -123,7 +150,10 @@ def test_markdown_and_image_crops(file_cli, temp_doc, tmp_path):
     }
     assert images
     assert all(
-        name in (destination / "document.md").read_text(encoding="utf-8")
+        name
+        in (destination / "document_20260923_143052.md").read_text(
+            encoding="utf-8"
+        )
         for name in images
     )
     image_dir = tmp_path / "images"
@@ -166,13 +196,15 @@ def test_missing_destination_and_folder_flags(
 def test_output_dir_compatibility_and_overwrite(file_cli, temp_doc, tmp_path):
     destination = tmp_path / "output"
     destination.mkdir()
-    (destination / "document.md").write_text("old")
+    (destination / "document_20260923_143052.md").write_text("old")
     (destination / "notes.txt").write_text("keep")
     result = file_cli.invoke(
         convert.convert_cli, [temp_doc.name, "--output_dir", str(destination)]
     )
     assert result.exit_code == 0, result.output
-    assert "Hello, World!" in (destination / "document.md").read_text(encoding="utf-8")
+    assert "Hello, World!" in (
+        destination / "document_20260923_143052.md"
+    ).read_text(encoding="utf-8")
     assert (destination / "notes.txt").read_text() == "keep"
 
 
@@ -182,7 +214,7 @@ def test_failure_preserves_existing_output(
 ):
     destination = tmp_path / "old"
     destination.mkdir()
-    previous = destination / "document.md"
+    previous = destination / "document_20260923_143052.md"
     previous.write_text("keep")
     flags = []
     if failure == "extraction":
@@ -202,6 +234,7 @@ def test_failure_preserves_existing_output(
 
 
 def test_missing_credentials(temp_doc, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     result = CliRunner().invoke(
         convert.convert_cli, [temp_doc.name, str(tmp_path / "new")]
@@ -214,7 +247,7 @@ def test_missing_credentials(temp_doc, tmp_path, monkeypatch):
 def test_input_collision_before_extraction(
     file_cli, temp_doc, tmp_path, extraction_service
 ):
-    source = tmp_path / "annotated.pdf"
+    source = tmp_path / "document_20260923_143052_annotated.pdf"
     content = Path(temp_doc.name).read_bytes()
     source.write_bytes(content)
     result = file_cli.invoke(
@@ -229,11 +262,11 @@ def test_input_collision_before_extraction(
 def test_validate_all_paths_before_writing(temp_doc, tmp_path):
     destination = tmp_path / "outputs"
     destination.mkdir()
-    previous = destination / "document.md"
+    previous = destination / "document_20260923_143052.md"
     previous.write_bytes(b"keep")
     with pytest.raises(ValueError, match="Unsafe"):
         save_document_exports(
-            {"document.md": b"new", "../outside.md": b"outside"},
+            {"document_20260923_143052.md": b"new", "../outside.md": b"outside"},
             destination,
             temp_doc.name,
         )

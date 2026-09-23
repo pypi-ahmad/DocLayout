@@ -10,8 +10,11 @@ from tqdm import tqdm
 
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
+from doclayout.filenames import export_basename, export_filename
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import output_exists, save_output
+from doclayout.services.openai import OpenAIService
+from doclayout.usage import cost_message
 
 
 def convert_file(fpath, destination, options, formats):
@@ -23,11 +26,17 @@ def convert_file(fpath, destination, options, formats):
     )
 
     models = None
+    converter = None
     try:
+        basename = export_basename(fpath)
         output_targets(
             destination,
             fpath,
-            [EXPORT_FILES[kind] for kind in formats if kind in EXPORT_FILES],
+            [
+                export_filename(basename, EXPORT_FILES[kind])
+                for kind in formats
+                if kind in EXPORT_FILES
+            ],
         )
         parser = ConfigParser(options)
         config = parser.generate_config_dict()
@@ -38,12 +47,16 @@ def convert_file(fpath, destination, options, formats):
             processor_list=parser.get_processors(),
         )
         document = converter.build_document(fpath)
-        outputs = document_exports(document, config, formats)
+        outputs = document_exports(document, config, formats, basename)
         save_document_exports(outputs, destination, fpath)
         click.echo(f"Saved {len(outputs)} file(s) to {destination}")
     except Exception as exc:
         raise click.ClickException(str(exc)) from exc
     finally:
+        if converter is not None and isinstance(
+            converter.extraction_service, OpenAIService
+        ):
+            click.echo(cost_message(converter.extraction_service.usage))
         if models is not None:
             shutdown_models(models)
 
@@ -51,6 +64,7 @@ def convert_file(fpath, destination, options, formats):
 def process_single_pdf(args):
     fpath, options = args
     models = None
+    converter = None
     try:
         parser = ConfigParser(options)
         config = parser.generate_config_dict()
@@ -72,6 +86,12 @@ def process_single_pdf(args):
         click.echo(f"Failed {fpath}: {exc}", err=True)
         return 0, False
     finally:
+        if converter is not None and isinstance(
+            converter.extraction_service, OpenAIService
+        ):
+            click.echo(
+                f"{os.path.basename(fpath)}: {cost_message(converter.extraction_service.usage)}"
+            )
         if models is not None:
             shutdown_models(models)
 

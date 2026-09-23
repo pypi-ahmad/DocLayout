@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Sequence
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, BlockId, BlockOutput
@@ -24,6 +24,7 @@ class TocItem(BaseModel):
 
 
 class Document(BaseModel):
+    usage: list[dict] = Field(default_factory=list)
     filepath: str
     pages: List[PageGroup]
     block_type: BlockTypes = BlockTypes.Document

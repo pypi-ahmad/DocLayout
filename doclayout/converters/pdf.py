@@ -167,6 +167,8 @@ class PdfConverter(BaseConverter):
                 os.unlink(temp_file.name)
 
     def build_document(self, filepath: str) -> Document:
+        if isinstance(self.extraction_service, OpenAIService):
+            self.extraction_service.usage.clear()
         provider_cls = provider_from_filepath(filepath)
         provider = provider_cls(filepath, self.config)
         document = DocumentBuilder(self.config)(provider, self.extraction_service)
@@ -181,6 +183,8 @@ class PdfConverter(BaseConverter):
                     block.html = sanitize_html(block.html)
                 if getattr(block, "description", None):
                     block.description = sanitize_html(block.description)
+        if isinstance(self.extraction_service, OpenAIService):
+            document.usage = list(self.extraction_service.usage)
         return document
 
     def prepare_document(self, document):
