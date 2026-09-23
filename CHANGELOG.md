@@ -1,11 +1,22 @@
 # Changelog
 
-This changelog records DocLayout releases and pending changes. GitHub release
-assets are separate from PyPI publication, which is deferred.
+This changelog records published releases and changes still in the checkout.
+GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
-No pending changes.
+- Removed benchmark input files from Git tracking and package builds while
+  retaining local copies. Added document/export ignore rules and optional local
+  benchmark setup; tests collect without downloaded data.
+- Added automatic launch-folder `.env` credentials for all entry points, with
+  environment variables taking priority and one shared resolver for OCR and chat.
+- Added estimated API costs at the supplied Sol/Luna rates, with a persistent
+  browser-session total, CLI summaries, and token/cost metadata. Missing usage
+  is flagged as partial, and reported usage survives failed extraction.
+- CLI and GUI exports now use the original filename and a shared UTC timestamp
+  per extraction, including ZIP entries, annotated pages, and linked crops.
+- Folder conversion and `doclayout_single` use the same naming convention;
+  `--skip_existing` recognizes both earlier and timestamped outputs.
 
 ## 2.1.0 (2026-09-23)
 
@@ -19,9 +30,7 @@ No pending changes.
   and versioned release wheels. PyPI publication is deferred.
 - Offline CLI checks for output selection, overwrite behavior, failure handling,
   path validation, and GUI-equivalent HTML.
-
-
-- Practical [configuration reference](docs/configuration.md) and
+- Added a [configuration reference](docs/configuration.md) and
   [development guide](docs/development.md), with shared material moved out of
   other guides and replaced by links.
 

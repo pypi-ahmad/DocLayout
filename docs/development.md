@@ -14,24 +14,23 @@ uv run playwright install chromium --only-shell
 ```
 
 The `dev` group supplies GUI, API, test, and development tools. The `full` extra
-adds Office/HTML/EPUB converters. Their native library requirements are covered
-in [installation](usage.md#installation). Use the `gui` and `server` extras for end-user installations. An ordinary
-wheel or pip install does not install dependency groups. Keep `pyproject.toml` and `uv.lock` together when
-changing dependencies; use `uv add` and `uv remove` without unrelated upgrades.
+adds Office/HTML/EPUB converters; see their [native library requirements](usage.md#installation).
+End-user installs can use the `gui` or `server` extras. Wheel and pip installs do
+not include the development group. Keep `pyproject.toml` and `uv.lock` together
+when changing dependencies, and avoid unrelated upgrades.
 
 Stop processes using this project's environment before an exact sync removes
 packages: Windows can lock loaded `.pyd` files. If an application must remain
 running, `uv sync --locked --group dev --extra full --inexact` retains extra
-packages. To check that removed dependencies are no longer required, run tests
-in a fresh environment. An inexact sync retains
-packages that could hide a missing dependency.
+packages. Test removed dependencies in a fresh environment because an inexact
+sync may leave packages that hide a missing dependency.
 
 ## Run the application
 
 Use the [browser workbench](usage.md#browser-workbench),
 [CLI](usage.md#command-line-conversion), or [HTTP API](usage.md#http-api)
 instructions. Configure credentials through the
-[process environment](configuration.md#credentials-and-environment).
+[process environment or launch-folder `.env`](configuration.md#credentials-and-environment).
 The Windows launcher disables file watching, so restart after changing code or
 prompt resources. Model calls incur endpoint charges.
 
@@ -47,13 +46,14 @@ git diff --check
 Sync first, then use `--no-sync` to test that environment without
 changing its installed packages. Default tests block unrequested OpenAI calls.
 They cover providers, structured extraction contracts, rendering, configuration,
-API requests, GUI state, chat validation, prompt fingerprints, and exports.
+API requests, GUI state, chat validation, credential precedence, cost accounting,
+prompt fingerprints, and exports.
 CLI export tests cover format selection, one extraction per page, GUI-equivalent
 HTML, ZIP contents, overwrite behavior, and input/output path protection.
-The browser test uses a real browser and local Streamlit process with mocked
-extraction; it verifies clipboard/download behavior and avoids repeated OCR.
+The browser test runs Streamlit with mocked extraction. It checks clipboard
+downloads and verifies that switching views does not repeat OCR.
 
-Run the relevant subset while developing, for example:
+For a focused check while developing:
 
 ```powershell
 uv run --no-sync pytest tests/config tests/services tests/test_chat_prompts.py
@@ -62,11 +62,16 @@ uv run --no-sync pytest tests/test_ui.py tests/test_ui_browser.py
 
 Use the Ruff correctness checks above as the baseline. The repository's
 pre-commit configuration also runs autofixes and formatting, using its own pinned
-Ruff version. Review those changes, especially around prompt literals. An
-unrelated patch does not need broad formatting changes. When you run focused type checks,
-report the paths checked; their results apply only to that subset.
+Ruff version. Review those changes, especially around prompt literals. Leave
+unrelated formatting alone. When reporting a focused type check, name the paths
+checked.
 
 ## Live evaluation
+
+Benchmark PDFs and JSONL records are local-only. Follow the
+[local dataset setup](../tests/data/olmocr_bench/README.md) first. Missing inputs
+are skipped before an API client is created; offline tests generate temporary
+documents and do not require the dataset.
 
 Live tests make billable requests and run only when explicitly selected:
 
@@ -75,13 +80,21 @@ uv run --no-sync pytest tests/converters/test_olmocr_bench.py --run-integration
 ```
 
 See the [benchmark guide](../benchmarks/README.md) for harness options,
-[fixture provenance](../tests/data/olmocr_bench/README.md) for included data, and
+[fixture provenance](../tests/data/olmocr_bench/README.md) for optional local data, and
 [validation report](gpt6-validation.md) for dated results and known failures.
 Offline test success does not establish model accuracy or endpoint availability.
 The live fixture suite may fail on the recorded header/footer limitation or
 other model variation.
 
 ## Build and package checks
+
+Keep document inputs in `input/` or `inputs/`, and results in `output/`,
+`outputs/`, or `conversion_results/`. These folders, common document formats,
+datasets, and timestamped exports are ignored. Source Markdown and JSON remain
+eligible for Git, so arbitrary document exports must stay in ignored folders.
+Review `git diff --cached --name-only` before publication and do not force-add
+input or output files. Ignore rules cannot remove files from earlier Git history
+or previously published release assets.
 
 ```powershell
 uv build
@@ -142,7 +155,7 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Validation | Dated observations and verification limits |
 | Benchmark/example/fixture guides | Their specific workflows and provenance |
 
-Link to the guide responsible for a topic to avoid duplicating its tables or
-procedures. Update the changelog's Unreleased section for relevant changes and preserve historical
-measurements as dated evidence. Check relative links, anchors, and executable
-examples without making live requests unless that evaluation is intended.
+Link to the guide that covers a topic instead of copying its tables. Record
+current changes under Unreleased in the changelog, and keep historical
+measurements dated. Check links, anchors, and executable examples. Live requests
+need a separate, explicit evaluation.

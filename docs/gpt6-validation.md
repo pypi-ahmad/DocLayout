@@ -1,11 +1,24 @@
 # DocLayout validation
 
-The results below record live model observations and offline application checks
-separately.
-See [development](development.md) for current verification commands,
-[usage](usage.md) for application workflows, and [architecture](architecture.md)
-for the pipeline. The model observations describe extraction quality; the
-offline tests check deterministic application behavior.
+This report separates live extraction observations from offline application
+checks. See [development](development.md) for verification commands,
+[usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
+
+## Current checkout checks (2026-09-23)
+
+- With `DOCLAYOUT_BENCH_DIR` pointing to an empty local directory, the offline
+  suite passed: **155 passed, 1 skipped**. The optional live benchmark skipped
+  before creating an API client. No model calls were made.
+- The three benchmark PDFs and their JSONL rules are no longer tracked. Local
+  copies remain usable, and a fresh checkout collects the tests without them.
+- Package builds excluded input documents, dataset records, and generated
+  output folders. The installed wheel read `.env` from its launch folder for
+  extraction and chat in a mocked check. It did not make an API request.
+- Cost tests cover both supplied rate tables, cached tokens, incomplete usage,
+  failed requests, per-conversion isolation, and GUI session totals.
+
+The live observations below predate these checkout changes. The current
+checkout has not been published as a new GitHub release.
 
 ## Version 2.1.0 installation and CLI checks (2026-09-23)
 
@@ -57,8 +70,9 @@ and endpoint. They do not guarantee throughput elsewhere.
 
 Generated smoke artifacts are under the ignored
 `conversion_results/gpt6_validation/` directory. Default tests mock API calls.
-The explicit `--run-integration` test checks all 14 rules and can fail on the
-known classification limitation or other model variation.
+With the optional local PDFs and JSONL rules installed, the explicit
+`--run-integration` test checks all 14 rules. It can fail on the known
+classification limitation or other model variation.
 
 ## Original local checks accompanying the live run
 

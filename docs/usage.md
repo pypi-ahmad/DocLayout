@@ -8,6 +8,8 @@ Follow the [README installation steps](../README.md#installation) for uv tool,
 manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
+The commands pinned to v2.1.0 install the published release. Changes listed as
+[Unreleased](../CHANGELOG.md#unreleased) currently exist only in this checkout.
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
@@ -36,10 +38,11 @@ available package index or local cache even when DocLayout comes from GitHub.
 
 ## Credentials and model settings
 
-Configure credentials before running extraction. See the
-[configuration guide](configuration.md#credentials-and-environment) for the
-process environment, fixed model choices, request defaults, and available
-controls. Extra refinement is optional; page extraction always uses Sol.
+Configure credentials before running extraction. The current source accepts
+environment variables or `.env` in the launch folder. See the
+[configuration guide](configuration.md#credentials-and-environment) for precedence,
+model choices, request defaults, and controls. Extra refinement is optional;
+page extraction always uses Sol.
 
 ## Browser workbench
 
@@ -53,7 +56,7 @@ interpreting them as Streamlit server flags.
 2. Choose Start page and End page. Both are inclusive and numbered from 1; the
    default selects the entire document. Images are treated as a single page.
 3. Optionally enable extra refinement or retain page headers and footers.
-4. Select **Run DocLayout**. Each selected page is sent for extraction.
+4. Select Run DocLayout. Each selected page is sent for extraction.
 5. Inspect and download the result from the tabs.
 
 | Tab | Behavior |
@@ -71,12 +74,12 @@ known image crops and converts supported LaTeX to MathML; failed conversions
 retain readable LaTeX. Formatted copying uses the generated HTML.
 Clipboard operations require browser support and permission on localhost/HTTPS.
 
-The ZIP contains `document.md`, `document.html`, `document.json`, `chunks.json`,
-`metadata.json`, extracted crops, `annotated.pdf`, and `annotations/page-N.png`.
+The ZIP contains Markdown, HTML, document JSON, chunks, metadata, extracted crops,
+and annotated PDF/PNGs. All use the [output filename convention](#output-filenames).
 It excludes the uploaded source and chat. Annotations are raster copies with
 estimated boxes. They contain no searchable PDF text layer.
 
-Switching tabs and downloading files keeps the completed results and makes no new OCR calls.
+Switching tabs and downloading files reuse the result without new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
 results and chat. Running extraction again also starts a fresh result. Debug
 shows metadata and raw output; it does not save a GUI run history.
@@ -84,14 +87,22 @@ shows metadata and raw output; it does not save a GUI run history.
 ### Document chat
 
 Chat sends parsed text, the question, and up to six accepted previous turns.
-It does not send page images, browse the web, or use tools. The app checks quotes
-locally before a second model verifies the candidate answer.
+It sends no page images. The app checks quotes locally before a second model
+verifies the candidate answer.
 
 See [fixed chat limits](configuration.md#fixed-chat-limits) for question,
 answer, history, and context limits. Select a smaller page range if the context
 is too large. Missing, out-of-scope, unverified, and unavailable answers use fixed
 status messages. Chat usage is separate from extraction metadata; Clear chat
-removes its local history and usage.
+removes its local history and usage details. The Session API cost sidebar
+retains costs from cleared chats, previous uploads, repeat extractions, and failed
+requests in this browser session. Chat costs include both draft and verification
+requests. A new browser session starts a new total.
+
+CLI commands print estimated cost per conversion. Metadata exports contain
+`usage` records and a `cost` summary for OCR and optional refinement; chat costs
+remain in the browser session. Previewing, exporting, and downloading completed
+results adds no model cost. See [rates and limitations](configuration.md#cost-estimates).
 
 ## Command-line conversion
 
@@ -115,17 +126,19 @@ The file command requires a destination, either the second positional argument
 or `--output_dir`. It builds one document and reuses it for every selected
 export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
 
+`BASE` means the source stem plus the extraction timestamp, described below.
+
 | Flag | Files written directly into the destination |
 | --- | --- |
-| No format flag, or `--markdown` | `document.md` and its extracted crops |
-| `--html` | `document.html`, generated from Markdown with embedded crops and MathML |
-| `--json` | `document.json`, hierarchical blocks with metadata |
-| `--chunks` | `chunks.json`, flattened blocks with metadata |
-| `--metadata` | `metadata.json` |
+| No format flag, or `--markdown` | `BASE.md` and its extracted crops |
+| `--html` | `BASE.html`, generated from Markdown with embedded crops and MathML |
+| `--json` | `BASE.json`, hierarchical blocks with metadata |
+| `--chunks` | `BASE_chunks.json`, flattened blocks with metadata |
+| `--metadata` | `BASE_metadata.json` |
 | `--images` | Extracted crop files, when present and enabled |
-| `--annotated-pdf` | `annotated.pdf`, a raster PDF with estimated region boxes |
-| `--annotated-images` | `annotations/page-N.png`, using original one-based page numbers |
-| `--zip` | `document.zip`, containing the complete GUI bundle |
+| `--annotated-pdf` | `BASE_annotated.pdf`, a raster PDF with estimated region boxes |
+| `--annotated-images` | `annotations/BASE_page-N.png`, using original one-based page numbers |
+| `--zip` | `BASE.zip`, containing the complete GUI bundle |
 | `--all` | Every file above, including the ZIP |
 
 Combine individual flags to select several outputs. Use `--all` on its own
@@ -136,11 +149,28 @@ with the selection flags. `--zip` alone creates no loose document files.
 Text exports use UTF-8. JSON and chunks use distinct filenames, so they can
 coexist in one directory. The ZIP excludes the input document and chat history.
 
-A successful run overwrites generated files with matching names and leaves
-unrelated files intact. Use separate destinations to retain different documents.
+Each extraction gets a new timestamp, so later runs normally retain earlier
+outputs in the same directory. An exact filename collision is still overwritten;
+unrelated files remain intact.
 Extraction and export generation finish before output files are written; their
 failures preserve previous output. Filesystem write errors can leave a partial
 set of outputs. A run cannot overwrite its own input document.
+
+### Output filenames
+
+For `report.pdf`, an extraction might produce
+`report_20260923_143052.md`, `report_20260923_143052.html`,
+`report_20260923_143052.json`, and `report_20260923_143052.zip`. The UTC timestamp
+has seconds precision. GUI downloads keep the same timestamp across reruns.
+
+Chunks and metadata add `_chunks.json` and `_metadata.json`; the annotated PDF
+adds `_annotated.pdf`. Annotated images use `annotations/BASE_page-N.png` inside
+ZIPs and CLI folders, or `BASE_page-N.png` for individual browser downloads.
+Crop filenames also include `BASE`, and Markdown links are updated to match.
+
+The source extension is removed. Spaces and characters other than letters,
+numbers, underscores, dots, and hyphens become underscores; source stems are
+limited to 140 characters to leave room for export suffixes.
 
 ### Folder and legacy single-file conversion
 
@@ -150,9 +180,9 @@ uv run doclayout_single document.pdf --output_dir output --output_format markdow
 uv run doclayout_single document.pdf --page_range 0,2-4 --output_format html
 ```
 
-These commands keep the existing per-document subdirectory and source-stem
-filenames, a separate `_meta.json` file, and renderer crops. Select one format
-with `--output_format`: `markdown`, `html`, `json`, or `chunks`. Their HTML comes
+These commands use a directory per document, with timestamped filenames, crops,
+and a separate `_metadata.json` file. Select one format with `--output_format`:
+`markdown`, `html`, `json`, or `chunks`. Their HTML comes
 from document blocks. The new file command's HTML comes from Markdown, matching
 the GUI. Export selection flags such as `--all` are for file input only.
 
@@ -221,13 +251,14 @@ Successful responses contain `success`, `format`, `output`, `images`, and
 `metadata`. `output` is a string, including serialized JSON for JSON/chunks;
 image values are base64 strings. Conversion failures return HTTP 200 with
 `success: false` and `error`; clients must check `success`. Invalid fields and
-request validation errors return HTTP 422. The API process runs one conversion at a time. GUI chat, annotations, and ZIP downloads are not HTTP endpoints.
+request validation errors return HTTP 422. The API process runs one conversion
+at a time. GUI chat, annotations, and ZIP downloads have no HTTP endpoints.
 
 ## Troubleshooting
 
 | Symptom | Check |
 | --- | --- |
-| Credentials unavailable | Restart the terminal after changing Windows user environment variables |
+| Credentials unavailable | Check the launch folder's `.env`; after changing Windows environment variables, open a new terminal and restart the app |
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |

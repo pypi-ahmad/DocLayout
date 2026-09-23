@@ -1,11 +1,10 @@
 # DocLayout
 
-**From scans and images to structured Markdown.**
+From scans and images to structured Markdown.
 
-DocLayout converts PDFs, scans, images, and office documents into readable,
-structured content. In the browser workbench, you can inspect pages, copy or download results,
-and ask questions about the extracted text. For scripts, use the CLI, Python
-library, or local HTTP API.
+DocLayout turns PDFs, scans, images, and office documents into structured content.
+The browser app lets you inspect pages, copy or download results, and ask questions
+about the extracted text. You can also use the CLI, Python library, or local HTTP API.
 
 ## Features
 
@@ -25,7 +24,9 @@ library, or local HTTP API.
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
 needed for GitHub-source installs. The package declares Python `>=3.10,<4`;
 Windows checks use Python 3.14. PyPI publication is deferred. The commands below
-install this repository's version directly from GitHub or a release wheel.
+install the published v2.1.0 release from GitHub or a release wheel. The
+[Unreleased changes](CHANGELOG.md#unreleased) are local to this checkout until
+they are published. Commands pinned to the v2.1.0 tag install the earlier release.
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -57,15 +58,15 @@ cd DocLayout
 uv sync --locked --group dev --extra full
 ```
 
-This sets up the GUI, API, and development tools, plus optional document-format
-converters. After configuring credentials, run:
+This installs the GUI, API, development tools, and optional document converters.
+After configuring credentials, run:
 
 ```powershell
 uv run doclayout input.pdf output --all
 .\launch.cmd
 ```
 
-The launcher opens **http://localhost:8471**, stopping the previous listener on
+The launcher opens http://localhost:8471, stopping the previous listener on
 port 8471 first. It disables file watching; restart it after edits.
 `doclayout_gui` uses Streamlit's defaults and does not stop a port listener.
 
@@ -104,7 +105,11 @@ Tool-installed commands run directly as `doclayout ...`. Inside a clone,
 
 ## Configure API access
 
-Set these in the terminal that will launch DocLayout:
+In the current source, DocLayout reads environment variables first. If a value
+is absent, it reads `.env` in the launch folder. Each variable follows that order
+independently. The GUI, CLI, Python library, and API server share this behavior.
+
+Either set these in the terminal that will launch DocLayout:
 
 ```powershell
 $env:OPENAI_API_KEY = "your-api-key"
@@ -112,9 +117,22 @@ $env:OPENAI_API_KEY = "your-api-key"
 $env:OPENAI_BASE_URL = "https://your-endpoint.example/v1"
 ```
 
+Or copy [`.env.example`](.env.example) to `.env` in your launch folder and edit it:
+
+```dotenv
+OPENAI_API_KEY=your-api-key
+# Optional for a custom compatible endpoint:
+# OPENAI_BASE_URL=https://your-endpoint.example/v1
+```
+
+With `launch.cmd`, the launch folder is the repository root. For an installed
+`doclayout_gui` or `doclayout` command, it is the current working directory.
+Keep `.env` private; it is excluded from Git and package builds. Restart the app
+after credential changes. After changing Windows User/Machine environment
+variables, also open a fresh terminal before launching it.
+
 The endpoint must support the app's models and request formats. See
 [credentials and persistent Windows setup](docs/configuration.md#credentials-and-environment).
-Configure credentials before running conversion or opening the app.
 
 ## Command-line examples
 
@@ -135,9 +153,11 @@ complete archive. Individual format flags can be combined; see the
 [full output reference](docs/usage.md#command-line-conversion), including
 `--metadata` and `--images`.
 
-File outputs go directly into the requested directory. Successful conversion
-replaces generated files with the same names; unrelated files remain intact.
-Use a different output directory for each document you want to keep.
+CLI files and GUI downloads use `originalfilename_YYYYMMDD_HHMMSS.ext`,
+with one UTC timestamp per extraction. JSON variants, crops, and annotated pages
+add a type or page suffix. ZIP entries use the same names as loose exports.
+File outputs go directly into the requested directory; later runs get new names.
+See [filename details](docs/usage.md#output-filenames) for examples.
 
 Folder conversion and the legacy single-file command remain available:
 
@@ -146,8 +166,8 @@ doclayout documents --output_dir output --workers 1
 doclayout_single input.pdf --output_dir output --output_format markdown
 ```
 
-GUI Start/End pages are **1-based and inclusive**. CLI/API page ranges are
-**zero-based**. Extra refinement is optional; OCR always runs through Sol.
+GUI Start/End pages are one-based and inclusive. CLI/API page ranges are
+zero-based. Extra refinement is optional; OCR always runs through Sol.
 
 ## Documentation
 
@@ -168,15 +188,19 @@ DocLayout sends page images to the configured API endpoint. Chat sends extracted
 text and recent accepted conversation turns. Requests use `store=False`, which
 does not replace the endpoint provider's own data-handling policy.
 
+The sidebar shows estimated session API cost for OCR, refinement, and chat.
+CLI commands print each conversion's estimate, and document metadata includes
+token usage and costs. See [rates and limitations](docs/configuration.md#cost-estimates).
+
 Extraction and chat can incur API charges. Model-estimated boxes are not
 confidence scores. Small text, complex tables, equations, and header/footer
 classification need review. Document chat verification can also miss mistakes.
 There is no claim of perfect accuracy or a general benchmark ranking.
 
-The browser keeps results in session memory. Download them before closing or
-losing the session. CLI conversion writes output files. The GUI and the new file command generate HTML
+The browser keeps results in session memory, so download them before closing the
+session. CLI conversion writes files. The GUI and file command generate HTML
 from Markdown. The legacy single-file command, folder conversion, and API render
-HTML directly from document blocks.
+HTML from document blocks.
 
 ## Development
 
@@ -195,5 +219,5 @@ foundation for its extraction service, document workbench, chat, and exports.
 It is an independent application and does not imply upstream endorsement.
 
 Distributed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for
-attribution and a description of modifications. The vendored benchmark fixtures
-have their own [source attribution](tests/data/olmocr_bench/README.md).
+attribution and a description of modifications. Optional local benchmark data
+has its own [source attribution and setup](tests/data/olmocr_bench/README.md).

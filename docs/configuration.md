@@ -2,9 +2,8 @@
 
 [Back to README](../README.md) · [Usage](usage.md) · [Development](development.md)
 
-For processor-specific controls beyond the settings below, see
-[advanced configuration](#advanced-configuration). The examples use the current
-implementation and leave extraction prompts unchanged.
+For processor controls beyond the settings below, see
+[advanced configuration](#advanced-configuration).
 
 ## Credentials and environment
 
@@ -13,10 +12,26 @@ implementation and leave extraction prompts unchanged.
 | `OPENAI_API_KEY` | Required API credential for extraction and document chat |
 | `OPENAI_BASE_URL` | Optional OpenAI-compatible endpoint; omitted uses the SDK default |
 
-Set credentials in the process environment. After changing Windows user
-environment variables, open a new terminal and restart DocLayout. For settings that last only for the current PowerShell session, use the
-[README example](../README.md#configure-api-access). To persist values for your
-Windows user account, replace these placeholders and open a new terminal afterward:
+API clients resolve each variable from the process environment first, then from
+`.env` in the current working directory. This applies to every entry point and
+to both extraction/refinement and document chat. No parent directory, source
+checkout fallback, or installed package folder is searched. The resolver does
+not modify the process environment.
+
+An explicitly empty environment API key blocks file fallback and produces a
+configuration error. An empty or missing selected base URL uses the SDK default.
+File values are read literally; `${VARIABLE}` substitution is not performed.
+Other `.env` keys do not configure DocLayout application settings.
+
+Copy [`.env.example`](../.env.example) to `.env` in the launch folder and replace
+the placeholders, or set credentials in the environment. `launch.cmd` changes
+the working directory to the repository root before starting the GUI. Installed
+commands read `.env` in the folder from which you invoke them.
+
+After changing Windows user or machine environment variables, open a new terminal
+and restart DocLayout. The [README example](../README.md#configure-api-access)
+sets values for one PowerShell session. To keep them across sessions, replace
+these placeholders and open a new terminal afterward:
 
 ```powershell
 [Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "your-api-key", "User")
@@ -30,6 +45,11 @@ Check presence without displaying values:
 [bool]$env:OPENAI_API_KEY
 [bool]$env:OPENAI_BASE_URL
 ```
+
+These presence checks inspect the terminal environment, not `.env`. Restart
+DocLayout after editing credentials: the GUI caches its extraction client.
+Variables changed in Windows settings are inherited by newly launched terminals
+and applications; DocLayout does not read or modify the Windows registry.
 
 The endpoint must support Responses, image input, and structured output for
 `gpt-6-sol`; document chat also requires `gpt-6-luna`. Credentials do not belong
@@ -49,12 +69,11 @@ Common application settings from [settings.py](../doclayout/settings.py):
 | `OUTPUT_IMAGE_FORMAT` | `JPEG` | Saved crops and API image encoding |
 | `LOGLEVEL` | `INFO` | Application logging level |
 
-The same settings class defines font paths and an artifact URL used by document
-format converters. These advanced settings control the application, not the model.
-The class definition sets path defaults. Changing a base-directory setting
-does not automatically recompute every derived path. Set the final path
-you need explicitly. The model service sends PNG images independently of
-`OUTPUT_IMAGE_FORMAT`.
+The settings class also defines font paths and an artifact URL for document
+converters. These control the application rather than the model. Path defaults
+are set when the class is defined. Changing a base directory does not recalculate
+derived paths, so set the final path explicitly. Model requests send PNG images
+regardless of `OUTPUT_IMAGE_FORMAT`.
 
 ## Models and request limits
 
@@ -105,7 +124,7 @@ it does not increase that per-process cap.
 
 ## CLI and JSON configuration
 
-The new `doclayout FILE OUTPUT_DIR` command accepts individual output flags or
+`doclayout FILE OUTPUT_DIR` accepts individual output flags or
 `--all`. See [file exports](usage.md#file-conversion) for the full selection table,
 filenames, and overwrite behavior. Folder conversion and `doclayout_single`
 retain the settings below. `--output_format` is a single-format alternative for
@@ -128,12 +147,11 @@ Save this as `config.json` in your working directory:
 uv run doclayout_single document.pdf --config_json config.json --timeout 90
 ```
 
-When you supply conflicting options, the later value wins. This example
-uses a 90-second timeout. Putting `--timeout 90` before `--config_json config.json`
-lets the file replace it with 180. Flags do not always take precedence.
-Put the file option first and overrides afterward. Avoid setting the same value
-in multiple places. Common CLI defaults and output/converter selection have their
-own handling; use dedicated flags for selecting the output format and components.
+When options conflict, the later value wins. This example uses a 90-second
+timeout. If `--timeout 90` comes before `--config_json config.json`, the file's
+180-second value wins. Put the file option first when flags should override it.
+Common CLI defaults and output/converter selection have their own handling;
+use their dedicated flags.
 
 Explicit `false` and zero values survive parsing. Each setting still has to pass
 its own validation. Default-false booleans such as `--use_llm` are flags; default-true
@@ -199,6 +217,29 @@ request data is limited to 200,000 bytes, reserving 30,000 bytes before the draf
 for verification overhead. These limits are fixed in code and cannot be changed
 through the GUI or JSON settings.
 Reduce the selected page range when parsed text exceeds the limit.
+
+## Cost estimates
+
+DocLayout uses these user-supplied USD rates per million tokens, defined in
+[usage.py](../doclayout/usage.py):
+
+| Model | Input | Cached input | Cache writes | Output |
+| --- | ---: | ---: | ---: | ---: |
+| gpt-6-sol | $2.00 | $0.20 | $2.50 | $10.00 |
+| gpt-6-luna | $0.10 | $0.01 | $0.125 | $0.50 |
+
+Reported input tokens include cached reads and cache writes. The calculator
+subtracts both before pricing ordinary input, so each token is charged once.
+Missing cache detail fields count as zero; tokens without a reported cache split
+use the ordinary input rate. Output tokens include any reasoning tokens already
+included in the provider's output count.
+
+Missing input/output usage, invalid totals, and unpriced models make the estimate
+partial. The displayed amount then covers only requests with usable usage.
+Reported usage from incomplete or refused responses is retained. SDK retries
+and charges absent from endpoint usage cannot be reconstructed. The table above
+contains the rates supplied for this project. They have not been checked against
+current provider pricing, and the estimate is not a provider invoice.
 
 ## Advanced configuration
 
