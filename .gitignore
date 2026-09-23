@@ -26,6 +26,7 @@ exports/
 # Input documents, dataset records, and rendered document artifacts
 *.[pP][dD][fF]
 *.[pP][nN][gG]
+!docs/diagrams/doclayout-data-flow.png
 *.[jJ][pP][gG]
 *.[jJ][pP][eE][gG]
 *.[gG][iI][fF]

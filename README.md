@@ -19,6 +19,10 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 - Preview navigation, copying, and downloads reuse completed session results
   without repeating OCR.
 
+## How DocLayout works
+
+![DocLayout data flow](docs/diagrams/doclayout-data-flow.png)
+
 ## Installation
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
