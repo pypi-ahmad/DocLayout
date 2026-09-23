@@ -1,0 +1,2 @@
+# Preserve the exact prompt bytes used in model requests.
+doclayout/prompts/*.md -text

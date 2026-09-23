@@ -1,0 +1,17 @@
+DocLayout
+
+DocLayout includes code derived from Marker, originally developed by
+Vik Paruchuri and contributors and distributed under the Apache License 2.0.
+Original contributors retain rights in their contributions. See LICENSE for
+the applicable terms and the README References and attribution section for
+the upstream source.
+
+This distribution has been modified for DocLayout. Changes include the
+Python package and command names, GPT-6 Sol page extraction and refinement,
+GPT-6 Luna document chat, session-based document previews and exports,
+Markdown prompt resources, Windows launcher, configuration, tests, and
+documentation. DocLayout does not imply endorsement by the original authors.
+
+The vendored olmOCR-bench test pages and rules are attributed separately in
+tests/data/olmocr_bench/README.md. Third-party dependencies retain their own
+licenses.
