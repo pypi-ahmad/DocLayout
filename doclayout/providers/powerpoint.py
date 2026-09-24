@@ -1,11 +1,8 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-import base64
-import os
-import tempfile
-import traceback
 
 from doclayout.logger import get_logger
-from doclayout.providers.pdf import PdfProvider
+from doclayout.providers.converted import ConvertedPdfProvider
+from doclayout.security import DocumentLimitError, embedded_resource, image_data_uri
 
 logger = get_logger()
 
@@ -40,27 +37,10 @@ img {
 """
 
 
-class PowerPointProvider(PdfProvider):
+class PowerPointProvider(ConvertedPdfProvider):
     include_slide_number: bool = False
 
-    def __init__(self, filepath: str, config=None):
-        temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        self.temp_pdf_path = temp_pdf.name
-        temp_pdf.close()
-
-        # Convert PPTX to PDF
-        try:
-            self.convert_pptx_to_pdf(filepath)
-        except Exception as e:
-            print(traceback.format_exc())
-            raise ValueError(f"Error converting PPTX to PDF: {e}")
-
-        # Initalize the PDF provider with the temp pdf path
-        super().__init__(self.temp_pdf_path, config)
-
-    def __del__(self):
-        if os.path.exists(self.temp_pdf_path):
-            os.remove(self.temp_pdf_path)
+    conversion_method = "convert_pptx_to_pdf"
 
     def convert_pptx_to_pdf(self, filepath):
         from pptx import Presentation
@@ -106,8 +86,12 @@ class PowerPointProvider(PdfProvider):
         html = "\n".join(html_parts)
 
         # We convert the HTML into a PDF
-        HTML(string=html).write_pdf(
-            self.temp_pdf_path, stylesheets=[CSS(string=css), self.get_font_css()]
+        HTML(string=html, url_fetcher=embedded_resource).write_pdf(
+            self.temp_pdf_path,
+            stylesheets=[
+                CSS(string=css, url_fetcher=embedded_resource),
+                self.get_font_css(),
+            ],
         )
 
     def _handle_group(self, group_shape) -> str:
@@ -219,9 +203,11 @@ class PowerPointProvider(PdfProvider):
         image_bytes = image.blob
 
         try:
-            img_str = base64.b64encode(image_bytes).decode("utf-8")
-            return f"<img src='data:{image.content_type};base64,{img_str}' />"
-        except Exception as e:
+            uri = image_data_uri(image_bytes, image.content_type)
+            return f"<img src='{uri}' />"
+        except DocumentLimitError:
+            raise
+        except (OSError, ValueError) as e:
             logger.warning(f"Warning: image cannot be loaded by Pillow: {e}")
             return ""
 

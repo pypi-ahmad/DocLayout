@@ -19,6 +19,8 @@ def streamlit_app_cli(app_name: str = "streamlit_app.py"):
         "streamlit",
         "run",
         app_path,
+        "--server.address",
+        "127.0.0.1",
         "--server.fileWatcherType",
         "none",
         "--server.headless",

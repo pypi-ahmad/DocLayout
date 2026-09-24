@@ -5,6 +5,16 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+- Validate model table spans and expanded cell counts before rendering or
+  refinement allocations, including merged HTML tables and direct callers.
+- HTTP conversion now requires a separate bearer token. Server filepath access is
+  disabled unless a dedicated input root is configured. Uploads and selected pages
+  default to 200 MiB and 500 pages; conversion failures use HTTP error statuses.
+- Added document, archive, image, and worksheet limits, embedded-only rendering
+  resources, escaped spreadsheet text, and deterministic provider cleanup.
+- GUI launchers bind loopback; `launch.cmd` refuses an occupied port without
+  terminating its listener. See configuration for security and compatibility limits.
+
 - Added a data flow image to the README and downloadable interactive data flow
   and system architecture diagrams to the architecture guide.
 - Removed benchmark input files from Git tracking and package builds while

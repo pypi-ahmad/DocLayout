@@ -10,10 +10,10 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Freeing port 8471...
-powershell.exe -NoProfile -Command "try { $ErrorActionPreference = 'Stop'; $owners = @(Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 8471 | Select-Object -ExpandProperty OwningProcess -Unique); foreach ($owner in $owners) { Write-Host ('Stopping process ' + $owner); Stop-Process -Id $owner -Force }; for ($attempt = 0; $attempt -lt 20; $attempt++) { $busy = @(Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 8471); if ($busy.Count -eq 0) { exit 0 }; Start-Sleep -Milliseconds 250 }; throw 'Port 8471 is still busy.' } catch { Write-Host ('ERROR: ' + $_.Exception.Message); exit 1 }"
+echo Checking port 8471...
+powershell.exe -NoProfile -Command "try { $ErrorActionPreference = 'Stop'; $busy = @(Get-NetTCPConnection -State Listen | Where-Object LocalPort -eq 8471); if ($busy.Count -ne 0) { throw 'Port 8471 is busy. Close the application using it and retry.' }; exit 0 } catch { Write-Host ('ERROR: ' + $_.Exception.Message); exit 1 }"
 if errorlevel 1 (
-    echo Could not free port 8471. If access was denied, run this launcher as administrator.
+    echo Could not use port 8471. No existing process was stopped.
     pause
     exit /b 1
 )

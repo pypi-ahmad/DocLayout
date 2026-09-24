@@ -186,10 +186,10 @@ removed uppercase `Settings.DEBUG_DATA_FOLDER` is a separate, retired setting.
 - In the GUI, Start/End pages are one-based and inclusive. Sidebar selections
   override startup values for page range, refinement, and header/footer visibility.
   The Debug checkbox displays results; it does not enable CLI-style debug files.
-- The launcher `launch.cmd` binds `127.0.0.1:8471`, stops an existing listener,
+- The launcher `launch.cmd` binds `127.0.0.1:8471`, refuses an occupied port,
   and disables file watching. These values are written in the launcher.
-  `doclayout_gui` uses Streamlit defaults and forwards arguments to the app;
-  it does not implement the launcher's port cleanup.
+  `doclayout_gui` binds loopback and forwards arguments to the app;
+  neither launcher terminates other processes.
 - The API accepts only the fields below; arbitrary processor/service settings
   are not HTTP parameters. `doclayout_server` defaults to host `127.0.0.1`,
   port `8000`, adjustable with `--host` and `--port`.
@@ -199,7 +199,7 @@ removed uppercase `Settings.DEBUG_DATA_FOLDER` is a separate, retired setting.
 
 | API field | Default | Meaning |
 | --- | --- | --- |
-| `filepath` | `null` | Server-readable path for `/doclayout`; upload route supplies a temporary path |
+| `filepath` | Required on `/doclayout` | Path inside the configured input root; not accepted on upload route |
 | `page_range` | `null` | Zero-based comma/range string |
 | `use_llm` | `false` | Extra refinement |
 | `paginate_output` | `false` | Renderer pagination |
@@ -207,6 +207,51 @@ removed uppercase `Settings.DEBUG_DATA_FOLDER` is a separate, retired setting.
 
 The upload route also requires multipart `file`. Unknown fields are rejected
 with HTTP 422. See [HTTP API usage](usage.md#http-api) for requests and responses.
+
+## Security and resource limits
+
+The HTTP API requires `DOCLAYOUT_API_TOKEN`: a separate randomly generated token
+of at least 32 non-whitespace ASCII characters. Set it in the process environment
+or launch-folder `.env`; an environment value, even blank, takes precedence.
+Send `Authorization: Bearer <token>` on every conversion request. Authentication
+runs before body parsing. GET documentation remains public.
+
+Filepath requests are disabled unless `DOCLAYOUT_INPUT_ROOT` names an existing,
+dedicated directory. Relative paths are resolved there; absolute paths must remain
+inside it. Traversal, network paths, alternate streams and hard links are rejected;
+the opened file's final location and regular-file status are checked before copying.
+Do not put private unrelated files in that directory. Use uploads when possible.
+
+These operator settings use process environment variables or `local.env`, not
+request fields or conversion JSON. Values must be positive integers.
+
+| Setting | Default |
+| --- | ---: |
+| `DOCLAYOUT_MAX_FILE_MIB` | 200 |
+| `DOCLAYOUT_MAX_PAGES` | 500 selected pages |
+| `DOCLAYOUT_MAX_ARCHIVE_MEMBERS` | 10,000 |
+| `DOCLAYOUT_MAX_EXPANDED_MIB` | 1,024 declared archive MiB |
+| `DOCLAYOUT_MAX_SOURCE_PIXELS` | 64,000,000 |
+| `DOCLAYOUT_MAX_RENDER_PIXELS` | 16,000,000 per rendered page |
+| `DOCLAYOUT_MAX_WORKSHEET_CELLS` | 1,000,000 |
+| `DOCLAYOUT_MAX_RESOURCE_MIB` | 64 per embedded resource |
+
+The API allows one conversion per process; overlapping submissions receive 429.
+Uploads allow one file and four option fields, with a total body allowance of
+the file limit plus 1 MiB. Page ranges are checked before expansion. These bounds
+reduce work but are not a native-parser sandbox or a total memory/CPU guarantee.
+Archive limits inspect declared sizes before format parsing.
+
+Document rendering accepts bounded embedded data resources only: external HTTP,
+file and relative resources are disabled. Documents depending on linked images
+or styles may render differently. The configured application font may still be
+downloaded on first use with bounded streaming and atomic replacement. Model
+extraction and chat still send selected content to the configured API endpoint.
+
+All callers sharing a bearer token have the same authority; this is not tenant
+isolation. Keep the GUI local. Remote deployments need operator-managed TLS,
+access controls, request timeouts and process resource limits; multiple workers
+need shared admission/rate controls. The Modal example is not live-validated.
 
 ### Fixed chat limits
 
@@ -241,6 +286,13 @@ uses rates supplied for this project. They have not been checked against current
 provider pricing, and the estimate is not a provider invoice.
 
 ## Advanced configuration
+
+Model-generated tables and direct Markdown/refinement inputs share fixed limits:
+positive ASCII integer spans, at most 1,000 rows or columns, and at most 100,000
+expanded grid cells or cumulative span cells per table. Invalid or oversized
+tables are rejected before grid allocation; merged HTML tables are checked again.
+These limits are not browser or request options. They complement input-file and
+model-token limits and do not replace deployment-level process resource limits.
 
 ```powershell
 uv run doclayout_single --help

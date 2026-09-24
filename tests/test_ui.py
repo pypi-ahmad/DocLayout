@@ -61,6 +61,9 @@ def test_office_preparation_reuses_pdf(temp_doc, tmp_path, monkeypatch, model_di
     class PreparedProvider:
         temp_pdf_path = prepared_pdf
 
+        def close(self):
+            pass
+
         def __len__(self):
             return 2
 
@@ -222,7 +225,9 @@ def test_session_reruns_and_invalidation(
     from streamlit.testing.v1 import AppTest
 
     monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
-    app = AppTest.from_file("doclayout/scripts/streamlit_app.py", default_timeout=20).run()
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
     assert not app.exception
     app.file_uploader[0].set_value(
         ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")

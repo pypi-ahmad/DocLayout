@@ -1,14 +1,13 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
 import base64
-import os
 import re
-import tempfile
 from io import BytesIO
 
 from PIL import Image
 
 from doclayout.logger import get_logger
-from doclayout.providers.pdf import PdfProvider
+from doclayout.providers.converted import ConvertedPdfProvider
+from doclayout.security import DocumentLimitError, embedded_resource, check_pixels
 
 logger = get_logger()
 
@@ -50,24 +49,8 @@ td {
 """
 
 
-class DocumentProvider(PdfProvider):
-    def __init__(self, filepath: str, config=None):
-        temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        self.temp_pdf_path = temp_pdf.name
-        temp_pdf.close()
-
-        # Convert DOCX to PDF
-        try:
-            self.convert_docx_to_pdf(filepath)
-        except Exception as e:
-            raise RuntimeError(f"Failed to convert {filepath} to PDF: {e}")
-
-        # Initialize the PDF provider with the temp pdf path
-        super().__init__(self.temp_pdf_path, config)
-
-    def __del__(self):
-        if os.path.exists(self.temp_pdf_path):
-            os.remove(self.temp_pdf_path)
+class DocumentProvider(ConvertedPdfProvider):
+    conversion_method = "convert_docx_to_pdf"
 
     def convert_docx_to_pdf(self, filepath: str):
         import mammoth
@@ -79,8 +62,15 @@ class DocumentProvider(PdfProvider):
             html = result.value
 
             # We convert the HTML into a PDF
-            HTML(string=self._preprocess_base64_images(html)).write_pdf(
-                self.temp_pdf_path, stylesheets=[CSS(string=css), self.get_font_css()]
+            HTML(
+                string=self._preprocess_base64_images(html),
+                url_fetcher=embedded_resource,
+            ).write_pdf(
+                self.temp_pdf_path,
+                stylesheets=[
+                    CSS(string=css, url_fetcher=embedded_resource),
+                    self.get_font_css(),
+                ],
             )
 
     @staticmethod
@@ -89,16 +79,19 @@ class DocumentProvider(PdfProvider):
 
         def convert_image(match):
             try:
-                img_data = base64.b64decode(match.group(2))
+                img_data = embedded_resource(match.group(0))["string"]
 
                 with BytesIO(img_data) as bio:
                     with Image.open(bio) as img:
+                        check_pixels(*img.size, source=True)
                         output = BytesIO()
                         img.save(output, format=img.format)
                         new_base64 = base64.b64encode(output.getvalue()).decode()
                         return f"data:{match.group(1)};base64,{new_base64}"
 
-            except Exception as e:
+            except DocumentLimitError:
+                raise
+            except (OSError, ValueError) as e:
                 logger.error(f"Failed to process image: {e}")
                 return ""  # we ditch broken images as that breaks the PDF creation down the line
 

@@ -7,12 +7,14 @@ import bleach
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+from doclayout.security import check_table
+
 
 def sanitize_html(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "iframe", "object", "embed"]):
         tag.decompose()
-    return bleach.clean(
+    cleaned = bleach.clean(
         str(soup),
         tags={
             "p",
@@ -61,6 +63,9 @@ def sanitize_html(html: str) -> str:
         protocols={"http", "https", "mailto"},
         strip=True,
     )
+    for table in BeautifulSoup(cleaned, "html.parser").find_all("table"):
+        check_table(table)
+    return cleaned
 
 
 class ExtractedBlock(BaseModel):

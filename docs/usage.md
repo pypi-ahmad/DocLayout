@@ -47,9 +47,9 @@ page extraction always uses Sol.
 
 ## Browser workbench
 
-In the source checkout, run `launch.cmd` for the browser on port 8471. It stops
-the previous port listener before launching. The `doclayout_gui` command also
-starts the GUI with Streamlit's default server settings. It leaves port cleanup
+In the source checkout, run `launch.cmd` for the browser on port 8471. It refuses
+an occupied port without stopping its listener. The `doclayout_gui` command also
+binds loopback, with Streamlit's default port. It leaves port cleanup
 to the caller and forwards extra arguments to the app without
 interpreting them as Streamlit server flags.
 
@@ -63,14 +63,15 @@ interpreting them as Streamlit server flags.
 | Tab | Behavior |
 | --- | --- |
 | Input preview | View a source page; converted office documents use their prepared PDF |
-| Markdown | Native theme-aware rendering or raw Markdown; copy raw/formatted content or download `.md` |
+| Markdown | Sanitized theme-aware preview or raw Markdown; copy raw/formatted content or download `.md` |
 | HTML | Styled white-page preview generated from the exact Markdown; copy or download HTML |
 | Annotated | Estimated region boxes over page images; download individual PNGs or a raster PDF |
 | JSON | Hierarchical document output with metadata |
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
 
-The Markdown and HTML previews use different styles. Exported HTML embeds
+The Markdown and HTML previews use different styles but share the generated-image-only
+resource policy. Remote document images are omitted from both. Exported HTML embeds
 known image crops and converts supported LaTeX to MathML; failed conversions
 retain readable LaTeX. Formatted copying uses the generated HTML.
 Clipboard operations require browser support and permission on localhost/HTTPS.
@@ -226,24 +227,34 @@ Invalid configuration raises `ValueError`; failed model extraction raises
 
 ## HTTP API
 
+Generate a separate random API token locally, then start the server. Keep it out
+of source control and logs. Rotation requires restarting the API process.
+
 ```powershell
+$env:DOCLAYOUT_API_TOKEN = uv run --no-sync python -c "import secrets; print(secrets.token_urlsafe(32))"
+# Optional: an existing dedicated input directory, needed only for filepath requests.
+$env:DOCLAYOUT_INPUT_ROOT = 'D:\documents\api-input'
 uv run doclayout_server --host 127.0.0.1 --port 8000
 ```
 
 Interactive API documentation is at `http://127.0.0.1:8000/docs`; the generated
-schema is at `/openapi.json`. Keep the server local unless you add authentication
-and access controls. The filepath endpoint reads paths accessible to the server.
+schema is at `/openapi.json`. These GET pages remain public. Keep the server local
+unless you configure TLS, ingress access controls and resource limits. Filepath
+access is disabled when the input root is unset. In a second terminal, supply the
+same token through your protected environment or secret manager.
 
 ```powershell
+$headers = @{ Authorization = "Bearer $env:DOCLAYOUT_API_TOKEN" }
 $body = @{
-    filepath = 'D:\documents\document.pdf'
+    filepath = 'document.pdf'
     page_range = '0-1'
     output_format = 'markdown'
     use_llm = $false
 } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8000/doclayout' -ContentType 'application/json' -Body $body
+Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8000/doclayout' -Headers $headers -ContentType 'application/json' -Body $body
 
-curl.exe -X POST http://127.0.0.1:8000/doclayout/upload -F 'file=@document.pdf' -F 'page_range=0-1' -F 'output_format=markdown'
+# PowerShell 7 multipart upload; the token is not placed in an external process argument.
+Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8000/doclayout/upload' -Headers $headers -Form @{ file = Get-Item 'document.pdf'; page_range = '0-1'; output_format = 'markdown' }
 ```
 
 See the [API field reference](configuration.md#gui-api-and-python-differences)
@@ -251,10 +262,13 @@ for accepted fields, defaults, and page-range syntax. Unknown fields are rejecte
 
 Successful responses contain `success`, `format`, `output`, `images`, and
 `metadata`. `output` is a string, including serialized JSON for JSON/chunks;
-image values are base64 strings. Conversion failures return HTTP 200 with
-`success: false` and `error`; clients must check `success`. Invalid fields and
-request validation errors return HTTP 422. The API process runs one conversion
-at a time. GUI chat, annotations, and ZIP downloads have no HTTP endpoints.
+image values are base64 strings. Clients must check HTTP status: 401 for missing
+or invalid authentication, 403 for disallowed filepath access, 413 for resource
+limits, 422 for invalid fields, 429 while busy, and 500 for conversion failures.
+Malformed multipart requests may return 400. Errors omit private exception detail.
+The API process runs one conversion at a time. GUI chat, annotations, and ZIP
+downloads have no HTTP endpoints. Defaults are 200 MiB and 500 selected pages;
+see [security limits](configuration.md#security-and-resource-limits).
 
 ## Troubleshooting
 
@@ -264,7 +278,7 @@ at a time. GUI chat, annotations, and ZIP downloads have no HTTP endpoints.
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
-| Port 8471 remains occupied | Check permission to stop its listener; the launcher reports failures |
+| Port 8471 remains occupied | Close the owning application yourself or use another port; the launcher never terminates it |
 | Clipboard copy unavailable | Use localhost/HTTPS and allow clipboard access, or download the file |
 | Results disappear | Upload/processing changes invalidate them; a disconnected/replaced session can lose memory |
 | Header or table is wrong | Review the source and try optional refinement; correctness is not guaranteed |

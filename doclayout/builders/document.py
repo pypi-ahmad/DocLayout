@@ -22,47 +22,59 @@ class DocumentBuilder(BaseBuilder):
             raise ValueError("page_concurrency must be 1–3 and rendering DPI positive")
         pages = []
         ids = list(provider.page_range)
-        with ThreadPoolExecutor(max_workers=self.page_concurrency) as executor:
-            for start in range(0, len(ids), self.page_concurrency):
-                batch = []
-                # PDFium is never called from executor threads.
-                for page_id in ids[start : start + self.page_concurrency]:
-                    image = provider.get_images([page_id], self.highres_image_dpi)[0]
-                    page_class = cast(type[PageGroup], get_block_class(BlockTypes.Page))
-                    page = page_class(
-                        page_id=page_id,
-                        polygon=provider.get_page_bbox(page_id),
-                        lowres_image=image,
-                        highres_image=image,
-                        children=[],
-                        structure=[],
-                        refs=provider.get_page_refs(page_id),
-                        text_extraction_method="openai",
-                    )
-                    batch.append(
-                        (
-                            page,
-                            executor.submit(
-                                extraction_service,
-                                PAGE_PROMPT,
-                                image,
+        rendered_images = []
+        try:
+            with ThreadPoolExecutor(max_workers=self.page_concurrency) as executor:
+                for start in range(0, len(ids), self.page_concurrency):
+                    batch = []
+                    # PDFium is never called from executor threads.
+                    for page_id in ids[start : start + self.page_concurrency]:
+                        image = provider.get_images([page_id], self.highres_image_dpi)[
+                            0
+                        ]
+                        rendered_images.append(image)
+                        page_class = cast(
+                            type[PageGroup], get_block_class(BlockTypes.Page)
+                        )
+                        page = page_class(
+                            page_id=page_id,
+                            polygon=provider.get_page_bbox(page_id),
+                            lowres_image=image,
+                            highres_image=image,
+                            children=[],
+                            structure=[],
+                            refs=provider.get_page_refs(page_id),
+                            text_extraction_method="openai",
+                        )
+                        batch.append(
+                            (
                                 page,
-                                ExtractedPage,
-                            ),
+                                executor.submit(
+                                    extraction_service,
+                                    PAGE_PROMPT,
+                                    image,
+                                    page,
+                                    ExtractedPage,
+                                ),
+                            )
                         )
-                    )
-                for page, future in batch:
-                    result = ExtractedPage.model_validate(future.result())
-                    for item in result.blocks:
-                        block = page.add_block(
-                            get_block_class(BlockTypes[item.block_type]),
-                            PolygonBox.from_bbox(item.bbox).rescale(
-                                (1000, 1000), page.polygon.size
-                            ),
-                        )
-                        setattr(block, "html", item.html)
-                        block.text_extraction_method = "openai"
-                        page.add_structure(block)
-                    pages.append(page)
+                    for page, future in batch:
+                        result = ExtractedPage.model_validate(future.result())
+                        for item in result.blocks:
+                            block = page.add_block(
+                                get_block_class(BlockTypes[item.block_type]),
+                                PolygonBox.from_bbox(item.bbox).rescale(
+                                    (1000, 1000), page.polygon.size
+                                ),
+                            )
+                            setattr(block, "html", item.html)
+                            block.text_extraction_method = "openai"
+                            page.add_structure(block)
+                        pages.append(page)
+        except BaseException:
+            # Executor exit waits for users of the images before closing them.
+            for image in rendered_images:
+                image.close()
+            raise
         document_class = cast(type[Document], get_block_class(BlockTypes.Document))
         return document_class(filepath=provider.filepath, pages=pages)

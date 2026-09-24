@@ -1,6 +1,5 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
 import re
-from collections import defaultdict
 from typing import Annotated, Tuple
 
 import regex
@@ -13,6 +12,7 @@ from doclayout.logger import get_logger
 from doclayout.renderers.html import HTMLRenderer
 from doclayout.schema import BlockTypes
 from doclayout.schema.document import Document
+from doclayout.security import check_table
 
 logger = get_logger()
 
@@ -127,23 +127,9 @@ class Markdownify(MarkdownConverter):
             )
 
     def convert_table(self, el, text, parent_tags):
+        total_rows, total_cols = check_table(el)
         if self.html_tables_in_markdown:
             return "\n\n" + str(el) + "\n\n"
-
-        total_rows = len(el.find_all("tr"))
-        colspans = []
-        rowspan_cols = defaultdict(int)
-        for i, row in enumerate(el.find_all("tr")):
-            row_cols = rowspan_cols[i]
-            for cell in row.find_all(["td", "th"]):
-                colspan = int(cell.get("colspan", 1))
-                row_cols += colspan
-                for r in range(int(cell.get("rowspan", 1)) - 1):
-                    rowspan_cols[i + r] += (
-                        colspan  # Add the colspan to the next rows, so they get the correct number of columns
-                    )
-            colspans.append(row_cols)
-        total_cols = max(colspans) if colspans else 0
 
         grid = [[None for _ in range(total_cols)] for _ in range(total_rows)]
 

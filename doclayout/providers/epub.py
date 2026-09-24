@@ -1,11 +1,9 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-import base64
-import os
-import tempfile
 
 from bs4 import BeautifulSoup
 
-from doclayout.providers.pdf import PdfProvider
+from doclayout.providers.converted import ConvertedPdfProvider
+from doclayout.security import embedded_resource, image_data_uri
 
 css = """
 @page {
@@ -45,24 +43,8 @@ td {
 """
 
 
-class EpubProvider(PdfProvider):
-    def __init__(self, filepath: str, config=None):
-        temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        self.temp_pdf_path = temp_pdf.name
-        temp_pdf.close()
-
-        # Convert Epub to PDF
-        try:
-            self.convert_epub_to_pdf(filepath)
-        except Exception as e:
-            raise RuntimeError(f"Failed to convert {filepath} to PDF: {e}")
-
-        # Initialize the PDF provider with the temp pdf path
-        super().__init__(self.temp_pdf_path, config)
-
-    def __del__(self):
-        if os.path.exists(self.temp_pdf_path):
-            os.remove(self.temp_pdf_path)
+class EpubProvider(ConvertedPdfProvider):
+    conversion_method = "convert_epub_to_pdf"
 
     def convert_epub_to_pdf(self, filepath):
         import ebooklib
@@ -71,16 +53,14 @@ class EpubProvider(PdfProvider):
 
         ebook = epub.read_epub(filepath)
 
-        styles = []
         html_content = ""
         img_tags = {}
 
         for item in ebook.get_items():
             if item.get_type() == ebooklib.ITEM_IMAGE:
-                img_data = base64.b64encode(item.get_content()).decode("utf-8")
-                img_tags[item.file_name] = f"data:{item.media_type};base64,{img_data}"
-            elif item.get_type() == ebooklib.ITEM_STYLE:
-                styles.append(item.get_content().decode("utf-8"))
+                img_tags[item.file_name] = image_data_uri(
+                    item.get_content(), item.media_type
+                )
 
         for item in ebook.get_items():
             if item.get_type() == ebooklib.ITEM_DOCUMENT:
@@ -102,10 +82,12 @@ class EpubProvider(PdfProvider):
                     image["xlink:href"] = img_tags[normalized_src]
 
         html_content = str(soup)
-        full_style = "".join([css])  # + styles)
 
         # we convert the epub to HTML
-        HTML(string=html_content, base_url=filepath).write_pdf(
+        HTML(string=html_content, url_fetcher=embedded_resource).write_pdf(
             self.temp_pdf_path,
-            stylesheets=[CSS(string=full_style), self.get_font_css()],
+            stylesheets=[
+                CSS(string=css, url_fetcher=embedded_resource),
+                self.get_font_css(),
+            ],
         )
