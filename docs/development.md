@@ -37,8 +37,8 @@ prompt resources. Model calls incur endpoint charges.
 ## Offline checks
 
 ```powershell
-uv run --no-sync pytest
-uv run --no-sync ruff check doclayout tests benchmarks examples convert.py convert_single.py doclayout_app.py doclayout_server.py --select F,E9
+uv run --no-sync python -m pytest
+uv run --no-sync python -m ruff check doclayout tests benchmarks examples convert.py convert_single.py doclayout_app.py doclayout_server.py --select F,E9
 uv lock --check
 git diff --check
 ```
@@ -47,7 +47,9 @@ Sync first, then use `--no-sync` to test that environment without
 changing its installed packages. Default tests block unrequested OpenAI calls.
 They cover providers, structured extraction contracts, rendering, configuration,
 API requests, GUI state, chat validation, credential precedence, cost accounting,
-prompt fingerprints, and exports.
+prompt fingerprints, and exports. `tests/test_security.py` uses small ordinary
+fixtures and mocked models for security-policy regressions. These tests are not
+an OS sandbox or adversarial security validation; no live deployment is tested.
 CLI export tests cover format selection, one extraction per page, GUI-equivalent
 HTML, ZIP contents, overwrite behavior, and input/output path protection.
 The browser test runs Streamlit with mocked extraction. It checks clipboard
@@ -56,8 +58,8 @@ downloads and verifies that switching views does not repeat OCR.
 For a focused check while developing:
 
 ```powershell
-uv run --no-sync pytest tests/config tests/services tests/test_chat_prompts.py
-uv run --no-sync pytest tests/test_ui.py tests/test_ui_browser.py
+uv run --no-sync python -m pytest tests/config tests/services tests/test_chat_prompts.py
+uv run --no-sync python -m pytest tests/test_ui.py tests/test_ui_browser.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's
@@ -75,7 +77,7 @@ documents and do not require the dataset.
 Live tests make billable requests and run only when explicitly selected:
 
 ```powershell
-uv run --no-sync pytest tests/converters/test_olmocr_bench.py --run-integration
+uv run --no-sync python -m pytest tests/converters/test_olmocr_bench.py --run-integration
 ```
 
 See the [benchmark guide](../benchmarks/README.md) for harness options,
