@@ -12,6 +12,7 @@ from doclayout.schema.blocks import Block, Table, TableCell
 from doclayout.schema.document import Document
 from doclayout.schema.groups.page import PageGroup
 from doclayout.schema.polygon import PolygonBox
+from doclayout.security import check_table
 
 logger = get_logger()
 
@@ -293,20 +294,10 @@ score: 5
         if not table:
             return []
 
+        _, max_cols = check_table(table)
         # Initialize grid
         rows = table.find_all("tr")
         cells = []
-
-        # Find maximum number of columns in colspan-aware way
-        max_cols = 0
-        for row in rows:
-            row_tds = row.find_all(["td", "th"])
-            curr_cols = 0
-            for cell in row_tds:
-                colspan = int(cell.get("colspan", 1))
-                curr_cols += colspan
-            if curr_cols > max_cols:
-                max_cols = curr_cols
 
         grid = [[True] * max_cols for _ in range(len(rows))]
 

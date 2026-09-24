@@ -13,6 +13,7 @@ from doclayout.processors.llm import BaseLLMComplexBlockProcessor
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, TableCell
 from doclayout.schema.document import Document
+from doclayout.security import check_table
 
 logger = get_logger()
 
@@ -155,12 +156,7 @@ Table 2
             return self.get_row_count(cells), self.get_column_count(cells)
         if block.html:
             soup = BeautifulSoup(block.html, "html.parser")
-            rows = soup.find_all("tr")
-            col_count = 0
-            for row in rows:
-                cols = sum(int(c.get("colspan", 1)) for c in row.find_all(["td", "th"]))
-                col_count = max(col_count, cols)
-            return len(rows), col_count
+            return check_table(soup)
         return 0, 0
 
     def rewrite_blocks(self, document: Document):
@@ -387,6 +383,7 @@ Table 2
             return None
         for row in rows2:
             container.append(row)
+        check_table(table1)
         return str(soup1)
 
     def validate_merge(
