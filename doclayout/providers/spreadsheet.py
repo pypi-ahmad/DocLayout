@@ -1,8 +1,10 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-import os
-import tempfile
 
-from doclayout.providers.pdf import PdfProvider
+from doclayout.providers.converted import ConvertedPdfProvider
+from html import escape
+
+from doclayout.security import embedded_resource, DocumentLimitError
+from doclayout.settings import settings
 
 css = """
 @page {
@@ -29,24 +31,8 @@ td {
 """
 
 
-class SpreadSheetProvider(PdfProvider):
-    def __init__(self, filepath: str, config=None):
-        temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        self.temp_pdf_path = temp_pdf.name
-        temp_pdf.close()
-
-        # Convert XLSX to PDF
-        try:
-            self.convert_xlsx_to_pdf(filepath)
-        except Exception as e:
-            raise RuntimeError(f"Failed to convert {filepath} to PDF: {e}")
-
-        # Initialize the PDF provider with the temp pdf path
-        super().__init__(self.temp_pdf_path, config)
-
-    def __del__(self):
-        if os.path.exists(self.temp_pdf_path):
-            os.remove(self.temp_pdf_path)
+class SpreadSheetProvider(ConvertedPdfProvider):
+    conversion_method = "convert_xlsx_to_pdf"
 
     def convert_xlsx_to_pdf(self, filepath: str):
         from openpyxl import load_workbook
@@ -54,20 +40,29 @@ class SpreadSheetProvider(PdfProvider):
 
         html = ""
         workbook = load_workbook(filepath)
-        if workbook is not None:
+        try:
+            if (
+                sum(sheet.max_row * sheet.max_column for sheet in workbook)
+                > settings.DOCLAYOUT_MAX_WORKSHEET_CELLS
+            ):
+                raise DocumentLimitError("Workbook exceeds the cell limit.")
             for sheet_name in workbook.sheetnames:
                 sheet = workbook[sheet_name]
                 html += (
-                    f"<div><h1>{sheet_name}</h1>"
+                    f"<div><h1>{escape(sheet_name)}</h1>"
                     + self._excel_to_html_table(sheet)
                     + "</div>"
                 )
-        else:
-            raise ValueError("Invalid XLSX file")
+        finally:
+            workbook.close()
 
         # We convert the HTML into a PDF
-        HTML(string=html).write_pdf(
-            self.temp_pdf_path, stylesheets=[CSS(string=css), self.get_font_css()]
+        HTML(string=html, url_fetcher=embedded_resource).write_pdf(
+            self.temp_pdf_path,
+            stylesheets=[
+                CSS(string=css, url_fetcher=embedded_resource),
+                self.get_font_css(),
+            ],
         )
 
     @staticmethod
@@ -83,7 +78,14 @@ class SpreadSheetProvider(PdfProvider):
         return merged_info
 
     def _excel_to_html_table(self, sheet):
+        if sheet.max_row * sheet.max_column > settings.DOCLAYOUT_MAX_WORKSHEET_CELLS:
+            raise DocumentLimitError("Worksheet exceeds the cell limit.")
         merged_cells = self._get_merged_cell_ranges(sheet)
+        if (
+            sum(item["rowspan"] * item["colspan"] for item in merged_cells.values())
+            > settings.DOCLAYOUT_MAX_WORKSHEET_CELLS
+        ):
+            raise DocumentLimitError("Merged cells exceed the cell limit.")
 
         html = "<table>"
 
@@ -106,11 +108,11 @@ class SpreadSheetProvider(PdfProvider):
                                 skip_cells.add((r, c))
 
                     # Add merged cell with rowspan/colspan
-                    value = cell.value if cell.value is not None else ""
+                    value = escape(str(cell.value)) if cell.value is not None else ""
                     html += f'<td rowspan="{merge_info["rowspan"]}" colspan="{merge_info["colspan"]}">{value}'
                 else:
                     # Regular cell
-                    value = cell.value if cell.value is not None else ""
+                    value = escape(str(cell.value)) if cell.value is not None else ""
                     html += f"<td>{value}"
 
                 html += "</td>"

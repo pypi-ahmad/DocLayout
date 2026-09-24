@@ -3,6 +3,7 @@ import os
 
 from dotenv import find_dotenv
 from pydantic_settings import BaseSettings
+from pydantic import Field
 
 
 class Settings(BaseSettings):
@@ -18,6 +19,16 @@ class Settings(BaseSettings):
     # General
     OUTPUT_ENCODING: str = "utf-8"
     OUTPUT_IMAGE_FORMAT: str = "JPEG"
+
+    # Operator policy; these settings are never accepted from HTTP requests.
+    DOCLAYOUT_MAX_FILE_MIB: int = Field(default=200, gt=0)
+    DOCLAYOUT_MAX_PAGES: int = Field(default=500, gt=0)
+    DOCLAYOUT_MAX_ARCHIVE_MEMBERS: int = Field(default=10000, gt=0)
+    DOCLAYOUT_MAX_EXPANDED_MIB: int = Field(default=1024, gt=0)
+    DOCLAYOUT_MAX_SOURCE_PIXELS: int = Field(default=64000000, gt=0)
+    DOCLAYOUT_MAX_RENDER_PIXELS: int = Field(default=16000000, gt=0)
+    DOCLAYOUT_MAX_WORKSHEET_CELLS: int = Field(default=1000000, gt=0)
+    DOCLAYOUT_MAX_RESOURCE_MIB: int = Field(default=64, gt=0)
 
     class Config:
         env_file = find_dotenv("local.env")

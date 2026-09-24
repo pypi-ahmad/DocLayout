@@ -69,16 +69,25 @@ def assign_config(cls, config: BaseModel | dict | None):
 
 
 def parse_range_str(range_str: str) -> List[int]:
-    range_lst = range_str.split(",")
-    page_lst = []
-    for i in range_lst:
-        if "-" in i:
-            start, end = i.split("-")
-            page_lst += list(range(int(start), int(end) + 1))
-        else:
-            page_lst.append(int(i))
-    page_lst = sorted(list(set(page_lst)))  # Deduplicate page numbers and sort in order
-    return page_lst
+    from doclayout.security import DocumentLimitError
+
+    if not isinstance(range_str, str) or not range_str or len(range_str) > 4096:
+        raise ValueError("Invalid page range.")
+    pages = set()
+    for part in range_str.split(","):
+        match = re.fullmatch(r"\s*([0-9]{1,9})(?:-([0-9]{1,9}))?\s*", part)
+        if match is None:
+            raise ValueError("Invalid page range.")
+        start = int(match[1])
+        end = int(match[2]) if match[2] is not None else start
+        if end < start:
+            raise ValueError("Invalid page range.")
+        if end - start + 1 > settings.DOCLAYOUT_MAX_PAGES:
+            raise DocumentLimitError("Too many selected pages.")
+        pages.update(range(start, end + 1))
+        if len(pages) > settings.DOCLAYOUT_MAX_PAGES:
+            raise DocumentLimitError("Too many selected pages.")
+    return sorted(pages)
 
 
 def matrix_intersection_area(
@@ -106,15 +115,34 @@ def matrix_intersection_area(
 
 def download_font():
     if not os.path.exists(settings.FONT_PATH):
+        import tempfile
+        import time
+
+        from doclayout.security import DocumentLimitError, MIB
+
         os.makedirs(os.path.dirname(settings.FONT_PATH), exist_ok=True)
         font_dl_path = f"{settings.ARTIFACT_URL}/{settings.FONT_NAME}"
-        with (
-            requests.get(font_dl_path, stream=True) as r,
-            open(settings.FONT_PATH, "wb") as f,
-        ):
-            r.raise_for_status()
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
+        temp_path = None
+        deadline = time.monotonic() + 60
+        try:
+            with requests.get(font_dl_path, stream=True, timeout=(5, 10)) as r:
+                r.raise_for_status()
+                with tempfile.NamedTemporaryFile(
+                    dir=os.path.dirname(settings.FONT_PATH), delete=False
+                ) as f:
+                    temp_path = f.name
+                    size = 0
+                    for chunk in r.iter_content(chunk_size=8192):
+                        size += len(chunk)
+                        if size > settings.DOCLAYOUT_MAX_RESOURCE_MIB * MIB:
+                            raise DocumentLimitError("Font exceeds the size limit.")
+                        if time.monotonic() > deadline:
+                            raise TimeoutError("Font download timed out.")
+                        f.write(chunk)
+            os.replace(temp_path, settings.FONT_PATH)
+        finally:
+            if temp_path is not None and os.path.exists(temp_path):
+                os.unlink(temp_path)
 
 
 # Modification of unwrap_math from surya.recognition

@@ -33,8 +33,18 @@ class BaseProvider:
     def __enter__(self):
         return self
 
+    def close(self):
+        pass
+
+    def __exit__(self, *_):
+        self.close()
+
     @staticmethod
     def get_font_css():
+        import base64
+        from pathlib import Path
+
+        from doclayout.security import embedded_resource, DocumentLimitError, MIB
         from doclayout.util import download_font
 
         download_font()
@@ -42,11 +52,16 @@ class BaseProvider:
         from weasyprint.text.fonts import FontConfiguration
 
         font_config = FontConfiguration()
+        with Path(settings.FONT_PATH).open("rb") as font:
+            data = font.read(settings.DOCLAYOUT_MAX_RESOURCE_MIB * MIB + 1)
+        if len(data) > settings.DOCLAYOUT_MAX_RESOURCE_MIB * MIB:
+            raise DocumentLimitError("Font exceeds the size limit.")
+        font_uri = "data:font/ttf;base64," + base64.b64encode(data).decode("ascii")
         css = CSS(
             string=f"""
             @font-face {{
                 font-family: GoNotoCurrent-Regular;
-                src: url({settings.FONT_PATH});
+                src: url({font_uri});
                 font-display: swap;
             }}
             body {{
@@ -57,5 +72,6 @@ class BaseProvider:
             }}
             """,
             font_config=font_config,
+            url_fetcher=embedded_resource,
         )
         return css

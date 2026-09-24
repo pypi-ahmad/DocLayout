@@ -38,6 +38,8 @@ from doclayout.processors.reference import ReferenceProcessor
 from doclayout.processors.sectionheader import SectionHeaderProcessor
 from doclayout.processors.text import TextProcessor
 from doclayout.providers.registry import provider_from_filepath
+from doclayout.security import DocumentLimitError, MIB
+from doclayout.settings import settings
 from doclayout.renderers.markdown import MarkdownRenderer
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block
@@ -154,8 +156,12 @@ class PdfConverter(BaseConverter):
                     delete=False, suffix=".pdf"
                 ) as temp_file:
                     if isinstance(file_input, io.BytesIO):
-                        file_input.seek(0)
-                        temp_file.write(file_input.getvalue())
+                        with file_input.getbuffer() as buffer:
+                            if buffer.nbytes > settings.DOCLAYOUT_MAX_FILE_MIB * MIB:
+                                raise DocumentLimitError(
+                                    "Document exceeds the configured file size limit."
+                                )
+                            temp_file.write(buffer)
                     else:
                         raise TypeError(
                             f"Expected str or BytesIO, got {type(file_input)}"
@@ -170,8 +176,8 @@ class PdfConverter(BaseConverter):
         if isinstance(self.extraction_service, OpenAIService):
             self.extraction_service.usage.clear()
         provider_cls = provider_from_filepath(filepath)
-        provider = provider_cls(filepath, self.config)
-        document = DocumentBuilder(self.config)(provider, self.extraction_service)
+        with provider_cls(filepath, self.config) as provider:
+            document = DocumentBuilder(self.config)(provider, self.extraction_service)
         self.prepare_document(document)
 
         for processor in self.processor_list:

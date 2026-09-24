@@ -6,6 +6,7 @@ from PIL import Image
 
 from doclayout.providers import BaseProvider
 from doclayout.schema.polygon import PolygonBox
+from doclayout.security import check_file, check_pixels
 
 
 class ImageProvider(BaseProvider):
@@ -20,14 +21,20 @@ class ImageProvider(BaseProvider):
     def __init__(self, filepath: str, config=None):
         super().__init__(filepath, config)
 
-        self.images = [Image.open(filepath)]
+        check_file(filepath)
+        self.images = []
+        image = Image.open(filepath)
+        try:
+            check_pixels(*image.size, source=True)
+            if self.page_range is not None and list(self.page_range) != [0]:
+                raise ValueError("Image page_range must be [0].")
+            self.images.append(image)
+        except BaseException:
+            image.close()
+            raise
 
         if self.page_range is None:
             self.page_range = range(self.image_count)
-
-        assert max(self.page_range) < self.image_count and min(self.page_range) >= 0, (
-            f"Invalid page range, values must be between 0 and {len(self.doc) - 1}.  Min of provided page range is {min(self.page_range)} and max is {max(self.page_range)}."
-        )
 
         self.page_bboxes = {
             i: [0, 0, self.images[i].size[0], self.images[i].size[1]]
@@ -41,8 +48,13 @@ class ImageProvider(BaseProvider):
         # Treat the native image as 96 dpi - higher dpi requests (OCR) get an
         # upscaled copy so small images stay legible for the model
         scale = dpi / 96
+        for i in idxs:
+            check_pixels(
+                self.images[i].width * max(scale, 1),
+                self.images[i].height * max(scale, 1),
+            )
         if scale <= 1:
-            return [self.images[i] for i in idxs]
+            return [self.images[i].copy() for i in idxs]
         return [
             self.images[i].resize(
                 (
@@ -61,3 +73,8 @@ class ImageProvider(BaseProvider):
 
     def get_page_refs(self, idx: int) -> List[Reference]:
         return []
+
+    def close(self):
+        for image in self.images:
+            image.close()
+        self.images.clear()
