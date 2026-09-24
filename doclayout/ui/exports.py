@@ -32,15 +32,9 @@ def image_bytes(image, format="PNG"):
 
 
 def markdown_preview(markdown: str, images: dict) -> str:
-    """Embed extracted crops for the native Markdown view without changing exports."""
-    for name, image in images.items():
-        uri = "data:image/png;base64," + base64.b64encode(image_bytes(image)).decode()
-        markdown = re.sub(
-            r"(!\[[^\]]*\]\()" + re.escape(name) + r"(\))",
-            lambda match, uri=uri: match[1] + uri + match[2],
-            markdown,
-        )
-    return markdown
+    """Return sanitized preview HTML without the export's fixed white-page style."""
+    soup = BeautifulSoup(markdown_html(markdown, images), "html.parser")
+    return "<div>" + soup.body.decode_contents() + "</div>"
 
 
 def markdown_html(markdown: str, images: dict) -> str:

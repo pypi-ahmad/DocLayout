@@ -7,6 +7,8 @@ import os
 import streamlit as st
 
 from doclayout.credentials import CredentialsError
+from doclayout.security import DocumentLimitError
+from doclayout.settings import settings
 from doclayout.filenames import export_basename, export_filename, name_result
 from doclayout.scripts.common import load_models, parse_args
 from doclayout.ui.chat import answer_document_question
@@ -31,6 +33,7 @@ show_costs(cost_panel, session_usage)
 uploaded = st.sidebar.file_uploader(
     "PDF, document, or image file",
     type=["pdf", "png", "jpg", "jpeg", "gif", "pptx", "docx", "xlsx", "html", "epub"],
+    max_upload_size=settings.DOCLAYOUT_MAX_FILE_MIB,
 )
 if uploaded is None:
     for key in ("upload_id", "upload", "scope", "result", "chat", "chat_usage"):
@@ -56,6 +59,9 @@ if st.session_state.get("upload_id") != upload_id:
         with st.spinner("Preparing document…"):
             st.session_state.upload = prepare_upload(uploaded.getvalue(), uploaded.name)
         st.session_state.upload_id = upload_id
+    except DocumentLimitError as exc:
+        st.error(str(exc))
+        st.stop()
     except Exception:  # noqa: BLE001 - document errors may contain private paths
         st.error(
             "Could not prepare this document. Check the file and required document-format dependencies."
@@ -103,7 +109,7 @@ if st.sidebar.button("Run DocLayout", type="primary", disabled=not valid):
             result["annotations"] = annotations(result["document"])
             result["zip"] = output_zip(result)
             st.session_state.result = result
-    except CredentialsError as exc:
+    except (CredentialsError, DocumentLimitError) as exc:
         st.error(str(exc))
     except Exception:  # noqa: BLE001 - do not disclose provider error payloads
         st.error(
@@ -161,7 +167,7 @@ with tabs[1]:
         if view == "Raw":
             st.code(result["markdown"], language="markdown", wrap_lines=True)
         else:
-            st.markdown(markdown_preview(result["markdown"], result["images"]))
+            st.html(markdown_preview(result["markdown"], result["images"]))
 with tabs[2]:
     if tabs[2].open:
         copy_buttons(

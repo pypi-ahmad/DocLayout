@@ -70,9 +70,10 @@ uv run doclayout input.pdf output --all
 .\launch.cmd
 ```
 
-The launcher opens http://localhost:8471, stopping the previous listener on
-port 8471 first. It disables file watching; restart it after edits.
-`doclayout_gui` uses Streamlit's defaults and does not stop a port listener.
+The launcher opens http://localhost:8471 and refuses an occupied port without
+stopping its listener. It disables file watching; restart it after edits.
+`doclayout_gui` also binds loopback and leaves existing listeners alone.
+The API requires a separate bearer token; see [security limits](docs/configuration.md#security-and-resource-limits).
 
 ### pip or uv pip
 

@@ -10,6 +10,8 @@ from doclayout.providers.registry import provider_from_filepath
 from doclayout.renderers.chunk import ChunkRenderer
 from doclayout.renderers.json import JSONRenderer
 from doclayout.renderers.markdown import MarkdownRenderer
+from doclayout.security import DocumentLimitError, MIB
+from doclayout.settings import settings
 
 
 @dataclass
@@ -20,11 +22,13 @@ class Upload:
 
 
 def prepare_upload(data: bytes, name: str) -> Upload:
+    if len(data) > settings.DOCLAYOUT_MAX_FILE_MIB * MIB:
+        raise DocumentLimitError("Document exceeds the configured file size limit.")
     suffix = Path(name).suffix.lower()
     with TemporaryDirectory() as directory:
         path = Path(directory) / ("document" + suffix)
         path.write_bytes(data)
-        provider = provider_from_filepath(str(path))(str(path))
+        provider = provider_from_filepath(str(path))(str(path), {"page_range": [0]})
         try:
             count = len(provider)
             if hasattr(provider, "temp_pdf_path"):
@@ -32,9 +36,7 @@ def prepare_upload(data: bytes, name: str) -> Upload:
                 suffix = ".pdf"
             return Upload(data, suffix, count)
         finally:
-            for image in getattr(provider, "images", []):
-                image.close()
-            del provider
+            provider.close()
 
 
 def preview(upload: Upload, page: int):
@@ -43,10 +45,9 @@ def preview(upload: Upload, page: int):
         path.write_bytes(upload.data)
         provider = provider_from_filepath(str(path))(str(path), {"page_range": [page]})
         try:
-            return provider.get_images([page], 96)[0].copy()
+            return provider.get_images([page], 96)[0]
         finally:
-            for image in getattr(provider, "images", []):
-                image.close()
+            provider.close()
 
 
 def page_range(start: int, end: int, count: int) -> str:
