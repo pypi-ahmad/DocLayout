@@ -28,9 +28,8 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
 needed for GitHub-source installs. The package declares Python `>=3.10,<4`;
 Windows checks use Python 3.14. PyPI publication is deferred. The Git commands
-below install the current `main` branch, including the
-[Unreleased changes](CHANGELOG.md#unreleased). The release wheel installs the
-earlier `v2.1.0` tag.
+below install the current `main` branch. The release wheel installs `v2.1.1`;
+later changes on `main` are recorded under [Unreleased](CHANGELOG.md#unreleased).
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -85,16 +84,16 @@ uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git
 python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
 ```
 
-The `v2.1.0` release wheel avoids the Git requirement. Either installer can use
+The `v2.1.1` release wheel avoids the Git requirement. Either installer can use
 this URL:
 
 ```powershell
-uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v2.1.0/doclayout-2.1.0-py3-none-any.whl"
+uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v2.1.1/doclayout-2.1.1-py3-none-any.whl"
 ```
 
 The wheel command above installs the base CLI. To add extras to a downloaded
 wheel, use its local path, for example
-`uv pip install ".\doclayout-2.1.0-py3-none-any.whl[gui]"`.
+`uv pip install ".\doclayout-2.1.1-py3-none-any.whl[gui]"`.
 
 | Installation | Includes |
 | --- | --- |

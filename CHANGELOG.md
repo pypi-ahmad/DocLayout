@@ -5,6 +5,17 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+## 2.1.1 (2026-09-24)
+
+### Compatibility
+
+- HTTP conversion now requires `DOCLAYOUT_API_TOKEN` and a bearer header. Filepath
+  requests also require `DOCLAYOUT_INPUT_ROOT`. Errors use HTTP statuses and a
+  `detail` field instead of HTTP 200 responses with `success: false`; API clients
+  must update their authentication and error handling.
+
+### Security and reliability
+
 - Validate model table spans and expanded cell counts before rendering or
   refinement allocations, including merged HTML tables and direct callers.
 - HTTP conversion now requires a separate bearer token. Server filepath access is
@@ -14,6 +25,8 @@ GitHub hosts release assets; PyPI publication is deferred.
   resources, escaped spreadsheet text, and deterministic provider cleanup.
 - GUI launchers bind loopback; `launch.cmd` refuses an occupied port without
   terminating its listener. See configuration for security and compatibility limits.
+
+### Other updates
 
 - Added a data flow image to the README and downloadable interactive data flow
   and system architecture diagrams to the architecture guide.
