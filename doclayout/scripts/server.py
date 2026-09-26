@@ -24,9 +24,10 @@ from doclayout.config.parser import ConfigParser
 from doclayout.converters.pdf import PdfConverter
 from doclayout.credentials import api_configuration
 from doclayout.input_files import input_file
+from doclayout.layout import LayoutUnavailableError
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import text_from_rendered
-from doclayout.security import DocumentLimitError, MIB
+from doclayout.security import MIB, DocumentLimitError
 from doclayout.settings import settings
 from doclayout.util import parse_range_str
 
@@ -131,6 +132,7 @@ async def http_error(request, exc):
         413: "Document or request exceeds a configured limit.",
         422: "Invalid request fields.",
         429: "A conversion is already running.",
+        503: "Layout model unavailable. Check model files and ONNX Runtime configuration.",
     }
     return JSONResponse(
         {"detail": details.get(status, "Document conversion failed.")},
@@ -227,6 +229,8 @@ async def _run(function, *args):
         raise
     except DocumentLimitError as exc:
         raise HTTPException(413, str(exc)) from None
+    except LayoutUnavailableError as exc:
+        raise HTTPException(503, str(exc)) from None
     except Exception:
         raise HTTPException(500, "Document conversion failed.") from None
 

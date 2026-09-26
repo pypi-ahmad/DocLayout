@@ -38,15 +38,15 @@ from doclayout.processors.reference import ReferenceProcessor
 from doclayout.processors.sectionheader import SectionHeaderProcessor
 from doclayout.processors.text import TextProcessor
 from doclayout.providers.registry import provider_from_filepath
-from doclayout.security import DocumentLimitError, MIB
-from doclayout.settings import settings
 from doclayout.renderers.markdown import MarkdownRenderer
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block
 from doclayout.schema.document import Document
 from doclayout.schema.extraction import sanitize_html
 from doclayout.schema.registry import register_block_class
+from doclayout.security import MIB, DocumentLimitError
 from doclayout.services.openai import OpenAIService
+from doclayout.settings import settings
 from doclayout.util import strings_to_classes
 
 
@@ -175,9 +175,18 @@ class PdfConverter(BaseConverter):
     def build_document(self, filepath: str) -> Document:
         if isinstance(self.extraction_service, OpenAIService):
             self.extraction_service.usage.clear()
+        from doclayout.layout import get_layout_engine, prepare_for_conversion
+
+        engine = self.artifact_dict.get("layout_engine") or get_layout_engine()
+        engine = prepare_for_conversion(engine)
         provider_cls = provider_from_filepath(filepath)
         with provider_cls(filepath, self.config) as provider:
-            document = DocumentBuilder(self.config)(provider, self.extraction_service)
+            document = DocumentBuilder(self.config)(
+                provider, self.extraction_service, engine
+            )
+        from doclayout.layout import finalize_layout, pipeline_manifest
+
+        document.layout.manifest = pipeline_manifest(self.config)
         self.prepare_document(document)
 
         for processor in self.processor_list:
@@ -191,6 +200,7 @@ class PdfConverter(BaseConverter):
                     block.description = sanitize_html(block.description)
         if isinstance(self.extraction_service, OpenAIService):
             document.usage = list(self.extraction_service.usage)
+        finalize_layout(document)
         return document
 
     def prepare_document(self, document):

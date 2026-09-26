@@ -11,6 +11,7 @@ from tqdm import tqdm
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
 from doclayout.filenames import export_basename, export_filename
+from doclayout.layout import pipeline_manifest
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import output_exists, save_output
 from doclayout.services.openai import OpenAIService
@@ -70,7 +71,9 @@ def process_single_pdf(args):
         config = parser.generate_config_dict()
         folder = parser.get_output_folder(fpath)
         name = parser.get_base_filename(fpath)
-        if options.get("skip_existing") and output_exists(folder, name):
+        if options.get("skip_existing") and output_exists(
+            folder, name, fingerprint=pipeline_manifest(config)["fingerprint"]
+        ):
             return 0, True
         models = create_model_dict()
         converter = parser.get_converter_cls()(

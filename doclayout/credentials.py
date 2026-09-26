@@ -13,7 +13,16 @@ class CredentialsError(ValueError):
 
 
 def api_configuration():
-    """Caller credentials, with the same explicit-empty precedence as OpenAI."""
+    """Resolve local API access settings without changing the environment.
+
+    Returns:
+        tuple[str, Path | None]: Validated bearer token and optional input root.
+        Environment entries, including empty ones, override launch-folder .env.
+
+    Raises:
+        CredentialsError: Configuration cannot be read, the token is invalid,
+            or the input root is not an existing dedicated directory.
+    """
     names = ("DOCLAYOUT_API_TOKEN", "DOCLAYOUT_INPUT_ROOT")
     values = {}
     if any(name not in os.environ for name in names):
@@ -45,6 +54,15 @@ def api_configuration():
 
 
 def openai_credentials() -> dict[str, str]:
+    """Resolve API key/base URL from the environment or launch-folder .env.
+
+    Returns:
+        dict[str, str]: SDK api_key and base_url keyword arguments. An empty
+        environment key blocks file fallback; an empty URL uses the SDK default.
+
+    Raises:
+        CredentialsError: The file cannot be read or the selected key is blank.
+    """
     names = ("OPENAI_API_KEY", "OPENAI_BASE_URL")
     values = {}
     if any(name not in os.environ for name in names):

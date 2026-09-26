@@ -126,6 +126,9 @@ class PageGroup(Group):
         return template
 
     def replace_block(self, block: Block, new_block: Block):
+        if block.layout is not None and new_block.layout is None:
+            new_block.layout = block.layout.model_copy(deep=True)
+            new_block.layout.status = "processor"
         # Handles incrementing the id
         self.add_full_block(new_block)
 

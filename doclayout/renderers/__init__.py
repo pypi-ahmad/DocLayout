@@ -135,6 +135,13 @@ class BaseRenderer:
         if document.debug_data_path is not None:
             metadata["debug_data_path"] = document.debug_data_path
 
+        from doclayout.layout import layout_metadata
+
+        layout = layout_metadata(document)
+        if layout is not None:
+            metadata["layout"] = layout
+            metadata["extraction"]["geometry"] = "mixed-v3-sol-processor"
+
         return metadata
 
     def _splice_block_html(self, document: Document, block_output: BlockOutput):

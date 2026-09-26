@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 from PIL import ImageDraw
 
 from doclayout.filenames import export_filename
+from doclayout.schema.polygon import PolygonBox
 
 STYLE = """
 body {background:white;color:black;font-family:Georgia,'Times New Roman',serif;
@@ -26,6 +27,19 @@ p {margin:.6em 0} img {max-width:100%;height:auto} pre {overflow:auto;background
 
 
 def image_bytes(image, format="PNG"):
+    """Encode an image as RGB bytes.
+
+    Args:
+        image (PIL.Image.Image): Image to encode without modifying the original.
+        format (str): Pillow output format, normally PNG or JPEG.
+
+    Returns:
+        bytes: Encoded image.
+
+    Raises:
+        OSError: Pillow cannot encode the requested image.
+        KeyError: The requested format has no registered encoder.
+    """
     buffer = io.BytesIO()
     image.convert("RGB").save(buffer, format=format)
     return buffer.getvalue()
@@ -38,6 +52,19 @@ def markdown_preview(markdown: str, images: dict) -> str:
 
 
 def markdown_html(markdown: str, images: dict) -> str:
+    """Render sanitized standalone HTML using only known extracted images.
+
+    Args:
+        markdown (str): Converted document text.
+        images (dict): Source image names mapped to Pillow images.
+
+    Returns:
+        str: Styled HTML with embedded images and supported LaTeX conversion.
+        Unknown image sources are removed; remote resources are not fetched.
+
+    Raises:
+        OSError: An extracted image cannot be encoded.
+    """
     body = markdown2.markdown(
         markdown, extras=["tables", "fenced-code-blocks", "strike", "task_list"]
     )
@@ -182,17 +209,67 @@ def markdown_html(markdown: str, images: dict) -> str:
 
 
 def annotations(document):
+    """Draw rectangular block overlays and encode a raster annotated PDF.
+
+    Args:
+        document (Document): Converted pages with high-resolution images.
+
+    Returns:
+        dict: One-based page images, PDF bytes, and drawn/skipped box counts.
+        Invalid boxes are skipped; source images remain unchanged. Layout-aware
+        overlays follow visible final structure and retain source footprints
+        for cross-page merges. Raw V3 masks are not drawn as contour polygons.
+
+    Raises:
+        OSError: Image or PDF encoding fails.
+    """
     pages, skipped, drawn = {}, 0, 0
+    overlays = {}
+    if getattr(document, "layout", None) is not None:
+        ordinal = 0
+        for source_page in document.pages:
+            for bid in source_page.structure or []:
+                block = document.get_block(bid)
+                if block.removed or block.ignore_for_output:
+                    continue
+                ordinal += 1
+                label = f"{ordinal} {block.id}"
+                sources = block.layout.sources if block.layout is not None else []
+                if len({s.page_id for s in sources}) > 1:
+                    for source in sources:
+                        overlays.setdefault(source.page_id, []).append(
+                            (PolygonBox.from_bbox(source.bbox), label)
+                        )
+                else:
+                    overlays.setdefault(source_page.page_id, []).append(
+                        (block.polygon, label)
+                    )
     for page in document.pages:
         image = page.get_image(highres=True).convert("RGB").copy()
         draw = ImageDraw.Draw(image)
-        for block in page.children or []:
-            if block.removed or block.structure:
-                continue
+        if getattr(document, "layout", None) is not None:
+            boxes = overlays.get(page.page_id, [])
+        else:
+            boxes = [
+                (b.polygon, b.block_type.name)
+                for b in page.children or []
+                if not b.removed and not b.structure
+            ]
+        for polygon, label in boxes:
             try:
-                x0, y0, x1, y1 = block.polygon.rescale(
-                    page.polygon.size, image.size
-                ).bbox
+                if getattr(document, "layout", None) is not None:
+                    origin_x, origin_y = page.polygon.bbox[:2]
+                    coords = polygon.bbox
+                    x0, x1 = (
+                        (coords[i] - origin_x) * image.width / page.polygon.width
+                        for i in (0, 2)
+                    )
+                    y0, y1 = (
+                        (coords[i] - origin_y) * image.height / page.polygon.height
+                        for i in (1, 3)
+                    )
+                else:
+                    x0, y0, x1, y1 = polygon.rescale(page.polygon.size, image.size).bbox
                 if not (
                     all(math.isfinite(v) for v in (x0, y0, x1, y1))
                     and 0 <= x0 < x1 <= image.width
@@ -200,9 +277,7 @@ def annotations(document):
                 ):
                     raise ValueError("invalid box")
                 draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
-                draw.text(
-                    (x0, max(0, y0 - 14)), block.block_type.name, fill=(220, 30, 30)
-                )
+                draw.text((x0, max(0, y0 - 14)), label, fill=(220, 30, 30))
                 drawn += 1
             except (ValueError, TypeError, ZeroDivisionError):
                 skipped += 1
@@ -220,6 +295,20 @@ def annotations(document):
 
 
 def output_zip(result):
+    """Package existing conversion outputs without rerunning conversion.
+
+    Args:
+        result (dict): Rendered text, metadata, images, and annotation payloads;
+            optional export_base controls shared filenames.
+
+    Returns:
+        bytes: ZIP containing conversion exports and annotated page images.
+
+    Raises:
+        ValueError: An image filename is unsafe or collides with reserved output.
+        KeyError: A required export payload is missing.
+        OSError: Image encoding fails.
+    """
     buffer = io.BytesIO()
     with ZipFile(buffer, "w", ZIP_DEFLATED) as archive:
         for name, data in {

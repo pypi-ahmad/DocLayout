@@ -8,7 +8,7 @@ license-files = ["LICENSE", "NOTICE"]
 authors = [
     { name = "DocLayout" },
 ]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.11,<4"
 keywords = ["pdf", "markdown", "ocr", "nlp"]
 dependencies = [
     "pillow>=11,<13",
@@ -24,6 +24,7 @@ dependencies = [
     "markdown2>=2.5.2,<3",
     "filetype>=1.2.0,<2",
     "openai>=2.2.0,<3",
+    "jsonschema>=4.23,<5",
     "scikit-learn>=1.6.1,<2",
     "beautifulsoup4>=4.12,<5",
     "numpy>=2,<3",
@@ -32,6 +33,10 @@ dependencies = [
     "requests>=2.32,<3",
     "bleach>=6.2,<7",
     "latex2mathml>=3.77.0",
+    "onnxruntime-gpu==1.30.0 ; platform_machine == 'AMD64' and sys_platform == 'win32'",
+    "onnxruntime==1.30.0 ; platform_machine != 'AMD64' or sys_platform != 'win32'",
+    "huggingface-hub==2.0.0",
+    "pyyaml==6.0.3",
 ]
 
 [project.urls]

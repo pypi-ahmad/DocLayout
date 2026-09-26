@@ -1,9 +1,10 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
 import os
+from typing import Literal
 
 from dotenv import find_dotenv
-from pydantic_settings import BaseSettings
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -29,6 +30,10 @@ class Settings(BaseSettings):
     DOCLAYOUT_MAX_RENDER_PIXELS: int = Field(default=16000000, gt=0)
     DOCLAYOUT_MAX_WORKSHEET_CELLS: int = Field(default=1000000, gt=0)
     DOCLAYOUT_MAX_RESOURCE_MIB: int = Field(default=64, gt=0)
+    DOCLAYOUT_LAYOUT_DEVICE: Literal["auto", "cuda", "cpu"] = "auto"
+    DOCLAYOUT_LAYOUT_CACHE_DIR: str = os.path.join(BASE_DIR, "cache", "pp-doclayoutv3")
+    DOCLAYOUT_LAYOUT_MODEL_DIR: str | None = None
+    DOCLAYOUT_LAYOUT_OFFLINE: bool = False
 
     class Config:
         env_file = find_dotenv("local.env")

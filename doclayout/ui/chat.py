@@ -56,6 +56,7 @@ class Verification(BaseModel):
 
 @dataclass
 class ChatResult:
+    """Safe displayed answer/status strings, usage records, and stage diagnostics."""
     answer: str
     status: str
     usage: list[dict] = field(default_factory=list)
@@ -178,6 +179,19 @@ def _validated_text(draft: Draft, pages: dict[int, str]) -> str:
 def answer_document_question(
     pages: dict[int, str], question, history=(), *, client=None
 ) -> ChatResult:
+    """Answer from parsed pages after quote checks and independent verification.
+
+    Args:
+        pages (dict[int, str]): Original page numbers mapped to parsed text.
+        question (str): Nonempty document question, at most 2,000 characters.
+        history (Iterable[dict]): Prior turns; only six latest answered turns are used.
+        client (OpenAI | None): Borrowed client, or None to create and close one.
+
+    Returns:
+        ChatResult: Accepted answer or safe refusal/error status with reported
+        usage. An accepted answer requires two Luna/medium requests. Invalid
+        input and oversized context return before either paid request.
+    """
     result = ChatResult(UNVERIFIED, "blocked")
     if not pages:
         return ChatResult("Parse document pages before using chat.", "no_document")

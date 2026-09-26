@@ -69,7 +69,7 @@ def json_to_chunks(
 ) -> FlatBlockOutput | List[FlatBlockOutput]:
     if block.block_type == "Page":
         children = block.children
-        page_id = int(block.id.split("/")[-1])
+        page_id = int(block.id.split("/")[2])
         return [
             json_to_chunks(child, image_blocks, page_id=page_id) for child in children
         ]

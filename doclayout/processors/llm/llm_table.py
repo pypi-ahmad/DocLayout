@@ -181,6 +181,9 @@ score: 5
 
         block.structure = []
         for cell in parsed_cells:
+            if block.layout is not None:
+                cell.layout = block.layout.model_copy(deep=True)
+                cell.layout.status = "processor"
             page.add_full_block(cell)
             block.add_structure(cell)
 

@@ -27,7 +27,7 @@ class OCRJSONOutput(BaseModel):
 
 
 class OCRJSONRenderer(BaseRenderer):
-    """Return source-order blocks with model-estimated geometry, without character boxes."""
+    """Return final structure and geometry without inventing character boxes."""
 
     def __call__(self, document):
         pages = []

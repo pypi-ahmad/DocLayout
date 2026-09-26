@@ -348,6 +348,9 @@ Table 2
                     start_block = curr_block
                     continue
                 start_block.html = merged_html
+                from doclayout.layout import merge_lineage
+
+                merge_lineage(start_block, [curr_block])
                 start_block.lowres_image = self.join_images(
                     start_image, curr_image, direction
                 )
@@ -362,6 +365,9 @@ Table 2
 
             merged_image = self.join_images(start_image, curr_image, direction)
             merged_cells = self.join_cells(children, children_curr, direction)
+            from doclayout.layout import merge_lineage
+
+            merge_lineage(start_block, [curr_block])
             curr_block.structure = []
             start_block.structure = [b.id for b in merged_cells]
             start_block.lowres_image = merged_image

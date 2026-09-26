@@ -7,6 +7,7 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict, PrivateAttr, field_validator
 
 from doclayout.schema import BlockTypes
+from doclayout.schema.layout import BlockLayout
 from doclayout.schema.polygon import PolygonBox
 
 if TYPE_CHECKING:
@@ -101,6 +102,7 @@ class Block(BaseModel):
         None  # Model's token estimate for OCRing this block, from layout
     )
     metadata: BlockMetadata | None = None
+    layout: BlockLayout | None = None
     lowres_image: Image.Image | None = None
     highres_image: Image.Image | None = None
     removed: bool = False  # Has block been replaced by new block?

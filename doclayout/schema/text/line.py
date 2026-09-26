@@ -85,6 +85,9 @@ class Line(Block):
         )
 
     def merge(self, other: "Line"):
+        from doclayout.layout import merge_lineage
+
+        merge_lineage(self, [other])
         self.polygon = self.polygon.merge([other.polygon])
 
         # Handle merging structure with Nones
