@@ -1,9 +1,40 @@
 # Changelog
 
-This changelog records published releases and changes on `main` awaiting a release.
+This changelog records published releases and unreleased changes in this checkout.
 GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
+
+### Local layout with Sol fallback
+
+- Attempt PP-DocLayoutV3 for real GUI, CLI, API, PDF, and OCR conversion. Sol still
+  transcribes the whole page and writes HTML, guided by bounded layout JSON.
+- Use revision-pinned, hash-checked ONNX weights in an ignored cache and the
+  optional `layout` dependency extra (Python 3.11+). Download only absent files.
+  Auto mode supports CPU fallback; explicit CUDA never falls back to CPU. V3
+  preparation/inference failures use full-image Sol extraction, with visible
+  warnings and sanitized fallback diagnostics. There is no layout-off option.
+- Align validated Sol blocks before structure building. Preserve content in
+  ambiguous split/merge cases and protect matched V3 rectangles and reading order
+  through processing. Page correction is HTML-only; annotations draw rectangles,
+  not segmentation masks. Without a matching policy, retain Sol boxes/order and
+  use available V3 guidance only. Configured matching requires all five evaluated
+  thresholds; invalid policies remain errors.
+- Show GUI preparation, actual device, and fallback status using the existing
+  model cache. Export dedicated layout metadata with model/revision, timings,
+  original detections, matching diagnostics, and region/match counts.
+- Select `gui` and `layout` extras in the frozen Windows launcher while preserving
+  loopback binding. Relaunching now force-stops existing listeners on port 8471;
+  startup aborts if the port cannot be freed.
+
+### Documentation
+
+- Synchronize installation, conversion, API, development, benchmark, and deployment
+  instructions with V3 guidance and Sol fallback. Distinguish standalone layout
+  errors from converter fallback and preserve dated validation results.
+- Update diagram sources and generated HTML for layout preparation, alignment,
+  protected processing, and fallback. Replace the README's historical flow image
+  with a current Mermaid overview.
 
 ## 2.1.1 (2026-09-24)
 
