@@ -1,6 +1,6 @@
 [project]
 name = "doclayout"
-version = "2.1.1"
+version = "3.0.0"
 description = "From scans and images to structured Markdown."
 readme = "README.md"
 license = "Apache-2.0"
@@ -27,11 +27,11 @@ dependencies = [
     "scikit-learn>=1.6.1,<2",
     "beautifulsoup4>=4.12,<5",
     "numpy>=2,<3",
-    "opencv-python-headless>=4.10,<5",
     "pypdfium2>=4.30,<6",
     "requests>=2.32,<3",
     "bleach>=6.2,<7",
     "latex2mathml>=3.77.0",
+    "opencv-contrib-python==4.10.0.84",
 ]
 
 [project.urls]
@@ -54,6 +54,12 @@ server = [
     "python-multipart>=0.0.16",
     "uvicorn>=0.32.0",
 ]
+layout = [
+    "huggingface-hub==2.0.0 ; python_full_version >= '3.11'",
+    "onnxruntime-gpu==1.30.0 ; python_full_version >= '3.11'",
+    "paddleocr==3.7.0 ; python_full_version >= '3.11'",
+    "paddlex==3.7.2 ; python_full_version >= '3.11'",
+]
 
 [project.scripts]
 doclayout = "doclayout.scripts.convert:convert_cli"
@@ -74,10 +80,22 @@ dev = [
     "ty>=0.0.83",
     "httpx>=0.28.1",
 ]
+notebook = [
+    "ipykernel>=7,<8",
+    "jupyterlab>=4.6,<5",
+    "onnxruntime-gpu>=1.30,<1.31",
+    "paddleocr>=3.7,<3.8",
+]
+
+[tool.uv.dependency-groups]
+notebook = { requires-python = ">=3.13,<3.14" }
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/.cache/**"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["doclayout"]

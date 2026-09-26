@@ -24,13 +24,20 @@ For uploads, send a multipart `file` and optional `page_range`,
 Page extraction and extra refinement incur API charges. Conversion requests require
 `Authorization: Bearer <token>`. Filepath access is disabled by default; use uploads.
 Add deployment TLS, request timeouts and resource controls before remote use.
-It needs no GPU or model-cache volume. The deployment has not been tested live.
+The deployment has not been tested live.
 
-The example image installs the development group, including server dependencies.
+The example image installs the development group, including server dependencies,
+but does not select the `layout` extra. As written, it reports V3 dependency
+failure and continues with Sol on the full image. It needs no GPU or layout
+model-cache volume for that fallback path. Enabling V3 in a separate deployment
+would require the locked layout extra, a writable cache, and suitable native
+libraries; these are not configured by this example.
 It supports PDFs and images. Other document formats need the `full` extra and native WeasyPrint
 libraries added to the image before use. The example does not serve the Streamlit
 workbench, document chat, annotations, or ZIP downloads.
 
 Keep the root `LICENSE` file; the image copies it. API clients should check HTTP
-status codes; conversion errors now return HTTP 500 and policy limits return 413.
+status codes; ordinary conversion errors return HTTP 500, resource limits return
+413, and fatal layout configuration/guide/invariant errors return 503. Successful
+Sol fallback returns HTTP 200 with diagnostic metadata.
 See [API usage](../docs/usage.md#http-api).

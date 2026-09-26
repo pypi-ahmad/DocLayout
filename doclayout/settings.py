@@ -2,8 +2,8 @@
 import os
 
 from dotenv import find_dotenv
-from pydantic_settings import BaseSettings
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     OUTPUT_IMAGE_FORMAT: str = "JPEG"
 
     # Operator policy; these settings are never accepted from HTTP requests.
+    DOCLAYOUT_ALIGNMENT_POLICY: str | None = None
+    DOCLAYOUT_LAYOUT_DEVICE: str = "auto"
+    DOCLAYOUT_LAYOUT_CACHE_DIR: str | None = None
     DOCLAYOUT_MAX_FILE_MIB: int = Field(default=200, gt=0)
     DOCLAYOUT_MAX_PAGES: int = Field(default=500, gt=0)
     DOCLAYOUT_MAX_ARCHIVE_MEMBERS: int = Field(default=10000, gt=0)

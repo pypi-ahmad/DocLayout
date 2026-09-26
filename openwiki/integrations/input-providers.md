@@ -3,10 +3,9 @@ type: integration guide
 title: Input Providers and Normalization
 description: How DocLayout detects supported files and normalizes PDFs, images, and optional document formats into page images and geometry for extraction.
 tags: [providers, input, pdf, images, normalization]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
 sources:
+  - id: openwiki-source-c0def149d0f62564f4806923
+    resource: repo://doclayout/providers/converted.py
   - id: openwiki-source-a7f62e8435d39c3daa6c1a23
     resource: repo://doclayout/providers/document.py
   - id: openwiki-source-de7b9fa19ea13aa3e3f3869f
@@ -19,7 +18,10 @@ sources:
     resource: repo://tests/providers/test_document_providers.py
   - id: openwiki-source-aa58b2614cdad072afd30d5c
     resource: repo://tests/providers/test_pdf_provider.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+generated: { by: "codex", at: "2026-09-26T10:42:04.191Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:42:04.191Z
 ---
 
 # Input Providers and Normalization
@@ -28,7 +30,7 @@ Providers isolate source-format handling from the conversion pipeline. Regardles
 
 ## Provider selection
 
-`provider_from_filepath()` first inspects file signatures for images, PDF, EPUB, DOCX, XLSX, and PPTX. If no binary signature matches, it attempts to parse the file as HTML. Its final fallback uses the filename extension, and an unknown extension falls back to `PdfProvider`.
+`provider_from_filepath()` checks the file's size and type safety, then inspects signatures for images, PDF, EPUB, DOCX, XLSX, and PPTX. If no binary signature matches, it attempts to parse the file as HTML. Its final fallback uses the filename extension, and an unknown extension falls back to `PdfProvider`.
 
 This detection happens after byte-stream inputs have been copied to a temporary `.pdf` file. Callers that supply non-PDF bytes therefore need to use a real path with the appropriate source suffix; uploaded interfaces preserve the upload suffix when writing their own temporary file.
 
@@ -38,11 +40,11 @@ This detection happens after byte-stream inputs have been copied to a temporary 
 
 `PdfProvider` opens documents through PDFium under a process-wide reentrant lock. Initialization validates the configured zero-based page range and records each rendered page's effective width and height. This size comes from PDFium after page rotation, so the page polygon and resulting image use the same coordinate space.
 
-Each `get_images()` call reopens the document, renders selected pages at `dpi / 72`, converts them to RGB PIL images, and closes page, bitmap, and document resources. Form rendering is enabled by default. PDF embedded text is not extracted by this provider; all pages proceed as images to structured extraction.
+Each `get_images()` call reopens the document, checks the rendered pixel limit, renders selected pages at `dpi / 72`, converts them to RGB PIL images, and closes page, bitmap, and document resources. Form rendering is enabled by default. PDF embedded text is not extracted by this provider; all pages proceed as images to structured extraction.
 
 ### Images
 
-`ImageProvider` treats a single image as one page. Its polygon uses native pixel dimensions. Requests at more than 96 DPI return a Lanczos-upscaled copy; lower requests return the original image. It supplies no page references.
+`ImageProvider` treats a single image as one page. Its polygon uses native pixel dimensions. Requests at more than 96 DPI return a Lanczos-upscaled copy; lower requests return a copy at native size. Both paths check pixel limits. It supplies no page references.
 
 ## Formats normalized through PDF
 
@@ -60,7 +62,7 @@ These conversions normalize content for visual extraction; they do not preserve 
 
 ## Temporary files and optional resources
 
-Each converted-format provider owns a named temporary PDF. It closes the initial file handle before conversion, initializes `PdfProvider` only after conversion succeeds, and removes the temporary path when the provider is destroyed. Conversion errors are wrapped with source-format context.
+Each converted-format provider owns a named temporary PDF. It closes the initial file handle before conversion, initializes `PdfProvider` only after conversion succeeds, and removes the temporary path on explicit context cleanup or conversion failure. Destruction is only a fallback for callers that omit cleanup. Conversion errors are wrapped with source-format context.
 
 WeasyPrint-based providers use a shared font CSS helper. That helper downloads the configured Go Noto font when missing, disables ligatures, and configures it for rendered HTML. These dependencies and font access are only needed for formats normalized through HTML and PDF.
 
@@ -77,4 +79,5 @@ A provider implementation needs to expose the `BaseProvider` contract: length, p
 ## Related pages
 
 - [Document Conversion Workflow](../workflows/document-conversion.md)
+- [Layout Guidance and Alignment](layout-guidance-and-alignment.md)
 - [Configuration, Development, and Testing](../operations/configuration-and-testing.md)

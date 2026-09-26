@@ -2,6 +2,7 @@
 
 import io
 import json
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -89,14 +90,18 @@ def test_annotation_scaling_and_invalid_boxes():
     blocks = [
         SimpleNamespace(
             removed=False,
+            ignore_for_output=False,
             structure=[],
             block_type=BlockTypes.Text,
             polygon=PolygonBox.from_bbox(box),
         )
-        for box in ([10, 10, 30, 30], [-10, 10, 20, 20])
+        for box in ([10.0, 10.0, 30.0, 30.0], [-10.0, 10.0, 20.0, 20.0])
     ]
     page = SimpleNamespace(
         page_id=4,
+        layout=None,
+        structure=[0, 1],
+        get_block=lambda key: blocks[key],
         children=blocks,
         polygon=PolygonBox.from_bbox([0, 0, 100, 100]),
         get_image=lambda **_: source,
@@ -105,6 +110,142 @@ def test_annotation_scaling_and_invalid_boxes():
     assert result["drawn"] == 1 and result["skipped"] == 1
     assert result["pages"][5].getpixel((20, 20)) == (220, 30, 30)
     assert source.getpixel((20, 20)) == (255, 255, 255)
+
+
+def test_gui_layout_failure_has_warning_and_sol_result(
+    temp_doc, model_dict, monkeypatch
+):
+    from streamlit.testing.v1 import AppTest
+
+    from doclayout.services.layout import LayoutInferenceError
+
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)
+    model_dict["layout_service"].predict.side_effect = LayoutInferenceError(
+        "private payload"
+    )
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
+    app.file_uploader[0].set_value(
+        ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")
+    ).run()
+    next(b for b in app.button if b.label == "Run DocLayout").click().run()
+    assert not app.exception
+    assert not app.error
+    assert any("V3 unavailable" in warning.value for warning in app.warning)
+    assert all("private" not in warning.value for warning in app.warning)
+    assert "result" in app.session_state
+    assert model_dict["extraction_service"].called
+
+
+@pytest.mark.parametrize("invalid_policy", [False, True])
+def test_gui_preparation_failure_falls_back_but_invalid_policy_stops(
+    temp_doc, model_dict, monkeypatch, invalid_policy
+):
+    from streamlit.testing.v1 import AppTest
+
+    from doclayout.services.layout import LayoutArtifactError
+    from doclayout.settings import settings
+
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)
+    model_dict["layout_service"].prepare.side_effect = LayoutArtifactError(
+        "private payload"
+    )
+    model_dict["layout_service"].predict.side_effect = LayoutArtifactError(
+        "private payload"
+    )
+    if invalid_policy:
+        monkeypatch.setattr(settings, "DOCLAYOUT_ALIGNMENT_POLICY", "{}")
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
+    app.file_uploader[0].set_value(
+        ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")
+    ).run()
+    model_dict["layout_service"].prepare.assert_not_called()
+    next(b for b in app.button if b.label == "Run DocLayout").click().run()
+    assert not app.exception
+    if invalid_policy:
+        assert "Layout conversion failed" in app.error[0].value
+        assert "result" not in app.session_state
+        model_dict["layout_service"].predict.assert_not_called()
+        model_dict["extraction_service"].assert_not_called()
+    else:
+        assert not app.error
+        assert "result" in app.session_state
+        assert model_dict["extraction_service"].called
+        assert any("V3 unavailable" in warning.value for warning in app.warning)
+        assert all("private" not in warning.value for warning in app.warning)
+    assert model_dict["layout_service"].prepare.call_count == (
+        0 if invalid_policy else 1
+    )
+    if not invalid_policy:
+        assert app.status[0].state == "error"
+
+
+def test_gui_reports_actual_cpu_after_cuda_page_failure(
+    temp_doc, model_dict, monkeypatch
+):
+    from streamlit.testing.v1 import AppTest
+
+    from doclayout.services.layout import LayoutPreparation
+
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)
+    layout = model_dict["layout_service"]
+    layout.prepare.return_value = LayoutPreparation(
+        "cuda:0", "CUDAExecutionProvider", 0.1
+    )
+    predict = layout.predict.side_effect
+    reason = "CUDA page inference failed (RuntimeError); using CPU."
+    layout.predict.side_effect = lambda image: replace(
+        predict(image), fallback_reason=reason
+    )
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
+    app.file_uploader[0].set_value(
+        ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")
+    ).run()
+    layout.prepare.assert_not_called()
+    next(b for b in app.button if b.label == "Run DocLayout").click().run()
+    assert not app.exception and not app.error
+    assert "CUDAExecutionProvider" in app.status[0].label
+    assert app.status[0].state == "complete"
+    assert any("Layout: cpu" in item.value for item in app.caption)
+    assert any(item.value == reason for item in app.warning)
+    layout.prepare.assert_called_once()
+    app.number_input(key="preview_page").set_value(2).run()
+    layout.prepare.assert_called_once()
+    assert any("Layout: cpu" in item.value for item in app.caption)
+
+
+def test_gui_without_policy_extracts_with_sol_geometry(
+    temp_doc, model_dict, monkeypatch
+):
+    from streamlit.testing.v1 import AppTest
+
+    from doclayout.settings import settings
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_ALIGNMENT_POLICY", None)
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
+    app.file_uploader[0].set_value(
+        ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")
+    ).run()
+    next(b for b in app.button if b.label == "Run DocLayout").click().run()
+    assert not app.exception and not app.error
+    assert any("No matching policy configured" in item.value for item in app.info)
+    assert all(
+        page["alignment_mode"] == "sol_geometry"
+        for page in app.session_state["result"]["metadata"]["layout"]
+    )
+    assert model_dict["layout_service"].predict.call_count == 2
 
 
 def test_zip_rejects_unsafe_crop_paths():

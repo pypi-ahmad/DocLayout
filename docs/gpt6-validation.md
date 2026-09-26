@@ -4,6 +4,38 @@ This report separates live extraction observations from offline application
 checks. See [development](development.md) for verification commands,
 [usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
 
+## Documentation sync (2026-09-26)
+
+These checks applied to the pre-release checkout, including its then-uncommitted
+layout integration. That documentation pass did not change Python source,
+runtime prompts, dependencies, or launcher behavior. Earlier results below are
+historical observations, not evidence of a new live run.
+
+- The offline suite passed: **514 passed, 3 skipped** in 75.47 seconds, using
+  the existing Python 3.13 layout environment with `uv run --no-sync`.
+  This includes prompt fingerprints, mocked layout/fallback behavior, API
+  contracts, and application tests.
+- Both CLI help commands completed. OpenAPI generation succeeded, and the
+  request model still rejects extra fields and exposes no layout-off option.
+- Ten maintained Markdown files passed checks for 122 relative links and
+  anchors. Two Python examples, one JSON example, and 28 PowerShell examples
+  parsed successfully. Syntax checks do not prove installation or live execution.
+- All five diagram specifications and regenerated HTML artifacts passed nine
+  structural checks with no composition errors or warnings. Light/dark browser
+  captures were inspected. Architecture and data flow passed viewport containment
+  at 1440×900, 1600×1000, 1920×1080, and 2048×1320. Workflow, lifecycle, and chat
+  sequence still overflow vertically at some desktop sizes; their first-screen
+  visual review failed. Content remains available by scrolling. New visual
+  receipts are under the ignored `.cache` directory; existing receipts were kept.
+- Git whitespace checks passed. The OpenWiki snapshot, historical validation
+  sections, legal text, future-work plan, and unrelated work were preserved.
+
+No live Sol, CPU-layout, GPU-layout, or deployment test was run in this pass.
+No weights were downloaded and no dependencies were changed. These checks do
+not establish new extraction-accuracy, split/merge quality, GPU compatibility,
+or fresh-machine installation results. Mermaid rendering and external links
+were not exhaustively browser-tested.
+
 ## Checks for changes now on main (2026-09-23)
 
 - With `DOCLAYOUT_BENCH_DIR` pointing to an empty local directory, the offline
@@ -17,8 +49,8 @@ checks. See [development](development.md) for verification commands,
 - Cost tests cover both supplied rate tables, cached tokens, incomplete usage,
   failed requests, per-conversion isolation, and GUI session totals.
 
-The live observations below predate these changes. They are on `main`, but have
-not been published as a new GitHub release.
+The live observations below predate these changes and were not repeated for
+v3.0.0.
 
 ## Version 2.1.0 installation and CLI checks (2026-09-23)
 

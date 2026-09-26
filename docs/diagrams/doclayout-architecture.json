@@ -2,218 +2,208 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "DocLayout System Architecture",
+    "title": "DocLayout system architecture",
     "quality_profile": "showcase",
-    "viewBox": [1280, 560],
-    "views": [
-      {
-        "id": "ingest-and-extract",
-        "label": "Ingestion and extraction",
-        "focus": ["entrypoints", "providers", "sol_service", "validator", "builder"],
-        "note": "Page preparation, 192 DPI rendering, GPT-6 Sol vision extraction, and block validation."
-      },
-      {
-        "id": "model-and-processors",
-        "label": "Document processing",
-        "focus": ["builder", "processors", "doc_model"],
-        "note": "Structural refinement, line merging, and in-memory document tree construction."
-      },
-      {
-        "id": "render-and-chat",
-        "label": "Local outputs and chat",
-        "focus": ["doc_model", "renderers", "exports", "luna_service"],
-        "note": "Zero-inference local rendering alongside independent Luna chat draft verification."
-      }
+    "viewBox": [
+      1230,
+      790
     ]
   },
   "components": [
     {
-      "id": "entrypoints",
+      "id": "interfaces",
       "type": "frontend",
-      "label": "App Entry Points",
-      "sublabel": "CLI, GUI, FastAPI",
-      "pos": [60, 240],
-      "size": [140, 60]
+      "label": "Conversion entry points",
+      "sublabel": "GUI, CLI, API, Python",
+      "pos": [
+        60,
+        100
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "providers",
+      "id": "page-render",
       "type": "backend",
-      "label": "Page Providers",
-      "sublabel": "PDFium rasterizer",
-      "pos": [260, 240],
-      "size": [140, 60],
-      "tag": "192 DPI"
+      "label": "Page providers",
+      "sublabel": "Whole image at 192 DPI",
+      "pos": [
+        360,
+        100
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "sol_service",
+      "id": "local-layout",
+      "type": "backend",
+      "label": "PP-DocLayoutV3",
+      "sublabel": "Locked ORT session",
+      "pos": [
+        660,
+        100
+      ],
+      "size": [
+        210,
+        78
+      ]
+    },
+    {
+      "id": "sol-extraction",
       "type": "cloud",
       "label": "GPT-6 Sol",
-      "sublabel": "vision extraction",
-      "pos": [460, 80],
-      "size": [140, 60],
-      "tag": "concurrency <= 3"
+      "sublabel": "Full-image transcription",
+      "pos": [
+        960,
+        100
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "validator",
+      "id": "block-alignment",
       "type": "security",
-      "label": "Block Validator",
-      "sublabel": "Pydantic sanitizer",
-      "pos": [460, 240],
-      "size": [140, 60]
+      "label": "Validate and align",
+      "sublabel": "Keep unmatched Sol blocks",
+      "pos": [
+        960,
+        350
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "builder",
+      "id": "protected-processing",
       "type": "backend",
-      "label": "Document Builder",
-      "sublabel": "assembly & bounds",
-      "pos": [660, 240],
-      "size": [140, 60]
+      "label": "Document processing",
+      "sublabel": "Geometry/order invariants",
+      "pos": [
+        660,
+        350
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "processors",
-      "type": "backend",
-      "label": "Processors",
-      "sublabel": "reading order & layout",
-      "pos": [660, 390],
-      "size": [140, 60]
-    },
-    {
-      "id": "doc_model",
+      "id": "shared-document",
       "type": "database",
-      "label": "Document Model",
-      "sublabel": "in-memory doc tree",
-      "pos": [860, 240],
-      "size": [140, 60],
-      "tag": "zero store"
+      "label": "Document",
+      "sublabel": "Blocks, images, diagnostics",
+      "pos": [
+        360,
+        350
+      ],
+      "size": [
+        210,
+        78
+      ]
     },
     {
-      "id": "luna_service",
+      "id": "local-exports",
+      "type": "backend",
+      "label": "Local exports",
+      "sublabel": "Renderers and annotations",
+      "pos": [
+        60,
+        350
+      ],
+      "size": [
+        210,
+        78
+      ]
+    },
+    {
+      "id": "document-chat",
       "type": "cloud",
       "label": "GPT-6 Luna",
-      "sublabel": "grounded chat verify",
-      "pos": [860, 80],
-      "size": [140, 60],
-      "tag": "quote checks"
-    },
-    {
-      "id": "renderers",
-      "type": "backend",
-      "label": "Local Renderers",
-      "sublabel": "MD, JSON, chunks",
-      "pos": [1060, 240],
-      "size": [140, 60]
-    },
-    {
-      "id": "exports",
-      "type": "frontend",
-      "label": "File Exports",
-      "sublabel": "HTML, PDF, ZIP",
-      "pos": [1060, 390],
-      "size": [140, 60]
-    }
-  ],
-  "boundaries": [
-    {
-      "kind": "security-group",
-      "label": "External Inference APIs",
-      "wraps": ["sol_service", "luna_service"]
-    },
-    {
-      "kind": "region",
-      "label": "Local DocLayout Engine",
-      "wraps": ["providers", "validator", "builder", "processors", "doc_model", "renderers", "exports"]
+      "sublabel": "Parsed-text chat checks",
+      "pos": [
+        360,
+        600
+      ],
+      "size": [
+        210,
+        78
+      ]
     }
   ],
   "connections": [
     {
-      "id": "entry-to-providers",
-      "from": "entrypoints",
-      "to": "providers",
-      "variant": "emphasis"
+      "id": "interfaces-to-page-render",
+      "from": "interfaces",
+      "to": "page-render",
+      "label": "input"
     },
     {
-      "id": "providers-to-sol",
-      "from": "providers",
-      "to": "sol_service",
-      "fromSide": "top",
-      "toSide": "left",
-      "via": [[330, 110]]
+      "id": "page-render-to-local-layout",
+      "from": "page-render",
+      "to": "local-layout",
+      "label": "image"
     },
     {
-      "id": "sol-to-validator",
-      "from": "sol_service",
-      "to": "validator",
-      "fromSide": "bottom",
-      "toSide": "top"
+      "id": "local-layout-to-sol-extraction",
+      "from": "local-layout",
+      "to": "sol-extraction",
+      "label": "guide*"
     },
     {
-      "id": "validator-to-builder",
-      "from": "validator",
-      "to": "builder"
+      "id": "sol-extraction-to-block-alignment",
+      "from": "sol-extraction",
+      "to": "block-alignment",
+      "label": "HTML, types, boxes",
+      "labelDy": 24
     },
     {
-      "id": "builder-to-processors",
-      "from": "builder",
-      "to": "processors",
-      "fromSide": "bottom",
-      "toSide": "top"
+      "id": "block-alignment-to-protected-processing",
+      "from": "block-alignment",
+      "to": "protected-processing",
+      "label": "blocks"
     },
     {
-      "id": "processors-to-model",
-      "from": "processors",
-      "to": "doc_model",
-      "fromSide": "right",
-      "toSide": "bottom",
-      "via": [[930, 420]]
+      "id": "protected-processing-to-shared-document",
+      "from": "protected-processing",
+      "to": "shared-document",
+      "label": "tree"
     },
     {
-      "id": "model-to-renderers",
-      "from": "doc_model",
-      "to": "renderers",
-      "variant": "emphasis"
+      "id": "shared-document-to-local-exports",
+      "from": "shared-document",
+      "to": "local-exports",
+      "label": "render"
     },
     {
-      "id": "renderers-to-exports",
-      "from": "renderers",
-      "to": "exports",
-      "fromSide": "bottom",
-      "toSide": "top"
-    },
-    {
-      "id": "model-to-luna",
-      "from": "doc_model",
-      "to": "luna_service",
-      "fromSide": "top",
-      "toSide": "bottom",
-      "variant": "security"
+      "id": "shared-document-to-document-chat",
+      "from": "shared-document",
+      "to": "document-chat",
+      "label": "page text",
+      "labelDy": 24
     }
   ],
   "cards": [
     {
-      "dot": "emerald",
-      "title": "Local Processing Core",
-      "items": [
-        "Providers prepare files and rasterize pages one by one at 192 DPI",
-        "Document builder orchestrates block mapping and structural processors",
-        "In-memory document model holds all pages, blocks, and token usage"
-      ]
-    },
-    {
       "dot": "cyan",
-      "title": "Model Inference Boundaries",
+      "title": "Layout guidance",
       "items": [
-        "Shared Sol client manages rate-limiting with at most 3 concurrent calls",
-        "Document chat uses a dedicated Luna service with independent verification",
-        "Rendering, annotation, and ZIP generation require no model calls"
+        "* The same full image always reaches Sol; the guide is omitted if V3 fails.",
+        "V3 uses pinned ONNX weights; no policy means Sol geometry/order."
       ]
     },
     {
-      "dot": "violet",
-      "title": "Multi-Surface Ownership",
+      "dot": "emerald",
+      "title": "Content and outputs",
       "items": [
-        "Streamlit GUI, CLI commands, and HTTP API share the same core pipeline",
-        "Session state is isolated in memory with no persistent document store",
-        "Local exports produce Markdown, hierarchical JSON, chunks, and styled HTML"
+        "Matches retain Sol HTML/types; misses and mismatches retain Sol boxes.",
+        "Exports add no model calls. Luna chat makes separate API requests."
       ]
     }
   ]

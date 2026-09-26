@@ -7,9 +7,13 @@
 Follow the [README installation steps](../README.md#installation) for uv tool,
 manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
-API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
+API, or `full` for Office/HTML/EPUB converters. Add `layout` for V3 guidance;
+if V3 cannot run, conversion uses Sol. Without an [alignment policy](configuration.md#mandatory-layout-policy),
+Sol boxes/order are retained and V3 supplies guidance only.
+Guidance is omitted if V3 fails; the result then reports Sol fallback.
+Extras can be combined; the layout runtime requires Python 3.11+.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v2.1.1`; later changes on `main` are recorded under
+wheel installs `v3.0.0`; later changes on `main` are recorded under
 [Unreleased](../CHANGELOG.md#unreleased).
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
@@ -17,8 +21,9 @@ An ordinary package install does not include the development group; see
 WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
-providers can download a font on first use. PDF and image extraction needs no GPU
-or local model weights.
+providers can download a font on first use. V3 uses local weights, downloaded
+only when absent; CPU execution is supported. If V3 cannot run, Sol still
+extracts the page and the result records fallback.
 
 ### Installing the application package
 
@@ -26,15 +31,16 @@ For local source or wheel installation, choose one installer in your intended
 Python environment:
 
 ```powershell
-uv pip install ".[gui]"
-python -m pip install ".[gui]"
+uv pip install ".[gui,layout]"
+python -m pip install ".[gui,layout]"
 uv build --wheel
-uv pip install ".\dist\doclayout-2.1.1-py3-none-any.whl[gui]"
+uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui,layout]"
 ```
 
 See [build checks](development.md#build-and-package-checks) for verification.
 Tool-installed commands run directly. In a checkout, prefix commands with
-`uv run` to use the project's environment. Python dependencies still need an
+`uv run --extra layout` (plus `--extra gui` or `--extra server` when needed) to use
+the project's environment. Python dependencies still need an
 available package index or local cache even when DocLayout comes from GitHub.
 
 ## Credentials and model settings
@@ -47,25 +53,43 @@ page extraction always uses Sol.
 
 ## Browser workbench
 
-In the source checkout, run `launch.cmd` for the browser on port 8471. It refuses
-an occupied port without stopping its listener. The `doclayout_gui` command also
+In the source checkout, run `launch.cmd` for the browser on port 8471. It force-stops
+any process listening on that port, including unrelated apps or active conversions,
+then waits for the port to become free. Cleanup failure aborts startup with an
+error. The `doclayout_gui` command also
 binds loopback, with Streamlit's default port. It leaves port cleanup
 to the caller and forwards extra arguments to the app without
 interpreting them as Streamlit server flags.
+The launcher selects both `gui` and `layout` extras using the existing frozen
+lockfile. A complete evaluated policy enables V3 geometry/order matching;
+without one, the GUI reports that it is retaining Sol boxes/order.
 
 1. Upload a PDF, PNG, JPEG, GIF, DOCX, PPTX, XLSX, HTML, or EPUB file.
 2. Choose Start page and End page. Both are inclusive and numbered from 1; the
    default selects the entire document. Images are treated as a single page.
 3. Optionally enable extra refinement or retain page headers and footers.
-4. Select Run DocLayout. Each selected page is sent for extraction.
+4. Select Run DocLayout. Preparation verifies cached V3 weights, downloads absent
+   files on first use, and warms up the local model. Readiness shows the actual
+   CUDA or CPU provider, or a warning if V3 is unavailable. Each selected whole-page
+   image goes to Sol, with a guide when available, to transcribe content and write HTML.
 5. Inspect and download the result from the tabs.
+
+Auto mode falls back to CPU if CUDA setup or inference fails; final results show
+the device actually used and the fallback reason. Explicit CPU never probes CUDA;
+explicit CUDA never falls back to CPU. No compatible GPU is required.
+V3 preparation/inference failures produce a visible warning and Sol processes the
+full image without a guide, keeping its validated boxes and order. Invalid
+configuration, guide limits, and downstream layout-invariant violations remain
+errors. Corrupt cached weights trigger fallback. There is no layout toggle.
+Preview and downloads do not reload the model.
+Debug metadata includes layout timing, region counts, and match counts.
 
 | Tab | Behavior |
 | --- | --- |
 | Input preview | View a source page; converted office documents use their prepared PDF |
 | Markdown | Sanitized theme-aware preview or raw Markdown; copy raw/formatted content or download `.md` |
 | HTML | Styled white-page preview generated from the exact Markdown; copy or download HTML |
-| Annotated | Estimated region boxes over page images; download individual PNGs or a raster PDF |
+| Annotated | V3-derived matched boxes and Sol-estimated unmatched boxes; rectangles, not masks; download PNGs or a raster PDF |
 | JSON | Hierarchical document output with metadata |
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
@@ -79,7 +103,8 @@ Clipboard operations require browser support and permission on localhost/HTTPS.
 The ZIP contains Markdown, HTML, document JSON, chunks, metadata, extracted crops,
 and annotated PDF/PNGs. All use the [output filename convention](#output-filenames).
 It excludes the uploaded source and chat. Annotations are raster copies with
-estimated boxes. They contain no searchable PDF text layer.
+V3-derived matched boxes and Sol-estimated unmatched boxes, not masks. They
+contain no searchable PDF text layer.
 
 Switching tabs and downloading files reuse the result without new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
@@ -113,17 +138,17 @@ results adds no model cost. See [rates and limitations](configuration.md#cost-es
 From a clone:
 
 ```powershell
-uv run doclayout document.pdf output
-uv run doclayout document.pdf output --all
-uv run doclayout document.pdf output --markdown --html
-uv run doclayout document.pdf output --json --chunks --metadata
-uv run doclayout document.pdf output --annotated-pdf --annotated-images
-uv run doclayout document.pdf output --zip
-uv run doclayout document.pdf output --all --page_range 0,2-4 --use_llm
-uv run doclayout --help
+uv run --extra layout doclayout document.pdf output
+uv run --extra layout doclayout document.pdf output --all
+uv run --extra layout doclayout document.pdf output --markdown --html
+uv run --extra layout doclayout document.pdf output --json --chunks --metadata
+uv run --extra layout doclayout document.pdf output --annotated-pdf --annotated-images
+uv run --extra layout doclayout document.pdf output --zip
+uv run --extra layout doclayout document.pdf output --all --page_range 0,2-4 --use_llm
+uv run --extra layout doclayout --help
 ```
 
-After a uv tool install, run the same commands without `uv run`.
+After a uv tool install, run the same commands without `uv run --extra layout`.
 The file command requires a destination, either the second positional argument
 or `--output_dir`. It builds one document and reuses it for every selected
 export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
@@ -138,7 +163,7 @@ export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
 | `--chunks` | `BASE_chunks.json`, flattened blocks with metadata |
 | `--metadata` | `BASE_metadata.json` |
 | `--images` | Extracted crop files, when present and enabled |
-| `--annotated-pdf` | `BASE_annotated.pdf`, a raster PDF with estimated region boxes |
+| `--annotated-pdf` | `BASE_annotated.pdf`, a raster PDF with V3-derived matched boxes and Sol-estimated unmatched boxes |
 | `--annotated-images` | `annotations/BASE_page-N.png`, using original one-based page numbers |
 | `--zip` | `BASE.zip`, containing the complete GUI bundle |
 | `--all` | Every file above, including the ZIP |
@@ -178,9 +203,9 @@ limited to 140 characters to leave room for export suffixes.
 ### Folder and legacy single-file conversion
 
 ```powershell
-uv run doclayout documents --output_dir output --workers 1 --skip_existing
-uv run doclayout_single document.pdf --output_dir output --output_format markdown
-uv run doclayout_single document.pdf --page_range 0,2-4 --output_format html
+uv run --extra layout doclayout documents --output_dir output --workers 1 --skip_existing
+uv run --extra layout doclayout_single document.pdf --output_dir output --output_format markdown
+uv run --extra layout doclayout_single document.pdf --page_range 0,2-4 --output_format html
 ```
 
 These commands use a directory per document, with timestamped filenames, crops,
@@ -220,10 +245,17 @@ finally:
 
 `PdfConverter` accepts a filepath or PDF `BytesIO`. Its default renderer returns
 Markdown, images, and metadata. `TableConverter` selects tables, forms, and
-tables of contents; `OCRConverter` returns ordered blocks with HTML and estimated
-geometry. Select other renderers by their full class paths.
-Invalid configuration raises `ValueError`; failed model extraction raises
-`ExtractionError`. Close shared models after use to release the HTTP client.
+tables of contents; `OCRConverter` returns aligned blocks with HTML, V3-matched
+geometry, and flagged Sol-only estimates. Select other renderers by their full
+class paths. `OCRConverter` skips grouping and default processors. All converters
+use the alignment-policy and Sol-fallback behavior described above.
+Fatal layout configuration, guide, or invariant errors raise `LayoutError`
+subclasses. V3 runtime failures are handled by conversion and recorded in
+`rendered.metadata["layout"]`; direct `LayoutService` calls still raise typed
+runtime errors. Other invalid configuration raises `ValueError`, and failed Sol
+extraction raises `ExtractionError`.
+Close shared models after use to release the HTTP client. Local layout sessions
+remain cached for the process lifetime.
 
 ## HTTP API
 
@@ -234,7 +266,7 @@ of source control and logs. Rotation requires restarting the API process.
 $env:DOCLAYOUT_API_TOKEN = uv run --no-sync python -c "import secrets; print(secrets.token_urlsafe(32))"
 # Optional: an existing dedicated input directory, needed only for filepath requests.
 $env:DOCLAYOUT_INPUT_ROOT = 'D:\documents\api-input'
-uv run doclayout_server --host 127.0.0.1 --port 8000
+uv run --extra server --extra layout doclayout_server --host 127.0.0.1 --port 8000
 ```
 
 Interactive API documentation is at `http://127.0.0.1:8000/docs`; the generated
@@ -264,8 +296,12 @@ Successful responses contain `success`, `format`, `output`, `images`, and
 `metadata`. `output` is a string, including serialized JSON for JSON/chunks;
 image values are base64 strings. Clients must check HTTP status: 401 for missing
 or invalid authentication, 403 for disallowed filepath access, 413 for resource
-limits, 422 for invalid fields, 429 while busy, and 500 for conversion failures.
+limits, 422 for invalid fields, 429 while busy, 503 for fatal layout errors,
+and 500 for other conversion failures.
 Malformed multipart requests may return 400. Errors omit private exception detail.
+V3 runtime failure alone is not an HTTP failure: successful Sol fallback returns
+200 with `alignment_mode: sol_fallback` and a sanitized layout `error_code` in
+metadata. There is no HTTP parameter to disable V3 or set its device/cache/policy.
 The API process runs one conversion at a time. GUI chat, annotations, and ZIP
 downloads have no HTTP endpoints. Defaults are 200 MiB and 500 selected pages;
 see [security limits](configuration.md#security-and-resource-limits).
@@ -278,7 +314,12 @@ see [security limits](configuration.md#security-and-resource-limits).
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
-| Port 8471 remains occupied | Close the owning application yourself or use another port; the launcher never terminates it |
+| Port 8471 remains occupied | `launch.cmd` tries to force-stop its listeners; check the cleanup error if it cannot. `doclayout_gui` does not stop listeners |
+| V3 unavailable, Sol fallback | Read the layout `error_code`; check the layout extra, model-cache access, or native runtime. Restart after repairing a cached startup failure |
+| V3 misses content or disagrees | Sol blocks are retained. Review their `sol_only` reasons; do not invent matching thresholds to force agreement |
+| Sol boxes/order, V3 guidance only | No matching policy is configured. This is supported; enable replacements only with a complete evaluated policy |
+| Fatal layout error | Check invalid policy/device settings, guide limits, or a processor changing protected layout. These do not trigger Sol fallback |
+| Hardlink warning during uv installation | uv falls back to copying across filesystems. `UV_LINK_MODE=copy` suppresses the warning; it does not fix missing packages |
 | Clipboard copy unavailable | Use localhost/HTTPS and allow clipboard access, or download the file |
 | Results disappear | Upload/processing changes invalidate them; a disconnected/replaced session can lose memory |
 | Header or table is wrong | Review the source and try optional refinement; correctness is not guaranteed |

@@ -14,6 +14,8 @@ from zipfile import ZipFile
 import requests
 from playwright.sync_api import expect, sync_playwright
 
+from doclayout.settings import settings
+
 
 def test_browser_exports_and_no_repeat_ocr(tmp_path, temp_doc, page_result):
     root = Path(__file__).resolve().parents[1]
@@ -24,6 +26,16 @@ def test_browser_exports_and_no_repeat_ocr(tmp_path, temp_doc, page_result):
 from pathlib import Path
 import doclayout.scripts.common
 from openai.resources.responses.responses import Responses
+from doclayout.services.layout import LayoutPreparation, LayoutResult, MODEL_ID, MODEL_REVISION
+from doclayout.settings import settings
+
+settings.DOCLAYOUT_ALIGNMENT_POLICY = {settings.DOCLAYOUT_ALIGNMENT_POLICY!r}
+class OfflineLayout:
+    def prepare(self):
+        return LayoutPreparation("cpu", "CPUExecutionProvider", 0)
+
+    def predict(self, image):
+        return LayoutResult(MODEL_ID, MODEL_REVISION, "cpu", "CPUExecutionProvider", 0, image.size, ())
 def blocked(*args, **kwargs):
     raise AssertionError("Live API disabled in browser test")
 Responses.create = blocked
@@ -33,7 +45,7 @@ def extract(prompt, image, block, schema, **kwargs):
         stream.write("call\\n")
     block.update_metadata(llm_request_count=1, llm_tokens_used=123)
     return {page_result!r}
-doclayout.scripts.common.load_models = lambda: {{"extraction_service": extract}}
+doclayout.scripts.common.load_models = lambda: {{"extraction_service": extract, "layout_service": OfflineLayout()}}
 runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="__main__")
 """,
         encoding="utf-8",
@@ -87,6 +99,9 @@ runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="_
                 expect(page.get_by_text("OCR complete", exact=False)).to_be_visible(
                     timeout=30_000
                 )
+                expect(
+                    page.get_by_text("PP-DocLayoutV3 ready", exact=False)
+                ).to_be_visible()
                 page.get_by_role("tab", name="Markdown", exact=True).click()
                 page.get_by_role("button", name="Copy Markdown", exact=True).click()
                 expect(

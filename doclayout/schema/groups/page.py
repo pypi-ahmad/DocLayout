@@ -9,6 +9,7 @@ from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, BlockId
 from doclayout.schema.blocks.base import BlockMetadata
 from doclayout.schema.groups.base import Group
+from doclayout.schema.layout import PageLayout
 from doclayout.schema.polygon import PolygonBox
 
 
@@ -21,6 +22,7 @@ class PageGroup(Group):
     block_description: str = "A single page in the document."
     refs: List[Reference] | None = None
     ocr_errors_detected: bool = False
+    layout: PageLayout | None = None
 
     def incr_block_id(self):
         if self.block_id is None:

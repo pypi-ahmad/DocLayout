@@ -5,23 +5,26 @@
 ## Environment
 
 Use PowerShell and uv from the repository root. The package declares Python
-`>=3.10,<4`; the recorded Windows checks used Python 3.14.
-The checks did not cover every supported Python version.
+`>=3.10,<4`; the V3 extra requires Python 3.11+. Use Python 3.13 for the
+layout-enabled Windows environment. Earlier dated checks used Python 3.14;
+neither set covers every supported Python version.
 
 ```powershell
-uv sync --locked --group dev --extra full
-uv run playwright install chromium --only-shell
+uv sync --locked --python 3.13 --group dev --extra full --extra layout
+uv run --no-sync playwright install chromium --only-shell
 ```
 
 The `dev` group supplies GUI, API, test, and development tools. The `full` extra
 adds Office/HTML/EPUB converters; see their [native library requirements](usage.md#installation).
+The `layout` extra supplies PaddleOCR/PaddleX, the Hub client, and ONNX Runtime.
+Offline tests inject fake layout engines and do not download weights.
 End-user installs can use the `gui` or `server` extras. Wheel and pip installs do
 not include the development group. Keep `pyproject.toml` and `uv.lock` together
 when changing dependencies, and avoid unrelated upgrades.
 
 Stop processes using this project's environment before an exact sync removes
 packages: Windows can lock loaded `.pyd` files. If an application must remain
-running, `uv sync --locked --group dev --extra full --inexact` retains extra
+running, `uv sync --locked --group dev --extra full --extra layout --inexact` retains extra
 packages. Test removed dependencies in a fresh environment because an inexact
 sync may leave packages that hide a missing dependency.
 
@@ -54,12 +57,17 @@ CLI export tests cover format selection, one extraction per page, GUI-equivalent
 HTML, ZIP contents, overwrite behavior, and input/output path protection.
 The browser test runs Streamlit with mocked extraction. It checks clipboard
 downloads and verifies that switching views does not repeat OCR.
+Layout tests cover artifact verification, device selection, runtime fallback,
+deterministic matching, split/merge retention, protected geometry/order, and
+GUI/CLI/API behavior. A fake engine may be injected for tests; there is no
+user-facing layout-off option.
 
 For a focused check while developing:
 
 ```powershell
 uv run --no-sync python -m pytest tests/config tests/services tests/test_chat_prompts.py
 uv run --no-sync python -m pytest tests/test_ui.py tests/test_ui_browser.py
+uv run --no-sync python -m pytest tests/services/test_layout.py tests/builders/test_alignment.py tests/test_layout_wiring.py tests/test_entrypoints.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's
@@ -79,6 +87,20 @@ Live tests make billable requests and run only when explicitly selected:
 ```powershell
 uv run --no-sync python -m pytest tests/converters/test_olmocr_bench.py --run-integration
 ```
+
+Two synthetic layout checks are also explicitly opt-in:
+
+```powershell
+# Uses real V3 on CPU and sends a generated page to Sol; billable.
+uv run --no-sync python -m pytest tests/converters/test_layout_live.py::test_live_cpu_conversion --run-integration -s
+# Local V3 GPU check; no Sol request, but may download absent weights.
+uv run --no-sync python -m pytest tests/converters/test_layout_live.py::test_live_gpu_layout --run-integration -s
+```
+
+Check compatible GPU libraries before the GPU test. Inspect its actual provider
+and any skip/fallback reason rather than treating installed GPU packages as proof
+of CUDA execution. These synthetic tests do not calibrate matching thresholds or
+establish accuracy on user documents.
 
 See the [benchmark guide](../benchmarks/README.md) for harness options,
 [fixture provenance](../tests/data/olmocr_bench/README.md) for optional local data, and
@@ -155,8 +177,12 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Changelog | Changes and compatibility history |
 | Validation | Dated observations and verification limits |
 | Benchmark/example/fixture guides | Their specific workflows and provenance |
+| Diagram specifications and HTML | Visual explanations of verified current behavior |
 
 Link to the guide that covers a topic instead of copying its tables. Record
 changes awaiting a release under Unreleased in the changelog, and date historical
 measurements. Check links, anchors, and executable examples. Run live requests
 only as part of an explicit evaluation.
+OpenWiki and graph indexes are generated snapshots, not code authorities.
+Keep runtime Markdown prompts out of prose-only documentation edits. Preserve
+historical validation results and future-work plans as such.

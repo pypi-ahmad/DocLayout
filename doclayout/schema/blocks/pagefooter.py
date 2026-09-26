@@ -13,8 +13,9 @@ class PageFooter(Block):
     html: str | None = None
 
     def assemble_html(self, document, child_blocks, parent_structure, block_config):
-        if block_config and block_config.get("keep_pagefooter_in_output"):
-            self.ignore_for_output = False
+        self.ignore_for_output = not (
+            block_config and block_config.get("keep_pagefooter_in_output")
+        )
 
         if self.html and not self.ignore_for_output:
             return self.html

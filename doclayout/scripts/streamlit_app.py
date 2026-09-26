@@ -6,11 +6,20 @@ import os
 
 import streamlit as st
 
+from doclayout.config.parser import ConfigParser
 from doclayout.credentials import CredentialsError
-from doclayout.security import DocumentLimitError
-from doclayout.settings import settings
 from doclayout.filenames import export_basename, export_filename, name_result
+from doclayout.models import prepare_layout_model
+from doclayout.schema.layout import alignment_policy
 from doclayout.scripts.common import load_models, parse_args
+from doclayout.security import DocumentLimitError
+from doclayout.services.layout import (
+    LAYOUT_RUNTIME_ERRORS,
+    LayoutError,
+    layout_error_message,
+    layout_fallback_message,
+)
+from doclayout.settings import settings
 from doclayout.ui.chat import answer_document_question
 from doclayout.ui.clipboard import copy_buttons
 from doclayout.ui.costs import show_costs
@@ -100,17 +109,42 @@ if st.sidebar.button("Run DocLayout", type="primary", disabled=not valid):
         st.session_state.pop(key, None)
     try:
         options["page_range"] = page_range(start, end, upload.count)
-        with st.spinner("Extracting selected pages…"):
-            result = run_document(
-                upload, options, load_models(), usage_entries=session_usage
+        # Honor config_json overrides before preparing a model or sending a page.
+        policy = alignment_policy(ConfigParser(options).generate_config_dict())
+        if policy is None:
+            st.info(
+                "No matching policy configured: using Sol boxes and order, with V3 guidance when available."
             )
+        with st.status("Preparing PP-DocLayoutV3…") as layout_status:
+            st.write(
+                "Checking cached weights; downloading only if absent, then warming up."
+            )
+            models = load_models()
+            try:
+                ready = prepare_layout_model(models)
+            except LAYOUT_RUNTIME_ERRORS as exc:
+                layout_status.update(
+                    label="V3 unavailable · Sol fallback", state="error"
+                )
+                st.warning(layout_fallback_message(exc))
+            else:
+                layout_status.update(
+                    label=f"PP-DocLayoutV3 ready · {ready.actual_device} · {ready.provider}",
+                    state="complete",
+                )
+                if ready.fallback_reason:
+                    st.warning(ready.fallback_reason)
+        with st.spinner("Extracting selected pages…"):
+            result = run_document(upload, options, models, usage_entries=session_usage)
             name_result(result, export_basename(uploaded.name))
             result["html"] = markdown_html(result["markdown"], result["images"])
-            result["annotations"] = annotations(result["document"])
+            result["annotations"] = annotations(result["document"], options)
             result["zip"] = output_zip(result)
             st.session_state.result = result
     except (CredentialsError, DocumentLimitError) as exc:
         st.error(str(exc))
+    except LayoutError as exc:
+        st.error(layout_error_message(exc))
     except Exception:  # noqa: BLE001 - do not disclose provider error payloads
         st.error(
             "Conversion failed. Check API availability, credentials, and the selected document. No result was retained."
@@ -141,6 +175,21 @@ if not result:
     st.info("Select a page range and run DocLayout to create results.")
     st.stop()
 st.sidebar.success(f"OCR complete · {len(result['document'].pages)} page(s)")
+layout_pages = result["metadata"].get("layout", [])
+if layout_pages:
+    if any(page.get("alignment_mode") == "sol_geometry" for page in layout_pages):
+        st.sidebar.caption("Sol boxes/order · V3 guidance only (no matching policy)")
+    devices = sorted({page["model"]["actual_device"] for page in layout_pages})
+    seconds = sum(page["model"]["elapsed_seconds"] for page in layout_pages)
+    st.sidebar.caption(f"Layout: {', '.join(devices)} · {seconds:.2f}s page inference")
+    for reason in sorted(
+        {
+            page["model"]["fallback_reason"]
+            for page in layout_pages
+            if page["model"].get("fallback_reason")
+        }
+    ):
+        st.sidebar.warning(reason)
 st.sidebar.download_button(
     "Download ZIP",
     result["zip"],
@@ -185,7 +234,7 @@ with tabs[3]:
     if tabs[3].open:
         annotated = result["annotations"]
         st.caption(
-            f"Estimated OCR boxes · {annotated['drawn']} drawn · {annotated['skipped']} invalid boxes skipped"
+            f"V3-derived matched boxes; Sol-estimated unmatched boxes · {annotated['drawn']} drawn · {annotated['skipped']} invalid boxes skipped. Rectangles, not masks."
         )
         st.download_button(
             "Download annotated PDF",

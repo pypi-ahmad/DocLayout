@@ -3,9 +3,6 @@ type: output architecture
 title: Rendering and Exports
 description: How DocLayout turns one structured document into Markdown, HTML, JSON, chunks, images, metadata, annotations, and safe filesystem or ZIP exports.
 tags: [rendering, exports, markdown, json, html, safety]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
 sources:
   - id: openwiki-source-96e22e9964ec5dc995a862c1
     resource: repo://doclayout/exports.py
@@ -19,9 +16,18 @@ sources:
     resource: repo://doclayout/renderers/json.py
   - id: openwiki-source-03df821c6b9ae2c7ec0fe520
     resource: repo://doclayout/renderers/markdown.py
+  - id: openwiki-source-cdaa752a3f645f8ee144bcdd
+    resource: repo://doclayout/renderers/ocr_json.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
+  - id: openwiki-source-43d75016fb479eccf27963fc
+    resource: repo://tests/builders/test_alignment.py
   - id: openwiki-source-154e6a78b00ef865edbb429b
     resource: repo://tests/test_cli_exports.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+generated: { by: "codex", at: "2026-09-26T10:42:04.191Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:42:04.191Z
 ---
 
 # Rendering and Exports
@@ -32,7 +38,7 @@ Renderers consume the final in-memory `Document`; they never repeat extraction. 
 
 `BaseRenderer` controls image-block types, crop extraction, header/footer visibility, output block IDs, and image resolution. Image crops come from figure, picture, and diagram polygons and may remain PIL images or become base64 strings for structured output.
 
-Every renderer metadata object includes raw request usage, estimated cost, extraction method and model, model-estimated geometry, table of contents, and per-page block/LLM statistics. Debug paths are included only when present.
+Every renderer metadata object includes raw request usage, estimated cost, extraction method and model, table of contents, and per-page block/LLM statistics. A dedicated `layout` list records each page's model/revision, actual provider/device, timing, detections, match counts, fallback status, and source/group diagnostics. Geometry is marked as V3-matched plus Sol-estimated unmatched only when matching is configured. Debug paths are included only when present.
 
 ## Output shapes
 
@@ -52,9 +58,11 @@ The GUI's downloadable HTML is built from exported Markdown. It removes active o
 
 `ChunkRenderer` reuses JSON extraction, then flattens each page's top-level blocks. Every chunk records its page, geometry, fully assembled HTML, section hierarchy, and recursively collected images. A separate `page_info` map preserves page geometry.
 
+`OCRJSONRenderer`, used by `OCRConverter`, returns visible aligned source blocks with HTML, type, page-space bounding box, and a four-corner rectangle-derived polygon. It does not supply character boxes or model segmentation masks. A top-level grouped JSON/chunk box can be the union of member boxes while source leaf geometry remains unchanged.
+
 ### Annotations and ZIP
 
-Annotations draw estimated leaf-block polygons over high-resolution page images. Invalid, nonfinite, or out-of-bounds boxes are skipped and counted. The result contains numbered PNG images, a raster PDF, and drawn/skipped totals.
+Annotations draw rectangles around visible source leaves over high-resolution page images. Matched leaves use V3-derived boxes; unmatched leaves use Sol-estimated boxes. Invalid, nonfinite, or out-of-bounds boxes are skipped and counted. The result contains numbered PNG images, a raster PDF, and drawn/skipped totals. It does not draw irregular masks.
 
 The ZIP bundle contains Markdown, sanitized HTML, hierarchical JSON, chunks, metadata, annotated PDF, image crops, and annotated page PNGs. It uses the same timestamped export names as individual CLI and GUI downloads.
 
@@ -76,4 +84,5 @@ Existing intended output files may be replaced after successful extraction and e
 
 - [Document Model and Structure](../concepts/document-model.md)
 - [Document Conversion Workflow](../workflows/document-conversion.md)
+- [Layout Guidance and Alignment](../integrations/layout-guidance-and-alignment.md)
 - [CLI, GUI, and API Interfaces](../interfaces/cli-gui-api.md)

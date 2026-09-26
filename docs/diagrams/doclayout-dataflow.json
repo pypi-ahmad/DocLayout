@@ -2,269 +2,164 @@
   "schema_version": 1,
   "diagram_type": "dataflow",
   "meta": {
-    "title": "DocLayout Data Flow",
+    "title": "DocLayout data flow",
     "quality_profile": "showcase",
-    "viewBox": [1080, 760],
-    "views": [
-      {
-        "id": "extraction-pipeline",
-        "label": "Extraction pipeline",
-        "focus": ["inputs", "provider", "sol_extract", "validator", "processors", "doc_model"],
-        "note": "Follow the primary document ingestion, Sol vision extraction, and processing path into the document model."
-      },
-      {
-        "id": "rendering-exports",
-        "label": "Local exports",
-        "focus": ["doc_model", "renderers", "gui_export"],
-        "note": "Local rendering produces Markdown, JSON chunks, styled HTML, annotated images, and raster PDFs without model calls."
-      },
-      {
-        "id": "grounded-chat",
-        "label": "Grounded chat",
-        "focus": ["doc_model", "page_text", "luna_draft", "quote_verify"],
-        "note": "Luna generates answers with page quotes, independently verified against parsed page text before citation."
-      }
+    "viewBox": [
+      1080,
+      520
     ]
   },
   "stages": [
-    { "label": "Ingest" },
-    { "label": "Extract" },
-    { "label": "Process" },
-    { "label": "Model" },
-    { "label": "Deliver & Verify" }
+    {
+      "label": "Input"
+    },
+    {
+      "label": "Page data"
+    },
+    {
+      "label": "Transcription"
+    },
+    {
+      "label": "Alignment"
+    },
+    {
+      "label": "Outputs"
+    }
   ],
   "nodes": [
     {
-      "id": "inputs",
+      "id": "source-file",
       "type": "external",
-      "label": "Source Documents",
-      "sublabel": "PDF, Office, image",
+      "label": "Document",
+      "sublabel": "Selected pages",
       "stage": 0,
-      "row": 1,
-      "tag": "multi-format"
+      "row": 0
     },
     {
-      "id": "provider",
+      "id": "page-image",
       "type": "backend",
-      "label": "Page Provider",
-      "sublabel": "prepare & render",
-      "stage": 0,
-      "row": 2,
-      "tag": "192 DPI"
+      "label": "Page image",
+      "sublabel": "192 DPI render",
+      "stage": 1,
+      "row": 0
     },
     {
-      "id": "sol_extract",
+      "id": "sol-response",
       "type": "cloud",
       "label": "GPT-6 Sol",
-      "sublabel": "page extraction",
-      "stage": 1,
-      "row": 1,
-      "tag": "3 concurrent max"
+      "sublabel": "Transcribes HTML",
+      "stage": 2,
+      "row": 0
     },
     {
-      "id": "validator",
+      "id": "aligned-content",
       "type": "security",
-      "label": "Block Validator",
-      "sublabel": "sanitize & bounds",
-      "stage": 1,
-      "row": 2,
-      "tag": "Pydantic"
-    },
-    {
-      "id": "processors",
-      "type": "backend",
-      "label": "Processors",
-      "sublabel": "document structure",
-      "stage": 2,
-      "row": 1
-    },
-    {
-      "id": "sol_refine",
-      "type": "cloud",
-      "label": "Sol Refinement",
-      "sublabel": "optional cleanup",
-      "stage": 2,
-      "row": 2,
-      "tag": "fallback safe"
-    },
-    {
-      "id": "doc_model",
-      "type": "database",
-      "label": "Document Model",
-      "sublabel": "blocks & reading order",
+      "label": "Aligned blocks",
+      "sublabel": "Validated Sol content",
       "stage": 3,
-      "row": 1,
-      "tag": "in-memory"
+      "row": 0
     },
     {
-      "id": "page_text",
+      "id": "result-document",
       "type": "database",
-      "label": "Parsed Page Text",
-      "sublabel": "normalized quotes",
-      "stage": 3,
-      "row": 3
-    },
-    {
-      "id": "renderers",
-      "type": "backend",
-      "label": "Local Renderers",
-      "sublabel": "Markdown & chunks",
+      "label": "Document",
+      "sublabel": "Protected source blocks",
       "stage": 4,
       "row": 0
     },
     {
-      "id": "gui_export",
-      "type": "frontend",
-      "label": "GUI & File Exports",
-      "sublabel": "HTML, PDF & ZIP",
-      "stage": 4,
-      "row": 1
-    },
-    {
-      "id": "luna_draft",
-      "type": "cloud",
-      "label": "GPT-6 Luna",
-      "sublabel": "grounded draft",
-      "stage": 4,
+      "id": "v3-regions",
+      "type": "backend",
+      "label": "V3 regions",
+      "sublabel": "Pixel boxes and order",
+      "stage": 1,
       "row": 2
     },
     {
-      "id": "quote_verify",
-      "type": "security",
-      "label": "Luna Verification",
-      "sublabel": "quote validation",
+      "id": "layout-diagnostics",
+      "type": "database",
+      "label": "Diagnostics",
+      "sublabel": "Matches and fallback",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "export-files",
+      "type": "backend",
+      "label": "Local exports",
+      "sublabel": "Text, JSON, annotations",
       "stage": 4,
-      "row": 3,
-      "tag": "cited answers"
+      "row": 2
     }
   ],
   "flows": [
     {
-      "id": "doc-bytes",
-      "from": "inputs",
-      "to": "provider",
-      "label": "document bytes",
-      "classification": "raw files"
+      "id": "source-file-to-page-image",
+      "from": "source-file",
+      "to": "page-image",
+      "label": "render"
     },
     {
-      "id": "rendered-pages",
-      "from": "provider",
-      "to": "sol_extract",
-      "label": "page images",
-      "classification": "page images",
-      "variant": "emphasis"
+      "id": "page-image-to-sol-response",
+      "from": "page-image",
+      "to": "sol-response",
+      "label": "full image"
     },
     {
-      "id": "raw-blocks",
-      "from": "sol_extract",
-      "to": "validator",
-      "label": "ordered blocks",
-      "classification": "raw model output",
-      "variant": "emphasis",
-      "labelDy": 24
+      "id": "page-image-to-v3-regions",
+      "from": "page-image",
+      "to": "v3-regions",
+      "label": "analyze"
     },
     {
-      "id": "sanitized-blocks",
-      "from": "validator",
-      "to": "processors",
-      "label": "sanitized blocks",
-      "classification": "validated blocks",
-      "variant": "emphasis"
+      "id": "v3-regions-to-sol-response",
+      "from": "v3-regions",
+      "to": "sol-response",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [[530, 385]],
+      "label": "guide if ready"
     },
     {
-      "id": "refine-req",
-      "from": "processors",
-      "to": "sol_refine",
-      "label": "refinement request",
-      "classification": "optional",
-      "variant": "dashed"
+      "id": "sol-response-to-aligned-content",
+      "from": "sol-response",
+      "to": "aligned-content",
+      "label": "HTML + boxes"
     },
     {
-      "id": "doc-tree",
-      "from": "processors",
-      "to": "doc_model",
-      "label": "document tree",
-      "classification": "document tree",
-      "variant": "emphasis",
-      "route": "straight",
-      "labelDy": -24
+      "id": "aligned-content-to-result-document",
+      "from": "aligned-content",
+      "to": "result-document",
+      "label": "build"
     },
     {
-      "id": "refined-tree",
-      "from": "sol_refine",
-      "to": "doc_model",
-      "label": "refined blocks",
-      "classification": "cleaned layout",
-      "variant": "dashed"
+      "id": "aligned-content-to-layout-diagnostics",
+      "from": "aligned-content",
+      "to": "layout-diagnostics",
+      "label": "record"
     },
     {
-      "id": "doc-model-out",
-      "from": "doc_model",
-      "to": "renderers",
-      "label": "in-memory document",
-      "classification": "document model",
-      "variant": "default"
-    },
-    {
-      "id": "rendered-output",
-      "from": "renderers",
-      "to": "gui_export",
-      "label": "rendered formats",
-      "classification": "exports",
-      "variant": "default"
-    },
-    {
-      "id": "extract-page-text",
-      "from": "doc_model",
-      "to": "page_text",
-      "label": "normalized text",
-      "classification": "page text",
-      "variant": "default"
-    },
-    {
-      "id": "chat-context",
-      "from": "page_text",
-      "to": "luna_draft",
-      "label": "page context",
-      "classification": "context",
-      "variant": "default"
-    },
-    {
-      "id": "draft-answer",
-      "from": "luna_draft",
-      "to": "quote_verify",
-      "label": "draft quotes",
-      "classification": "draft answer",
-      "variant": "security",
-      "labelDy": 24
+      "id": "result-document-to-export-files",
+      "from": "result-document",
+      "to": "export-files",
+      "label": "render"
     }
   ],
   "cards": [
     {
-      "dot": "emerald",
-      "title": "Extraction Pipeline",
-      "items": [
-        "Documents are prepared by format providers and rasterized one page at a time at 192 DPI",
-        "GPT-6 Sol performs structured block extraction with concurrency limited to 3 per process",
-        "Pydantic validation verifies block bounds and sanitizes HTML before document processing"
-      ]
-    },
-    {
       "dot": "cyan",
-      "title": "Local Output Ownership",
+      "title": "Geometry and order",
       "items": [
-        "The in-memory document model stores pages, blocks, reading order, and token costs",
-        "Renderers locally generate Markdown, hierarchical JSON, and flat chunks without model calls",
-        "Local exports build styled HTML, annotated images, raster PDFs, and ZIP archives"
+        "V3 returns rectangles; four corners are derived for PolygonBox.",
+        "An evaluated policy applies confident one-to-one matches before grouping."
       ]
     },
     {
-      "dot": "violet",
-      "title": "Grounded Document Chat",
+      "dot": "emerald",
+      "title": "Fallback and reuse",
       "items": [
-        "Chat uses a separate Luna model for answer drafts with supporting page quotes",
-        "Local checks verify normalized quotes exist in parsed page text before verification",
-        "Independent Luna verification approves answers before citations are attached"
+        "Missing or incompatible regions retain Sol content and geometry.",
+        "V3 runtime failure omits the guide; all exports reuse the resulting document."
       ]
     }
   ]

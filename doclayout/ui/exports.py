@@ -181,14 +181,14 @@ def markdown_html(markdown: str, images: dict) -> str:
     )
 
 
-def annotations(document):
+def annotations(document, config=None):
+    from doclayout.schema.layout import visible_source_blocks
+
     pages, skipped, drawn = {}, 0, 0
     for page in document.pages:
         image = page.get_image(highres=True).convert("RGB").copy()
         draw = ImageDraw.Draw(image)
-        for block in page.children or []:
-            if block.removed or block.structure:
-                continue
+        for block in visible_source_blocks(page, config):
             try:
                 x0, y0, x1, y1 = block.polygon.rescale(
                     page.polygon.size, image.size
@@ -201,7 +201,7 @@ def annotations(document):
                     raise ValueError("invalid box")
                 draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
                 draw.text(
-                    (x0, max(0, y0 - 14)), block.block_type.name, fill=(220, 30, 30)
+                    (x0, max(0, y0 - 14)), str(block.block_type), fill=(220, 30, 30)
                 )
                 drawn += 1
             except (ValueError, TypeError, ZeroDivisionError):

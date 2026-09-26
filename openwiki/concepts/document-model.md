@@ -3,21 +3,29 @@ type: core concept
 title: Document Model and Structure
 description: The typed in-memory graph that represents pages, blocks, geometry, reading order, metadata, and render output throughout DocLayout.
 tags: [schema, document-model, blocks, geometry, rendering]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
 sources:
+  - id: openwiki-source-1faf643b9f60547b3495121a
+    resource: repo://doclayout/builders/alignment.py
+  - id: openwiki-source-5dcb620e5737ce6818a4678d
+    resource: repo://doclayout/builders/document.py
+  - id: openwiki-source-61dc7f9e9ba4f8fa05cfee1d
+    resource: repo://doclayout/converters/pdf.py
   - id: openwiki-source-158c5e2b7d609ae6c42bd1d8
     resource: repo://doclayout/schema/blocks/base.py
   - id: openwiki-source-1f2c2096c8418e0c763c9d17
     resource: repo://doclayout/schema/document.py
   - id: openwiki-source-08de1b0f5602855358eeb1b6
     resource: repo://doclayout/schema/groups/page.py
+  - id: openwiki-source-f9b9ef051ee27ca44899d86a
+    resource: repo://doclayout/schema/layout.py
   - id: openwiki-source-40b7085857583170a97d7e39
     resource: repo://doclayout/schema/polygon.py
   - id: openwiki-source-6619880ebc9c95309464ca18
     resource: repo://doclayout/schema/registry.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+generated: { by: "codex", at: "2026-09-26T10:42:04.191Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:42:04.191Z
 ---
 
 # Document Model and Structure
@@ -47,7 +55,7 @@ The registry maps every `BlockTypes` member to an importable implementation. Bui
 
 `PolygonBox` stores four clockwise corners beginning at the top left. It exposes a cached axis-aligned bounding box and derived dimensions, center, overlaps, intersection percentage, and minimum gap. Geometry methods return new polygons for expansion, rescaling, and merging, so the cached bounding box remains valid.
 
-Extraction responses express block boxes in a normalized 1000 by 1000 coordinate space. The builder rescales them into page coordinates before constructing blocks. When a renderer or processor needs a crop, `Block.get_image()` rescales the page-space polygon into the selected page image's pixel dimensions. The same model supports rotated pages because the provider supplies the rendered page size and tests require extracted blocks to stay inside those bounds.
+Sol extraction responses express block boxes in a normalized 1000 by 1000 coordinate space. V3 detections use pixels on the rendered page image. Alignment converts them into one space before block construction. A confident match takes V3's rectangle and reading order while keeping Sol's HTML and compatible semantic type; without an evaluated policy, or for unmatched content, the Sol box and order remain. Rectangles become four-corner `PolygonBox` values and are then rescaled into page coordinates. When a renderer or processor needs a crop, `Block.get_image()` rescales the page-space polygon into the selected page image's pixel dimensions. The same model supports rotated pages because the provider supplies the rendered page size and tests require extracted blocks to stay inside those bounds.
 
 ## Navigation and traversal
 
@@ -63,7 +71,7 @@ Rendering is a recursive two-part operation. Each block first renders its struct
 
 ## Metadata and invariants
 
-Block metadata counts LLM requests, errors, and tokens, along with selected prior-state fields used by processors. Page aggregation merges metadata from current children. Removed blocks remain addressable in page storage but should not appear in current traversal or output.
+Block metadata counts LLM requests, errors, and tokens, along with selected prior-state fields used by processors. Page aggregation merges metadata from current children. Layout diagnostics live in a separate `PageLayout` record, which retains original model regions, match status, source bindings, counts, device, and timings. They are not merged into numeric `BlockMetadata`. Removed blocks remain addressable in page storage but should not appear in current traversal or output.
 
 The central invariants are:
 
@@ -73,8 +81,15 @@ The central invariants are:
 4. Replacement updates structure references and marks the old block removed.
 5. Every block type has exactly one currently registered implementation.
 
+`PdfConverter` runs `check_layout()` after grouping and processors to protect the
+source blocks' identity, geometry, membership, and order. Group boxes are derived
+unions and can differ from matched leaf boxes. Direct processor calls can still
+reorder structure; the converter's invariant check rejects such a change before
+rendering. Intentional table-only or blank-page filtering is recorded separately.
+
 ## Related pages
 
 - [System Overview](../architecture/system-overview.md)
 - [Document Conversion Workflow](../workflows/document-conversion.md)
+- [Layout Guidance and Alignment](../integrations/layout-guidance-and-alignment.md)
 - [Rendering and Exports](../outputs/rendering-and-exports.md)

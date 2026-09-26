@@ -9,6 +9,13 @@ from PIL import Image, ImageDraw
 from doclayout.builders.document import DocumentBuilder
 from doclayout.converters.pdf import PdfConverter
 from doclayout.providers.pdf import PdfProvider
+from doclayout.services.layout import (
+    MODEL_ID,
+    MODEL_REVISION,
+    LayoutPreparation,
+    LayoutResult,
+)
+from doclayout.settings import settings
 
 
 def pytest_addoption(parser):
@@ -40,6 +47,43 @@ def prevent_unrequested_api(request, monkeypatch):
         )
         monkeypatch.setattr(
             "openai.resources.responses.responses.Responses.create", blocked
+        )
+
+
+@pytest.fixture
+def layout_service():
+    # Empty detections are a valid inference result, not a layout-off mode.
+    return Mock(
+        prepare=Mock(
+            return_value=LayoutPreparation("cpu", "CPUExecutionProvider", 0.01)
+        ),
+        predict=Mock(
+            side_effect=lambda image: LayoutResult(
+                MODEL_ID,
+                MODEL_REVISION,
+                "cpu",
+                "CPUExecutionProvider",
+                0.01,
+                image.size,
+                (),
+            )
+        ),
+    )
+
+
+@pytest.fixture(autouse=True)
+def offline_layout(request, monkeypatch, layout_service):
+    if "integration" not in request.keywords:
+        monkeypatch.setattr(
+            settings,
+            "DOCLAYOUT_ALIGNMENT_POLICY",
+            '{"min_iou":0.6,"min_score":0.5,"min_containment":0.8,"min_area_ratio":0.25,"max_center_distance":0.4}',
+        )
+        monkeypatch.setattr(
+            "doclayout.models.create_layout_service", lambda: layout_service
+        )
+        monkeypatch.setattr(
+            "doclayout.converters.pdf.create_layout_service", lambda: layout_service
         )
 
 
@@ -96,8 +140,8 @@ def extraction_service(page_result):
 
 
 @pytest.fixture
-def model_dict(extraction_service):
-    return {"extraction_service": extraction_service}
+def model_dict(extraction_service, layout_service):
+    return {"extraction_service": extraction_service, "layout_service": layout_service}
 
 
 @pytest.fixture

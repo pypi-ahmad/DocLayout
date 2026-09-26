@@ -86,6 +86,81 @@ Model names, reasoning effort, and chat request limits are fixed in code. The
 Sol settings below are configurable. `use_llm=False` disables extra refinement;
 every selected page still uses Sol extraction. There is no local OCR fallback.
 
+<a id="mandatory-layout-policy"></a>
+
+## Layout guidance and optional matching policy
+
+All real conversion paths attempt V3 using the `layout` extra and cached
+PP-DocLayoutV3 weights. With no policy configured, available V3 detections guide Sol,
+but validated Sol boxes, types, HTML, and order are retained unchanged by alignment.
+To enable V3 geometry/order matching, set `DOCLAYOUT_ALIGNMENT_POLICY` to a JSON object with
+all five values, or provide a complete `alignment_policy` object in Python
+converter config or `--config_json`. There are no production threshold defaults.
+
+| Policy key | Meaning |
+| --- | --- |
+| `min_iou` | Minimum IoU for an overlap candidate |
+| `min_score` | Minimum V3 confidence for an applied match |
+| `min_containment` | Intersection divided by smaller area for the fallback candidate rule |
+| `min_area_ratio` | Smaller/larger area bound for fallback candidates |
+| `max_center_distance` | Maximum per-axis center displacement normalized by the larger extent |
+
+All values must be finite numbers in `[0, 1]`. Evaluate them on representative
+pages; test fixture values are not recommendations. An override replaces the
+whole policy, not individual fields. Absent policy (`None`/JSON `null`) uses Sol
+geometry; an empty string, empty object, partial, or invalid policy aborts before inference.
+Metadata records `alignment_mode: sol_geometry`, `policy: null`, and
+`policy_not_configured` reasons. No candidate matches are attempted; all Sol blocks
+and V3 regions are retained as unmatched diagnostics, not evidence of detector misses.
+Configured policies use `alignment_mode: v3_matching`. V3 runtime failures use
+`alignment_mode: sol_fallback` with `layout_unavailable` reasons, `policy: null`,
+and no region matches. Sol retains its validated boxes, HTML, types, and order.
+The model record uses `actual_device`/`provider: unavailable`, a sanitized
+`error_code`, and `fallback_reason`; zero regions do not imply a successful run.
+There is no layout-off option.
+
+Operator settings use the existing Settings environment/`local.env` flow:
+`DOCLAYOUT_LAYOUT_DEVICE` defaults to `auto`; `cpu` never probes CUDA and `cuda`
+never falls back to CPU (conversion uses Sol if CUDA fails). `DOCLAYOUT_LAYOUT_CACHE_DIR` defaults to
+`.cache/layout` under the working directory. API request fields cannot configure
+policy, cache, or device. OpenAI credentials retain their separate `.env` flow.
+Do not place layout settings only in the credential `.env`: that loader does not
+configure the layout runtime. Keep all five evaluated policy values explicit;
+synthetic test values are not production defaults.
+
+The `layout` extra uses one ORT GPU package that also supports CPU inference.
+GPU acceleration is optional and requires compatible CUDA/cuDNN and Windows VC++
+runtime libraries; see [ORT's CUDA requirements](https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html).
+Weights are revision-pinned and hash-checked; only absent files are downloaded.
+Corrupt files fail clearly rather than being silently replaced. The default
+`.cache/layout` directory is ignored by Git; custom caches must also stay outside Git.
+
+Each full-page guide is limited to 512 regions and 64 KiB UTF-8; overflow fails
+without truncation. Invalid configuration, guide limits, and downstream integrity
+violations still abort conversion; the API returns a sanitized 503 layout error.
+Missing dependencies, cache/download errors, corrupt weights, or inference failures
+instead continue with Sol on the full image and report fallback metadata (HTTP 200
+if extraction and conversion complete successfully).
+Restart the process after repairing a cached startup failure. The GUI reports
+preparation and actual device without offering a layout-off control.
+
+Export metadata's `layout` list contains one record per page. Its `model` holds
+`model_id`, `revision`, `actual_device`, `provider`, `elapsed_seconds`,
+`preparation_seconds`, `fallback_reason`, and `error_code`, along with image size and regions.
+On Sol fallback, model ID/revision identify the attempted model, and elapsed time
+measures the failed attempt (including any lazy startup), not successful inference.
+`counts` holds `regions`, `matched`, `sol_only`, and `v3_only` at alignment time;
+later filtering is separate. Do not sum repeated shared-session preparation time
+across pages. On successful V3 runs, `provider` names the actual primary session provider, not a guarantee
+that every operator ran on CUDA. Scores are detector confidence, not OCR accuracy.
+
+Groups retain ordered source blocks and derived union boxes. Source geometry,
+IDs, types and order are protected after alignment. Header/footnote moves and
+table merging cannot override them; configured block relabeling is rejected.
+Page correction accepts only validated HTML rewrites; invalid/reordering replies
+are ignored atomically and recorded in layout diagnostics. Table-only conversion
+and explicit blank-page filtering are recorded as ordered subsequences.
+
 ## Extraction and rendering
 
 Use these keys in a Python configuration dictionary or JSON configuration file.
@@ -143,7 +218,7 @@ Save this as `config.json` in your working directory:
 ```
 
 ```powershell
-uv run doclayout_single document.pdf --config_json config.json --timeout 90
+uv run --extra layout doclayout_single document.pdf --config_json config.json --timeout 90
 ```
 
 When options conflict, the later value wins. This example uses a 90-second
@@ -186,10 +261,11 @@ removed uppercase `Settings.DEBUG_DATA_FOLDER` is a separate, retired setting.
 - In the GUI, Start/End pages are one-based and inclusive. Sidebar selections
   override startup values for page range, refinement, and header/footer visibility.
   The Debug checkbox displays results; it does not enable CLI-style debug files.
-- The launcher `launch.cmd` binds `127.0.0.1:8471`, refuses an occupied port,
-  and disables file watching. These values are written in the launcher.
-  `doclayout_gui` binds loopback and forwards arguments to the app;
-  neither launcher terminates other processes.
+- The launcher `launch.cmd` binds `127.0.0.1:8471`, force-stops existing listeners
+  on that port, and disables file watching. This can interrupt an unrelated app
+  or an active conversion. Startup fails if the port cannot be freed.
+  `doclayout_gui` binds loopback, disables file watching, and forwards arguments
+  to the app; it does not terminate existing listeners.
 - The API accepts only the fields below; arbitrary processor/service settings
   are not HTTP parameters. `doclayout_server` defaults to host `127.0.0.1`,
   port `8000`, adjustable with `--host` and `--port`.
@@ -312,7 +388,7 @@ representable. See [configuration discovery](../doclayout/config/crawler.py),
 [CLI parsing](../doclayout/config/printer.py), and
 [assignment rules](../doclayout/util.py).
 
-Retired OCR routing, local inference, model-selection, and credential controls
+Retired OCR routing, legacy local-model controls, model-selection, and credential controls
 are rejected at configuration boundaries. Examples include `force_ocr`,
 `disable_ocr`, `mode`, `keep_chars`, `pdftext_workers`, and `openai_model`.
 See the [validator](../doclayout/config/validation.py) for the complete rejection

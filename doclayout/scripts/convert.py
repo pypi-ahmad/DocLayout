@@ -13,6 +13,7 @@ from doclayout.config.printer import CustomClickPrinter
 from doclayout.filenames import export_basename, export_filename
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import output_exists, save_output
+from doclayout.services.layout import LayoutError, layout_error_message
 from doclayout.services.openai import OpenAIService
 from doclayout.usage import cost_message
 
@@ -51,7 +52,9 @@ def convert_file(fpath, destination, options, formats):
         save_document_exports(outputs, destination, fpath)
         click.echo(f"Saved {len(outputs)} file(s) to {destination}")
     except Exception as exc:
-        raise click.ClickException(str(exc)) from exc
+        raise click.ClickException(
+            layout_error_message(exc) if isinstance(exc, LayoutError) else str(exc)
+        ) from exc
     finally:
         if converter is not None and isinstance(
             converter.extraction_service, OpenAIService
@@ -83,7 +86,10 @@ def process_single_pdf(args):
         save_output(rendered, folder, name)
         return converter.page_count, True
     except Exception as exc:
-        click.echo(f"Failed {fpath}: {exc}", err=True)
+        message = (
+            layout_error_message(exc) if isinstance(exc, LayoutError) else str(exc)
+        )
+        click.echo(f"Failed {fpath}: {message}", err=True)
         return 0, False
     finally:
         if converter is not None and isinstance(

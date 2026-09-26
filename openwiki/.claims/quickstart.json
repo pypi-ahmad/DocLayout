@@ -1,14 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e4d2a3c5783f4e7827f975ad259cb2f1ed61918b6e3c4157a4d68f9e812ae775",
+  "pageVersion": "sha256:72fe805e39ad79a15ce1ff04bf5924491d6c85d7fb53f196698e587e6eb4eeb0",
   "claims": [
     {
       "id": "claim_af587d3789d94298b6c2dc1b9963336c",
-      "statement": "The documented clone setup uses uv sync with the locked development group and full extra, then runs checkout commands through uv run.",
+      "statement": "The documented checkout setup uses uv sync with the locked development group, full and layout extras on Python 3.13, then runs commands through uv run.",
       "evidence": [
         {
-          "resource": "repo://README.md#L57-L75",
-          "version": "repo-lines-v1:sha256:aab5dad9b7c303ff6c2782fcb965f6957d9895014e93fa82fd8fc3497b85245c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1NDc1YjE3ODEwZGEwYjk5YTZhMzRkNjYzNzhjZTEzYWU2YTEzNWJiMDY2MzhmN2I5MzM3Yjc2NDAyMjM3ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOTU4ZjM0YTdlMDhlYjFmYzNkMTg2YjBlMGVlMjA0OTBkN2EzMzAwZjA1YzFkNGMwMmJhYThlODU0ZTBjNGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkODA5NGY1YzIwYzNmZTNjMzExYWFjMzJlNTk5NDk4MTVhYjgwZjBhMjMzZDg5NzcwMjFlYjVkNjZiNmU5NDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiM2YwY2JkODkyZWRiNzNiYzY5ZTg0NzRlMTU3MmIzZjk3ZGM2ODZjY2YwODdlNmZjNjM3Yjk3ZTllNWJiNzUifQ"
+          "resource": "repo://README.md#L47-L96",
+          "version": "repo-lines-v1:sha256:6031bafffb82188d774f3e8f2448d688f16d8c2fdb9100b646542bc39097d7bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNmFlMWFjMTY3NTQxNGMwNWUwZmIwOGJiMDA1Yzg0YWIzYmYxNTFjYWY5YzhiN2NkYWFmYzUwOTcwNWY1NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NmJhZTAwYTZlYmNiMTRhNjUxMGEzYmY4NGQyNDBlY2MwY2NmOTI0NWQ4MTQwNmFjNzk0YWE4ZjU5ZGRmNTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0ZTU3ZGJjMWEwOTY3NWNjOGI3YThkZDgxYjdhOWQyM2FmZDM5YjZjMDEyYmExZGM4ZGZlMjQ0N2IzOWY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiM2YwY2JkODkyZWRiNzNiYzY5ZTg0NzRlMTU3MmIzZjk3ZGM2ODZjY2YwODdlNmZjNjM3Yjk3ZTllNWJiNzUifQ"
+        },
+        {
+          "resource": "repo://docs/development.md#L5-L30",
+          "version": "repo-lines-v1:sha256:09ca1ded6a4497cbbaf76fdd32462fed92c42579f3e0905fa64744e79203001f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMjBiMDcxOGVkMDQwNmVmMzc2OWViMzRjN2E4NjNkNzNmMzlmOWE5N2JmYWRhZTE4NjRhMzdjY2RmMDgxZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMDQ5NzUwMWZhYmY0MDcyN2M1YzkzOGM2MDM3NDAxNWYwY2JmMDIzNjUyNTBkYzYwZTZlZDE2MTUyN2FjMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMjEzYmY4NTFjY2NhMDNhMWNjNmVlM2E2YzQ0N2Q2ZmViMTZhODY0Mjk0N2I4ODdkMjBjNDQ4MWM4OTkyMGUifQ"
         }
       ]
     },
@@ -44,11 +48,15 @@
     },
     {
       "id": "claim_aa97a292847045b58709275a093650ab",
-      "statement": "The FastAPI server exposes generated documentation and supports both path-based JSON conversion and multipart upload conversion.",
+      "statement": "The authenticated FastAPI server exposes generated documentation and supports both path-based JSON conversion and multipart upload conversion.",
       "evidence": [
         {
-          "resource": "repo://doclayout/scripts/server.py#L37-L107",
-          "version": "repo-lines-v1:sha256:88198438a0151732bceaddc09980cbdd6735d51cfd87a85fdd908af243651428:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMzQ1ZTk5M2FmODM3YWI4MTUyMGYyNTZhZjhmZjA2ZjBiMTc0OGEyNjc2MzQ1NzVlNGY0MTk0ODJmNDM2ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNGExNjcyMTc3NTU1MjQzOTM1YWQ2MDAyNzM5ZGQzOWJhMjE4YmRlMTJmNDNiYTBkOTllYjY4Y2Q2OGNhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3NTk5NzcxN2MzN2JlMDAxYmY0NjI5ODVmYTc1MmFmNWMzMjIzNjBiYWIyZmI2ZWVjYjZmZTBkNDcyYzA1NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NjBkYjFiMDU4Njk0NGIyZjY1MjNjOGVhNmNiYzE0MmQ2NTFlNzYwZTE0YTg2MGE4MDc1OTEwY2FjZGY2YTIifQ"
+          "resource": "repo://doclayout/scripts/server.py#L118-L176",
+          "version": "repo-lines-v1:sha256:8c059d0997d2ca4cabfe12b9c082535f5cfce9b1315e51d210c04eb5a7fc05dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMzQ1ZTk5M2FmODM3YWI4MTUyMGYyNTZhZjhmZjA2ZjBiMTc0OGEyNjc2MzQ1NzVlNGY0MTk0ODJmNDM2ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOTQyZGE3ZWZjZTA0NmRhNThjMmY1OTA3YzM1ZTkzYjNiNWE1MDBiY2U5YzAzYTY5MzExMWE2Mzg4YjkyOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwZGNlNmNjODc2MDQ5MWNjZTc0YzYzZDI5ZWY0M2QzYzIyYTQwZmFjN2EwMTJmYWI5NGJlZmQyMjZhY2EzMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMTkzZWUzZDc4NWI0NWYxYmQ3MmE2NDI1M2YxOGJjYzcxYjM0ZGJiOWU4OWU4ZTI4YjVjY2MyZGNiOGVmZjAifQ"
+        },
+        {
+          "resource": "repo://doclayout/scripts/server.py#L242-L287",
+          "version": "repo-lines-v1:sha256:ab727a261184d67f573f52d1793ad9adb1ef59e5dc871cb71c5a9e4d93682715:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZmNmYzJhYTc5OWJmMmQyYThlYjViNWM0MGM3MmZjMGJiOWUxMDdkNzdhZDA3YjNiNTYwMGMxYWViZTc2ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZGE4NzQyMWZhMDY4OTRjNGI0YjNkNmI0MTE0ZmMzZDhlNjA5YjAyODFkZjZmZDY3M2U5MzliMDcxZTJhZTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyZGFhMjhmZjk1MTZmMTY4ZGEzMGFmZTdmZDdmYjMwZDIzYWU5ZmQ5OTkwZTFiOTY4ZTZkZjE4YWE2ZjBlNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NjBkYjFiMDU4Njk0NGIyZjY1MjNjOGVhNmNiYzE0MmQ2NTFlNzYwZTE0YTg2MGE4MDc1OTEwY2FjZGY2YTIifQ"
         }
       ]
     },
@@ -61,10 +69,24 @@
           "version": "repo-lines-v1:sha256:a760c43bc6cc216b1f7840fb70aa840b1c3f4e90143a4a03acc926acf707dc9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5OWRlODg3N2JkMjlmMmUwOTZmNzE3NDlhMGQ5MzU4NDg1MGI4NjFhNTM2MDgxYjg0NzhkMmIyMjE0YTcxN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNTE2ODUwYTA2YzljZjI5ZDQ3YjBlNjJkYmJkOTBmZGVkYTAwMmExOWQyODBmYTVkMjkwYTgwNjBiZWNiYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzE0MjZiZWE3ZmFiYTA1YTEyYzFlMWM4NjBkYTY3YzYxNzM4ZmZjY2NjYTRmNjc2ZTRiOTI2ZGVhNjZlMDIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c91f06496d414d0aafda6ee0f21ba2f4",
+      "statement": "Every conversion attempts local V3 guidance before sending the full page image to Sol; V3 runtime failure retains Sol fallback and diagnostics, while matching requires a configured policy.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L53-L124",
+          "version": "repo-lines-v1:sha256:1012cefe3703c535836f54f63ef38d23419c0db82457fc8db01cb7ab3481ebde:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MGQ1ODAyMGM2ODA0ODAwMjUwODY5Y2Y3YjE5N2QyOGIxZWU2Mjg3NDMyNGVlMmMwM2UwMTAwOTM4OWIzMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhZDZjOGVhYTg1M2RmYjcwNzIwNTFhNWY1OTYyOWJiNzZmMDJkMTMzMDQyZjY0MTQzNDNmYTAxOWFiOGU2ZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3NTk3YTE3NjVmNzhlZTFmY2MyMGE3YzRjODczMjQ0ODMxMzhlYTM5NzU5ODRiYTE0ZGQ4N2U4ZDI5YjE1ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ODdlNTkwNjg0ZTlhZTgxYTY4OWJiZjExY2ViYjhjNzBjOWI0YjgyODMwOTk0ZjcyYzAyNjFkZjA1NTU3MDYifQ"
+        },
+        {
+          "resource": "repo://doclayout/schema/layout.py#L29-L100",
+          "version": "repo-lines-v1:sha256:206aca9bbae83f944363cff36981aeaaba6feb2c855c91b4ab6c3faaf72885c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0YzE1MjY5YmRkMzIzMGRlODc3NjcxZGYyZThhM2QwNjk5OGJiZmNmMThlYjczYzE4NzQ5ODkxZDY1NTQ3OWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOTgyNmU5MDc0MWQ0ZmEzYjk3MmQ0ZDY4YTk1MGU4YmM5NmFhNDlhNWY3YWI4M2EyODgwMWUxZmMyMzMyYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:42:04.191Z"
   }
 }

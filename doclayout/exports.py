@@ -69,7 +69,7 @@ def document_exports(document, config, formats, basename=None):
     if "chunks" in needed:
         result["chunks"] = ChunkRenderer(config)(document).model_dump_json(indent=2)
     if {"annotated_pdf", "annotated_images"} & needed:
-        result["annotations"] = annotations(document)
+        result["annotations"] = annotations(document, config)
 
     outputs = {}
     for kind in formats & {"markdown", "html", "json", "chunks"}:
