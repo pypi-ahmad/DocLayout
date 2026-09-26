@@ -41,6 +41,35 @@ def prevent_unrequested_api(request, monkeypatch):
         monkeypatch.setattr(
             "openai.resources.responses.responses.Responses.create", blocked
         )
+        from doclayout.schema.layout import LayoutAnalysis
+
+        class OfflineLayout:
+            status = "Not loaded"
+            actual_device = None
+
+            def prepare(self):
+                self.actual_device = "cpu"
+                self.status = "Ready: offline test fixture"
+
+            def analyze(self, image):
+                return LayoutAnalysis(
+                    image_size=image.size,
+                    provider="test",
+                    model_id="test",
+                    model_revision="fixture",
+                    actual_device="cpu",
+                    elapsed_ms=0,
+                    candidate_count=0,
+                    filtered_count=0,
+                    regions=[],
+                )
+
+            def retry_failed(self):
+                pass
+
+        engine = OfflineLayout()
+        monkeypatch.setattr("doclayout.layout.get_layout_engine", lambda: engine)
+        monkeypatch.setattr("doclayout.ui.batch.get_layout_engine", lambda: engine)
 
 
 @pytest.fixture

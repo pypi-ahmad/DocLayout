@@ -6,16 +6,17 @@ import pytest
 from pydantic import ValidationError
 
 from doclayout.builders.document import DocumentBuilder
-from doclayout.schema.extraction import ExtractedPage, sanitize_html
+from doclayout.schema.extraction import PAGE_PROMPT, ExtractedPage, sanitize_html
 
 
 def test_pages_and_geometry(pdf_document, extraction_service):
     assert extraction_service.call_count == 2
-    # Fingerprint of the original inline extraction prompt, including whitespace.
+    # Fingerprint only the packaged instructions; page priors vary per image.
+    assert hashlib.sha256(PAGE_PROMPT.encode("utf-8")).hexdigest() == (
+        "57d05c2a4b72fac16d380fe4da5b7bd23e547520156ca648fafbfef203efaefc"
+    )
     for call in extraction_service.call_args_list:
-        assert hashlib.sha256(call.args[0].encode("utf-8")).hexdigest() == (
-            "43fd5319eded0c9c3be512c2b963e0da5985352dfc13e6e3e8f2619379081caa"
-        )
+        assert call.args[0].startswith(PAGE_PROMPT.rstrip() + "\n\n")
     page = pdf_document.pages[0]
     assert page.text_extraction_method == "openai"
     assert len(page.structure) == 7

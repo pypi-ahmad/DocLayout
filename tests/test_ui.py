@@ -15,6 +15,31 @@ from doclayout.ui.documents import page_range, prepare_upload, preview, run_docu
 from doclayout.ui.exports import annotations, markdown_html, output_zip
 
 
+def test_sidebar_navigation_buttons(tmp_path, monkeypatch, model_dict):
+    from streamlit.testing.v1 import AppTest
+
+    monkeypatch.setattr("doclayout.settings.settings.OUTPUT_DIR", str(tmp_path))
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    app = AppTest.from_file("doclayout/scripts/streamlit_app.py", default_timeout=15)
+    app.run()
+    assert not app.exception
+    buttons = list(app.sidebar.button)
+    assert [b.label for b in buttons[:2]] == [
+        "Convert documents",
+        "Extracted information",
+    ]
+    assert all(not b.proto.icon for b in buttons[:2])
+    assert buttons[0].proto.type == "primary"
+    buttons[1].click().run()
+    assert not app.exception
+    assert app.title[0].value == "Extracted information"
+    assert app.sidebar.button[1].proto.type == "primary"
+    app.sidebar.button[0].click().run()
+    assert not app.exception
+    assert app.file_uploader
+    assert app.sidebar.button[0].proto.type == "primary"
+
+
 def test_single_extraction_all_exports(temp_doc, model_dict, extraction_service):
     upload = prepare_upload(Path(temp_doc.name).read_bytes(), "source.pdf")
     assert upload.count == 2
@@ -220,17 +245,18 @@ def test_chat_limits_history_and_errors():
 
 
 def test_session_reruns_and_invalidation(
-    temp_doc, model_dict, extraction_service, monkeypatch
+    temp_doc, model_dict, extraction_service, monkeypatch, tmp_path
 ):
     from streamlit.testing.v1 import AppTest
 
     monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.settings.settings.OUTPUT_DIR", str(tmp_path))
     app = AppTest.from_file(
         "doclayout/scripts/streamlit_app.py", default_timeout=20
     ).run()
     assert not app.exception
     app.file_uploader[0].set_value(
-        ("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")
+        [("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")]
     ).run()
     assert not app.exception
     assert app.number_input(key="start").value == 1

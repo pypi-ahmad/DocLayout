@@ -7,6 +7,10 @@ JSONL records are local-only and excluded from fresh clones and package builds.
 Existing local copies can remain here. `tests/converters/test_olmocr_bench.py`
 converts each page and checks its local rules.
 
+The test uses the current shared converter, including V3 analysis and Sol fallback
+in this checkout. Earlier reported scores predate that integration; rerunning a
+fixture is a new billable evaluation, not a validation of historical output.
+
 ## Local setup
 
 Obtain the benchmark data separately and keep it in an ignored folder or outside
