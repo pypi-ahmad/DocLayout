@@ -2,218 +2,238 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "DocLayout System Architecture",
+    "title": "DocLayout architecture",
     "quality_profile": "showcase",
-    "viewBox": [1280, 560],
+    "viewBox": [
+      1160,
+      700
+    ],
     "views": [
       {
-        "id": "ingest-and-extract",
-        "label": "Ingestion and extraction",
-        "focus": ["entrypoints", "providers", "sol_service", "validator", "builder"],
-        "note": "Page preparation, 192 DPI rendering, GPT-6 Sol vision extraction, and block validation."
+        "id": "conversion",
+        "label": "Conversion and exports",
+        "focus": [
+          "intake",
+          "conversion",
+          "markdown",
+          "exports"
+        ],
+        "note": "CLI, GUI, library and HTTP share V3 analysis, whole-page Sol and explicit Sol fallback."
       },
       {
-        "id": "model-and-processors",
-        "label": "Document processing",
-        "focus": ["builder", "processors", "doc_model"],
-        "note": "Structural refinement, line merging, and in-memory document tree construction."
+        "id": "fields",
+        "label": "GUI field workflow",
+        "focus": [
+          "markdown",
+          "fields",
+          "grounding",
+          "storage",
+          "review"
+        ],
+        "note": "Sol extracts raw Markdown; optional Luna classification, local grounding, and SQLite support saved review."
       },
       {
-        "id": "render-and-chat",
-        "label": "Local outputs and chat",
-        "focus": ["doc_model", "renderers", "exports", "luna_service"],
-        "note": "Zero-inference local rendering alongside independent Luna chat draft verification."
+        "id": "chat",
+        "label": "Document chat",
+        "focus": [
+          "conversion",
+          "chat"
+        ],
+        "note": "Parsed page text supports quote-checked Luna answers and independent verification."
       }
     ]
   },
   "components": [
     {
-      "id": "entrypoints",
+      "id": "intake",
       "type": "frontend",
-      "label": "App Entry Points",
-      "sublabel": "CLI, GUI, FastAPI",
-      "pos": [60, 240],
-      "size": [140, 60]
+      "label": "Document intake",
+      "sublabel": "CLI / GUI / HTTP",
+      "pos": [
+        60,
+        90
+      ],
+      "size": [
+        160,
+        70
+      ]
     },
     {
-      "id": "providers",
+      "id": "conversion",
       "type": "backend",
-      "label": "Page Providers",
-      "sublabel": "PDFium rasterizer",
-      "pos": [260, 240],
-      "size": [140, 60],
-      "tag": "192 DPI"
+      "label": "Conversion core",
+      "sublabel": "V3 prior + whole-page Sol",
+      "pos": [
+        340,
+        90
+      ],
+      "size": [
+        160,
+        70
+      ]
     },
     {
-      "id": "sol_service",
-      "type": "cloud",
-      "label": "GPT-6 Sol",
-      "sublabel": "vision extraction",
-      "pos": [460, 80],
-      "size": [140, 60],
-      "tag": "concurrency <= 3"
-    },
-    {
-      "id": "validator",
-      "type": "security",
-      "label": "Block Validator",
-      "sublabel": "Pydantic sanitizer",
-      "pos": [460, 240],
-      "size": [140, 60]
-    },
-    {
-      "id": "builder",
+      "id": "markdown",
       "type": "backend",
-      "label": "Document Builder",
-      "sublabel": "assembly & bounds",
-      "pos": [660, 240],
-      "size": [140, 60]
-    },
-    {
-      "id": "processors",
-      "type": "backend",
-      "label": "Processors",
-      "sublabel": "reading order & layout",
-      "pos": [660, 390],
-      "size": [140, 60]
-    },
-    {
-      "id": "doc_model",
-      "type": "database",
-      "label": "Document Model",
-      "sublabel": "in-memory doc tree",
-      "pos": [860, 240],
-      "size": [140, 60],
-      "tag": "zero store"
-    },
-    {
-      "id": "luna_service",
-      "type": "cloud",
-      "label": "GPT-6 Luna",
-      "sublabel": "grounded chat verify",
-      "pos": [860, 80],
-      "size": [140, 60],
-      "tag": "quote checks"
-    },
-    {
-      "id": "renderers",
-      "type": "backend",
-      "label": "Local Renderers",
-      "sublabel": "MD, JSON, chunks",
-      "pos": [1060, 240],
-      "size": [140, 60]
+      "label": "Raw Markdown",
+      "sublabel": "Completed conversion",
+      "pos": [
+        620,
+        90
+      ],
+      "size": [
+        160,
+        70
+      ]
     },
     {
       "id": "exports",
       "type": "frontend",
-      "label": "File Exports",
-      "sublabel": "HTML, PDF, ZIP",
-      "pos": [1060, 390],
-      "size": [140, 60]
-    }
-  ],
-  "boundaries": [
-    {
-      "kind": "security-group",
-      "label": "External Inference APIs",
-      "wraps": ["sol_service", "luna_service"]
+      "label": "Conversion exports",
+      "sublabel": "MD / HTML / JSON / ZIP",
+      "pos": [
+        900,
+        90
+      ],
+      "size": [
+        180,
+        70
+      ]
     },
     {
-      "kind": "region",
-      "label": "Local DocLayout Engine",
-      "wraps": ["providers", "validator", "builder", "processors", "doc_model", "renderers", "exports"]
+      "id": "fields",
+      "type": "cloud",
+      "label": "Sol field extraction",
+      "sublabel": "Medium reasoning",
+      "tag": "Luna classifier off",
+      "pos": [
+        620,
+        330
+      ],
+      "size": [
+        160,
+        80
+      ]
+    },
+    {
+      "id": "grounding",
+      "type": "security",
+      "label": "Local evidence",
+      "sublabel": "Quotes + block geometry",
+      "pos": [
+        900,
+        330
+      ],
+      "size": [
+        180,
+        80
+      ]
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Local persistence",
+      "sublabel": "SQLite + JSON + sources",
+      "pos": [
+        900,
+        570
+      ],
+      "size": [
+        180,
+        70
+      ]
+    },
+    {
+      "id": "review",
+      "type": "frontend",
+      "label": "Extracted information",
+      "sublabel": "Saved fields + PDF regions",
+      "pos": [
+        620,
+        570
+      ],
+      "size": [
+        180,
+        70
+      ]
+    },
+    {
+      "id": "chat",
+      "type": "cloud",
+      "label": "Luna document chat",
+      "sublabel": "Draft + verification",
+      "pos": [
+        340,
+        570
+      ],
+      "size": [
+        180,
+        70
+      ]
     }
   ],
   "connections": [
     {
-      "id": "entry-to-providers",
-      "from": "entrypoints",
-      "to": "providers",
-      "variant": "emphasis"
+      "from": "intake",
+      "to": "conversion"
     },
     {
-      "id": "providers-to-sol",
-      "from": "providers",
-      "to": "sol_service",
-      "fromSide": "top",
-      "toSide": "left",
-      "via": [[330, 110]]
+      "from": "conversion",
+      "to": "markdown"
     },
     {
-      "id": "sol-to-validator",
-      "from": "sol_service",
-      "to": "validator",
+      "from": "markdown",
+      "to": "exports"
+    },
+    {
+      "from": "markdown",
+      "to": "fields",
+      "label": "GUI only",
+      "labelDy": 24
+    },
+    {
+      "from": "fields",
+      "to": "grounding"
+    },
+    {
+      "from": "grounding",
+      "to": "storage"
+    },
+    {
+      "from": "storage",
+      "to": "review"
+    },
+    {
+      "from": "conversion",
+      "to": "chat",
+      "label": "Parsed page text",
       "fromSide": "bottom",
       "toSide": "top"
-    },
-    {
-      "id": "validator-to-builder",
-      "from": "validator",
-      "to": "builder"
-    },
-    {
-      "id": "builder-to-processors",
-      "from": "builder",
-      "to": "processors",
-      "fromSide": "bottom",
-      "toSide": "top"
-    },
-    {
-      "id": "processors-to-model",
-      "from": "processors",
-      "to": "doc_model",
-      "fromSide": "right",
-      "toSide": "bottom",
-      "via": [[930, 420]]
-    },
-    {
-      "id": "model-to-renderers",
-      "from": "doc_model",
-      "to": "renderers",
-      "variant": "emphasis"
-    },
-    {
-      "id": "renderers-to-exports",
-      "from": "renderers",
-      "to": "exports",
-      "fromSide": "bottom",
-      "toSide": "top"
-    },
-    {
-      "id": "model-to-luna",
-      "from": "doc_model",
-      "to": "luna_service",
-      "fromSide": "top",
-      "toSide": "bottom",
-      "variant": "security"
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Local Processing Core",
+      "title": "Conversion",
       "items": [
-        "Providers prepare files and rasterize pages one by one at 192 DPI",
-        "Document builder orchestrates block mapping and structural processors",
-        "In-memory document model holds all pages, blocks, and token usage"
+        "192-DPI pages pass through V3; Sol supplies text and HTML.",
+        "Missed/rejected regions keep Sol boxes; failed V3 uses Sol fallback."
       ]
     },
     {
       "dot": "cyan",
-      "title": "Model Inference Boundaries",
+      "title": "Fields and routing",
       "items": [
-        "Shared Sol client manages rate-limiting with at most 3 concurrent calls",
-        "Document chat uses a dedicated Luna service with independent verification",
-        "Rendering, annotation, and ZIP generation require no model calls"
+        "Three GUI file jobs run at once; batch uploads use all pages.",
+        "Enabled classification requires score >= 0.75 and verified evidence."
       ]
     },
     {
       "dot": "violet",
-      "title": "Multi-Surface Ownership",
+      "title": "Persistence and review",
       "items": [
-        "Streamlit GUI, CLI commands, and HTTP API share the same core pipeline",
-        "Session state is isolated in memory with no persistent document store",
-        "Local exports produce Markdown, hierarchical JSON, chunks, and styled HTML"
+        "Field retries reuse raw Markdown; export retries make no model calls.",
+        "Saved originals and records remain local; chat stays in session memory."
       ]
     }
   ]

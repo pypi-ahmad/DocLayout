@@ -4,6 +4,11 @@ This report separates live extraction observations from offline application
 checks. See [development](development.md) for verification commands,
 [usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
 
+The measurements below are dated historical results. They do not evaluate the
+current V3/Sol fallback pipeline. See the [layout integration record](layout-v3-plan.md)
+for its bounded runtime observations and the [documentation verification record](documentation-sync.md)
+for later offline checks. Neither record establishes a general accuracy improvement.
+
 ## Checks for changes now on main (2026-09-23)
 
 - With `DOCLAYOUT_BENCH_DIR` pointing to an empty local directory, the offline

@@ -1,70 +1,122 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2a9bab9c2fb13875a7ff739fb9800c576e2a66a88555decc27b2a329802e7923",
+  "pageVersion": "sha256:2fd8d2474445552e3c5e4bfc37ca67224736d91ba87ea00e355a739135cb3f83",
   "claims": [
     {
-      "id": "claim_1136a632f542450890c51fb51d131714",
-      "statement": "PdfConverter validates configuration, requires an extraction service, resolves processors and renderer, chooses Markdown by default, and runs structure building before its ordered processor chain.",
+      "id": "claim_1d14c56f09ba41f39b7dfd2a9ba99c52",
+      "statement": "PdfConverter selects a provider, builds a Document, runs StructureBuilder then sequential processors, sanitizes their HTML, attaches usage and finally renders.",
       "evidence": [
         {
-          "resource": "repo://doclayout/converters/pdf.py#L51-L151",
-          "version": "repo-lines-v1:sha256:8632f9e1b78c0d860bfdfec1c18f5c560b0e178fcdf917d9342a34132d46712d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMzZlNTBkMTM5MjU5NWVkNzAwOWNkOWU4MDA2ZWZhMjNiM2U2NTIxMzdmYTIyM2U4NjdlOWRiMTFlNGJiOWUzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzZWU1ZTNjNDA5MDg0M2JhODcyODJlMmNiNTRmYmVlNDQzMTRhN2UxZTY0Y2QxMzIzNDAzNzc4MjdmODU4OWZjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzNTUzMjdhZjk3NzMwYzgwZTIwMmM0M2Q3NDE3MjhmZjI2ZjdjY2I2MTEyOTQ1NDc3MWVhNzk1YjQ0M2YwMDRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhZjEyZmYxMTAzNDVmYTNmMTM4YzI1Y2NmYmNiYzU5OTY2ZTZjMmRiZWIwNDI3MjU5ODZhYmRlMGFmZmQ4NTFhIn0"
+          "resource": "repo://doclayout/converters/pdf.py",
+          "version": "repo-file-v1:sha256:eec4629726a9f4036945665d0115235b29e1e1209fd36f5e4bc9a65c27d930c0"
         }
       ]
     },
     {
-      "id": "claim_c29bab510a544c7ab6d1e1b4917e4882",
-      "statement": "DocumentBuilder batches one request per selected page with concurrency limited to one through three, renders page images before submitting requests, validates responses, rescales normalized boxes, and appends pages in input order.",
+      "id": "claim_d90e87445f6747249a848bfe2fa2bbc6",
+      "statement": "DocumentBuilder renders pages on its caller thread, schedules one request per selected page with concurrency 1–3, validates responses, rescales boxes and preserves provider order.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L16-L68",
-          "version": "repo-lines-v1:sha256:f43609ec9947f371ef13ac3143dc70eaf611ce60d226dce675a7b0a2af35117e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZTU1NTNiYWE3NTNiOWMyOGIxZjAwNWY5NDJjMzFiODg1OGFhNzgwZjcwOTZmZTY0NmVmZmE0NWE3ZjQ0NzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4ODBhMGRhNjMyOTA3NTgxODBmZmVjZDYxODllMjczZWZlM2U0MWEzNjJiODRiMDYyMjIxYzAwYjJmZDgyMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+        },
+        {
+          "resource": "repo://tests/builders/test_document_builder.py",
+          "version": "repo-file-v1:sha256:4bf5c306505bdbbd08b72b026038653778375a8e4b229f36a388e70b8c65c3b6"
         }
       ]
     },
     {
-      "id": "claim_88ae1121bd9a4a41b8412aae29eca473",
-      "statement": "Tests enforce that page rendering occurs only on the caller thread while extraction requests run on worker threads.",
+      "id": "claim_148f2b063875450a8e7f10d70b469e25",
+      "statement": "Invalid page extraction aborts document conversion, and focused tests verify one extraction per page and preservation of prior output on failure.",
       "evidence": [
         {
-          "resource": "repo://tests/builders/test_document_builder.py#L52-L69",
-          "version": "repo-lines-v1:sha256:1ef615d10a9c4bd09e1deae4204462c37b61b84f19216caf57691eeb5c6bfbb7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiZWU4YzFlYWU5NjEyODhiYTk1YzIzODRmZTk3MTI2NWUzNWM2MjdhNjhmZDRlMTA5MTExZjlkYWNlNjk0ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNjEzM2ZhMjE2NWMyZWE4MGY4YjU2Zjg4ZmY1ZDEyZjkzYWM2ZjVlNWRjM2ExOGQwZjI4NzQzZDg3MTY4NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjNTdkNGFiMDc2MjgzY2EyNzljMTM2NzI3MjVmOGMwZTBhNmEyNmJlODhhOGI4ZmNmNDgzY2Y2OTlmMTkxZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1Y2NiZmJkMmY5NDY4Yjk3NzA4ODE5ZTk3NmI2Nzk1MTI0ZTJiNGY4ZDRhNzBhOTAxNzAwZjM0M2JmMzJkYzIifQ"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+        },
+        {
+          "resource": "repo://tests/converters/test_pdf_converter.py",
+          "version": "repo-file-v1:sha256:a53bfb1fd3d6816598cf512899237c3073a2c13066c6770ce9607cc6a6334a5a"
         }
       ]
     },
     {
-      "id": "claim_daa7ffc7c6fe4495b31d9670488d9784",
-      "statement": "Extracted page validation rejects inconsistent blank state, unknown block types, empty textual blocks, invalid rectangles, and coordinates outside the normalized 0–1000 range.",
+      "id": "claim_e74538b06aa240fa80d8ebc41bdb278f",
+      "statement": "CLI export paths derive multiple formats from one converted document and validate output targets before writing.",
       "evidence": [
         {
-          "resource": "repo://tests/builders/test_document_builder.py#L29-L49",
-          "version": "repo-lines-v1:sha256:7f579a31d6bf738e0a169aa98bb856c5765d88379f4479195f6f9904647e35ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkZGE4YTc3MTQ1NTg1N2YyM2ZjODgxYzZkZTI0YmQ1MzNkMmZmMGY5M2MwZGMwMTI0ZTc0MjRmZjFhZTUyMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzYjA2OTM0MzEzYzMxNjAwMjk5MWQ3OGY1YmYyMGVkNWI3YTFiMGVmODVjNjdhYWM0ODY2ZjVlZGIxYmE3OWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlOGEzODk4Y2JhODJlOGMxYjBlMjBjYTcxZGEyYzExODM5YWIzMDM1NTBiOTBkZDVkYTBjZTc3MTM1MmIzOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MDdmMjUxNWI2MTE2Mjc0MTkxNTkxZmJlZmVmOTA5Yzc1NTA5ODNjNjBhYWNlMmNlZWMyYzQ2YTljNmMwN2EifQ"
+          "resource": "repo://doclayout/exports.py",
+          "version": "repo-file-v1:sha256:eb92ee18e3ac7f3b86b0452e5fbd2a744a0a35be0baf51c4cd4874c5459934b8"
+        },
+        {
+          "resource": "repo://doclayout/scripts/convert.py",
+          "version": "repo-file-v1:sha256:3a6836198b985f629ac973ed9ef3f07885131e341a51c17d3993aab1e39b4ba1"
+        },
+        {
+          "resource": "repo://tests/test_cli_exports.py",
+          "version": "repo-file-v1:sha256:cb59cd5d1f48103bcf027ce3cf5e3bf3df2c1cfed8cb62ac6f37c5f8b5eaf4e3"
         }
       ]
     },
     {
-      "id": "claim_49e4561a88914e61961598d238034752",
-      "statement": "After processors complete, PdfConverter sanitizes block HTML and descriptions, attaches service usage to the Document, and only then resolves and invokes the renderer.",
+      "id": "claim_498bf446b62b4fc0bcdea77c0dd8bdba",
+      "statement": "GUI batch preserves per-file failure receipts and sends saved raw Markdown into a separate downstream field workflow after successful conversion.",
       "evidence": [
         {
-          "resource": "repo://doclayout/converters/pdf.py#L123-L151",
-          "version": "repo-lines-v1:sha256:853c6c8283dc4bec567e3b28a51fdc4202a601ea45295f9bf5ca21c950d9611c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZTVlM2M0MDkwODQzYmE4NzI4MmUyY2I1NGZiZWU0NDMxNGE3ZTFlNjRjZDEzMjM0MDM3NzgyN2Y4NTg5ZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkM2I3MDVhZDhlYjU3YTM5YzQ0NDg4YzJlNGM2OGU5NTEzZjVkOGM4Y2I0N2U4OGQ1NmQxMTMzYWI3YmUzNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMTJmZjExMDM0NWZhM2YxMzhjMjVjY2ZiY2JjNTk5NjZlNmMyZGJlYjA0MjcyNTk4NmFiZGUwYWZmZDg1MWEifQ"
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
         }
       ]
     },
     {
-      "id": "claim_4dbb3450b63046b4b7c8d1417b67ed76",
-      "statement": "Tests show extraction failure preserves prior output, while folder conversion continues to process a valid later document before returning failure status.",
+      "id": "claim_d74c3c7929f84f7aa25f9a9fee024f0b",
+      "statement": "Conversion attempts prepared V3 before whole-page Sol and records Sol fallback on layout failure; successful reconciliation preserves Sol content while selecting accepted V3 rectangles.",
       "evidence": [
         {
-          "resource": "repo://tests/converters/test_pdf_converter.py#L46-L81",
-          "version": "repo-lines-v1:sha256:85ce13690c6243626d0c6fbe18739b85977e342da7e53d9c3a9c3ac68848be92:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNmEzZjcwNTQ1YmI2MTY4MDY3ODg4ZWZkMWZlYmVjNjJiNDgyYzM1ZmIwM2I3ZDdiMjk1MmIzNTQzYTEyMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZTFiNzNiYTVjMjI1ZDg1YmIzYzBiZWM3NDFlOWI3MjdjYTRjYjU3Y2I4NWE0NDVkYThkMzE4ZGQ4YzhhMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhODJlYmU5ZWQ0MDdjM2E2YmE0YjAwMzQyOTJiYWE1MmMxMWNlNWFlMjg2MTA3NDAyZGU0NzkyZWVlY2FjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/builders/document.py#L42-L153",
+          "version": "repo-lines-v1:sha256:06b803c9c264b38ba7beb81801873f318db349da7295dfd4c2af52131935bd0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NGM0NjY1YWU2M2E2NTE5OTAxNjIxZWM1ZDgwNDc2YWMwMTg3YTBlNmNiNDE3Zjc2MjhmNWFjODhkZTI2YjU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2MDZiMDNkYzZkOGZiYzg0MTk5NzYxY2Y0NDNhMDFkOTBlZmUyNzUzMzY3M2U1MzhiOTZkYjVmYTU0NDFhZWJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTYwMzZlYmE2NjJiNDBlMDUwYzQyNGEyZWYyMDQ0YjZkNTU2NGM1ZTJjNGMxNzk5NWJlZWUxMWMxYWUwNzA4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhNDVjMzMyNzIyYmMxMjNkNjYyNjYyNTNjYTQ5NDdhOWVkODRkNzA3N2E1NTdkMGMzODQyMThlYjQwYjc3OTdlIn0"
+        },
+        {
+          "resource": "repo://doclayout/converters/pdf.py#L175-L203",
+          "version": "repo-lines-v1:sha256:7de1fac3c74e71ebcb28b8959a15a58c3ebb6138e518b6e88d77a5554bc87fd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkNTAxYmU5MzAzYzg2NjBiZDQxZDI1ZmE3ZjY2MTIxYWE5ZGUzYjIyMmNhMjZiN2Q0MzkzMjIwZDlkZjc4NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlZDk2NzE3YmU5ZDYwZTA3MGE2MmRhMGQyNmU0MWU3MTM4ZWE5OThkM2I3NTdkYTRhMzE4YmU5NjA1MTA1ODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f354492ec8a4b16b3b4a678978d6d04",
+      "statement": "Matching uses compatible mutual-best IoU >=0.5 with 0.10 margins, rejects ties and strong-containment split/merge ambiguity at 0.8, and only reorders contiguous matched runs, leaving sol_only anchors and unmatched V3 diagnostics.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py#L808-L920",
+          "version": "repo-lines-v1:sha256:b78f030f2c870e33ab81f7dc978e56bb11990a5f8b58bb7e7ba83e90ce7c1192:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NTdmZDQ2OTVmMzZlYWNhMGVhYjdkOTM0OWRjNWIyMjJlZTU5MWM2YmZjMjZmMjJhOTQ4NGE1NTI3NzkzNDZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNTgwMzE5ZjUwNGJmODUwMmMxNWU1YjBlZjc2NGQwYTFmODExYTNjZWM2N2IyNDNhYjE5YjBiNTdmZDUzY2EzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YTgyZWJlOWVkNDA3YzNhNmJhNGIwMDM0MjkyYmFhNTJjMTFjZTVhZTI4NjEwNzQwMmRlNDc5MmVlZWNhY2ZjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MzVkMzZlMWRhODg2NDcwZWQwNGI4N2IzOWU5OTNmYTAyZDM0OTE2NGUwMDExMWZlMDY5MTM1ZjNkNTdmZTg1In0"
+        },
+        {
+          "resource": "repo://doclayout/layout.py#L89-L93",
+          "version": "repo-lines-v1:sha256:f0b70a46fa36153755f95ebb4295ecad6462506ba6e0e0b776eda50da1c1673a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmYjhlZjg5ZmNlZjM1MzA3ZjY1MmU1YzlhNzBkMjU0NWYwYmZiOTM4YzQwNTViMDQ3MTBiZGJiYWQzOGM0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzlmNzY0NzdjODFjNjViYzY0MjkwOWYzMTcyZjMyY2Y5MmI4MWE1OTI2ZmRlY2JhYjQ3ZDlkNWI4MWQ2Y2UwZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWYxMTJlYzdkYjk4Y2I5N2M0NDM3ZDM5OTYzMmQ0ODdmZDRkN2NlOTE5NjA2M2QwMmY5YjYxYzg0MjI0MTQ0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGQ1ZWYwNGM3MzlmOTJlYWJjYTIxNWZiZDRlNzkwMmUxZDZmZTc2MjBiYTVhYTY4M2IyYmFjMGZkZjc4MzdlZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_14eceb79f4bc476e8b9ead3893052e41",
+      "statement": "GUI identity includes the pipeline fingerprint and policy versions; saved fallback is reusable and field-only retry reads raw Markdown/chunks without reconversion.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py#L235-L271",
+          "version": "repo-lines-v1:sha256:513caa36d773fb4ea96f01e1cca75418b780cee7ab5831cf2703034462bf6f76:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmODQ2MzEwYTA4NzRmNGQyNjIxZGZlODIzYmE3YjQ2NDIyZjFjMGI3N2ZkZWY2MjhlNGM3YmRjNWU2YmM5Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyM2M1YzJhNmE1Y2UzOTEwNzI1N2JhODYxY2ZjODUzMDZlYmUxMjA4NmE4ZGQ3NmE1MzgzYTc3MGJhNjc1ZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxOTZlYjY0NTI1ZjYwZWU5MDQyNjFmYmUxZDA2MGNhMTU0Nzc4MGY1NWEyZmEzZGEyZDllODc3ZDVmMzkyMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlNjM4NDlhOGQ3NzY5NWJlZGQ3NDM4NzA1NjM3Mjg3NjA5MmUzYzg0M2U0M2I1YTA3Yjk0ZjUxZWE1NGI1MzgifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L183-L213",
+          "version": "repo-lines-v1:sha256:9f63164419e2b6d96388aa7e6dd3269aca2d58a4dc42a664648c81063009dd48:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxY2E3YWJiNzg3Mzc2NTY1ODQxNzRlNjcyMGIwYjk1MGU3NmU0ZDlkNjJlMjdhODJiYWNkY2I4NGViNTZkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4ZWQ2YjJhMDUxMzY3OTA0YjAyZDFjZDA0MDUxNTRmZmY1NjdlYzM4ZWZhYzM3OGNjYzllMDYxODdlY2ZhNzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwNzY1ZDZmODk5MWI0OGUzMTcyNDZjODlhNTllMTAwYzljNzlhOWM4OGQ2YzY1MDdjODgzNjdkNGUyNjZjMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YjJhZTEzYWE5ZTVmMWQzMmI5ZTYzYjQwMDA5YzU3ZDNjMmRmYmI2YTQ2OTAyZDhiN2FhYTU2NzA2NDMzYzgifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L31-L44",
+          "version": "repo-lines-v1:sha256:a89bbbfdcb6bd8fed263f546db7874d384ec1f2b97c4a79a81c95fd856057973:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYjdiMDFlYzM3MjU2MmZkYTE2NTFiYjVhM2NkMmEyN2U0NmFkNWMwN2RjOWNjZGZiYWMwNDA5MTlkNmM3MDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ODNiOGExZTk0OTI4NWQ2OTg4MjcwMGYxYTNhMjFhNjEwODgwOTc0YWEyMzQzYWFmNDQ5YWY5MDgyMzM0ZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzNjljYjA5OTZmODdhYzRiNDBiYTY0MTg2MzI0ODczOWNiZGExNDk1NTVlOTg1YjMzNjE4YjAxNmQ5NzkxYmYifQ"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
   }
 }

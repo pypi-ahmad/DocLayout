@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:42e00f7edd694f538e361c6002803d039ab37a2a040edfb4565e2b6ae954f11f",
+  "claims": [
+    {
+      "id": "claim_d0f8ff328f2e4165a1445dbe92f4aab5",
+      "statement": "GUI downstream extraction reads saved raw Markdown and chunks, with prompt and fixed schema defining the authorization record fields including stated ICD-10 and CPT codes.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/prompts/fields/extraction.md",
+          "version": "repo-file-v1:sha256:b7240c261fc51157ab0c5ddc7e89ee7a343e4e84300442b7881518ea76f5acc7"
+        },
+        {
+          "resource": "repo://doclayout/prompts/fields/extraction.schema.json",
+          "version": "repo-file-v1:sha256:5c67b5409ac9fc5ba8438c2d1da9d1be84c95fb083e6ed691d066586a44f249b"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+        }
+      ]
+    },
+    {
+      "id": "claim_906cdddaeca4491e8ddc0f7a4db594d4",
+      "statement": "Classification is disabled by default; enabling requires configured categories and one target, then uses Luna/medium closed JSON with an inclusive score >=0.75 and verified source quote.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
+        },
+        {
+          "resource": "repo://doclayout/prompts/fields/classification.md",
+          "version": "repo-file-v1:sha256:42b7bca252c85722041373da90ae9873eb181a7589b723baf8cce719a84e33e4"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_bd2fb205f15d46519f0466a4e8eb1c5c",
+      "statement": "Accepted non-target classification stops with classified_no_extraction while insufficient, ambiguous or low-score classification stops with fallout and reasons.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_76fd4982da8f43b29377925c909f7e02",
+      "statement": "One logical Sol/medium request extracts all records from complete raw Markdown under a byte budget; local checks validate schema, quote paths, unique chunk mapping and bounded finite geometry.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f5d51efd7ab46cfb7704ec500a86d10",
+      "statement": "FieldStore saves fixed SQLite tables and JSON field/evidence columns; same-definition outcomes are reused, field retry reads saved Markdown/chunks without conversion, and JSON export retry uses SQLite without a model.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/field_store.py",
+          "version": "repo-file-v1:sha256:02faae7146c7cfae1acb3e79697194a0546b01796741bfbebb0d8b69938b5b72"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_1717c0937b15439aad2ecc826b5eb1d6",
+      "statement": "GUI batch processes three files concurrently with per-file failure isolation, and Extracted information reads saved records across sessions with Summary and Source document views.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/app_pages/review.py",
+          "version": "repo-file-v1:sha256:5a7a9815960c2545e825d337ff4727bd733d9367bbba885711fc7e27c99b79ed"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+        },
+        {
+          "resource": "repo://tests/test_field_summary.py",
+          "version": "repo-file-v1:sha256:b331483231969a2e4fbdb43539b40e3912ce288fe06db5cf236ffdb77726575c"
+        }
+      ]
+    },
+    {
+      "id": "claim_feb9062346094eb1b2bc0a2d12f474c8",
+      "statement": "Extraction instructions prioritize the main authorization form, allow compatible supporting details, resolve explicit Same As Above links after source selection, and define request_date as the requested service date or range.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/prompts/fields/extraction.md#L18-L48",
+          "version": "repo-lines-v1:sha256:fee8b9badc15a2320996658e5b68bf4d7b7f8d8031d21b4a864ee25f9b5a5043:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjZDY1ZTM1MTk2MTcwODQ4NjYwYmY5MjhhNTM2M2IyZmI1MzU5NTkxZGE1NTM1ZDFmYmFhNzNhYjEyZDRkYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0ODE5ODQ3MzFjNDNjOGVlZDA3NWFlMzljMDE3MWZhZTRmN2QwZWY1NTNmZTcwOGE2YTZiNTczNjA2NjA4MjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5YjA4YjNhZThjZjk4MWRiNjk2ZDgxNTcwMGY2MmQ5ZWI2ZDZhODhjODVlMWY4M2ZhZjNhNDMzNzM3ODNlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliNjc3NGIyYzBiOTNjMzY1MDA2YmM1MjIzM2Y3NjkxMDQyY2VkOGJkOWFlY2E2MjE2ZjcxNzFhOWMzNTUwODIifQ"
+        },
+        {
+          "resource": "repo://doclayout/prompts/fields/extraction.md#L92-L99",
+          "version": "repo-lines-v1:sha256:560cbac660af4a1ff9e8beccc54d3bbd0c17db7bcfc32a3039f3d71bd1a318b8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMyNGM0NDE4ZmEwMTdhNTdkODg5MzY1OTk4OWQ1ZThlMmYwMDE5NjM0M2NjMzRlNzE1ZTQ3NjJhMGVlMmZiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWI2NzY0MTc2NzUxMmEzN2RkZTkzZjcxYmI5OWJlNWFiNWUwNTE1MmZkMzQyOGMxNGNlM2ZmZjk1NGZjYTM3YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGQxMWU5MGM3M2FkZGIwZjhhZDJiYjk3ZWRlZWUwZmEwMzhlZjVjMTI1YTU3NzI4ZDYyMDM5ZWU4YTFjNWVkNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_056d78c159a34e7bab4d69321667c913",
+      "statement": "Definition fingerprints include extraction model and effort; evidence validation deduplicates identical field/reason warnings without relaxing exact quote checks.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py#L129-L155",
+          "version": "repo-lines-v1:sha256:a0f98f02a55a13961caf1bf1ef3dfc60df384042e063ebbfd7ac33ca814203d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3NjUwNWI1ZTMyN2JjM2NjOTcxYWUyZDBhYjVmOGY1NGU2YjQ5Nzk1ODE5ZmIwMGEzMWYzZDU4NmFhZjI5YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiNmJhZjE2ZDVlNTdlNmJmNmNkZmUzNzhiMWIwNmY5NTcxNTAwMTFiYjg5MmYyOTRlOGU4MjdlOTMxY2IyYmYifQ"
+        },
+        {
+          "resource": "repo://doclayout/fields.py#L285-L376",
+          "version": "repo-lines-v1:sha256:6420d321e4ea186b78b6503eeb86251e628dd77f28cd5f54484f4df23f54dbb8:eyJzZWxlY3RlZExpbmVDb3VudCI6OTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNjdkNjI4NjZlOWJmMDVhM2I5MTc4NzRmOTE4NzI4MWRmNWUxNzhjMTZlNGE2MTY3ZWFmNjI0MTI1MzYxYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZWIwOTczNzJiMzdkZjcyZDM1MzQ2YTE4ZTg0MGEwMWVjMzcwNjE3YWU0NGVjYjg5ZmJmNGMwNjc3M2E2NjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyNTU4YTQxM2ZiNjhlZmM5OGM4ZDJhNjI5MzU3YzkxY2UyNjMzODdhNzhmMDY5ZjYxMzQ1ZWNjYThiZTY5YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmMzI1MWI2YzcxNGI5YzIyN2RhYjdhZTYzZDE5NTlhYmE4NjBlYWIwYjRkNDI1ODIxMzFhZThmMDBlNWQyZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7d45ad677cd94c3c8c52f325d51b0297",
+      "statement": "Successful Sol fallback conversions continue into Markdown-only fields; field-only retries bypass V3 and conversion, and multi-page block lineage prevents fabricated single-page evidence locations.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py#L308-L318",
+          "version": "repo-lines-v1:sha256:331fb52e710467cc0649c639f55ec240d3231f2adab89d0f2755068fccf874e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNmFiNmYyZGE2NDk1NDcyYjgyMzllODZmNDRkNjI2NmQ4NjljYTcxYzViNDA4MWZhNWMwZGYyYzY2MzljZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZmUzZDIxMmIyZmZhYjE5YTdjY2ZhOWM1MDM5NGIxOWUyYzA5YTk2ZDZiNTE3OTQ0MTc5MjJmYzI0ZjdjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzZDUxNGY3MTA3NDc0NWU2NzFmNzljMzkyMTM4ZTM1MjQyN2ZhNWM3ZmY1ZjRiM2YxYmE4OTZmNTg2YzBhYzYifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L189-L212",
+          "version": "repo-lines-v1:sha256:66440779070b01d3e994f6deb6ac1eddb4b323c9554191e219ddc90225a7913c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZTdhOTc5MzY3NzU3MWUzMzNmOGIzYzdjMWVjOTBlNWZkYTFmMWY1YmNmZjg0NGE5YTlhNjFlYjBjYTllZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiOWE5MTMyY2YxNGUwNzgzNDE5ODAxOTQ5YTM2MWVhMmUxMWU4OWQxMzMyOWE0MzY2NDgxMjY2NWM0Y2Q1MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkNjYxMWJkMDI2OTFjMDRmODgzYzRhYzY5ZGRjMmJhNWQ2N2RmOTRmYzIzNzE4OTQwZWQzNTg1Y2ZmZjdlNzAifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L252-L289",
+          "version": "repo-lines-v1:sha256:bca70d67fce3e60e6b213e18fa225cea40b3b4b8be7b104cd618941c6bf66776:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZWZmMzYwYTkxZDhkNzUwMTA5NDZmNjM5ZTFhNjEwYmMzYTMyZDk1NTc2OTRmNWMxOGMzOWUxMTkxZjJjOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5YzA3ZDNkOTM0ZmE2YjFhYjkzYjRjNWFlYzdlNWI3ODMwYTQyMTM2ZTVmYmE3MDJhZDg0Zjc5MzFlYWNkYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYjJlMjU2YzQ0Mzk4NDhmMzk0YTNhN2EyNzY0YWU2NWIxZDYzNTUyODgyNmJkMTEwZTkyZjU5OTdjYmU1ZjAifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
+  }
+}

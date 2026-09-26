@@ -9,16 +9,19 @@ manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v2.1.1`; later changes on `main` are recorded under
-[Unreleased](../CHANGELOG.md#unreleased).
+wheel installs `v2.1.1`. [Unreleased](../CHANGELOG.md#unreleased) describes this
+working checkout and does not establish what has been pushed to `main`.
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
 WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
-providers can download a font on first use. PDF and image extraction needs no GPU
-or local model weights.
+providers can download a font on first use. The local unreleased V3 pipeline
+attempts to load pinned layout model weights, downloaded during first preparation
+unless already present. V3 can run on CPU; if layout remains unavailable, conversion
+uses Sol with explicit fallback provenance. The published
+v2.1.1 release predates this local integration; no V3 release is implied here.
 
 ### Installing the application package
 
@@ -47,18 +50,37 @@ page extraction always uses Sol.
 
 ## Browser workbench
 
-In the source checkout, run `launch.cmd` for the browser on port 8471. It refuses
-an occupied port without stopping its listener. The `doclayout_gui` command also
+In the source checkout, run `launch.cmd` for the browser on port 8471. It stops
+an existing DocLayout listener on that port automatically; other applications
+require confirmation. Stopping a process can discard in-progress work and resets
+the browser session; saved results remain. The `doclayout_gui` command also
 binds loopback, with Streamlit's default port. It leaves port cleanup
 to the caller and forwards extra arguments to the app without
 interpreting them as Streamlit server flags.
 
-1. Upload a PDF, PNG, JPEG, GIF, DOCX, PPTX, XLSX, HTML, or EPUB file.
-2. Choose Start page and End page. Both are inclusive and numbered from 1; the
-   default selects the entire document. Images are treated as a single page.
+The sidebar has two full-width buttons without icons: Convert documents and Extracted
+information. The active page is highlighted. Switching pages does not call a model.
+
+1. Open Convert documents and upload one or more PDF, PNG, JPEG, GIF, DOCX, PPTX,
+   XLSX, HTML, or EPUB files.
+2. For one file, choose Start page and End page, inclusive and numbered from 1.
+   Multiple files use all pages and have no page selectors.
 3. Optionally enable extra refinement or retain page headers and footers.
-4. Select Run DocLayout. Each selected page is sent for extraction.
-5. Inspect and download the result from the tabs.
+4. Select Run DocLayout. Matching saved runs are reused without loading V3.
+   If new conversion is needed, “Preparing layout model…” appears while pinned
+   weights are checked/downloaded and the provider is exercised. Conversion waits
+   for an exercised “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” state, or
+   continues with “Sol fallback · V3 unavailable” if preparation fails. Up to three file jobs
+   then run at once. V3 analyzes each whole page before the same image and layout
+   prior go to Sol. If page analysis fails, Sol receives the whole image without
+   that prior. Completed raw
+   Markdown goes to Sol/medium for authorization-field extraction.
+5. Select a document to inspect its conversion tabs. Click **View extracted
+   information** for its saved request details, or open **Extracted information**
+   in the sidebar. **Summary** shows readable sections and service tables;
+   **Source document** retains interactive highlighting. Missing values are hidden
+   until **Show missing information** is enabled. Review flags appear under
+   **Items to check**, and raw output is in **Technical details**.
 
 | Tab | Behavior |
 | --- | --- |
@@ -83,8 +105,33 @@ estimated boxes. They contain no searchable PDF text layer.
 
 Switching tabs and downloading files reuse the result without new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
-results and chat. Running extraction again also starts a fresh result. Debug
-shows metadata and raw output; it does not save a GUI run history.
+session results and chat. Saved artifacts remain on disk. Matching documents,
+options, and definitions reuse saved runs. In Extracted information, **More actions →
+Extract again** requests new extraction from saved Markdown. **Download data (JSON)**
+exports the saved record without changing it. Debug shows conversion metadata and raw output.
+
+The result caption shows stored V3 regions, initial matches and summed page-analysis
+milliseconds where available. Timing includes queue wait, not just model kernels,
+and is not elapsed document time. Preparation is separate from these per-page
+measurements. Annotations show rectangular final block bounds, not exact contours
+or character locations. V3 masks and observed ordering are evidence, not a promise
+of better Markdown accuracy.
+
+There is no layout switch. Failed V3 preparation or inference uses whole-page Sol
+instead, with “Sol fallback · V3 unavailable” and saved per-page provenance.
+Missing, incompatible or ambiguous V3 matches keep Sol content, boxes and order.
+Sol/API/validation failures still fail conversion. Saved results, including fallback
+results, are reused without silently reconverting after V3 recovers. Field-only
+retries still use saved Markdown. Previewing or changing tabs does not retry
+loading. See [layout settings](configuration.md#local-layout-inference) for the
+cache/model-directory override, offline mode and CUDA/CPU policy. These settings
+belong in process variables or `local.env`, not credential `.env`.
+
+Classification is off by default and makes no extra request. Enabling it later
+requires category definitions, one extraction target, and an explicit process
+environment switch. See the [field guide](field-extraction.md) for activation,
+record schemas, local storage, failure statuses, and two-way evidence highlighting.
+The CLI and HTTP conversion endpoints do not perform these downstream stages.
 
 ### Document chat
 
@@ -99,7 +146,10 @@ status messages. Chat usage is separate from extraction metadata; Clear chat
 removes its local history and usage details. The Session API cost sidebar
 retains costs from cleared chats, previous uploads, repeat extractions, and failed
 requests in this browser session. Chat costs include both draft and verification
-requests. A new browser session starts a new total.
+requests. Field and enabled-classification usage also enters this ledger. The
+sidebar shows GPT-6 Sol and GPT-6 Luna subtotals, not a stage breakdown. A new browser session
+starts a new total. Reopening saved records does not replay their historical
+charges into that total.
 
 CLI commands print estimated cost per conversion. Metadata exports contain
 `usage` records and a `cost` summary for OCR and optional refinement; chat costs
@@ -223,7 +273,10 @@ Markdown, images, and metadata. `TableConverter` selects tables, forms, and
 tables of contents; `OCRConverter` returns ordered blocks with HTML and estimated
 geometry. Select other renderers by their full class paths.
 Invalid configuration raises `ValueError`; failed model extraction raises
-`ExtractionError`. Close shared models after use to release the HTTP client.
+`ExtractionError`. Layout failures are caught by conversion and recorded as Sol
+fallback; direct `LayoutEngine.prepare()` and `analyze()` callers receive
+`LayoutModelUnavailable`. Close shared models after use to release the HTTP
+client; the borrowed layout engine remains cached until process exit.
 
 ## HTTP API
 
@@ -266,6 +319,9 @@ image values are base64 strings. Clients must check HTTP status: 401 for missing
 or invalid authentication, 403 for disallowed filepath access, 413 for resource
 limits, 422 for invalid fields, 429 while busy, and 500 for conversion failures.
 Malformed multipart requests may return 400. Errors omit private exception detail.
+Ordinary V3 preparation/inference failures continue to Sol and can return a normal
+successful response with fallback metadata. A defensive HTTP 503 handler remains
+for a layout error that escapes the shared conversion boundary.
 The API process runs one conversion at a time. GUI chat, annotations, and ZIP
 downloads have no HTTP endpoints. Defaults are 200 MiB and 500 selected pages;
 see [security limits](configuration.md#security-and-resource-limits).
@@ -276,9 +332,11 @@ see [security limits](configuration.md#security-and-resource-limits).
 | --- | --- |
 | Credentials unavailable | Check the launch folder's `.env`; after changing Windows environment variables, open a new terminal and restart the app |
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
+| Sol fallback / V3 unavailable | Conversion uses Sol content and boxes. Check runtime dependencies, pinned files and cache access for future conversions. Offline mode requires complete files; saved fallback results are not automatically reconverted |
+| CPU shown despite a GPU | `auto` requires successful CUDA execution and kernel verification, otherwise it uses working CPU. Explicit `cuda` rejects a failed CUDA engine without substituting CPU; conversion then uses Sol fallback |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
-| Port 8471 remains occupied | Close the owning application yourself or use another port; the launcher never terminates it |
+| Port 8471 remains occupied | The launcher retries after stopping its listener; if access is denied or the owner changes, close the owning application and retry |
 | Clipboard copy unavailable | Use localhost/HTTPS and allow clipboard access, or download the file |
 | Results disappear | Upload/processing changes invalidate them; a disconnected/replaced session can lose memory |
 | Header or table is wrong | Review the source and try optional refinement; correctness is not guaranteed |

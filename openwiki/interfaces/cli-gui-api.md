@@ -1,73 +1,65 @@
 ---
-type: interface guide
-title: CLI, GUI, and API Interfaces
-description: The responsibilities, state, lifecycle, and output behavior of DocLayout's command-line, Streamlit, and FastAPI entrypoints.
-tags: [cli, streamlit, fastapi, interfaces, lifecycle]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
+type: Interface guide
+title: CLI, GUI, and API interfaces
+description: Entry point responsibilities, conversion outputs, GUI persistence, and authenticated HTTP limits.
+tags: [cli, streamlit, fastapi, interfaces]
 sources:
-  - id: openwiki-source-67bc4fcd658b5dbb5cb95cc0
-    resource: repo://doclayout/scripts/convert_single.py
+  - id: openwiki-source-61dc7f9e9ba4f8fa05cfee1d
+    resource: repo://doclayout/converters/pdf.py
+  - id: openwiki-source-f8eb525c17b05d929e5c2c00
+    resource: repo://doclayout/credentials.py
+  - id: openwiki-source-3fc18d2b3bd86c90ce3a3ddd
+    resource: repo://doclayout/field_store.py
+  - id: openwiki-source-6c373104051421f3f3c546ea
+    resource: repo://doclayout/layout.py
+  - id: openwiki-source-dcc182883a6f92d01cba381f
+    resource: repo://doclayout/scripts/app_pages/convert.py
+  - id: openwiki-source-78143bbf8e0e918bf100317b
+    resource: repo://doclayout/scripts/app_pages/review.py
   - id: openwiki-source-e4aa4d69e867cd141e316b1d
     resource: repo://doclayout/scripts/convert.py
   - id: openwiki-source-dd442b9660f0eaeb4d42fde8
     resource: repo://doclayout/scripts/server.py
   - id: openwiki-source-ad6ebd9d60ed27110202975f
     resource: repo://doclayout/scripts/streamlit_app.py
-  - id: openwiki-source-852c65645159b1b6c9ad63af
-    resource: repo://doclayout/ui/documents.py
+  - id: openwiki-source-4ed424df535efedbec384488
+    resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-05b015b57d1b77a3ae6023e9
+    resource: repo://doclayout/ui/field_summary.py
+  - id: openwiki-source-05ccef8d4cf1698187f20464
+    resource: repo://pyproject.toml
+  - id: openwiki-source-abd31605405249fba84ec342
+    resource: repo://tests/test_entrypoints.py
+  - id: openwiki-source-51b6aa7d36018bd3566db002
+    resource: repo://tests/test_field_summary.py
   - id: openwiki-source-ff268f9389aaadf9064c3be8
     resource: repo://tests/test_ui_browser.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:40:37.445Z
 ---
 
-# CLI, GUI, and API Interfaces
+# CLI, GUI, and API interfaces
 
-DocLayout exposes the same conversion core through four installed commands. Each interface owns configuration translation and service lifetime, but they differ in persistence, concurrency, and how results are delivered.
+DocLayout installs `doclayout`, `doclayout_single`, `doclayout_gui`, and `doclayout_server`. The file CLI can select standalone conversion exports or request `--all` to construct a complete bundle and ZIP from one converted document. Folder mode processes sorted files, optionally using worker processes, and reports individual failures. The legacy single-file command keeps its configured renderer path. Neither CLI runs business-field extraction automatically.
 
-| Command | Interface | Result path |
-|---|---|---|
-| `doclayout` | File export or folder batch CLI | Selected files, full bundle, or legacy renderer output |
-| `doclayout_single` | Legacy single-file CLI | One configured renderer output in an output folder |
-| `doclayout_gui` | Streamlit workbench | Session state, previews, downloads, clipboard, and document chat |
-| `doclayout_server` | FastAPI service | JSON response containing output text, base64 images, and metadata |
+The Streamlit app has icon-free Convert documents and Extracted information sidebar buttons, with the active page highlighted. A single upload offers page selection; multiple uploads use all pages and up to three concurrent file jobs. The explicit run button starts conversion and downstream extraction. The GUI saves original bytes, raw Markdown, chunks, conversion exports, business JSON, and SQLite results. Browsing exports or saved review records does not repeat model work. The results page offers explicit extraction retry from saved Markdown and a JSON export retry that reads SQLite.
 
-## File and folder CLI
+Extracted information presents grouped fields and service tables in Summary, with missing values hidden until requested. Source document links fields and PDF regions in both directions. Processing issues use readable field labels, while raw metadata stays under Technical details. Saved results can be selected across sessions, and multiple requests within one run have a separate selector.
 
-For a file input, `doclayout` requires a destination and supports individual export flags, `--all`, or the legacy `--output_format` option. These selection modes are mutually exclusive. It validates intended output paths before creating the API service or extracting the document, renders all requested formats from one document, writes them, prints an estimated cost, and closes the service in `finally`.
+The HTTP API exposes path-based `POST /doclayout` and multipart `POST /doclayout/upload` for conversion only. Its lifespan creates a shared service and reads a bearer token. The request guard authenticates non-GET/HEAD calls before request parsing, caps request bodies, and returns 429 with `Retry-After` while a conversion is active. Conversion runs in a cancellation-shielded worker thread so a disconnected caller does not free the busy slot early. Path access requires an existing dedicated `DOCLAYOUT_INPUT_ROOT`.
 
-For a folder, the command sorts direct child files, optionally divides them into deterministic chunks, applies a maximum count, and processes them sequentially or in spawned worker processes. Each worker creates and closes its own service and can issue up to three API requests. A failed file is reported while remaining tasks continue; the command exits with a summary error if any document failed.
+Successful HTTP responses include the chosen conversion output, base64 images, and metadata. Failure responses use HTTP codes and `detail`: validation 422, authentication 401, forbidden path 403, size limit 413, busy service 429, and conversion failure 500. The API tests exercise authenticated path/upload conversion and rejection of retired options.
 
-`doclayout_single` keeps the earlier configuration-driven behavior: it creates a service, runs one configured converter and renderer, saves the result, reports cost, and always closes the service.
+Entrypoints share the converter and configuration parser but own different service lifetimes. The GUI owns persisted downstream records. CLI and HTTP output shapes remain conversion results.
 
-## Streamlit workbench
+All real conversion paths, including the Python converter, attempt V3 preparation before page conversion. The GUI shows “Preparing layout model…” for uncached work, then the actual CUDA/CPU state or a Sol fallback warning. Preparation runs off the UI thread once for the batch; file jobs share the engine. A failed preparation does not trigger a new download or warmup on each page. No GUI layout switch is exposed.
 
-The launcher checks for the `gui` extra and runs the packaged application headlessly with file watching disabled. The application caches model artifacts for the Streamlit process, while document and chat state live in `st.session_state`.
-
-An upload is hashed from its bytes and filename. A new upload clears prior extraction, scope, preview, and chat state. `prepare_upload()` detects the provider, counts pages, and eagerly converts optional document formats into stored PDF bytes so later reruns do not repeat office-format normalization.
-
-The extraction scope includes the upload hash, selected page range, refinement option, and header/footer option. Changing any part clears the result and chat without making another model call. Only the explicit **Run DocLayout** button extracts pages. The browser test verifies that switching tabs and downloading exports does not repeat extraction, and changing scope invalidates existing downloads before another run.
-
-One conversion builds Markdown, hierarchical JSON, chunks, per-page chat text, annotations, HTML, and a ZIP. Debug artifacts are forced off and all temporary inputs remain inside a temporary directory. Pages with detected OCR errors or no text are omitted from chat context. Chat history and chat usage are cleared with the document scope and its requests are added to the session cost ledger.
-
-## FastAPI service
-
-The API lifespan creates one service artifact and one `asyncio.Lock`, then closes and removes both at shutdown. The lock serializes conversion because PDFium use and the surrounding conversion are not exposed concurrently through this process.
-
-`POST /doclayout` accepts a strict JSON model with a filesystem path, page range, refinement flag, pagination flag, and one of four output formats. Unknown fields receive a 422 response. `POST /doclayout/upload` accepts the same fields as form values plus a file. It ignores the upload filename as a path, retains only its suffix, writes bytes under a fixed name in a temporary directory, and converts there.
-
-Successful API responses contain `success`, the requested format, serialized output text, base64-encoded images, and renderer metadata. Conversion failures are returned as `success: false` with an error string, while malformed request fields use HTTP 422.
-
-## Shared configuration and cleanup
-
-All interfaces use `ConfigParser` to turn Click or request options into converter configuration, processor selection, renderer selection, page ranges, and output locations. Removed options are rejected rather than silently ignored.
-
-CLI commands own short-lived service instances and close them in `finally`. The Streamlit process and API lifespan own long-lived artifacts. Individual converters use isolated configured service copies, so usage from one conversion does not leak into the next even when the underlying HTTP client is reused.
+Normal V3 preparation or inference failure continues with Sol content, geometry, and order, recorded in output provenance. HTTP can therefore return a successful fallback conversion. The defensive 503 handler applies only if a layout exception escapes that boundary. Sol request and schema failures still fail the conversion. Saved field-only retries do not prepare V3 or reconvert pages.
 
 ## Related pages
 
 - [Quickstart](../quickstart.md)
-- [Rendering and Exports](../outputs/rendering-and-exports.md)
-- [OpenAI Extraction and Refinement](../integrations/openai-processing.md)
-- [Configuration, Development, and Testing](../operations/configuration-and-testing.md)
+- [Field extraction](../workflows/field-extraction.md)
+- [Rendering and exports](../outputs/rendering-and-exports.md)

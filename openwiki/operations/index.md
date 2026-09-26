@@ -1,3 +1,3 @@
 # Files
 
-- [Configuration, Development, and Testing](configuration-and-testing.md) - How DocLayout separates runtime settings, converter options, dependency extras, offline tests, live integration checks, and benchmark runs.
+- [Configuration and testing](configuration-and-testing.md) - Application settings, field switches, uv checks, and the limits of offline and live evidence.

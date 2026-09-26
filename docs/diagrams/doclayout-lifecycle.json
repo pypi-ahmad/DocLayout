@@ -2,43 +2,54 @@
   "schema_version": 1,
   "diagram_type": "lifecycle",
   "meta": {
-    "title": "DocLayout Document Processing Lifecycle",
-    "viewBox": [980, 660],
-    "animation": "trace",
+    "title": "DocLayout conversion lifecycle",
     "quality_profile": "showcase",
+    "viewBox": [
+      980,
+      566
+    ],
     "views": [
       {
-        "id": "main-lifecycle",
-        "label": "Main conversion",
-        "focus": ["queued", "rasterizing", "extracting", "validating", "ready"],
-        "note": "Follow the ordered phases from file upload to document readiness."
+        "id": "conversion",
+        "label": "Conversion phases",
+        "focus": [
+          "queued",
+          "rasterizing",
+          "extracting",
+          "validating",
+          "ready"
+        ],
+        "note": "Prepare V3 before new conversion. Failed layout uses whole-page Sol; saved field retries skip both stages."
       },
       {
-        "id": "rate-and-backoff",
-        "label": "Throttling and backoff",
-        "focus": ["extracting", "throttled", "validating", "backoff"],
-        "note": "See concurrency slot waiting and model rate limit handling."
-      },
-      {
-        "id": "recovery-and-terminal",
-        "label": "Recovery and exits",
-        "focus": ["extracting", "repairing", "aborted", "timeout"],
-        "note": "Differentiate recoverable schema repair from terminal abortion."
+        "id": "failures",
+        "label": "Document failures",
+        "focus": [
+          "extracting",
+          "request_failed",
+          "validating",
+          "schema_failed"
+        ],
+        "note": "Sol request or schema failures stop this document. V3 failure records Sol fallback and continues."
       }
     ]
   },
   "lanes": [
-    { "id": "main", "label": "Conversion Rail" },
-    { "id": "waiting", "label": "Throttling & Waits" },
-    { "id": "exceptions", "label": "Recovery Loop" },
-    { "id": "terminal", "label": "Terminal Exits" }
+    {
+      "id": "main",
+      "label": "Conversion phases"
+    },
+    {
+      "id": "terminal",
+      "label": "Document failures"
+    }
   ],
   "states": [
     {
       "id": "queued",
       "type": "start",
       "label": "Queued",
-      "sublabel": "file submitted",
+      "sublabel": "prepare V3 once",
       "lane": "main",
       "col": 0,
       "step": "01",
@@ -58,11 +69,11 @@
       "id": "extracting",
       "type": "active",
       "label": "Extracting",
-      "sublabel": "GPT-6 Sol vision",
+      "sublabel": "V3 then Sol",
       "lane": "main",
       "col": 2,
       "step": "03",
-      "tag": "model"
+      "tag": "Sol if V3 fails"
     },
     {
       "id": "validating",
@@ -78,140 +89,41 @@
       "id": "ready",
       "type": "success",
       "label": "Ready",
-      "sublabel": "assembled model",
+      "sublabel": "matched + processed",
       "lane": "main",
       "col": 4,
       "step": "05",
       "tag": "done"
     },
     {
-      "id": "throttled",
-      "type": "waiting",
-      "label": "Throttled",
-      "sublabel": "wait slot",
-      "lane": "waiting",
-      "col": 0,
-      "tag": "concurrency <= 3"
-    },
-    {
-      "id": "backoff",
-      "type": "waiting",
-      "label": "Backoff",
-      "sublabel": "rate delay",
-      "lane": "waiting",
-      "col": 1,
-      "tag": "pause"
-    },
-    {
-      "id": "repairing",
+      "id": "request_failed",
       "type": "failure",
-      "label": "Repairing",
-      "sublabel": "recoverable parse",
-      "lane": "exceptions",
-      "col": 0,
-      "yOffset": 78,
-      "tag": "retryable"
-    },
-    {
-      "id": "aborted",
-      "type": "failure",
-      "label": "Aborted",
-      "sublabel": "unparseable file",
+      "label": "Sol failed",
+      "sublabel": "Refusal / API failure",
       "lane": "terminal",
       "col": 0,
-      "tag": "terminal"
+      "yOffset": -75
     },
     {
-      "id": "timeout",
+      "id": "schema_failed",
       "type": "failure",
-      "label": "Timed Out",
-      "sublabel": "retries exhausted",
+      "label": "Invalid output",
+      "sublabel": "Schema / page checks",
       "lane": "terminal",
       "col": 1,
-      "tag": "terminal"
+      "yOffset": -75
     }
   ],
   "transitions": [
     {
-      "id": "extract-throttled",
       "from": "extracting",
-      "to": "throttled",
-      "variant": "security",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "route": "straight"
+      "to": "request_failed",
+      "variant": "security"
     },
     {
-      "id": "validate-backoff",
       "from": "validating",
-      "to": "backoff",
-      "variant": "default",
-      "route": "drop"
-    },
-    {
-      "id": "extract-repairing",
-      "from": "extracting",
-      "to": "repairing",
-      "variant": "security",
-      "fromSide": "left",
-      "toSide": "left",
-      "via": [[320, 157], [320, 385]]
-    },
-    {
-      "id": "repair-retry",
-      "from": "repairing",
-      "to": "extracting",
-      "variant": "emphasis",
-      "fromSide": "left",
-      "toSide": "top",
-      "via": [[20, 385], [20, 80], [402, 80]]
-    },
-    {
-      "id": "backoff-timeout",
-      "from": "backoff",
-      "to": "timeout",
-      "variant": "security",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "route": "straight"
-    },
-    {
-      "id": "throttle-aborted",
-      "from": "throttled",
-      "to": "aborted",
-      "variant": "security",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "via": [[480, 336], [480, 432], [402, 432]]
-    }
-  ],
-  "cards": [
-    {
-      "dot": "emerald",
-      "title": "Ordered Conversion Rail",
-      "items": [
-        "Every document moves linearly from queued ingestion through rendering",
-        "Sol extraction produces structured JSON blocks per page",
-        "Document model reaches Ready when all pages are assembled and indexed"
-      ]
-    },
-    {
-      "dot": "amber",
-      "title": "Transient Rate Limits",
-      "items": [
-        "Concurrent calls are strictly capped at 3 simultaneous requests",
-        "Rate limiting introduces exponential backoff without dropping the run",
-        "Wait states preserve document state in memory until slots free up"
-      ]
-    },
-    {
-      "dot": "rose",
-      "title": "Resilience & Termination",
-      "items": [
-        "Malformed outputs trigger automatic repair and re-prompting",
-        "Fatal file corruption or exhausted retries route to terminal exits",
-        "Terminal exits do not re-enter active execution loops"
-      ]
+      "to": "schema_failed",
+      "variant": "security"
     }
   ]
 }

@@ -1,79 +1,57 @@
 ---
-type: output architecture
-title: Rendering and Exports
-description: How DocLayout turns one structured document into Markdown, HTML, JSON, chunks, images, metadata, annotations, and safe filesystem or ZIP exports.
-tags: [rendering, exports, markdown, json, html, safety]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
+type: Output architecture
+title: Rendering and exports
+description: Conversion formats, destination safety, and separate persisted business records.
+tags: [rendering, exports, markdown, sqlite]
 sources:
+  - id: openwiki-source-5dcb620e5737ce6818a4678d
+    resource: repo://doclayout/builders/document.py
   - id: openwiki-source-96e22e9964ec5dc995a862c1
     resource: repo://doclayout/exports.py
-  - id: openwiki-source-b785a78cd70fa2704f5d6526
-    resource: repo://doclayout/renderers/__init__.py
+  - id: openwiki-source-3fc18d2b3bd86c90ce3a3ddd
+    resource: repo://doclayout/field_store.py
+  - id: openwiki-source-6c373104051421f3f3c546ea
+    resource: repo://doclayout/layout.py
   - id: openwiki-source-24f0edb7a6f534afb5bf8bd5
     resource: repo://doclayout/renderers/chunk.py
-  - id: openwiki-source-13284e888a18e3d44db49105
-    resource: repo://doclayout/renderers/html.py
   - id: openwiki-source-4bf827c6803e4aac3683e040
     resource: repo://doclayout/renderers/json.py
-  - id: openwiki-source-03df821c6b9ae2c7ec0fe520
-    resource: repo://doclayout/renderers/markdown.py
+  - id: openwiki-source-cdaa752a3f645f8ee144bcdd
+    resource: repo://doclayout/renderers/ocr_json.py
+  - id: openwiki-source-4ed424df535efedbec384488
+    resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
   - id: openwiki-source-154e6a78b00ef865edbb429b
     resource: repo://tests/test_cli_exports.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+  - id: openwiki-source-97c2d91c6ec415fd43007ed6
+    resource: repo://tests/test_fields.py
+generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:40:37.445Z
 ---
 
-# Rendering and Exports
+# Rendering and exports
 
-Renderers consume the final in-memory `Document`; they never repeat extraction. The document first produces a recursive `BlockOutput` tree with HTML templates and `<content-ref>` placeholders. Each renderer resolves that tree into a target shape and attaches shared extraction metadata.
+Renderers consume one completed in-memory `Document`; choosing several formats does not repeat page extraction. `document_exports()` always renders Markdown, then adds requested HTML, hierarchical JSON, flattened chunks, metadata, image crops, or annotations. A requested ZIP builds the complete GUI conversion bundle. The GUI's HTML is generated from exported Markdown and sanitized before display or download.
 
-## Shared renderer behavior
+Conversion JSON describes block hierarchy and geometry. Chunk JSON flattens page blocks while retaining IDs, page information, bounding boxes, and assembled content. These files support evidence lookup but are not the business-field response schema. The GUI separately produces field and evidence JSON, with diagnoses and services remaining arrays.
 
-`BaseRenderer` controls image-block types, crop extraction, header/footer visibility, output block IDs, and image resolution. Image crops come from figure, picture, and diagram polygons and may remain PIL images or become base64 strings for structured output.
+Layout-aware exports follow processed structure, not the original V3 detection list. Metadata includes the layout manifest, device and timing, initial match counts, original regions, final block bounds/order, and source lineage. Unmatched V3 regions remain diagnostics and add no duplicate Markdown. Unmatched Sol blocks preserve their validated content and box with `sol_only` provenance, subject to the normal downstream processors.
 
-Every renderer metadata object includes raw request usage, estimated cost, extraction method and model, model-estimated geometry, table of contents, and per-page block/LLM statistics. Debug paths are included only when present.
+Annotations draw rectangles around visible final structure. For cross-page merges, they retain source-page footprints rather than projecting one union onto every page. Raw V3 mask data is metadata only: neither the annotated image nor raster PDF is polygon-accurate. OCR JSON likewise reports block boxes, not invented character coordinates.
 
-## Output shapes
+Filesystem outputs are named from a sanitized source stem and timestamp. `output_targets()` resolves every intended path before writing anything. It rejects traversal, absolute or drive-like names, output/input collisions, directories in place of files, and duplicate targets. Export construction checks image-name collisions with reserved output names and annotation paths. Focused tests show that an unsafe target leaves prior output untouched and that an input collision is rejected before extraction.
 
-### Markdown
+The GUI persists source bytes, raw Markdown, chunks, and conversion ZIP below the field storage root. `FieldStore` has fixed SQLite tables for documents, definitions, runs, and extraction results. Per-record fields and evidence are JSON columns, so adding a configured field does not add a database column. The extraction-results table has ten columns and no category column; classification is kept in the run result JSON. JSON export retry reads SQLite and performs no model call.
 
-`MarkdownRenderer` first uses the HTML rendering path, then converts the resolved HTML with project-specific Markdown rules for tables, math, headings, links, and escaping. Its typed result contains `markdown`, extracted PIL images, and metadata. Optional pagination wraps pages and emits page separators; disabled image extraction removes both crops and their image references.
+Saved sources and outputs have no automatic expiration or application-level encryption. Operators choose the output location and retention policy.
 
-### HTML
-
-`HTMLRenderer` recursively substitutes child placeholders, extracts configured image crops, optionally adds block IDs, merges adjacent formatting/math tags, and returns a complete UTF-8 HTML document plus images and metadata. Page wrappers are added only when pagination is enabled.
-
-The GUI's downloadable HTML is built from exported Markdown. It removes active or unsupported elements, rejects image sources outside the extracted image map, applies a tag/attribute/protocol allowlist, embeds approved images as data URLs, and locally converts sanitized LaTeX fragments to MathML.
-
-### JSON and chunks
-
-`JSONRenderer` preserves the document hierarchy. Each output block has its ID, type, HTML, polygon, bounding box, section hierarchy, optional children, and optional base64 image map.
-
-`ChunkRenderer` reuses JSON extraction, then flattens each page's top-level blocks. Every chunk records its page, geometry, fully assembled HTML, section hierarchy, and recursively collected images. A separate `page_info` map preserves page geometry.
-
-### Annotations and ZIP
-
-Annotations draw estimated leaf-block polygons over high-resolution page images. Invalid, nonfinite, or out-of-bounds boxes are skipped and counted. The result contains numbered PNG images, a raster PDF, and drawn/skipped totals.
-
-The ZIP bundle contains Markdown, sanitized HTML, hierarchical JSON, chunks, metadata, annotated PDF, image crops, and annotated page PNGs. It uses the same timestamped export names as individual CLI and GUI downloads.
-
-## One extraction, many exports
-
-`document_exports()` always renders Markdown because that supplies shared text, images, and metadata. It conditionally adds HTML, JSON, chunks, and annotations. Requesting a ZIP computes the complete GUI bundle, while the returned file map still contains only the requested standalone formats plus the archive.
-
-Export names derive from a sanitized, length-limited source stem and a UTC timestamp. Renaming also updates generated Markdown links and HTML image sources so crops stay reachable.
-
-## Filesystem and archive safety
-
-All intended filesystem targets are resolved before any output is written. A target must stay under the output directory, may not equal the directory, overwrite the input, name an existing directory, collide with another output, or use absolute paths, parent traversal, backslashes, or drive syntax. Only after every target passes validation does `save_document_exports()` create directories and write bytes.
-
-Image crops receive an additional collision check against reserved document export names and the annotation namespace. ZIP creation applies equivalent path validation and rejects duplicate reserved names. Tests prove that an unsafe target leaves existing output untouched and cannot write outside the destination, and that an input/output collision is detected before extraction begins.
-
-Existing intended output files may be replaced after successful extraction and export construction; unrelated files in the destination remain untouched. Extraction, range, or export failures preserve prior output because writes occur only after those stages complete.
+Record JSON includes the saved extraction model, reasoning effort, and definition version alongside fields and evidence. Export retry preserves those saved values; it does not relabel earlier records with the current model.
 
 ## Related pages
 
-- [Document Model and Structure](../concepts/document-model.md)
-- [Document Conversion Workflow](../workflows/document-conversion.md)
-- [CLI, GUI, and API Interfaces](../interfaces/cli-gui-api.md)
+- [Document model](../concepts/document-model.md)
+- [Field extraction](../workflows/field-extraction.md)
+- [Interfaces](../interfaces/cli-gui-api.md)

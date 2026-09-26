@@ -1,82 +1,126 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4e62337472bd129cabea1d83c3a7ef94bbc92af57a0a558f735d5036f10a2456",
+  "pageVersion": "sha256:1dfada070ee01a149cc88a92804d11987a3b850da4c4ad067a5b2baa76d1ce5a",
   "claims": [
     {
-      "id": "claim_4739925c74424449b1ba2cb11e9679f2",
-      "statement": "Document owns ordered pages and provides lazy self-healing page lookup, cross-page navigation, recursive block traversal, and page-by-page rendering with section hierarchy carried forward.",
+      "id": "claim_35db54b622a746f997fde94ce187bb99",
+      "statement": "Document owns ordered pages and usage, while each page separates owned child blocks from structure references that define reading and rendering order.",
       "evidence": [
         {
-          "resource": "repo://doclayout/schema/document.py#L26-L112",
-          "version": "repo-lines-v1:sha256:4f63fed0b8c2ed909685b7b3755ac706261314f031fef45d3121748fa35c70f1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNzE1YWRjZmYxYzUzZmZmZTJmYWQ0OTdlMDQxYTRkZDQ0NGNlMTZkNTg1ZjQ3ZGVhNzNhZWQ4ODA5YTAxMmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYjE0MzJlNDQxYzU1ZmU1NWJiM2RlNDI5YWI5YmNmNWY3NjFmNjQyMzg4ZjQ0Y2NiMDQ0NGQwM2I5MTY3NDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOGU5YWE5NGY4NTUwYTdlYjliNzRjNDY4YjI1Mzk1Y2JhMGRlNzAxNzcyZTVmODVlMDZmNDMzZThmZDY1ZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_e3a06b0b884a494aa0d5e809e40233cc",
-      "statement": "BlockId combines page, block type, and page-local block number into a stable textual identity, while Block stores geometry, structure references, provenance, metadata, and removal state.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/schema/blocks/base.py#L34-L109",
-          "version": "repo-lines-v1:sha256:156d83a1f78615ee70759b762d9e1b405baec61d746a751d336e7dc33ddf57fe:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1NjA0MzgxNDA1YmE5NWI4ZDdkYTNmM2FjZDkyYTliMzc4YWMzYWRkNDlkNDZlMDE2ZDA5ZjBjODI4ZTk4YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNzMzMWRkMDU1OTgzN2RkZjU4ZjA4MWUxYzljNzVhMGVhZmE3NDRkYWU0NDllNDk4NTlmOWI3YWFmNjkyNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2YWQyMzM1ZDM5NGEwMTE2NjAyYjcyMGNiNzJjNDdmN2NiNDk5YTM3MzM0MzMzMmEwNGU4OTRjMDE3MjkxMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MDEyOWE4M2RkYTQ1YmJmOTA2ZWU0NDVkODYxZWM5ZDZkNzJmMjU1NmNmNjY0OGIzMTRiZjMwYmJkMWRiNGIifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_4ab0b536d85d426c803bf13bf5bb0302",
-      "statement": "PageGroup assigns append-only page-local IDs, retrieves children by indexed BlockId, and replaces blocks by adding the replacement, updating structures, and marking the old block removed.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/schema/groups/page.py#L99-L140",
-          "version": "repo-lines-v1:sha256:ff152400564eea4d48833890b8cf25b588d0470b665a77ffd479bb8176505c05:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMWU2MmJmMTg4NzA2Yzg2NzlmNTE1YTI4ZTU5OTA3NDg3NWVkYWZmZTZkYWJlNTM0ZDQwNzc0MDNkZmRkNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlYjFjODM0ZGQ5NjA0Y2M0ZTQ0MjY0MDc0OTk0MWYyMzY5ODI0N2EwMTQ0YmQzMmJlZjA2ZTQwNDlkYjZmMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzNTlkMGFkMGYxNmEzYjJkNmUyZDI1MDdjZDBmMGI4YWUwNjQ2MzEyYWYxZGE3MjE5YWY2NzhmM2JmZmUzNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2MGIyNzc5NTk3YzIwZTMwMDZhNWJmMzQxYTM1YzM5NGZkNDgzMjAzNGU1MjMzMWM2NWZjOTQzMDExNzhiMGIifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_ef8d0ac8de06447ab884c1cdf08ec25b",
-      "statement": "Block rendering recursively follows structure references into BlockOutput children and carries section hierarchy between peer blocks.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/schema/blocks/base.py#L299-L333",
-          "version": "repo-lines-v1:sha256:9d9ab155172739ba76d7dee3e092f95eb965f3cc37916cfbea7c9303146d9402:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiMWJhOGQ2OTU1MzdiMWVlYzAwZGVmN2Y0ZjVkMzc4YjZiMTIyMmRkMWM1YjIyNjA1MzQ1Y2RmNzczZjZmZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhOWY4YzJiYzdhMTQxYTAyMmFmM2ZlYjhhYjUwMDhlYzI1NzU3ZWYyNGFjZDA0OWY1MDg5YTc0YjdjOWFlODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkYjY2NDg4M2ZlYjk1ZjQzZjc3ZDI2OGQ1NjU4NjQ1MmQ5ZDZiMWYzNjIwNjVmODdjYzE4NjkxYzU4OTEyYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3MmNiYzkxNDQ2NTNlYzYxYzE5ZmQ0MWM1ODRkODQyZjY3ZDVmNjA5YjVkNGFkNjc2YjkwMDM5ZjE1ODJjZmYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_c898cff8282a40a88359fa8d365bb34c",
-      "statement": "PolygonBox validates four ordered corners, caches its bounding box, and returns new instances for expansion, rescaling, and merging.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/schema/polygon.py#L11-L45",
-          "version": "repo-lines-v1:sha256:e45c5d3191360dd45a35b72a392d23246065164449c31d0793e5f543b772795a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZDVlN2JhZWZmMDNjNThlZTU1OGNlNDllOTU1MmM2ZDE4OTdiZThjYzI2ZTA1NGFiZTFmZDcyYWZlMWYzYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZDAyYjVkZGJiMjllOGVhOWE0NjhiZTM5YTU0Nzg4NTU0YWM0ZTI1MTdjYWM0YWM2YWQ4ZjQ3YmQ2OGM5MjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkZWNmODUyZjQ3Zjc0ODY4MzdlNDZiZTUxOTBmNWI4M2JkYzZmMGY3NTA0ZWZlOGNhYjkxYjU3ZjQ2MTFlZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3NTFhYTE3OWIyMDk1NDdiNzFiMDVlY2NiMzUyYzk4MzRmODhmN2MzZDkwMzJhOTk2Y2QyZmViMWFiNjhjMWEifQ"
+          "resource": "repo://doclayout/schema/document.py",
+          "version": "repo-file-v1:sha256:b9c2b34084397c6e6161caec8fe2ea33d485a37b26a74c828adc4790d1173243"
         },
         {
-          "resource": "repo://doclayout/schema/polygon.py#L144-L156",
-          "version": "repo-lines-v1:sha256:f5a474ca1f32379af40a200eb90e7ad4afb3dce2d401d42e124baab77130ec9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMWZjZjQ1YmQ3ODM2ODJjMTE1Njc2YjMwMjdlMDkxYjY0MGMwNzFlZjNiNzExZmNjODQ5YmRiMmE2YzJlYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYzhjZjFkZmI4NWVlY2Y2ZjE1Mzk5Njg4ZWU4NTQ5MzgyMmJlNGNmYzhjN2RmNDkxNzU3ZDE1MTFhYTgxNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMzk2MDUzOWExMWJhNzczYjdjMzNiYTY4MGM1NzBmZDlkYWZlYzQyMjM5ZjY3YmVkNDI5NDRmMTc0YWQyNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1YmYwZGRjODkwYWI3YTllZGRjODNjZjA3YWQ5YThkZjdlYWI4ZTIxYzY3NjQyM2ZhOGI4ZjYwMjFlNTc0NmYifQ"
-        },
-        {
-          "resource": "repo://doclayout/schema/polygon.py#L178-L196",
-          "version": "repo-lines-v1:sha256:0ffb4be617ca316ce088390dae4fd7725dcdc7f862ffac9560d2dff1869114d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1ZTRjNjVlZGMyYjY0ZTUxNjNkZjQ5YTVlYTIyZDU2MmE4YTA2NDI4NzJhYTE4Yzc3NzBjYWQ4NjU5OWI2OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NTJmNGQ3YTQ0MDU1YWI2ZGQzZDllYzMzNzk4YTg2NTE0NGRlMmY5ZTIxMjdiZjJlN2RjMGFlODY2MTQwMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2ZGQ1OGEwMmViYzYzNmJjOWIxZmJkNzViMDlhNGFjOWJiMzUxMDBhNTJmYjU5ZDZmODYzNjlmZGIwN2QwODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0MDViNDIxMmQ1OTVhZDRmMWRjNDMzMTFlMzhkNTZiN2U0MTQzY2FhMTgwYTUyMDlhZWVkZDBjNjA2N2JmZjEifQ"
-        },
-        {
-          "resource": "repo://doclayout/schema/polygon.py#L83-L112",
-          "version": "repo-lines-v1:sha256:b5b20edf9f11d128cca426a502bf2f1a043435ccaee8519e2a7340749b018dd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZjdkMTkyMmJkYTgxOWMyODJhY2Y2Y2FiMTEwMzEzMDJlM2E1MDcxZDg5NGI3ODJhMmQyYjA5MDZhMmY3OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkMjdlMjdmZDk1MzZmODU0NzFhMzQwMTE0YTk4NTMzYTM0YTdlMDYwY2I1N2E2YjE2NmM3YjRkZTdlMzgyZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMTM4YTZkMzkxMGFiYjJhY2IyYTAyMjZiNjQ5MWU3ZjRmNjI2NTEyNDg4N2UyN2MyNTlmNzY3OWEwYzEwOGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmZGM2YmMyNGY5M2NjNTRiMTUyOTA0MjZkOTI3YzQxMTk3NTUwODFlN2YyODM0OWZjN2JkMzEwNTM3NjJmMDcifQ"
+          "resource": "repo://doclayout/schema/groups/page.py",
+          "version": "repo-file-v1:sha256:f400faceb33651b6cf2947eb17ddcd9809615057f039405971601f632d36fbb8"
         }
       ]
     },
     {
-      "id": "claim_4f90147e43ba4f9fafd0edd1cdb57e53",
-      "statement": "The schema registry maps every BlockTypes member to an importable class and asserts complete coverage and matching class defaults.",
+      "id": "claim_95d413fe33b84900b0d943f4bef17bef",
+      "statement": "Block IDs encode page/type/local identity, removed blocks remain addressable but are filtered from current traversal, and cached page/structure indexes rebuild on mismatch.",
       "evidence": [
         {
-          "resource": "repo://doclayout/schema/registry.py#L42-L94",
-          "version": "repo-lines-v1:sha256:c180f7ee9142e6e8f4b373695e5fdeb3d266e6fb2b2a994ad4c3fd579841cce0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MzBhNzYxYmQ0NGRhNzc1MTViYWI0MDM0YWNlNzVlMDNhMWRlMjJiMmNhYjEzZWY4ZTRmMmNlZTFlOGFmM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzllMDIyZTBkODU0MTIwMDAzZDc5MGMyOGI3NTk2MmVkZDMwMzc1NmQ1MTMzM2RmNzQ1Y2ZiODZlYTExY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3MjYyYzM2NzFlOWUyMjg2MDJlMDkxYzllMzgwZjM5MjVmNWI2YTY1MjhjN2NjOTgwMmE0YWQxOGM0ODhmYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/schema/blocks/base.py",
+          "version": "repo-file-v1:sha256:cb33df9936989459420068876752a297a8221ab498b3079d4f872eac805753aa"
+        },
+        {
+          "resource": "repo://doclayout/schema/document.py",
+          "version": "repo-file-v1:sha256:b9c2b34084397c6e6161caec8fe2ea33d485a37b26a74c828adc4790d1173243"
+        },
+        {
+          "resource": "repo://doclayout/schema/groups/page.py",
+          "version": "repo-file-v1:sha256:f400faceb33651b6cf2947eb17ddcd9809615057f039405971601f632d36fbb8"
+        }
+      ]
+    },
+    {
+      "id": "claim_374949bc8cd54d6bbcf5334b8bd28323",
+      "statement": "The builder rescales normalized response geometry into page coordinates, while block cropping rescales page geometry into image pixels.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+        },
+        {
+          "resource": "repo://doclayout/schema/blocks/base.py",
+          "version": "repo-file-v1:sha256:cb33df9936989459420068876752a297a8221ab498b3079d4f872eac805753aa"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac842f98e8e84118ba0638faa0183647",
+      "statement": "StructureBuilder establishes list grouping before processors, with a focused test for preserved HTML list content.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/structure.py",
+          "version": "repo-file-v1:sha256:6a7a276ddcee07dd2a572d95d6fa70fb05531f9944ce3e037edbfb4d0f14748a"
+        },
+        {
+          "resource": "repo://tests/schema/groups/test_list_grouping.py",
+          "version": "repo-file-v1:sha256:ac5b5c9f42a9a8e0a17b048a24034224cd5e1127148e542663ee04acf509720d"
+        }
+      ]
+    },
+    {
+      "id": "claim_0c78bf0925714e5aa80510dcbfde0a81",
+      "statement": "Business field/evidence JSON is stored separately in FieldStore's SQLite tables rather than changing the conversion Document graph.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/field_store.py",
+          "version": "repo-file-v1:sha256:02faae7146c7cfae1acb3e79697194a0546b01796741bfbebb0d8b69938b5b72"
+        },
+        {
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
+        }
+      ]
+    },
+    {
+      "id": "claim_84b7490364204f01bde558e79ceae813",
+      "statement": "Saved field records retain model, reasoning effort and definition version independently of later extraction settings.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/field_store.py#L175-L196",
+          "version": "repo-lines-v1:sha256:feca7e4d0166dab518a40a920f5292b0fa7bbedd94050753e7ddbf45544ca98c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2NDllMGE2NmRlZmQyNmQ3OGFjMTE5N2M0ZjBjZjcxNzUxNzJiN2Q0MjBhOGJmYzc2YmI4ZjRmMmMxMjBkYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlZGQ5ZDhjNjkyNzM1MWQ3MDE4YTJkNGVkZmEzMGU5NTFhYjcxNTA1NTg1MDc4ZWExYzJmZjg4YTRiZmIyZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4ZDQ3Nzc3ZTJhYmRhNjRmOWZkMDhkMTk3ZGEzYmNhZDljYjhjYjk2ODZlYjk5ODk1ZWYzOTAwNDg1NGE1YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZjU2ZTE5ZGY2OTMzMWQ4ZGVlMmFjYmQxMDhhODlhN2VkZDQ0NDZjMTkxNmUxMTA5OWFmNmNhODQxYzg2MWYifQ"
+        },
+        {
+          "resource": "repo://tests/test_fields.py#L238-L272",
+          "version": "repo-lines-v1:sha256:9c4bf62f87aec7bf9c67d3d584e06ff2ba5cdb6d9de165beb1e8c227658afff7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYTRlMjViOTY2MmQ4YTM2MTk0NjIxMWQ4ZDU2OGEzOTUzYjQ4MmZmMDc3NDM0ODEwMDViMThkN2VlMjIwMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNTMwMjFiNjY5MGQ5YTFmYmJkMmY4YzkyZDFlYjIwODkwNWZmODYxZWM3OWI4Y2JjMTg2ZjQ2ZjE0NDFjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYmFkZWQxYzExNzU3OTFhMTNiMmZkNDk4MTdjOGQyZDk1MmIwMmI3NzMxMWFlY2Q1YjgzYzZmZjkxOWI5YzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8474317bbaa4a90bdaefd5d73777e6c",
+      "statement": "Local layout metadata retains V3 rectangles, mask RLE, model order keys, derived ranks and matched/sol_only/processor lineage outside the Sol response schema.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/schema/layout.py",
+          "version": "repo-file-v1:sha256:ed283a6be905d33a55ed0876e0d0df9db905944be020b92f28d592c0a8244969"
+        }
+      ]
+    },
+    {
+      "id": "claim_2cf2aad67bf94d33859fd7b9515b22a6",
+      "statement": "Reconciliation preserves Sol HTML and unmatched anchors, keeps unmatched V3 regions diagnostic, and exports final processed rectangular geometry rather than mask contours.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+        },
+        {
+          "resource": "repo://doclayout/schema/polygon.py",
+          "version": "repo-file-v1:sha256:ccfa7271312774594589c6ac5f2586fc94df448a6d55bd7c55e60f8e894805a8"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:bbe1d08330fff184a460efefd463568776b4397856de81a11fb9d8976ce1c976"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
   }
 }

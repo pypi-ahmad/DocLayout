@@ -1,78 +1,132 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d92f10dc1eeabe9520ce7f38365d06b1a3fdee4fc43c811d8a636f78b23c463d",
+  "pageVersion": "sha256:03ab04d9c0d49406c10081efdd0345d8446ba5398e4fb5e611df2079363f6fd4",
   "claims": [
     {
-      "id": "claim_1f4dc1b6718f43288c83e44ba3044f25",
-      "statement": "ConfigParser preserves explicit falsy values, translates debug, page-range, JSON, and image-extraction options, validates the merged dictionary, and resolves renderer, processor, and converter selections.",
+      "id": "claim_c9eddd13703b4dd394481487c09831a3",
+      "statement": "Metadata declares Python >=3.11,<4, base layout dependencies with ONNX Runtime GPU 1.30.0 on Windows AMD64 and CPU elsewhere, plus full/GUI/server extras and dev tools.",
       "evidence": [
         {
-          "resource": "repo://doclayout/config/parser.py#L21-L147",
-          "version": "repo-lines-v1:sha256:dfb181c1e40e4fa8a9d92067279d0113f44ac1cbdaadce01825f93435b11d0d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4MzNiMTUwNGY1ZDJhOTcyNTI5MWExYTdiN2MwZmExNTRiYWI1NmM3YzhhMmE2MmQxMzFhNmM3Mzg2MTk2OThhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMjExNWE0NjNmMzliOTcwZGM3ZGUwMGZkZmYxYmVmMTczMDY5ZGRiOTFiNzYzM2Q2NDkxN2VmYmVhOTVmYzljIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MDAxZDEyNmE2ZjdlMzhmNWJjZjJkNzgwNmNjYzc4ODRiOWEyZTkxNmFhMzZkYWEyZjU1NmRhYzM4YTA4MTBhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZDEwZGZjYTljNzQxNjdiMzM3M2EyNTUyY2Y3MTk2YmI1ZDJjOWQ0ZmUwZjBjMGNlZjNiMTFlYTNhZmQwNmFhIn0"
+          "resource": "repo://pyproject.toml#L11-L79",
+          "version": "repo-lines-v1:sha256:3ab6804b1b6019ae356287e4ce85b7fab680903fbc980087a1972221448a7cfb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNDIwOTQxMDFjOWE3YjgyZjczNTZlMjE3NDc1YWFkZWRiYTQ5MWI4ZjRmMzk1MDk4ODRlZmY4NGQ1YjNkNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZGE4NjdlNWY1OGEyMDIzNmRjYzZmZjU1NDNkODc2NGE2NDI1ZjA2MDI2ZmQ4ZjA1YTg1ZmJkNjY4ZTVmNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3M2YxNWQyMWQwZTE1NmE4MDUwNTZhMmFkYmJhYWI1NzA3MGYwMWRmOTQ4YzBkZDBkNzI0NmE4NGU3MDAxYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliZWUxMjc2YTM1YjFkOTA1NGY5MzU0ZWJjNDk1ZjgwM2Y2MzFiMWY4YTQ2MDc3NjRhYjRkYzdlNGZjMWEzNDIifQ"
         }
       ]
     },
     {
-      "id": "claim_99bb6c280c8849d3b478f51bd3e3bb08",
-      "statement": "ConfigCrawler discovers subclasses across configurable component families and gathers inherited annotated class attributes, defaults, and class-prefixed aliases.",
+      "id": "claim_361ba8fb67d4499dbb5bd1ccdc3a5190",
+      "statement": "Settings define operator source, page, image and archive limits; credential resolution is separate and API token/path-root rules are validated.",
       "evidence": [
         {
-          "resource": "repo://doclayout/config/crawler.py#L16-L115",
-          "version": "repo-lines-v1:sha256:3ea9988d9bd9daa76cd2992ad90315bfe5a7a96bfa159307b67d2ea4008d5228:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwYTljMzU0NmQzZGVlNWVmNTJhNzY3NjZlYjJiODUxYjgwMDFjMTVlZjViMDFhYmJiOTZkZGM0ODhmMDBlOWI1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZTExYjUwMjBiMGFlZTU0NDZlM2Q1ZjhjZDRmOTU0ZmNkMDcyOTUxMGY5NTQ1OWRlNzM1ZjM0MGM0YTg0Nzc5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiMzBlMTMzMzNmYWQ2NjRiZmIzNTE0NTYwYTdjOTYwYzk5NzU3YWRhOWQ3Mzg4Y2VjZDAyZjcxNzgwMWFlNWM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        }
-      ]
-    },
-    {
-      "id": "claim_f7007b794c254875a265dbf84c2183f6",
-      "statement": "Configuration validation rejects retired OCR, model, hardware, credential, and alternate-provider settings, including class-prefixed variants.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/config/validation.py#L1-L90",
-          "version": "repo-lines-v1:sha256:74e84e9c69c73dd8f4c6e89a407854065d11d8fe8812d44cb6153c824af0cdd7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NGNhODNiNWQxZmI5N2E2NDA3Mzc0NzFjZTE2Zjc5NzllNGQ4YmE1MDdkZDUwYTZhODEwNmIxZmY2MDI2ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/credentials.py",
+          "version": "repo-file-v1:sha256:a22e4e2a9fd614dd9594fc22d03798b94f07a04eccf575c27e37e04c0c10ae21"
         },
         {
-          "resource": "repo://tests/config/test_config.py#L11-L34",
-          "version": "repo-lines-v1:sha256:954b6678e3b174a69a9532ab4d9dfca355b8b459c4a250a1e625a91127aff9f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMzQ1ODNhNTk4NzY3YmY1NmFlZmViNjVlMjAzM2ExNjUxY2M0YzhkN2U2ZjBhZjNlNWNmZDMyOTNmOTMzYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwOTJmZjA5YzZiNzM0ZjU1NmQwZTQyMjljYzZjMTE4ZmVjMjc1NzI0YzMyYmViMDFhOTJkYTY1YTIwN2MwMzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5ZjczMjYzMzE3MzcwNWMxOTQxNTZiNTI1NjYyOWFlOTRjYmQxN2M3YTBlZmI0M2YzZTA0Y2E5Yzg3ZWExODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYmIyOWNiOThiZWY2NmUyOWEzMDYyODZjNmEwYzc1ZDliNWVkZDA4ZWJlNTVkMTNjYTkwMjJhODAxZTJkZGEifQ"
+          "resource": "repo://doclayout/settings.py",
+          "version": "repo-file-v1:sha256:55d52d3a74e7bdd4dbb93b500e150f166e03c1023a8eb0fbfe198e033001e723"
         }
       ]
     },
     {
-      "id": "claim_2287bcce8f6c45b8b1090102028d4d55",
-      "statement": "The project separates optional full document-format, GUI, and server extras from the development dependency group.",
+      "id": "claim_faa2a82a6d0048f48c3571d987632cb9",
+      "statement": "Classification and field byte-budget switches are read directly from process environment, with disabled default and a 1–900000 byte-budget range.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L39-L76",
-          "version": "repo-lines-v1:sha256:7e632d5aa01d0cb79ef6925ed6bba12116a8780b4dd72b1954cf60c9cb31f2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwZWVhNDIzZjc3NTAwNGIxMTBmYWEzNTE5ZmEwYzg4ODZhYTMxYzY4ZjJiMTBlMDg4NjNkZDM4ZmY2ZDQ5NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0ZWVjZjg1NDU2ZDBhYTZkZWY2NGMyYmI4NjllYWYzZGRlZDMyMDkyZGYyNDBhMDkxMjQyNzE3MzBjNTQ5ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MDViZGVkMDY0NDAxOTgyODQ5MGIxZDU2YzkwNmE0OGE5OGMyMDNiZTE2OTAzYjRmZjUyMDJiOTU0ZmI2YWUifQ"
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
         }
       ]
     },
     {
-      "id": "claim_48b4de985152483d82f4af59180d8ecf",
-      "statement": "Offline tests block real OpenAI Responses calls by default and integration-marked billable tests require the explicit --run-integration option.",
+      "id": "claim_5e6e12f11e514c89a159d93db2617884",
+      "statement": "Offline fixtures block real Responses calls and skip integration-marked billable tests unless explicitly enabled.",
       "evidence": [
         {
-          "resource": "repo://pytest.ini#L1-L8",
-          "version": "repo-lines-v1:sha256:b7a3cfbdac31badf57f11c0415e089c05393579a9642ce4d637c7c03bba651ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc4ZmMxY2QxMmQ4ZDY0MmRmOGVmZjQxZDcxZDUxMTk2MjZlOWY4OGYyMWZhZmFkYmE2YjEwOTJhYzg0MGE5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWJjOTU0YzhiMmViMmEyNWI1YzAwNjdkMWFlYzZhODQ4OTQ1ZjJhZGJlYWY5NDBmNjZiYWJkYjc0OTUxMDM5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://pytest.ini",
+          "version": "repo-file-v1:sha256:b7a3cfbdac31badf57f11c0415e089c05393579a9642ce4d637c7c03bba651ed"
         },
         {
-          "resource": "repo://tests/conftest.py#L1-L43",
-          "version": "repo-lines-v1:sha256:b8ff80b53a382e287025af9ae016ae7d7f52f872f63250bd61ff04494200c64b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MDExN2I5MTRjMTY1MDY3NjRkZmM2ZTk5YjU1NDExZjI2YzI5NzYzMjBkNDI4ZGMwNTFkZjE2OWU4ZWYzOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzE0MjZiZWE3ZmFiYTA1YTEyYzFlMWM4NjBkYTY3YzYxNzM4ZmZjY2NjYTRmNjc2ZTRiOTI2ZGVhNjZlMDIifQ"
+          "resource": "repo://tests/conftest.py",
+          "version": "repo-file-v1:sha256:2743ffcdcb6e51f381a470febecc8f8e67dff6d89dbff81fff3b6877fd5f13d0"
         }
       ]
     },
     {
-      "id": "claim_2b02a33155854a1faae5f145fd793919",
-      "statement": "The benchmark harness uses a separately obtained local dataset, makes billable GPT-6 Sol requests, records failures, skips existing nonempty outputs, and measures remote latency plus rendering rather than local GPU speed.",
+      "id": "claim_f79144d59c5649f88fb1803bfc6f65c0",
+      "statement": "Field tests exercise routing threshold, grounding, SQLite records, reuse and retries with mocked requests rather than measure live accuracy.",
       "evidence": [
         {
-          "resource": "repo://benchmarks/README.md#L7-L28",
-          "version": "repo-lines-v1:sha256:f5e38f1971c1cde420d024fe23f8b45f249a44095755cc6cb91a15cd72def170:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2ZjY0YWY2M2UxNmYxYmYzOWViYjE0NTEzZTdiZGUxYmNkODAwMzk3NGYzOWJkMjUyMTRiY2M5YjE5ZTc3YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMTI5ZTVmZmY5OTZlMDQwOGQ3NTY3MWNhZWRmMDNjNWIyNjg2ZmNlZTc3OWI2MTUwMGI1YzAwZmViYjIwYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZTQxN2VjMmUxNmUzODhiYTA4ZjIzNzEwOWI5YTdlZDQyMjVjYjU1NTNiYWFmY2E2ZWUxOGJlMjJlNzliODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMzVmYzE5OTM4ZjJjMTZhYTBhN2I2NmZmZWZmZmU2MWU4OTMzZDBjY2I5YTcyYjY0ODA0NDJkNjUwYmYyYzQifQ"
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_0a9fe19a60e6447d8deba4b24b998fbc",
+      "statement": "FieldStore persists SQLite and local artifacts below OUTPUT_DIR/field_extraction without an application retention or encryption mechanism.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/field_store.py",
+          "version": "repo-file-v1:sha256:02faae7146c7cfae1acb3e79697194a0546b01796741bfbebb0d8b69938b5b72"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+        }
+      ]
+    },
+    {
+      "id": "claim_528556a691014cca8a51aedd1b5f60f3",
+      "statement": "The Windows launcher binds loopback port 8471, disables file watching, and uses identity-checked port cleanup that automatically stops recognized DocLayout listeners and asks before stopping other applications.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/clear_gui_port.ps1",
+          "version": "repo-file-v1:sha256:84e9712cba5af908d49d60d4b37c5a043e7524fb152dea6b8c3a0d18c3372386"
+        },
+        {
+          "resource": "repo://launch.cmd",
+          "version": "repo-file-v1:sha256:87013800f43bcbe62114a07e252e25a3c55ca17026ab7bfea065b8b06f2f5c28"
+        },
+        {
+          "resource": "repo://tests/test_launcher.py",
+          "version": "repo-file-v1:sha256:4649af8449e2f5d17cf365803f637c1a56d9fc781b7e6230b0e945d237f1ea20"
+        }
+      ]
+    },
+    {
+      "id": "claim_423ea717a75049fcb64ee6ec837d07f0",
+      "statement": "V3 preparation verifies pinned official ONNX files and labels, honors cache/model-directory/offline settings, exercises a locked process-cached engine, verifies CUDA ScatterND CPU placement, and only auto mode substitutes an exercised CPU session; conversion otherwise uses Sol fallback.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+        },
+        {
+          "resource": "repo://doclayout/settings.py#L34-L42",
+          "version": "repo-lines-v1:sha256:e6a59db4a8b077e5b127455e8fc0284110563e7e82e7eac43d9cf6db547456d1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTBmYjQxNzNhNDcyMDlhMzAyMGEzNmIzNmY5YWZlMTZiMjk2MTIzOWVmNmFhNzczNTEyM2ZkYmFiMTRlMDQ2MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzZlZGJkYzI1YWJhZDRhY2UzYmQ2NGI4NjE5MjlmMzZhOTBiZDNhZGI2YmRjNGJiODdkN2UyM2NjNTI1NDgxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYThmNGJmMTg3NjE2MDJkM2I1OTBiMzdkMzk4ZmE5OTc3OTczMGE3N2I2ODEzOGZkZDE0MDczNDkyZTM3NjZlZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3dc998b17a1d4a54b6844f2c3b854466",
+      "statement": "Offline layout tests cover download races, provider fallback, parsing and integration using fakes without proving real hardware performance or accuracy.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_layout_prior.py",
+          "version": "repo-file-v1:sha256:d22e9c7d9c3fdecaddfa85ad099834bb4edef75d57f14b77c037f1c0e6d9fb60"
+        },
+        {
+          "resource": "repo://tests/test_layout_readiness.py",
+          "version": "repo-file-v1:sha256:ce5900f62d2f6f13abfad88886def78083840195a6c8df79bb37e0edc1d77ef8"
+        },
+        {
+          "resource": "repo://tests/test_layout_runtime.py",
+          "version": "repo-file-v1:sha256:abb15179606059fd820fe392042b7e778bf39092d8afd134996cad6e6307c608"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
   }
 }

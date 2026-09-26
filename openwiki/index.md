@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # Files
 
-- [Quickstart](quickstart.md) - Install DocLayout with uv, configure API access, run the CLI, GUI, or local API, and find the right architecture guide for deeper work.
+- [Quickstart](quickstart.md) - Set up this checkout, convert a file, open the GUI, authenticate HTTP requests, and find deeper guides.
 
 # Directories
 

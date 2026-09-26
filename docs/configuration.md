@@ -5,6 +5,34 @@
 For processor controls beyond the settings below, see
 [advanced configuration](#advanced-configuration).
 
+## Downstream field workflow
+
+The GUI runs authorization-field extraction after conversion. The CLI and HTTP
+API keep their conversion-only behavior. See [field extraction](field-extraction.md)
+for the field schema and persisted review workflow.
+
+| Process environment variable | Default | Meaning |
+| --- | --- | --- |
+| `DOCLAYOUT_CLASSIFICATION_ENABLED` | `false` | Explicitly enable classification; only `true` or `false`, case insensitive |
+| `DOCLAYOUT_FIELD_MAX_INPUT_BYTES` | `900000` | Maximum serialized downstream request bytes; integer from 1 to 900000 |
+
+Set these variables in the launching process. They are read with `os.getenv`, not
+from the credential `.env` file or Pydantic `local.env` settings. Editing the category
+template never enables classification. Enabled classification needs definitions and
+exactly one extraction target; incomplete configuration stops processing.
+
+Classification uses `gpt-6-luna`; field extraction uses `gpt-6-sol`. Both use
+medium reasoning, `store=false`, a
+180-second timeout, 32,768 output tokens, and two SDK transport retries. The output
+budget includes reasoning; the classification response itself is compact strict
+JSON. Its score must be >= 0.75, its category supported, and its quote verified.
+No model fallback is configured. Oversized requests go to review without splitting.
+
+Artifacts live under `OUTPUT_DIR/field_extraction/`, normally
+`conversion_results/field_extraction/`. Originals and previews are retained locally;
+SQLite and JSON outputs are not application-encrypted and have no automatic retention
+cleanup. Use local storage with suitable access controls.
+
 ## Credentials and environment
 
 | Variable | Purpose |
@@ -52,7 +80,9 @@ Variables changed in Windows settings are inherited by newly launched terminals
 and applications; DocLayout does not read or modify the Windows registry.
 
 The endpoint must support Responses, image input, and structured output for
-`gpt-6-sol`; document chat also requires `gpt-6-luna`. Credentials do not belong
+`gpt-6-sol` for conversion and Markdown field extraction; chat and enabled
+classification also require `gpt-6-luna`.
+Credentials do not belong
 in CLI flags, configuration JSON, source code, or Git.
 
 Application `Settings` reads environment variables and a discovered `local.env`
@@ -70,7 +100,7 @@ Common application settings from [settings.py](../doclayout/settings.py):
 | `LOGLEVEL` | `INFO` | Application logging level |
 
 The settings class also defines font paths and an artifact URL for document
-converters. These control the application rather than the model. Path defaults
+converters. These are application settings, not model settings. Path defaults
 are set when the class is defined. Changing a base directory does not recalculate
 derived paths, so set the final path explicitly. Model requests send PNG images
 regardless of `OUTPUT_IMAGE_FORMAT`.
@@ -80,11 +110,87 @@ regardless of `OUTPUT_IMAGE_FORMAT`.
 | Task | Model | Request defaults |
 | --- | --- | --- |
 | Page extraction and optional refinement | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries |
+| Markdown field extraction | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries |
+| Optional classification (off by default) | `gpt-6-luna` | Medium reasoning; strict JSON; 180-second timeout; two SDK retries |
 | Chat draft and verification | `gpt-6-luna` | Medium reasoning; 8,192 output tokens; 60-second timeout; no retries |
 
 Model names, reasoning effort, and chat request limits are fixed in code. The
 Sol settings below are configurable. `use_llm=False` disables extra refinement;
 every selected page still uses Sol extraction. There is no local OCR fallback.
+
+## Local layout inference
+
+The local unreleased pipeline runs pinned PP-DocLayoutV3 before each whole-page
+Sol request, which includes a compact `given_layout` prior. It uses the official
+`PaddlePaddle/PP-DocLayoutV3_onnx` artifact with direct ONNX Runtime. The Windows
+AMD64 base dependency is `onnxruntime-gpu==1.30.0`, including CPU execution; there
+is no layout extra or GUI on/off switch. NumPy and OpenCV are already base dependencies.
+
+On the first Run needing an uncached conversion, preparation resolves/downloads
+the pinned `inference.onnx` and `inference.yml`, verifies hashes and labels, then
+executes one synthetic 800×800 RGB warm-up. Its detections are discarded. CUDA
+readiness requires an executed CUDA kernel in an ORT profile, not just a reported
+GPU/provider name. CPU support for other graph nodes is allowed. In `auto`, CUDA
+initialization/execution/verification failure falls back to an exercised CPU
+session; later CUDA execution failure also retries that page on CPU. CPU success
+is latched. Explicit `cuda` never falls back to CPU. If layout preparation or page
+inference fails, conversion continues with whole-page Sol and explicitly records
+`sol_fallback`; this does not bypass Sol response validation or sanitization.
+
+CUDA sessions assign the pinned model's single `ScatterND` node to CPU using
+ONNX Runtime 1.30's name-based layer placement. Preparation verifies that
+assignment before inference; an unverified placement rejects CUDA (CPU fallback
+in `auto`, failure in explicit `cuda`). Other eligible operations remain on CUDA.
+This avoids the CUDA ScatterND duplicate-index warning path without suppressing
+logs or modifying weights. It may add CPU/GPU transfer overhead; it does not
+establish better detection accuracy. The execution policy is included in new
+conversion fingerprints; historical saved results and field retries are unchanged.
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `DOCLAYOUT_LAYOUT_DEVICE` | `auto` | `auto` verifies CUDA, then tries CPU on failure; `cuda` never substitutes a CPU session; `cpu` skips CUDA. If the selected engine cannot run, conversion uses Sol with fallback provenance |
+| `DOCLAYOUT_LAYOUT_CACHE_DIR` | `<BASE_DIR>/cache/pp-doclayoutv3` | Dedicated, writable Hugging Face model cache |
+| `DOCLAYOUT_LAYOUT_MODEL_DIR` | Unset | Exact pinned model directory; overrides Hub cache resolution. Existing files are verified, not silently replaced |
+| `DOCLAYOUT_LAYOUT_OFFLINE` | `false` | Refuse network downloads; pinned files must already be cached |
+
+Set these in the process environment or Pydantic `local.env`, then restart.
+Credential `.env` does not configure them; its example labels these settings
+separately. No model is loaded by opening the GUI, browsing saved results, or
+starting the HTTP server. The GUI displays “Preparing layout model…” during
+preparation, followed by “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” for the
+actual exercised device. Warm conversions reuse one serialized engine per process;
+additional CLI worker processes each own their own engine.
+
+Missing offline files, corrupt artifacts, unavailable dependencies, unsupported
+outputs or provider failure produce a typed error from the low-level engine.
+Conversion catches layout errors and keeps Sol content, boxes and order. GUI
+readiness shows “Sol fallback · V3 unavailable”; per-page metadata records the
+failure stage, unavailable provider, null device/order-source and fallback status.
+No failed layout output is presented as a successful empty detection. Failed
+preparation is not reprobed for every page. Repair configuration/files before new
+conversions; saved fallback results remain saved results, not silently reconverted.
+Passive reruns do not retry failed preparation. Saved loading,
+CLI skips and field-only retries do not require loading weights. A complete
+read-only model directory still needs a writable cache for temporary CUDA health
+profiles. Do not delete unrelated caches to repair this model. See the
+[layout integration record](layout-v3-plan.md) for pinned artifacts, Windows
+provider evidence, matching policy, cache identity and unverified quality claims.
+
+V3 supplies rectangles, binary masks, scores, 25 class labels and observed order
+keys, not transcription, HTML or raw polygon vertices. `observed_rank` is a
+derived stable sort of model order keys, not a separate prediction. Sol transcribes the
+whole image. Matching preserves Sol content; exports use rectangular geometry,
+with masks retained separately. Neither detector scores nor order keys are
+calibrated accuracy guarantees. Result summaries use stored region/match counts
+and summed per-page analysis milliseconds, including queue waiting. This is not
+wall-clock document time; separately prepared warm-up time is not included.
+
+Sol blocks with no accepted V3 match retain their own validated geometry and
+position as `sol_only`. Ambiguous ties and split/merge overlaps are rejected;
+unmatched V3 regions remain diagnostics and never generate Markdown. Matching
+thresholds are provisional, and an incorrect detection can still pass them.
+See the [matching policy](layout-v3-plan.md#4-deterministic-matching)
+for the exact rules and limitations.
 
 ## Extraction and rendering
 
@@ -186,10 +292,12 @@ removed uppercase `Settings.DEBUG_DATA_FOLDER` is a separate, retired setting.
 - In the GUI, Start/End pages are one-based and inclusive. Sidebar selections
   override startup values for page range, refinement, and header/footer visibility.
   The Debug checkbox displays results; it does not enable CLI-style debug files.
-- The launcher `launch.cmd` binds `127.0.0.1:8471`, refuses an occupied port,
-  and disables file watching. These values are written in the launcher.
+- The launcher `launch.cmd` binds `127.0.0.1:8471`, stops an existing DocLayout
+  listener on that port (other applications require confirmation), and disables
+  file watching. Cleanup waits up to five seconds and aborts on failure.
+  Restarting discards the browser session and in-progress work, not saved results.
   `doclayout_gui` binds loopback and forwards arguments to the app;
-  neither launcher terminates other processes.
+  the CLI launcher leaves existing processes alone.
 - The API accepts only the fields below; arbitrary processor/service settings
   are not HTTP parameters. `doclayout_server` defaults to host `127.0.0.1`,
   port `8000`, adjustable with `--host` and `--port`.

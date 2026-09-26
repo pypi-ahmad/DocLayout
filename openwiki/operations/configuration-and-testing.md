@@ -1,103 +1,71 @@
 ---
-type: operations guide
-title: Configuration, Development, and Testing
-description: How DocLayout separates runtime settings, converter options, dependency extras, offline tests, live integration checks, and benchmark runs.
-tags: [configuration, development, testing, uv, benchmarks]
-verified:
-  - by: openwiki/0.5.2
-    at: 2026-09-23T13:33:56.448Z
+type: Operations guide
+title: Configuration and testing
+description: Application settings, field switches, uv checks, and the limits of offline and live evidence.
+tags: [configuration, testing, uv, operations]
 sources:
-  - id: openwiki-source-af5b2fc4a0830cd3de40e530
-    resource: repo://benchmarks/README.md
-  - id: openwiki-source-2a4532afc0832c07abc2da10
-    resource: repo://doclayout/config/crawler.py
-  - id: openwiki-source-17de7dd389904e1fc58ef939
-    resource: repo://doclayout/config/parser.py
-  - id: openwiki-source-1046cac1b7bea28ed9ad4c24
-    resource: repo://doclayout/config/validation.py
+  - id: openwiki-source-f8eb525c17b05d929e5c2c00
+    resource: repo://doclayout/credentials.py
+  - id: openwiki-source-3fc18d2b3bd86c90ce3a3ddd
+    resource: repo://doclayout/field_store.py
+  - id: openwiki-source-15837773bd4113ac5b1f7ae1
+    resource: repo://doclayout/fields.py
+  - id: openwiki-source-6c373104051421f3f3c546ea
+    resource: repo://doclayout/layout.py
+  - id: openwiki-source-60a85b3abffa8ceadae5f4cd
+    resource: repo://doclayout/scripts/clear_gui_port.ps1
+  - id: openwiki-source-a288c4d4a875a1308ca48472
+    resource: repo://doclayout/settings.py
+  - id: openwiki-source-4ed424df535efedbec384488
+    resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-e7faa3ddaca50993ae19c88a
+    resource: repo://launch.cmd
   - id: openwiki-source-05ccef8d4cf1698187f20464
     resource: repo://pyproject.toml
   - id: openwiki-source-e44eab9a26f9187df819fc2a
     resource: repo://pytest.ini
-  - id: openwiki-source-ae4e170e615cd619c9fd16d5
-    resource: repo://tests/config/test_config.py
   - id: openwiki-source-f0a6e7dc03522b2682f88655
     resource: repo://tests/conftest.py
-generated: { by: "codex", at: "2026-09-23T13:33:56.448Z" }
+  - id: openwiki-source-97c2d91c6ec415fd43007ed6
+    resource: repo://tests/test_fields.py
+  - id: openwiki-source-747ce984286d9a8fb9342632
+    resource: repo://tests/test_launcher.py
+  - id: openwiki-source-302aace0465b65581c3853df
+    resource: repo://tests/test_layout_prior.py
+  - id: openwiki-source-e21a991204779b8d3c0240c6
+    resource: repo://tests/test_layout_readiness.py
+  - id: openwiki-source-b1623b7b40e27202adf3b061
+    resource: repo://tests/test_layout_runtime.py
+generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-26T10:40:37.445Z
 ---
 
-# Configuration, Development, and Testing
+# Configuration and testing
 
-DocLayout uses three configuration layers with different ownership: environment-backed application settings, converter configuration assembled by `ConfigParser`, and install-time dependency extras. Keeping them distinct avoids passing credentials through document configuration or installing optional format/UI/server stacks unnecessarily.
+The project declares Python `>=3.11,<4` and uses `uv.lock` for reproducible dependency resolution. The base package contains PDF/image conversion, V3 runtime dependencies, and the CLI; optional `full`, `gui`, and `server` extras add document-format libraries, Streamlit, and FastAPI. Windows AMD64 selects `onnxruntime-gpu==1.30.0`, which also supplies CPU execution; other platforms select `onnxruntime==1.30.0`. There is no layout extra. The development group supplies test and quality tools. The declared Python range does not claim every version has been exercised.
 
-## Runtime settings and credentials
+`settings.py` holds output paths, rendering choices, and operator limits, including maximum source size, page count, image pixels, and archive resources. It can read `local.env`. API credentials are resolved separately from process variables or a launch-folder `.env`; process variables take precedence per key. The HTTP token must be at least 32 non-whitespace ASCII characters. Path-based API input requires an existing dedicated `DOCLAYOUT_INPUT_ROOT`.
 
-`settings.py` defines application paths, output encoding, image format, font location, artifact URL, and log level. These settings use Pydantic Settings and may read `local.env`; API credentials are deliberately handled elsewhere by `openai_credentials()`, which reads the process environment or the launch folder's `.env`.
+The field workflow reads `DOCLAYOUT_CLASSIFICATION_ENABLED` directly from the process environment. It defaults to `false`; editing category text alone does not enable classification. `DOCLAYOUT_FIELD_MAX_INPUT_BYTES` defaults to 900000 and must be an integer from 1 through 900000. These process-only switches do not inherit the credential `.env` resolver or Pydantic `local.env` loading.
 
-Do not put API keys or endpoint URLs in converter JSON. The configuration validator rejects retired credential and provider fields. Use `OPENAI_API_KEY` and optional `OPENAI_BASE_URL` in the environment or `.env` instead.
+V3 uses the official `PaddlePaddle/PP-DocLayoutV3_onnx` artifact through direct ONNX Runtime, not the separately available Transformers interface. First preparation resolves two pinned files, verifies SHA-256 and labels, and exercises the session. The default Hub cache is `cache/pp-doclayoutv3` under the checkout; `DOCLAYOUT_LAYOUT_CACHE_DIR` overrides it. `DOCLAYOUT_LAYOUT_MODEL_DIR` selects an exact artifact directory and `DOCLAYOUT_LAYOUT_OFFLINE=true` prohibits downloads. Invalid supplied files are rejected, not silently overwritten.
 
-## Converter configuration
+`DOCLAYOUT_LAYOUT_DEVICE=auto` attempts CUDA, verifies actual execution, and falls back to an exercised CPU session. Explicit `cuda` never substitutes a CPU session; its failure reaches conversion-level Sol fallback instead. The pinned CUDA policy places the single ScatterND node on CPU and verifies its assignment before execution. One locked, process-cached engine serves batch-size-one inference. Ordinary preparation/inference errors produce recorded Sol fallback; they do not prove the model ran on CPU. See the [layout record](../../docs/layout-v3-plan.md) for artifact hashes and output-contract evidence.
 
-`ConfigParser` receives CLI, GUI, or API-derived options. It:
+Layout tests inject fake engines and sessions to cover download-once behavior, races, device selection, fallback, parsing, matching, and export provenance without downloading weights. These tests do not validate a real GPU, memory fit, speed, or accuracy improvement.
 
-- preserves explicit false and zero values;
-- expands debug mode into concrete debug output flags;
-- parses comma-separated page ranges into zero-based IDs;
-- merges values from an optional JSON file;
-- converts `disable_image_extraction` into `extract_images = false`;
-- validates the final dictionary before constructing a converter;
-- resolves renderer, processor, and converter class choices.
+From the repository root, synchronize dependencies with `uv sync --locked --group dev --extra full`. Run the offline suite with `uv run --no-sync python -m pytest` and a focused field check with `uv run --no-sync python -m pytest tests/test_fields.py`. For a browser test, install Playwright's Chromium shell first. `tests/conftest.py` blocks real Responses API calls by default and skips `integration` tests unless `--run-integration` is given. The latter is billable.
 
-Configurable class attributes are declared with type annotations across builders, processors, converters, providers, renderers, and services. `ConfigCrawler` imports implementations, gathers inherited annotations and defaults, and accepts either a plain attribute name or a class-prefixed override. `assign_config()` then applies relevant values at construction time.
+Offline tests check page and provider geometry, schema and sanitization, CLI/API behavior, GUI navigation, routing thresholds, grounding, SQLite persistence, cache reuse, and retries. They establish local contracts with generated fixtures and mocks. They do not measure current endpoint access, classification accuracy, field accuracy, or latency on real documents. The separate conversion benchmark uses a local dataset and billable Sol requests; it does not measure downstream fields, classification, or chat.
 
-Retired model, OCR, hardware, and alternate-provider settings fail closed at every configuration boundary. Validation catches direct converter dictionaries, JSON configuration, class-prefixed forms, and unknown legacy CLI options. The error explains that every page uses GPT-6 Sol and that `use_llm` only enables extra refinement.
+`launch.cmd` starts the GUI on `127.0.0.1:8471` with file watching disabled. Its PowerShell helper stops a recognized DocLayout listener automatically, asks before stopping another application, rechecks process identity and port ownership, and aborts if cleanup fails. Restarting loses in-progress work and browser state but preserves saved artifacts. Launcher tests mock processes and sockets; they do not terminate real listeners. Use the [verification record](../../docs/documentation-sync.md) for dated check results and known failures.
 
-## Dependency groups
-
-The base installation includes PDF/image rendering, the OpenAI client, schema/rendering libraries, and the Click CLI. Optional extras add narrowly scoped surfaces:
-
-- `full`: DOCX, XLSX, PPTX, EPUB, and WeasyPrint conversion dependencies.
-- `gui`: Streamlit.
-- `server`: FastAPI, multipart uploads, and Uvicorn.
-- development group: all interface dependencies plus pytest, Playwright, Ruff, ty, pre-commit, and HTTP test support.
-
-The project requires Python 3.10 through 3.13 and uses Hatchling for packaging. The lockfile is the reproducible dependency source for `uv sync`.
-
-## Local development checks
-
-From the repository root, the documented baseline is:
-
-```powershell
-uv sync
-uv run ruff check .
-uv run ruff format --check .
-uv run ty check
-uv run pytest
-```
-
-The test suite is rooted at `tests/` and declares `cpu`, `config`, and `integration` markers. Most tests use generated PDF/image fixtures plus a deterministic extraction service that returns schema-shaped page results. An autouse fixture blocks real Responses API parse and create calls outside integration tests, so an accidental network request fails immediately.
-
-The tests cover provider geometry and normalization, structured extraction validation, processor behavior, renderers, export containment and collisions, credentials, usage accounting, CLI/API entrypoints, Streamlit session behavior, and an offline browser workflow. Optional format tests may need the `full` dependencies; the browser test also needs Playwright's browser installation.
-
-## Live checks and evidence limits
-
-Tests marked `integration` are skipped unless `--run-integration` is passed. They are explicitly billable GPT-6 Sol checks and require configured credentials. Offline passing tests establish local control flow, schemas, sanitization, state invalidation, output shapes, and failure behavior with mocked extraction. They do not establish current API access, model quality, latency, or real-document accuracy.
-
-Run live tests deliberately:
-
-```powershell
-uv run pytest --run-integration
-```
-
-## Benchmark harness
-
-The benchmark tools run DocLayout against a separately obtained local olmOCR-bench dataset. `benchmarks/inference.py` extracts pages and records Markdown plus latency/failure data; `postprocess.py` and `summarize.py` prepare and aggregate results. The harness is billable, uses GPT-6 Sol, defaults to one worker with no extra refinement, skips existing nonempty outputs, and reports a nonzero exit when any request fails.
-
-Benchmark timing includes remote API latency and rendering. Results apply only to the evaluated files and cannot measure local GPU performance. Competitor scripts are independent adapters and do not change DocLayout's runtime pipeline.
+The GUI retains sources, derived conversion artifacts, JSON, and SQLite below `OUTPUT_DIR/field_extraction`. It has no automatic expiry or application-level encryption; operators should account for that when setting the output directory.
 
 ## Related pages
 
 - [Quickstart](../quickstart.md)
-- [Input Providers and Normalization](../integrations/input-providers.md)
-- [OpenAI Extraction and Refinement](../integrations/openai-processing.md)
-- [CLI, GUI, and API Interfaces](../interfaces/cli-gui-api.md)
+- [OpenAI processing](../integrations/openai-processing.md)
+- [Field extraction](../workflows/field-extraction.md)

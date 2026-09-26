@@ -2,46 +2,108 @@
   "schema_version": 1,
   "diagram_type": "workflow",
   "meta": {
-    "title": "DocLayout Conversion Workflow",
-    "animation": "trace",
+    "title": "DocLayout conversion workflow",
     "quality_profile": "showcase",
-    "viewBox": [1200, 720],
+    "viewBox": [
+      1200,
+      720
+    ],
     "views": [
       {
         "id": "conversion-path",
         "label": "Document conversion",
-        "focus": ["user_input", "page_prep", "sol_infer", "val_gate", "doc_builder", "renderers", "file_export"],
-        "note": "Follow the primary pipeline from file ingest to local artifact export."
+        "focus": [
+          "user_input",
+          "page_prep",
+          "sol_infer",
+          "val_gate",
+          "doc_builder",
+          "renderers",
+          "file_export"
+        ],
+        "note": "Prepare V3 once; render at 192 DPI, analyze the page, then send the whole image to Sol. Layout failure keeps Sol content and geometry."
       },
       {
-        "id": "validation-and-recovery",
-        "label": "Validation and recovery",
-        "focus": ["sol_infer", "val_gate", "val_retry"],
-        "note": "See schema enforcement and the error recovery branch for malformed blocks."
+        "id": "validation-and-failure",
+        "label": "Validation and failure",
+        "focus": [
+          "sol_infer",
+          "val_gate",
+          "val_retry"
+        ],
+        "note": "Invalid page output aborts the document; no automatic schema repair is implemented."
       },
       {
         "id": "grounded-chat",
         "label": "Grounded chat",
-        "focus": ["doc_builder", "luna_chat"],
+        "focus": [
+          "doc_builder",
+          "luna_chat"
+        ],
         "note": "Document tree feeds independent Luna chat with citation quote checks."
       }
     ]
   },
   "lanes": [
-    { "id": "client", "label": "User & Surfaces" },
-    { "id": "pipeline", "label": "Document Engine" },
-    { "id": "inference", "label": "Model Services" },
-    { "id": "exception", "label": "Recovery Path", "variant": "exception" },
-    { "id": "delivery", "label": "Export & Rendering" }
+    {
+      "id": "client",
+      "label": "User & Surfaces"
+    },
+    {
+      "id": "pipeline",
+      "label": "Document Engine"
+    },
+    {
+      "id": "inference",
+      "label": "Model Services"
+    },
+    {
+      "id": "exception",
+      "label": "Document failure",
+      "variant": "exception"
+    },
+    {
+      "id": "delivery",
+      "label": "Export & Rendering"
+    }
   ],
   "phases": [
-    { "id": "intake", "label": "Intake & Preparation", "fromCol": 0, "toCol": 1 },
-    { "id": "extraction", "label": "Vision & Validation", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
-    { "id": "delivery_phase", "label": "Assembly & Output", "fromCol": 4, "toCol": 5 }
+    {
+      "id": "intake",
+      "label": "Intake & Preparation",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "extraction",
+      "label": "Vision & Validation",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "delivery_phase",
+      "label": "Assembly & Output",
+      "fromCol": 4,
+      "toCol": 5
+    }
   ],
   "groups": [
-    { "id": "inference_group", "label": "Sol extraction loop", "lane": "inference", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
-    { "id": "delivery_group", "label": "Local outputs", "lane": "delivery", "fromCol": 4, "toCol": 5 }
+    {
+      "id": "inference_group",
+      "label": "V3 + Sol",
+      "lane": "inference",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "delivery_group",
+      "label": "Local outputs",
+      "lane": "delivery",
+      "fromCol": 4,
+      "toCol": 5
+    }
   ],
   "mainPath": [
     "user_input",
@@ -66,8 +128,8 @@
       "lane": "pipeline",
       "col": 1,
       "type": "backend",
-      "label": "Page Gate",
-      "sublabel": "PDFium 192 DPI",
+      "label": "Render + V3",
+      "sublabel": "192 DPI + prior",
       "tag": "limit <= 3"
     },
     {
@@ -76,7 +138,7 @@
       "col": 2,
       "type": "cloud",
       "label": "GPT-6 Sol",
-      "sublabel": "vision JSON",
+      "sublabel": "whole-page JSON",
       "tag": "structured"
     },
     {
@@ -84,8 +146,8 @@
       "lane": "inference",
       "col": 3,
       "type": "security",
-      "label": "Validator",
-      "sublabel": "Pydantic schema",
+      "label": "Match blocks",
+      "sublabel": "Sol + V3 boxes",
       "tag": "bounds check"
     },
     {
@@ -93,8 +155,8 @@
       "lane": "exception",
       "col": 3,
       "type": "security",
-      "label": "Recovery",
-      "sublabel": "repair or retry"
+      "label": "Failed",
+      "sublabel": "No schema repair"
     },
     {
       "id": "doc_builder",
@@ -163,13 +225,6 @@
       "variant": "security"
     },
     {
-      "id": "retry-to-sol",
-      "from": "val_retry",
-      "to": "sol_infer",
-      "role": "branch",
-      "variant": "dashed"
-    },
-    {
       "id": "builder-to-renderers",
       "from": "doc_builder",
       "to": "renderers",
@@ -194,24 +249,23 @@
       "dot": "emerald",
       "title": "Ingestion & Rasterization",
       "items": [
-        "PDFium rasterizes source pages at 192 DPI with lossless image extraction",
-        "Page dispatcher enforces the concurrency limit of at most 3 in-flight calls"
+        "PDFium 192 DPI; V3 supplies layout regions",
+        "At most three page requests run at once"
       ]
     },
     {
       "dot": "cyan",
       "title": "Validation & Assembly",
       "items": [
-        "Pydantic validation verifies block boundaries, text content, and hierarchy",
-        "Failed blocks route to the recovery handler before document construction",
-        "Document builder orchestrates reading order and block tree assembly"
+        "Sol failure stops conversion; V3 failure uses Sol boxes",
+        "Matched V3 selects bounds; Sol supplies text and HTML"
       ]
     },
     {
       "dot": "violet",
-      "title": "Zero-Cost Output",
+      "title": "Local output and chat",
       "items": [
-        "Local renderers produce Markdown, hierarchical JSON, and styled HTML offline",
+        "Markdown, hierarchical JSON, and styled HTML render locally",
         "Independent Luna chat performs grounded citations with quote checks"
       ]
     }

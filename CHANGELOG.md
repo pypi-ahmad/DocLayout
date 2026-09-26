@@ -1,9 +1,59 @@
 # Changelog
 
-This changelog records published releases and changes on `main` awaiting a release.
+This changelog records published releases and unreleased checkout changes.
 GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
+
+These changes are present in the working checkout; this entry does not establish
+that they have been committed, pushed, or included in a release.
+
+- Added explicit whole-page Sol fallback when V3 preparation or inference fails.
+  Missing/rejected V3 matches retain Sol blocks and boxes; GUI/logs and saved
+  per-page provenance report unavailable layout without invented device/order.
+  New fingerprints include the fallback policy; historical artifacts and saved
+  field-only retries remain unchanged.
+
+- Assigned PP-DocLayoutV3's single ScatterND operation to CPU within CUDA sessions,
+  with verified placement and fail-closed provider selection. Avoids the upstream
+  CUDA duplicate-index warning path without hiding warnings or changing weights;
+  new conversion identities record the execution policy.
+
+- Added local PP-DocLayoutV3 ONNX analysis before whole-page Sol
+  transcription across GUI, CLI, Python and HTTP conversion. Sol receives a
+  compact layout prior; validated content/HTML is retained through conservative
+  geometry/order matching, with unmatched detections kept as diagnostics.
+- Added process-cached preparation before new conversion: verified first-run
+  downloads, exercised CUDA detection with CPU fallback in `auto`, strict explicit
+  `cuda` failure, and clear GUI preparing/actual-device/error states. Saved-only
+  work avoids preparation; no layout toggle or launcher dependency change.
+- Added layout provenance, initial region/match counts and page timing in result
+  metadata, with rectangular annotations and separate raw masks. Pipeline-v2
+  identity separates new conversions from historical saves. Accuracy improvement,
+  polygon-accurate exports, speed and hardware fit are not established.
+
+- Added GUI authorization-field extraction from completed raw Markdown with
+  `gpt-6-sol` and medium reasoning, file-defined prompts/schema, source-quote
+  checks, and local JSON/SQLite storage.
+- Added multi-file uploads with three active file jobs, all-page batch processing,
+  and a persistent Extracted information page with readable summaries and two-way PDF block highlighting.
+- Added optional Luna/medium classification with compact strict JSON, enum reasons,
+  one evidence quote, and an inclusive 0.75 score threshold. It remains disabled
+  by default; category definitions and one extraction target are still required.
+- Added saved-artifact reuse, explicit field retries without reconversion, and
+  JSON-export retries without model calls. These downstream actions do not rerun
+  PDF-to-Markdown conversion; the separate V3 integration above changes new conversions.
+- Updated repository guides, generated documentation, and downstream docstrings.
+- Synchronized current documentation with V3/Sol fallback, engine-versus-conversion
+  failure behavior, cache reuse, and rectangular export limits. Historical live
+  observations remain dated; documentation checks do not establish accuracy gains.
+- Added icon-free sidebar navigation buttons with an active-page indicator.
+- Extraction prioritizes the main authorization form, uses requested service dates,
+  and avoids duplicate evidence warnings. Model and reasoning effort are included
+  in definition snapshots and cache fingerprints; historical runs remain unchanged.
+- The Windows launcher restarts an existing DocLayout listener on port 8471.
+  Other applications require confirmation before termination. Saved results remain;
+  browser sessions and in-progress work do not survive a restart.
 
 ## 2.1.1 (2026-09-24)
 

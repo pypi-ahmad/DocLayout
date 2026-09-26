@@ -1,78 +1,118 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a215c0f97cd176c78c3881f0b3a281f1c50c12839b2f318486379403bcbb2226",
+  "pageVersion": "sha256:c1ddc0c09c2724ce24bdd0c12180e6ff27241780b0fd1c61d2485ada33d3053c",
   "claims": [
     {
-      "id": "claim_a11ac5d2790046818b6ce26bf9818ebb",
-      "statement": "BaseRenderer controls image extraction and output visibility options and emits shared usage, cost, extraction, table-of-contents, and page-stat metadata.",
+      "id": "claim_57041c02f7b34a248b3703d733bb3249",
+      "statement": "document_exports derives requested conversion formats from one Document, always renders Markdown, and computes the full bundle for ZIP.",
       "evidence": [
         {
-          "resource": "repo://doclayout/renderers/__init__.py#L104-L138",
-          "version": "repo-lines-v1:sha256:a4a9cba03c1b89b843af779053514ff19028c03df13178c091af9a1c6c6e0eda:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNzY4NjNhM2NkNjFlMGRiZTgwYmE0YTQ5NGU4M2VkNzQ2YmI0N2I2NWVlZmFjMWEzNGE5OTU3MjU2NTRiY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzYTU2ZTdlOTE4MGExNTVlMDVhMWQ3MDYwOThjZDMwMWIwZDdmNWU0YWVmMTlkYzZiYjEwOTIzNjNlNTc3NGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNzY2YWExYjg3MzVjYTRjZmZjYTA0Njg1ODE5ZTkxY2E1YWFiMWQ0NDdjZjExYmZlY2E1ZGU0MjFhZWUxYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMTg2Y2U4OWE4NzFiZTM4MzJmMmI0NTc2OTMyYjIwMjY0MGY1YzUxNGNlODVkNGY3ZjJiNDkyYzJkMWM5MWQifQ"
+          "resource": "repo://doclayout/exports.py",
+          "version": "repo-file-v1:sha256:eb92ee18e3ac7f3b86b0452e5fbd2a744a0a35be0baf51c4cd4874c5459934b8"
+        }
+      ]
+    },
+    {
+      "id": "claim_b6af4918cb974296a755488cadfc0dba",
+      "statement": "Conversion JSON preserves hierarchy while chunk output flattens blocks with page and geometry information.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/renderers/chunk.py",
+          "version": "repo-file-v1:sha256:a286c63fb940ebc47afad30e7ef5655508b49031695bbfee6251c5a1463a04fe"
         },
         {
-          "resource": "repo://doclayout/renderers/__init__.py#L21-L69",
-          "version": "repo-lines-v1:sha256:7dabc721bd709b3f51097cceeb7f1370ff53b9f9d6d157cf57e87d1a7db6d237:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMzVhNjBkMTI5Y2YwYjhhMDhlY2RkZDBkOGNkZTIzZWRkNmU0NjIwNzY3YzhlZDcxNGE1YmYyNzEzYzNlYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ODY4ZDczOGZmOWEzNjZkM2Q4ZGE2NzM5ZWFiMDFjZmUyNWUzNGVlMTBlODhlYzU4NDE4ZDdmZWNkNGRhOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMzUxNzkwMWJkZGY0MzMwYjM2NjRlZjdmMzk1ODMyYjEyYWI1NTFlYzhhMzJkOGYwMzI1OTA4MTY1YjJjN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhYmUyMTIwZmYwMWYyYjE4ODYyNmQyMTIzNWQwOTg1Yjc4NjcwMDI3ODM1ZTExZGZmNjBkZWI1ZjM1OTM2YTQifQ"
+          "resource": "repo://doclayout/renderers/json.py",
+          "version": "repo-file-v1:sha256:0d640bd1d238dfea289b03209a781169fb1bc94755c42fc12a5d3c5ec497164a"
         }
       ]
     },
     {
-      "id": "claim_e1d8a3761a3e4a0b947343d3ea9b253e",
-      "statement": "HTMLRenderer recursively resolves content references, extracts image crops, optionally annotates block IDs and page wrappers, and returns complete HTML with images and metadata.",
+      "id": "claim_07b6ada84aa6427bb1a4af7747537a92",
+      "statement": "Export destinations are validated as a set before writes and reject unsafe traversal, input collisions and duplicate targets; tests prove prior output preservation.",
       "evidence": [
         {
-          "resource": "repo://doclayout/renderers/html.py#L23-L143",
-          "version": "repo-lines-v1:sha256:f0acb1b09faf04bc43934ff0bbfe60b989fb08d0fa49528edd4d3c610041358f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWI3MDI1NzU5M2RhMDZmNjgyYTNkZGRhNTRhOWQyNjBkNGZjNTE0ZjY0NTIzN2Y1Y2E3NGIwOGY4ZGE2MWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNTA4MmYyYzQyMjQ3MjkyNzU1ZTI2NmYxY2MwNGE3ZDM3MWQxYTI3ZjA5MmVkNDYyNGQxMmZlODQ4Mzk3NGMzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMTY3ZWYxOGMxMjliMjljYjQwMDZiNjEzMGQxYjA4Yjg1Mjg0YjY1ZWZiMzgwOThhNzc0NmQzYjMyYTk4MTk2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlMGQwYzJkOGE1ZTIzNDVmMTdlMjQ3MzgwYjdhN2ZhMzhkYjk0Mzk0N2RmN2VmMGUzNTJkODY0MjFiMDBmMGE0In0"
-        }
-      ]
-    },
-    {
-      "id": "claim_5c1ce11f957a4ca6a22dfa427dce2256",
-      "statement": "MarkdownRenderer converts the recursively assembled HTML into Markdown and returns text, extracted images, and shared metadata.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/markdown.py#L181-L231",
-          "version": "repo-lines-v1:sha256:04de994fff1f74cc36d69f35e453b93e77c38d55a1b1ecc325d7dc53baeca1fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZDdjODk0ZDRhMDM1OTFhYzNjZDA0Y2M4NmQ0NzI5OGNmZjc2MWIyYzNkYzI4MmY3ODI3ZWQyMWNkZTNkNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2OWU1MmRjZWZlYzZkNWIwZDE0NWZjMTdiNDcxYzY2YTM2MDI2MDQ5MDI4ZjM0NTRiYjllZWIzOTIzYjQ5NzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjOGQ2OWNkNzI3ZDU2NmExYjFkZTQ1MzM0YzRlYTRlMDJjZTAzMjZkYzQzMmQ2NTZiZTU1N2I0MWUyOWM3MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NmE4ZjNhNjhiMmFiZmZjNGJlNGM2ODFjYmNjZDkzZTZlYjY0Nzc3MjRhYWZiZmEyZTZmM2JmY2YzNzYxNzMifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_b4f1b37ece50446e848cfae39c9ccc32",
-      "statement": "JSONRenderer preserves hierarchical blocks, while ChunkRenderer flattens top-level page blocks and retains page geometry and recursively collected images.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/chunk.py#L11-L111",
-          "version": "repo-lines-v1:sha256:43383ab66f09d54fa694ba4b8c86a6c9bd1205b7eee35d32f03fc8a2b271d2d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWI3MDI1NzU5M2RhMDZmNjgyYTNkZGRhNTRhOWQyNjBkNGZjNTE0ZjY0NTIzN2Y1Y2E3NGIwOGY4ZGE2MWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjNzRmYjk2NmU4ZjE2ZmQ2YWMyZWI5ODNlMDExOGFmNDdmNDVlYTcwZmVmYjM0ZTg0MTAwMjc5MjJmMGQ3ZjAzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhMDU0NmQ2ZjkxZGQ2OTM5ODdkNTFjMWQ4ZmYwOGU0ZTk5MTQ0YTA2NWI2ZGRmMTAxMDljNGZiZDEzN2ZmZDZmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxY2JmZTk4ZjQwMDEyMjJkYzhmZWQ3ZTFjOWUxYTUwYjllMDJlODY0NGUzMDViMWJlYmE5ZTE0MDk0OGQ1ZDBhIn0"
+          "resource": "repo://doclayout/exports.py",
+          "version": "repo-file-v1:sha256:eb92ee18e3ac7f3b86b0452e5fbd2a744a0a35be0baf51c4cd4874c5459934b8"
         },
         {
-          "resource": "repo://doclayout/renderers/json.py#L9-L86",
-          "version": "repo-lines-v1:sha256:918df80da78841c1b11da4519c22fce20e5f88fb993f3033c4129579be5b5a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzNzNlZTNmYjNkNjE1ZWIxMGEwMjg3OWZjNzZjYWQyMjYwMTUyMjJhYzE4NTMxMWVlYzQwYTFhOGZkMTk2ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZWNmZGRmZDUyZDRkNDNhZjBkNDdiZDdiN2YzMDgzY2FiZTFmMjgzOGJhMzgzNmU0MzFlODhhOGYyOTkyZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4MzM4ZDg5MWY3YTg3ZTM2OTlmODgyZDgwNjAyMzFlOTg3ZmE0ODI4OTAyOTJlOTk4ZTdhYTRiNjYxMWM4YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhY2FmMjdkNzc5ZDFiNGE0YjgyZDRkMDdlNzJkYzA0Mzk5NDEzNmJkMTgyYWZkZDkzNWE1ZjNkMzFlYjIwM2YifQ"
+          "resource": "repo://tests/test_cli_exports.py",
+          "version": "repo-file-v1:sha256:cb59cd5d1f48103bcf027ce3cf5e3bf3df2c1cfed8cb62ac6f37c5f8b5eaf4e3"
         }
       ]
     },
     {
-      "id": "claim_52fcd2d626fd4052960814533fced980",
-      "statement": "document_exports derives requested formats from one Document, while output_targets validates containment, collisions, input overwrite, and unsafe names before save_document_exports writes any bytes.",
+      "id": "claim_658839a9cba343fb95614c1dbebf5b76",
+      "statement": "FieldStore persists fixed tables with ten extraction_results columns, field/evidence JSON, and classification in run JSON, then recreates record exports without model calls.",
       "evidence": [
         {
-          "resource": "repo://doclayout/exports.py#L12-L114",
-          "version": "repo-lines-v1:sha256:199cdb9df161529ee86d5dd297ce352678efbec516a07e53b1408488b883272d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiZGM0NGQwNjhkOGNlNzk3ZDE0NzM3MGQ3MmYyMjVlMTc3ZjU5ZmM1ZWI1MTE0OTQ3ZjJkODQ4M2ZiOTU1MzkyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlN2NjMWVkZmIyOTdiMTlhZWI0N2U1NDJmYTcwZjg5YTllYjc1ZDMwMzQzYjVkZTk4Zjc1NWE1NDBkMjdmNWRlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZmFlZjJlYWQ1N2EwMTY2ZTBjNmE3ODBiZjI3ODZhNGRkNDNiMzJmNjE0NmZkZWU2ZmJiMjYyOGI4YmM5M2FjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://doclayout/field_store.py",
+          "version": "repo-file-v1:sha256:02faae7146c7cfae1acb3e79697194a0546b01796741bfbebb0d8b69938b5b72"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
         }
       ]
     },
     {
-      "id": "claim_4f949b3796554f588965db5c0e7e7088",
-      "statement": "Tests verify unsafe multi-output paths leave prior files untouched and input/output collisions are rejected before extraction.",
+      "id": "claim_45b2ad0dc1af4476a5b196fe9cc76782",
+      "statement": "GUI batch persistence retains source bytes, raw Markdown, chunks and ZIP under its local field storage root.",
       "evidence": [
         {
-          "resource": "repo://tests/test_cli_exports.py#L247-L273",
-          "version": "repo-lines-v1:sha256:009044c06fda9961548b5dc2030383c9021dd44bd77c25a287025ca3c8f8a69d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZTU1NDRhZmNkZGFkNzcxM2EzY2VkZGY2YTNjMTc5YjM4OGY5NWRlMmZmZDFlNGI3Y2I4NzVkNmUzMGNiMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmNDJkOWE5ZTYxMTE0YTE2YjdjOGZlNzZhY2YxOTc2MmMzYzQwMTBkZWQxMzFiMzFhZDdmYjMxZTBiOWQ0NzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMGZkMjQyZTRiNWNiMDdjODZhNjk5YmY3MTBiNmJmMzEzMzRjYzBkNTdiZWNhNzJhYjg4ZTVkY2M4ODE4YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhOWI2ZTFmYTBmMmUxYTQ4M2E1ZjU3ZjBkMjdlMTA3ZTBjZDkyMmY1MTk4Njc5M2Y1MTY2NGZhNmZkY2M0ODMifQ"
+          "resource": "repo://doclayout/field_store.py",
+          "version": "repo-file-v1:sha256:02faae7146c7cfae1acb3e79697194a0546b01796741bfbebb0d8b69938b5b72"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+        }
+      ]
+    },
+    {
+      "id": "claim_47608c71c8c746ffa70e551c1e735bf9",
+      "statement": "Record exports retain the saved model, reasoning effort and definition version, including when regenerated from SQLite.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/field_store.py#L215-L282",
+          "version": "repo-lines-v1:sha256:4e58443bc89fa265e8d36bdadef41d7040ccf7833732efdf4c14bd25d57f5bd9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1ZDNhZTc3ZTdjMWQzMDgwZWFmMjQwYmVlZDgwYjFjMWE4MzYzM2YyMWY4ZDE3M2IyYzA2NzVjNjQzYTA3YmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMTVjNTg5MTEzZTkzZDkwYjE2YzI2MDZiNjgyOTc1YmYwNGJhMjI4OTYyOTNkMGQ5NmIwODYxMTI3Y2JkMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3YTI2ZjYzY2U2YjA3N2EyMjljNWQyYjY0NGEyMzE1OTMzNTQwZmFiM2YyZjY4NWY2ZWZiMTBlOWQ1YTFiZTYifQ"
+        },
+        {
+          "resource": "repo://tests/test_fields.py#L238-L272",
+          "version": "repo-lines-v1:sha256:9c4bf62f87aec7bf9c67d3d584e06ff2ba5cdb6d9de165beb1e8c227658afff7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmYTRlMjViOTY2MmQ4YTM2MTk0NjIxMWQ4ZDU2OGEzOTUzYjQ4MmZmMDc3NDM0ODEwMDViMThkN2VlMjIwMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNTMwMjFiNjY5MGQ5YTFmYmJkMmY4YzkyZDFlYjIwODkwNWZmODYxZWM3OWI4Y2JjMTg2ZjQ2ZjE0NDFjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYmFkZWQxYzExNzU3OTFhMTNiMmZkNDk4MTdjOGQyZDk1MmIwMmI3NzMxMWFlY2Q1YjgzYzZmZjkxOWI5YzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a42d748fc7b34f3882631ca947e9c40e",
+      "statement": "Layout exports retain pipeline/runtime evidence and final block geometry/order; unmatched V3 detections are diagnostic while unmatched Sol content retains sol_only provenance before processors.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L109-L153",
+          "version": "repo-lines-v1:sha256:77145a7d70781a07b51681331fc4c56683652a06d10444b5d3e27460644ee5de:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjVlMThmOTM5OGMwMDg3NzQyMTc5ZWEwYTZkYTgyMzVjOTNkMDcyZDhkN2VkZjQ3ZjAzYjVkOTA3NmI1MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNmIwM2RjNmQ4ZmJjODQxOTk3NjFjZjQ0M2EwMWQ5MGVmZTI3NTMzNjczZTUzOGI5NmRiNWZhNTQ0MWFlYmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMzJiY2YzN2U0YjFlZTg1YjRkZTQ1ZmJiMmE3OTRlYTNlODJhZDNjMGRhM2I1YzE1OWMwYjY4YjhmODQxZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0NWMzMzI3MjJiYzEyM2Q2NjI2NjI1M2NhNDk0N2E5ZWQ4NGQ3MDc3YTU1N2QwYzM4NDIxOGViNDBiNzc5N2UifQ"
+        },
+        {
+          "resource": "repo://doclayout/layout.py#L937-L980",
+          "version": "repo-lines-v1:sha256:afaf2e773096126a6727236a58ea5b1402571e7e010258b641d0562f4396508d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmMTdhZmMxYWUwYzA3ODg0ZWQ3NjMyMmNmODY5OTFmZTY4NmNlNGZhZjU0ZjFlYzE5NmFiNGExYWYyMDUwMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YzcxZmI3OGY3M2I1MmYzYTkxMzJkZWNhYmRmOTY3MDcwNWFhYzQ1ZWRiODUyMzMwM2U0Njk2NjNhNDhkMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzNDdkNzUxZTBmYzliMzI3MGRjNTFlZGY5MzVmODJiNzI0Y2ZkMzliMTY3ZGJjZmU0OGM5NzhlOGE0MDc2YTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMDI2YjZmNDJhZTc5OTE0ZWFkNTk4NDQwYjdkMTVhZTVmMzZkYTQ2ZWQ2MjcxOTZlM2IzZjgwZTA4YzdiNDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e896dbf9a20a4ba28988e4a2fa05b260",
+      "statement": "Annotations draw rectangular final structure or cross-page source footprints, never V3 mask contours; OCR JSON reports block rather than character boxes.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/renderers/ocr_json.py#L30-L54",
+          "version": "repo-lines-v1:sha256:ebfd096377348c4dc6e5e394361872337537f3bce0837e1b744227f19c82fdb8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzNGM5ZmY5MmExM2Q0MzNjNzhlMmNkZjFiNGQxYzdhNmM5NWY3NTM4MzM3ZTMwNmJiMzQ4MTdmNDg2ZjIzZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NDE1ZDUxYzcyMzViZjZjNDEzN2Q2NzI4YTkxZTE2NjZjMzA5MTVjNjQzOGE4YWM3NWVlYmZhY2FlYWQxZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkMjI0YzhmYjI5NzYwNzliMGMyZWZmODI5ZDkyZDM3MjdmNzg4ZDI3NmU2NDEwZTFlYTViZGQwNjQwOWNhZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4ZmMwZmQ4NjMyYmEwZTM2YmIyMTQ0YmI4MDc2YjNkNThkODliZDBmNTY3YmJlYWEwYjMwNzQ4YmUxZDgwZjkifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py#L213-L279",
+          "version": "repo-lines-v1:sha256:f4678e76a04ad93a25488885730e52fdc33873336c02f8a80cdb4f6c26b659f6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1YjY4ODY1ZmYzZjAxZWFiOGYzNDFhZGI5NGIwNjEyYzQyN2MzOTc5Y2ZmMDJhNjkwNWZmNTFkOTlhN2M1NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzZjgwZmViY2ZmMzQ1MTAyYjc2NGNhY2Q1MWQ3NTE2NDc4M2VjNGZkZjcwZDZmNDNkNGE3ZDI1ZmYxZmNhMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiOThkYmE0OTQ5YTRmM2Q4OTk3MDExOTA2ZjljYTk2NTQ0YjhkNjVlODBjYzM4MGY5MzhhMzhhNmYxNjhiZWQifQ"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
   }
 }

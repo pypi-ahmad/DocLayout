@@ -5,7 +5,7 @@
 ## Environment
 
 Use PowerShell and uv from the repository root. The package declares Python
-`>=3.10,<4`; the recorded Windows checks used Python 3.14.
+`>=3.11,<4`; the recorded Windows checks used Python 3.14.
 The checks did not cover every supported Python version.
 
 ```powershell
@@ -52,20 +52,54 @@ fixtures and mocked models for security-policy regressions. These tests are not
 an OS sandbox or adversarial security validation; no live deployment is tested.
 CLI export tests cover format selection, one extraction per page, GUI-equivalent
 HTML, ZIP contents, overwrite behavior, and input/output path protection.
-The browser test runs Streamlit with mocked extraction. It checks clipboard
-downloads and verifies that switching views does not repeat OCR.
+Browser tests run Streamlit with mocked extraction. They cover clipboard downloads,
+multi-file all-page processing, saved Extracted information, two-way block highlighting,
+summary navigation and missing-value toggling without repeated model calls.
+`tests/test_field_summary.py` covers readable labels, preserved values, partial records,
+request selection, and unsuccessful runs. Field tests cover the Sol/medium extraction contract,
+classification routing, quote grounding, SQLite exports, cache reuse, and retries.
+`tests/test_launcher.py` checks port cleanup using mocked listeners and processes;
+it does not stop a real application. Sidebar tests exercise both navigation buttons.
+
+Layout tests use injected engines and tensor fixtures, without downloading weights.
+They cover CUDA execution verification, CPU fallback, explicit CUDA failure,
+ScatterND placement, initialization races, matching/order, exports, and Sol fallback
+across entry points. Saved field-only retries must not prepare V3 or reconvert pages.
+The [layout integration record](layout-v3-plan.md) separates these offline checks
+from dated hardware observations; a passing fake-provider test is not a GPU test.
 
 For a focused check while developing:
 
 ```powershell
 uv run --no-sync python -m pytest tests/config tests/services tests/test_chat_prompts.py
 uv run --no-sync python -m pytest tests/test_ui.py tests/test_ui_browser.py
+uv run --no-sync python -m pytest tests/test_fields.py
+uv run --no-sync python -m pytest tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's
 pre-commit configuration also fixes and formats files with its pinned Ruff
 version. Review those changes, especially around prompt literals. When reporting
 a focused type check, name the paths checked.
+
+## Documentation changes
+
+Synchronize claims against code before editing prose. Keep Google-style docstrings
+for downstream and application-support APIs, including argument types, return
+values, error outcomes, and persistence/model-call effects. Layout adapter
+docstrings may describe its public contracts, but documentation-only work must
+preserve executable conversion behavior and runtime prompt bytes. Leave
+model-response class docstrings unchanged because they affect request schemas.
+
+Keep code examples offline unless the guide explicitly labels them billable.
+Check links and anchors, run affected tests, and compare syntax trees without
+docstrings when changing inline documentation. Preserve dated benchmark results;
+new test runs belong in a separately dated verification note.
+
+Update OpenWiki pages through its managed lifecycle. Do not edit claim sidecars,
+generated indexes, provenance, or run state manually. Diagram JSON is the editable
+source for the standalone HTML. Validate and deliver it through Archify, then inspect
+desktop captures. Analysis graphs are snapshots; check their claims against source.
 
 ## Live evaluation
 
@@ -101,8 +135,9 @@ or previously published release assets.
 uv build
 ```
 
-Inspect the generated wheel and source distribution for package code, all four
-Markdown prompt resources, `LICENSE`, and `NOTICE`. Local credentials, generated
+Inspect the generated wheel and source distribution for package code, the four
+top-level Markdown prompts, both field Markdown prompts, the field JSON schema,
+`LICENSE`, and `NOTICE`. Local credentials, generated
 outputs, indexes, and environments must not enter distribution artifacts.
 
 To smoke-test the installed wheel, create a separate environment outside the
@@ -111,7 +146,7 @@ repository so source imports cannot hide missing package files. Verify:
 
 - `doclayout` and `doclayout_single` help commands;
 - the GUI/API entry-point imports after installing the `gui` and `server` extras;
-- resource loading for all four prompts;
+- resource loading for all six Markdown prompts and the field JSON schema;
 - dependency consistency with `uv pip check --python <environment-python>`.
 
 See [package installation](usage.md#installing-the-application-package) for

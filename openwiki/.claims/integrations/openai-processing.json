@@ -1,94 +1,108 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bc54bdc092d4d6870017ee8af74f84abf958f44c362c21108cbbd8b7cff8ba7f",
+  "pageVersion": "sha256:087f7b9fa5fd595dbff2a0284a64f85fcf131594e3c5d051326d3d3ca7b16a4f",
   "claims": [
     {
-      "id": "claim_84983e834dfe4248ae802fa21242cda8",
-      "statement": "Credential resolution applies environment precedence per variable over the launch folder .env, requires a nonblank API key, defaults the base URL, and does not mutate the process environment.",
+      "id": "claim_7eb3613486d04c0ba3aa9423cefbf02a",
+      "statement": "Sol page requests use medium reasoning, parsed ExtractedPage, store=False and a process-wide three-request semaphore; incomplete or invalid results fail and usage is recorded.",
       "evidence": [
         {
-          "resource": "repo://doclayout/credentials.py#L15-L35",
-          "version": "repo-lines-v1:sha256:2acb32e276a735f69123d203e1312d280cf7026d203006c92e00aea4d5a050be:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkYzRhM2ExZjMwNDE5NGNjYTY3MzZlNjcyNjA1MjgyZTJiYjBmMGVjZmRhNDMwMzU0NWM0Zjc5YjYwMWU1NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmYzBjMmYxN2E4YjkxMGM1NmYwNjdjMTYyNGRkM2RjMmQyYzRiNzEyMzQ0NDQ5YzUwMjJmMDg2YTNhNjMwMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZTQxZTE5NzQxNTdjZmY3ZDE2ZTFlOTBiN2UyYThkNzgyNzM0NzI5ZTkwYzUyYTllZDRlZWY3NGE1MDE0NDkifQ"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
         },
         {
-          "resource": "repo://tests/test_credentials.py#L20-L64",
-          "version": "repo-lines-v1:sha256:7110f28b5a664ad7bfb76e83d782777ed5714f5698691b4904125a2a0855b832:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwNDdmYjY3NzQ2YTI1MjE5NDkwYmYxMDdhYjMwNDI4YWI3MGYyYzgxZTM4MzIzODJjYWZmNjM2OTQ2ZmZlODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhZTQ0YmI3ZGVhY2QxYWY2N2ZjZGZkNDI2YWFkMjI3MDExM2MyY2U4MWFmODc0Njg1NjZkZjBhYjNjY2U2NjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0ZDNmYjVjYzYxODdhN2U1OTFiMWIyN2VkMGRkYWUyYzgwZmVjNmU0OTRmNjI1MzBlODA0YjAxYTJiMzY2YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhYTkzYThkMWE2MTRhNDJkZTA0YmQ0NGE3NmE2YzI2NzU2MjljNzM5NThjYzdlMDhlNzA3N2VkZjMzNWEzODcifQ"
+          "resource": "repo://doclayout/services/openai.py",
+          "version": "repo-file-v1:sha256:34a47832a0a346c6b4d9395edcd5cff8b9e8cc3b920968f506d0fd0f6a25ab05"
         }
       ]
     },
     {
-      "id": "claim_37303c2d5efa437d8404749e23c21bb7",
-      "statement": "OpenAIService calls the Responses API with gpt-6-sol, structured parsing, medium reasoning, store disabled, and a class-wide concurrency limit of three; incomplete or failed calls become redacted ExtractionError failures.",
+      "id": "claim_78eeae43c2a64a0e877e935f797803be",
+      "statement": "Extraction schemas validate semantic block types, normalized boxes, blank-page consistency, visible text and sanitized HTML.",
       "evidence": [
         {
-          "resource": "repo://doclayout/services/openai.py#L29-L131",
-          "version": "repo-lines-v1:sha256:6b57ccaa25bb6a21b46aea56114625017016741dee53dba9cf63e8de71d9d18c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3YTM1YmI1NWMzYzY4OTEzMTBiMGI4MmViNzQxZmI4ZWJlODZmNGU1MmFiNjBjMzczMjk0OTYyMmVjODRlMzU0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkY2EzOWIyNGE0Zjk2MjhjZmU0Yjc3ZGRkN2ZhY2M2NzRkOTBhYWJkNmI2MzI2NWQ2OTk5YWE3YzkwM2YyN2U3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyMWYwZTMwNzhjMDEzMTQyYjFmMDQzMDIzODY1MzAyODYzMTEyOTdlZjAzMDg1Mjk5Mjk0ZWY1OTRjMGYyNmEzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MDlhNjYyZTUwZjE0N2FmYmM4M2M3M2Q2ZGEwZTRkNzZmMDczZWY5ZDBhYWY3MWRjMzVlNzE3NjIzNTdlYTM2In0"
+          "resource": "repo://doclayout/schema/extraction.py",
+          "version": "repo-file-v1:sha256:dc21842f250022db2e842977fabd7924613f8b95a5f5959648abe418d46640c4"
         }
       ]
     },
     {
-      "id": "claim_84c7bf84230f4bfc808133ab67c038d2",
-      "statement": "ExtractedPage and ExtractedBlock forbid extra fields, validate normalized geometry and blank-page consistency, require visible text for non-image blocks, and sanitize generated HTML against an allowlist.",
+      "id": "claim_b523d955c96243aa9d0bfe9f2a31a0ea",
+      "statement": "Luna document chat drafts evidence-bearing answers, validates quotes locally, and requires a second verifier approval; a test preserves packaged prompt bytes.",
       "evidence": [
         {
-          "resource": "repo://doclayout/schema/extraction.py#L11-L126",
-          "version": "repo-lines-v1:sha256:8faabaabf54a1e233a32b7acb012ffb6d4df42988e1d07fb58d8e36352c1b5fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzNWQxNTBjMGU1OGY0ZWNlNjEzNDk1OTZhOGJmOTk2NTg0MWU3Y2ZkYjBhMzNlMGVkNWMyYzA3YjIyNjkzNjkxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4MGEyM2FjZjRmNGU4NmZiYTlhMTBkNGM2YWIwOTk5MWIyYzk5MTc1YmFmODViN2NiZjU1ZmExZjZlMzI4NzFhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNTgwYWYxZDIxNDI4YTVhMWJkMGU3YTE5ZjMzMzlkMzJmNGYzNDMyOWJhYzVhZWQ0MDY1YjQ2YzU0YmMyZjU5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmYWZiYTA1MjdjMzk1M2M0YjZlMGU1YjU3MzliYTgzNjEyZjgwNTNiY2RjOTQ2NjczMDE5M2NkMWQ1OTBiNDA4In0"
+          "resource": "repo://doclayout/ui/chat.py",
+          "version": "repo-file-v1:sha256:74fc796c277d90ee040d04b447775194a6977df48729a70491190d9de7c5c30b"
+        },
+        {
+          "resource": "repo://tests/test_chat_prompts.py",
+          "version": "repo-file-v1:sha256:8583b1dc61255c7c6c9c606d726dad9bb2bf70f7307baf3661da39a04ba2887b"
         }
       ]
     },
     {
-      "id": "claim_930a45caeb8145908c54144974d8c370",
-      "statement": "LLM refinement processors are disabled unless use_llm is enabled, run with bounded concurrency, and contain rewrite failures rather than propagating partial refinements.",
+      "id": "claim_a7c4e62de8a045d29a08ee80600ab84d",
+      "statement": "Business field extraction uses only raw Markdown with Sol/medium, strict JSON Schema, source grounding, store=False, timeout 180, two SDK retries, and max output 32768.",
       "evidence": [
         {
-          "resource": "repo://doclayout/processors/llm/__init__.py#L132-L174",
-          "version": "repo-lines-v1:sha256:f204fb88c185ac8426b3439e6b85b48c2b8786d935cf7992028baf8c7c35bc6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0YTljMDUxZTkzYjljOTk5N2ZjY2UyOGM3ZDRjMTIyMzdiNWU4MDRjNTgyMWYyM2Y3Yzc1MGZjMGQ4MjllYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5ZGYwOThiZTc4YjFiOWZmODdmYzU1OGYyNjIwMTE4YTA2MmQxOTVjZDVlNzMyZmNhNjgxMDE1MmZiNmQ3NWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxM2Y0ZTlkOGIzNmNiNDA5NmVlMzA3ODc0MTY3NjJhMGU3MzlmOGFiNGJmMWYwZDY4NGYwNjQ4MmI0NDZiZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiOGM0YTNkYWFjMzQ2MjMxZDViZWI4YzQ4ZDkwMTRiMTY0NzQwNzU4MTkxOGJjYWMxNmRjMTNhZWRkMDRiNGYifQ"
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
         },
         {
-          "resource": "repo://doclayout/processors/llm/__init__.py#L37-L80",
-          "version": "repo-lines-v1:sha256:77abe43bf27324e15168464db3508be19ac636a340e6d2e7181d9e4328fed31b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxYjQ4OTAzOGNmYWQ4YWY1ZTIzMDk5ODQ4Y2IwN2YzYzYyNDEwYTI0MjY5ZGM3MGFmMGE2ZDYyYmNhODdjNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMjAzN2JiYzNiZjE4OTFhODBjMmI2NzUxYzcwMTBhZjQzMmVhMmVhOGU0OTMxOTAwZTIzNzJiM2Q5NTdjZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE5NDU0Y2UwZTBmNDFjMGMyMGFhYTBiMDRjNzUxYTIyYWVkMzI5MjUwZGJlMzY1MGVlN2FiODVkZTYxNjgwOGUifQ"
-        },
-        {
-          "resource": "repo://tests/processors/test_llm_processors.py#L46-L53",
-          "version": "repo-lines-v1:sha256:4701a95b4125633fc078ebff1a14f99a07b30416afd6a063c8c54486a277efc2:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQyNTljYmIwMTU3NDI2Mzk2Y2YxZjI2NTBkNzRhZGU4MzYxOWNhODllYTZmNjVlM2I0N2U3OTllZDU5NmQ3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJkMzNiZDk5YzE2M2FiMGZkN2U4ZDQ2YjkyMTljYzE4ZTU4ZTYwOWZkMTc3M2E3ZDIwZjdiZjkyNzFkZjkxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRjZGZhNWQ2MWY5YTk2NDFkYTAyYzI5NDc5NjFlMmNjMzI2MWEwYzE4ODFlNzg4NjA5NzFlZWMxZTgyYTRmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY2NTQ3NDg2NzY2YTg2MWE5MDYzNTZlYzhmM2U2MjA5NmRiZGQ0ZmE5MDI0MmJhMGE5YTM1M2UzM2FhZTZkYSJ9"
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
         }
       ]
     },
     {
-      "id": "claim_30e5746957154e49ac251f13b336a20c",
-      "statement": "Usage accounting records unknown calls as partial and prices ordinary, cached, cache-write, and output tokens separately when reported counts are usable.",
+      "id": "claim_97e96c3443454fe284c31cde586134ed",
+      "statement": "Optional classification is a closed Luna JSON request whose locally validated category score must reach 0.75 for target routing.",
       "evidence": [
         {
-          "resource": "repo://doclayout/usage.py#L16-L86",
-          "version": "repo-lines-v1:sha256:72990cdaa9ab4d4c2be87b86a18a0154906ad4f08bec9ea447e66ce4bdb7dc7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNzFkMzdhMzljZDExM2IyMjRmNGU0ZDliOGM4OGI5NDkxMzAxYzlmYTQ2YzM5MWFhMDFmMmIxYzJiMDc0NDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5YjY4NjA0YzVmMTE1NDRiOTAzOTkzYjAwOGZiN2I4MjhmZWIxODg1MWE4MTMwZjc5YzA0ZGU0MTBiYmYwMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MGU0MDc3MzFlZjc2NTkwNzJhMmNlOTFhZGEyY2M5YmQ3ZWQ3NzJhNzM2YjhjODEyMTIzMmM2OTc0MTI2NzEifQ"
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
         },
         {
-          "resource": "repo://tests/test_usage.py#L16-L57",
-          "version": "repo-lines-v1:sha256:de4b3c350c6078f223ae8d65283dfbf72c55ecae9e2e9e5ca5497e419c146658:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNjQxMTJjYTJkMDNiOWRlYTdhMzNiMjYyMzc2NDgwODYxNzBmYzIxYzQyN2ZjYjJmZTA3Yzk3ZDBlMGIyMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkYmZmNjY1ZGI0YTA2ODIzNzI4OGNiOGExNWRiMjY4MjQ4YTE5MzViMTYyMTczYWU0YWFlYTQwMzgxNmM5NmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MTQzOTU4OTBjNDc2OTg4Mjk4ZWNhZTVmOWY3MjNlYWQwMWEzZjJjOGIwYzgzYmJkZjU2ODUyY2FjMGM2NWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2M2MxMDU2YWY5NDY1YTAxZWQ2ZDYyY2QyY2Q5MTY4ZjhjNDdmYjI0OTZiMGQ3YmY3MTU3N2U2NzdmMWU2NmUifQ"
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
         }
       ]
     },
     {
-      "id": "claim_cf8e5bdb53834848b2eb627963813f20",
-      "statement": "Document chat uses gpt-6-luna to produce a strict evidence-bearing draft, validates quotations against parsed pages, then requires a second verifier approval before returning an answer.",
+      "id": "claim_350ab1f77f324551b4aca2e7c7904919",
+      "statement": "Credential resolution gives process variables precedence over the launch-folder .env; cost estimates may be partial, and the GUI labels model subtotals GPT-6 Sol and GPT-6 Luna.",
       "evidence": [
         {
-          "resource": "repo://doclayout/ui/chat.py#L146-L175",
-          "version": "repo-lines-v1:sha256:e13741f61de0accfe0fc734683da2620e37e0d1d6ed1c90a91fb5e765d32be15:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwNWYxMWNlZWVmZmNmN2E2ZGIxNjExMGJlNzE2NzIwODcxYWE0ZThmMDg0ZGY1ZThiOTI5MWM0NDFiNDczOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmZWVlY2ZhMjEwYTE2MzYyYjk5YWE5YmZjM2M5MjkwOGFjZjhmNmQwZTgyYTVlNDFkZjFkYmQ2YmM5NDdiOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhOWFkNThkNzM5YTcwNDEyNzc0MDM1ZTg0ODE4OTZmMjg1NTQwNDBkOThlYTljMWI4OWExNmU2YjkyZjA1YWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4YjliMTRhMjlhNTYzMTQxOTdhYWQ0MmU2ZGI1NzYxNDk5OGYzNTljNDNlZjZlMzMyNjkwN2RkNmQ5Y2JmMjAifQ"
+          "resource": "repo://doclayout/credentials.py",
+          "version": "repo-file-v1:sha256:a22e4e2a9fd614dd9594fc22d03798b94f07a04eccf575c27e37e04c0c10ae21"
         },
         {
-          "resource": "repo://doclayout/ui/chat.py#L16-L55",
-          "version": "repo-lines-v1:sha256:74d4a46a583f8ee27ba43d4ef0ad7683dcae8b96900945e7b1231942bcdc0629:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZmM3YjE4NzZhYjU5OGU3YjY5ODYxNWJiNzQwM2NjMzI1MjYzOTdmNzFjMjAxM2U4YzkzZTBlZTM0MDVjYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkMTJmYTY5Y2M2MDM0ZDAzMTE2ZmY2OTVmMmMxMDQ3NjYyMzU1NDMzNTZiOWI5N2RkZTA4MzJmZmIyMWZkOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhZjM1NmExM2RmZmMxNWMyOTIwNTFmZDY5NjYzMmZjZmNhYzM0M2NlMjBhYWM4OWM4MzY4NTM3YTAxOTVjODcifQ"
+          "resource": "repo://doclayout/ui/costs.py",
+          "version": "repo-file-v1:sha256:881ba72a484021990e9f165b8592cd3b3b985dce1fa8b72ed1486b0b80933934"
+        }
+      ]
+    },
+    {
+      "id": "claim_c80daed1eb0f4fd88c188da4f653c1a3",
+      "statement": "V3 success adds a compact given_layout prior to whole-page Sol extraction; layout failure omits it without suppressing Sol or validation failures, and the prompt allows content missed by V3 while treating document text as untrusted.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L42-L61",
+          "version": "repo-lines-v1:sha256:f32690484934111d80df80938b8b6782fdaa48ec12ecd43afc36eef90b4cfa71:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YzQ2NjVhZTYzYTY1MTk5MDE2MjFlYzVkODA0NzZhYzAxODdhMGU2Y2I0MTdmNzYyOGY1YWM4OGRlMjZiNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDVhODUxNTUxMjJkODYxNWJlNTJkNTk0NmRhZmUzMDI1OTQ5MzMxMDBmZjY5YjA3NzNkMzc3NWE5ZWUyZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NjAzNmViYTY2MmI0MGUwNTBjNDI0YTJlZjIwNDRiNmQ1NTY0YzVlMmM0YzE3OTk1YmVlZTExYzFhZTA3MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5YWZlZWVlZTAzY2NiMDk1NjBmZGFiNzRmMDFiODI5M2NhNTI2ZTk2YTcyMGIyM2ZhOWNiOTM5N2I3ZTI3NGMifQ"
         },
         {
-          "resource": "repo://doclayout/ui/chat.py#L178-L249",
-          "version": "repo-lines-v1:sha256:d0b79c755bfe8f2fc281c114a4fd3191a213a05748dd65a53b584f714198e081:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlOTY3MzNlNDc5ZGZkZjAyOGYyZjFkNTk1M2ZlNzM0MDUzOThhNjA5NDRlNDVjZjA0MzNhZjVmOTY1MzgyMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMTFjMDU2N2QwYTVmOWU5YjEzNWY2NWNkMjUzNzJkZmQ2Mjg3NzVmN2MxZWQyNTNmOGJhZDQyZGQyZDY2NjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkNmQzMTE3NmFjZDg3MDA3MTY2MThiOWZmZDA2MDhjNDdlNTVkYzI2NDNkYWIyZGIyYjU4NjE5OGIyMjBjZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/layout.py#L186-L221",
+          "version": "repo-lines-v1:sha256:272d11e056571ac32cde5d988a26f46cdef6b0a1204af53c2ba25089f3639ef3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzNWE3MTAzMTUzN2ZmOTczY2EzYzQ4MzVmNmRkOGQxZmEwMzRlNDU3YWQ1MTU0OTMyYzhiMWNkODQ5MDY4NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNDRlMmVhYThhNTJhYWJlOTk3MmI0N2RiY2I4NWY5MWYwMzUyNTRjMDI0MjEwOTFmODJhZjUxYWI4MzUzYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MWZhOTFlZWU2MjZjMjA3NWI3OTdjNmMzMjVjYTc2YTA0ZjVhYjY4ODMzZjIwMjQ1ODVkNDY4OWYyOTA3ODEifQ"
+        },
+        {
+          "resource": "repo://doclayout/prompts/extraction.md",
+          "version": "repo-file-v1:sha256:57d05c2a4b72fac16d380fe4da5b7bd23e547520156ca648fafbfef203efaefc"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:40:37.445Z"
   }
 }

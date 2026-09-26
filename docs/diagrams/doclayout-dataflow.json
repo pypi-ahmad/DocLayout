@@ -2,15 +2,16 @@
   "schema_version": 1,
   "diagram_type": "dataflow",
   "meta": {
-    "title": "DocLayout Data Flow",
+    "title": "DocLayout data flow",
     "quality_profile": "showcase",
-    "viewBox": [1080, 760],
+    "legend": { "entries": { "dashed": { "label": "refinement" }, "security": { "label": "verification" } } },
+    "viewBox": [1080, 620],
     "views": [
       {
         "id": "extraction-pipeline",
         "label": "Extraction pipeline",
         "focus": ["inputs", "provider", "sol_extract", "validator", "processors", "doc_model"],
-        "note": "Follow the primary document ingestion, Sol vision extraction, and processing path into the document model."
+        "note": "Rendered pages get a V3 prior when available. Sol supplies content; rejected matches or failed layout retain Sol geometry."
       },
       {
         "id": "rendering-exports",
@@ -46,8 +47,8 @@
     {
       "id": "provider",
       "type": "backend",
-      "label": "Page Provider",
-      "sublabel": "prepare & render",
+      "label": "Render + V3",
+      "sublabel": "page image + prior",
       "stage": 0,
       "row": 2,
       "tag": "192 DPI"
@@ -65,7 +66,7 @@
       "id": "validator",
       "type": "security",
       "label": "Block Validator",
-      "sublabel": "sanitize & bounds",
+      "sublabel": "sanitize + match V3",
       "stage": 1,
       "row": 2,
       "tag": "Pydantic"
@@ -102,7 +103,8 @@
       "label": "Parsed Page Text",
       "sublabel": "normalized quotes",
       "stage": 3,
-      "row": 3
+      "row": 3,
+      "yOffset": -15
     },
     {
       "id": "renderers",
@@ -135,6 +137,7 @@
       "sublabel": "quote validation",
       "stage": 4,
       "row": 3,
+      "yOffset": -15,
       "tag": "cited answers"
     }
   ],
@@ -150,8 +153,8 @@
       "id": "rendered-pages",
       "from": "provider",
       "to": "sol_extract",
-      "label": "page images",
-      "classification": "page images",
+      "label": "image + prior",
+      "classification": "image only if V3 fails",
       "variant": "emphasis"
     },
     {
@@ -236,36 +239,7 @@
       "label": "draft quotes",
       "classification": "draft answer",
       "variant": "security",
-      "labelDy": 24
-    }
-  ],
-  "cards": [
-    {
-      "dot": "emerald",
-      "title": "Extraction Pipeline",
-      "items": [
-        "Documents are prepared by format providers and rasterized one page at a time at 192 DPI",
-        "GPT-6 Sol performs structured block extraction with concurrency limited to 3 per process",
-        "Pydantic validation verifies block bounds and sanitizes HTML before document processing"
-      ]
-    },
-    {
-      "dot": "cyan",
-      "title": "Local Output Ownership",
-      "items": [
-        "The in-memory document model stores pages, blocks, reading order, and token costs",
-        "Renderers locally generate Markdown, hierarchical JSON, and flat chunks without model calls",
-        "Local exports build styled HTML, annotated images, raster PDFs, and ZIP archives"
-      ]
-    },
-    {
-      "dot": "violet",
-      "title": "Grounded Document Chat",
-      "items": [
-        "Chat uses a separate Luna model for answer drafts with supporting page quotes",
-        "Local checks verify normalized quotes exist in parsed page text before verification",
-        "Independent Luna verification approves answers before citations are attached"
-      ]
+      "labelAt": [960, 430]
     }
   ]
 }

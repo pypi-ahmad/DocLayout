@@ -1,6 +1,6 @@
 # DocLayout
 
-From scans and images to structured Markdown.
+Turn scans and images into structured Markdown.
 
 DocLayout turns PDFs, scans, images, and office documents into structured content.
 The browser app lets you inspect pages, copy or download results, and ask questions
@@ -8,8 +8,10 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 ## Features
 
-- GPT-6 Sol reads every selected page, including text, tables, equations,
-  headings, reading order, and estimated region coordinates.
+- PP-DocLayoutV3 attempts local layout detection before GPT-6 Sol reads each
+  whole page. Sol supplies text and HTML; accepted V3 matches supply rectangular
+  geometry and partial reading order. Missing or rejected matches keep Sol blocks.
+  If V3 cannot run, conversion continues with Sol and records the fallback.
 - Markdown has a native rendered view and an exact raw view. The separate HTML
   preview uses a white page, serif typography, embedded crops, and MathML.
 - Download Markdown, HTML, JSON, chunks, annotated page images, or an annotated
@@ -18,18 +20,31 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
   verification request before displaying accepted answers.
 - Preview navigation, copying, and downloads reuse completed session results
   without repeating OCR.
+- Upload multiple files with three active document jobs; batches process all pages.
+- Extract authorization fields from raw Markdown with Sol/medium, storing JSON
+  and SQLite records. Classification is explicitly off by default. A separate
+  persistent Extracted information page presents grouped summaries and service
+  tables, with a separate source view linking fields and PDF regions in both directions.
+  See the [field extraction guide](docs/field-extraction.md).
 
 ## How DocLayout works
 
-![DocLayout data flow](docs/diagrams/doclayout-data-flow.png)
+See the generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
+[system architecture](docs/diagrams/doclayout-architecture.html) for the current
+conversion path, layout fallback, and downstream consumers.
+In the GUI, authorization-field
+extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
+The CLI and HTTP API remain conversion-only. See the [architecture guide](docs/architecture.md)
+for the complete workflow, including optional classification.
 
 ## Installation
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
-needed for GitHub-source installs. The package declares Python `>=3.10,<4`;
+needed for GitHub-source installs. This local unreleased checkout declares Python `>=3.11,<4`;
 Windows checks use Python 3.14. PyPI publication is deferred. The Git commands
 below install the current `main` branch. The release wheel installs `v2.1.1`;
-later changes on `main` are recorded under [Unreleased](CHANGELOG.md#unreleased).
+[Unreleased](CHANGELOG.md#unreleased) describes this working checkout, including
+changes that may not yet be on `main`.
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -69,8 +84,10 @@ uv run doclayout input.pdf output --all
 .\launch.cmd
 ```
 
-The launcher opens http://localhost:8471 and refuses an occupied port without
-stopping its listener. It disables file watching; restart it after edits.
+The launcher opens http://localhost:8471 and stops an existing DocLayout listener
+on that port before starting. For another application, it asks for confirmation.
+Restarting resets the browser session but preserves saved results.
+It disables file watching; restart it after edits.
 `doclayout_gui` also binds loopback and leaves existing listeners alone.
 The API requires a separate bearer token; see [security limits](docs/configuration.md#security-and-resource-limits).
 
@@ -103,7 +120,11 @@ wheel, use its local path, for example
 | `[full]` | Office/HTML/EPUB document-format converters |
 | `[gui,server,full]` | All of the above |
 
-PDFs and images need no GPU or local model downloads. Office/HTML/EPUB conversion
+The local unreleased V3 integration downloads a pinned layout model on first
+conversion and supports CPU execution with exercised CUDA auto-detection. Sol
+still handles whole-page text conversion. See [layout setup](docs/configuration.md#local-layout-inference)
+and the [implementation and evidence record](docs/layout-v3-plan.md).
+Office/HTML/EPUB conversion
 also requires native WeasyPrint libraries; see [format prerequisites](docs/usage.md#installation).
 Tool-installed commands run directly as `doclayout ...`. Inside a clone,
 `uv run doclayout ...` uses the project's environment.
@@ -152,7 +173,7 @@ doclayout input.pdf output --all --page_range 0,2-4
 doclayout --help
 ```
 
-The default is Markdown with its image crops. `--all` writes every GUI export
+The default is Markdown with its image crops. `--all` writes every conversion export
 and a ZIP after one extraction per selected page. `--zip` alone writes only the
 complete archive. Individual format flags can be combined; see the
 [full output reference](docs/usage.md#command-line-conversion), including
@@ -171,7 +192,8 @@ doclayout documents --output_dir output --workers 1
 doclayout_single input.pdf --output_dir output --output_format markdown
 ```
 
-GUI Start/End pages are one-based and inclusive. CLI/API page ranges are
+GUI Start/End pages are one-based and inclusive for single-file uploads; multi-file
+batches process all pages without page selectors. CLI/API page ranges are
 zero-based. Extra refinement is optional; OCR always runs through Sol.
 
 ## Documentation
@@ -193,7 +215,7 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 - [Data flow](docs/diagrams/doclayout-dataflow.html)
 - [Lifecycle](docs/diagrams/doclayout-lifecycle.html)
 - [Sequence](docs/diagrams/doclayout-sequence.html)
-- [Workflow](docs/diagrams/doclayout-workflow.html)
+- [Workflow](docs/diagrams/doclayout-workflow.html) — current V3 prior, whole-page Sol request, block matching, and export path.
 
 ## Accuracy, privacy, and cost
 
@@ -210,7 +232,7 @@ confidence scores. Small text, complex tables, equations, and header/footer
 classification need review. Document chat verification can also miss mistakes.
 There is no claim of perfect accuracy or a general benchmark ranking.
 
-The browser keeps results in session memory. Download them before closing the
+The browser keeps conversion results in session memory. Download them before closing the
 session. CLI conversion writes files. The GUI and file command generate HTML
 from Markdown. The legacy single-file command, folder conversion, and API render
 HTML from document blocks.
