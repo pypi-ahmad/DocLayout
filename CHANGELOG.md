@@ -5,6 +5,8 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+## 3.0.0 (2026-09-26)
+
 ### Local layout with Sol fallback
 
 - Attempt PP-DocLayoutV3 for real GUI, CLI, API, PDF, and OCR conversion. Sol still

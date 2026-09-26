@@ -6,8 +6,8 @@ checks. See [development](development.md) for verification commands,
 
 ## Documentation sync (2026-09-26)
 
-These checks apply to the local checkout, including its existing uncommitted
-layout integration. This documentation pass did not change Python source,
+These checks applied to the pre-release checkout, including its then-uncommitted
+layout integration. That documentation pass did not change Python source,
 runtime prompts, dependencies, or launcher behavior. Earlier results below are
 historical observations, not evidence of a new live run.
 
@@ -49,8 +49,8 @@ were not exhaustively browser-tested.
 - Cost tests cover both supplied rate tables, cached tokens, incomplete usage,
   failed requests, per-conversion isolation, and GUI session totals.
 
-The live observations below predate these changes. They are on `main`, but have
-not been published as a new GitHub release.
+The live observations below predate these changes and were not repeated for
+v3.0.0.
 
 ## Version 2.1.0 installation and CLI checks (2026-09-23)
 
