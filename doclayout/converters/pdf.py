@@ -10,6 +10,7 @@ from doclayout.builders.document import DocumentBuilder
 from doclayout.builders.structure import StructureBuilder
 from doclayout.config.validation import validate_config
 from doclayout.converters import BaseConverter
+from doclayout.models import create_layout_service
 from doclayout.processors import BaseProcessor
 from doclayout.processors.blank_page import BlankPageProcessor
 from doclayout.processors.block_relabel import BlockRelabelProcessor
@@ -38,15 +39,17 @@ from doclayout.processors.reference import ReferenceProcessor
 from doclayout.processors.sectionheader import SectionHeaderProcessor
 from doclayout.processors.text import TextProcessor
 from doclayout.providers.registry import provider_from_filepath
-from doclayout.security import DocumentLimitError, MIB
-from doclayout.settings import settings
 from doclayout.renderers.markdown import MarkdownRenderer
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block
 from doclayout.schema.document import Document
 from doclayout.schema.extraction import sanitize_html
+from doclayout.schema.layout import alignment_policy, check_layout
 from doclayout.schema.registry import register_block_class
+from doclayout.security import MIB, DocumentLimitError
+from doclayout.services.layout import LayoutConfigurationError
 from doclayout.services.openai import OpenAIService
+from doclayout.settings import settings
 from doclayout.util import strings_to_classes
 
 
@@ -112,6 +115,11 @@ class PdfConverter(BaseConverter):
             config = {}
 
         self.config = dict(config)
+        alignment_policy(self.config)
+        if self.config.get("block_relabel_str"):
+            raise LayoutConfigurationError(
+                "Block relabeling cannot replace protected Sol/V3 blocks."
+            )
 
         for block_type, override_block_type in self.override_map.items():
             register_block_class(block_type, override_block_type)
@@ -130,6 +138,9 @@ class PdfConverter(BaseConverter):
 
         # Put here so that resolve_dependencies can access it
         self.artifact_dict = dict(artifact_dict)
+        self.layout_service = self.artifact_dict.get("layout_service")
+        if self.layout_service is None:
+            self.layout_service = create_layout_service()
         self.extraction_service = self.artifact_dict.get("extraction_service")
         if self.extraction_service is None:
             raise ValueError(
@@ -142,6 +153,13 @@ class PdfConverter(BaseConverter):
 
         self.renderer = renderer_class
         self.processor_list = self.initialize_processors(processor_classes)
+        if any(
+            isinstance(p, BlockRelabelProcessor) and p.block_relabel_map
+            for p in self.processor_list
+        ):
+            raise LayoutConfigurationError(
+                "Block relabeling cannot replace protected Sol/V3 blocks."
+            )
 
         self.page_count = None  # Track how many pages were converted
 
@@ -177,11 +195,37 @@ class PdfConverter(BaseConverter):
             self.extraction_service.usage.clear()
         provider_cls = provider_from_filepath(filepath)
         with provider_cls(filepath, self.config) as provider:
-            document = DocumentBuilder(self.config)(provider, self.extraction_service)
+            document = DocumentBuilder(self.config)(
+                provider, self.extraction_service, layout_service=self.layout_service
+            )
         self.prepare_document(document)
+        check_layout(document)
 
         for processor in self.processor_list:
+            if isinstance(processor, LLMTableMergeProcessor):
+                if self.use_llm:
+                    for page in document.pages:
+                        if page.layout:
+                            page.layout.events.append(
+                                "table_merge_skipped:protected_layout"
+                            )
+                continue
             processor(document)
+            check_layout(
+                document,
+                filter_reason=(
+                    "blank_page"
+                    if isinstance(processor, BlankPageProcessor)
+                    and processor.filter_blank_pages
+                    else None
+                ),
+            )
+
+        if self.processor_list:
+            # Refinement can change heading HTML; derive metadata from final content.
+            SectionHeaderProcessor(self.config)(document)
+            DocumentTOCProcessor(self.config)(document)
+            check_layout(document)
 
         for page in document.pages:
             for block in page.children:

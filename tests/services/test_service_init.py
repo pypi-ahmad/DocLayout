@@ -49,12 +49,12 @@ def test_responses_contract(monkeypatch):
     assert kwargs["text_format"] is Result
     assert kwargs["store"] is False
     assert kwargs["reasoning"] == {"effort": "medium"}
-    # Original inline system prompt fingerprint, captured before moving the text.
+    # Guide data is explicitly untrusted, alongside the page image.
     assert kwargs["input"][0]["role"] == "system"
     assert hashlib.sha256(
         kwargs["input"][0]["content"].encode("utf-8")
     ).hexdigest() == (
-        "877e99bf83095f25fd037bc6f35db33edef803bd11ac3e6a25e6d157409e605d"
+        "1c3932671e3e196b6e7377520ce523fce27048713134bc76708bb1bdf117d513"
     )
     assert kwargs["input"][1]["content"][1]["type"] == "input_image"
     assert factory.call_args.kwargs["api_key"] == "test-key"

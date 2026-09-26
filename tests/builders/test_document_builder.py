@@ -1,4 +1,5 @@
 import hashlib
+import json
 import threading
 import time
 
@@ -11,11 +12,13 @@ from doclayout.schema.extraction import ExtractedPage, sanitize_html
 
 def test_pages_and_geometry(pdf_document, extraction_service):
     assert extraction_service.call_count == 2
-    # Fingerprint of the original inline extraction prompt, including whitespace.
+    # Static instructions are fingerprinted separately from per-page layout data.
     for call in extraction_service.call_args_list:
-        assert hashlib.sha256(call.args[0].encode("utf-8")).hexdigest() == (
-            "43fd5319eded0c9c3be512c2b963e0da5985352dfc13e6e3e8f2619379081caa"
+        prompt, guide = call.args[0].split("\n\ngiven_layout=", 1)
+        assert hashlib.sha256(prompt.encode("utf-8")).hexdigest() == (
+            "a7ba7c1b7a7c901aa38e5219b394d6c36f7a9e307edff210f1b4cd8683559b8e"
         )
+        assert json.loads(guide)["image_size"] == list(call.args[1].size)
     page = pdf_document.pages[0]
     assert page.text_extraction_method == "openai"
     assert len(page.structure) == 7

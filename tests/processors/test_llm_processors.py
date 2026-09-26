@@ -17,6 +17,8 @@ def test_page_correction_reorders_real_ids(pdf_document):
     from doclayout.processors.llm.llm_page_correction import LLMPageCorrectionProcessor
 
     page = pdf_document.pages[0]
+    # Legacy, manually constructed documents have no authoritative layout.
+    page.layout = None
     original = list(page.structure)
     processor = LLMPageCorrectionProcessor(Mock(), {"use_llm": True})
     processor.handle_reorder([{"id": str(b)} for b in reversed(original)], page)

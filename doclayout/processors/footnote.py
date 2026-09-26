@@ -11,6 +11,7 @@ class FootnoteProcessor(BaseProcessor):
     """
     A processor for pushing footnotes to the bottom, and relabeling mislabeled text blocks.
     """
+
     block_types = (BlockTypes.Footnote,)
 
     def __call__(self, document: Document):
@@ -19,6 +20,8 @@ class FootnoteProcessor(BaseProcessor):
             self.assign_superscripts(page, document)
 
     def push_footnotes_to_bottom(self, page: PageGroup, document: Document):
+        if page.layout is not None:
+            return
         footnote_blocks = page.contained_blocks(document, self.block_types)
 
         # Push footnotes to the bottom

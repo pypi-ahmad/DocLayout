@@ -26,7 +26,8 @@ from doclayout.credentials import api_configuration
 from doclayout.input_files import input_file
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import text_from_rendered
-from doclayout.security import DocumentLimitError, MIB
+from doclayout.security import MIB, DocumentLimitError
+from doclayout.services.layout import LayoutError, layout_error_message
 from doclayout.settings import settings
 from doclayout.util import parse_range_str
 
@@ -144,6 +145,13 @@ async def invalid_request(request, exc):
     return JSONResponse({"detail": "Invalid request fields."}, 422)
 
 
+@app.exception_handler(LayoutError)
+async def layout_error(request, exc):
+    return JSONResponse(
+        {"detail": layout_error_message(exc), "code": type(exc).__name__}, 503
+    )
+
+
 @app.get("/")
 async def root():
     return HTMLResponse('<h1>DocLayout API</h1><a href="/docs">API documentation</a>')
@@ -223,7 +231,7 @@ async def _run(function, *args):
             return await anyio.to_thread.run_sync(
                 function, *args, abandon_on_cancel=False
             )
-    except HTTPException:
+    except (HTTPException, LayoutError):
         raise
     except DocumentLimitError as exc:
         raise HTTPException(413, str(exc)) from None
