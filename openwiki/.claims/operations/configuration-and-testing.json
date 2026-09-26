@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d92f10dc1eeabe9520ce7f38365d06b1a3fdee4fc43c811d8a636f78b23c463d",
+  "pageVersion": "sha256:ad33f225f92f6482111313729a2dbb00a3458b0f1c8dbf9e4b00b624854573e2",
   "claims": [
     {
       "id": "claim_1f4dc1b6718f43288c83e44ba3044f25",
@@ -38,41 +38,63 @@
     },
     {
       "id": "claim_2287bcce8f6c45b8b1090102028d4d55",
-      "statement": "The project separates optional full document-format, GUI, and server extras from the development dependency group.",
+      "statement": "The project separates optional full document-format, GUI, server, and layout extras from the development dependency group; layout requires Python 3.11+.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L39-L76",
-          "version": "repo-lines-v1:sha256:7e632d5aa01d0cb79ef6925ed6bba12116a8780b4dd72b1954cf60c9cb31f2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwZWVhNDIzZjc3NTAwNGIxMTBmYWEzNTE5ZmEwYzg4ODZhYTMxYzY4ZjJiMTBlMDg4NjNkZDM4ZmY2ZDQ5NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0ZWVjZjg1NDU2ZDBhYTZkZWY2NGMyYmI4NjllYWYzZGRlZDMyMDkyZGYyNDBhMDkxMjQyNzE3MzBjNTQ5ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MDViZGVkMDY0NDAxOTgyODQ5MGIxZDU2YzkwNmE0OGE5OGMyMDNiZTE2OTAzYjRmZjUyMDJiOTU0ZmI2YWUifQ"
+          "resource": "repo://pyproject.toml#L38-L91",
+          "version": "repo-lines-v1:sha256:57a772560a27f54cf9f035cfbf578e0967bfac04eb0feceaf06b65e6d5b360b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3YjQzMjNmNWU1ZWI3NmMzMWJkOTdjZGQ5MjIyNDExN2Q2ZWUzODg3OTY3YjQ1MmUyY2VhZWNkZWEwYThkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3OGYwNGVmOThjZDEwNjY1MmFhNzA0Y2EyMGEzZTM0NjdhMDc2MjNmOGZhZjEzMDFhMGJhZWIwZWU4MDJmMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlYWNhNmM2MDIzYjc2MzE0NTZiOTAxNTE1ZTEwOTMwMjM3ZjZkMTVmMGUzODYwNjRmMGQ3N2FlM2U3ZjdjNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MDViZGVkMDY0NDAxOTgyODQ5MGIxZDU2YzkwNmE0OGE5OGMyMDNiZTE2OTAzYjRmZjUyMDJiOTU0ZmI2YWUifQ"
         }
       ]
     },
     {
       "id": "claim_48b4de985152483d82f4af59180d8ecf",
-      "statement": "Offline tests block real OpenAI Responses calls by default and integration-marked billable tests require the explicit --run-integration option.",
+      "statement": "Offline tests block real OpenAI Responses calls by default, inject a fake layout engine, and integration-marked billable tests require the explicit --run-integration option.",
       "evidence": [
         {
           "resource": "repo://pytest.ini#L1-L8",
           "version": "repo-lines-v1:sha256:b7a3cfbdac31badf57f11c0415e089c05393579a9642ce4d637c7c03bba651ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc4ZmMxY2QxMmQ4ZDY0MmRmOGVmZjQxZDcxZDUxMTk2MjZlOWY4OGYyMWZhZmFkYmE2YjEwOTJhYzg0MGE5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWJjOTU0YzhiMmViMmEyNWI1YzAwNjdkMWFlYzZhODQ4OTQ1ZjJhZGJlYWY5NDBmNjZiYWJkYjc0OTUxMDM5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
-          "resource": "repo://tests/conftest.py#L1-L43",
-          "version": "repo-lines-v1:sha256:b8ff80b53a382e287025af9ae016ae7d7f52f872f63250bd61ff04494200c64b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MDExN2I5MTRjMTY1MDY3NjRkZmM2ZTk5YjU1NDExZjI2YzI5NzYzMjBkNDI4ZGMwNTFkZjE2OWU4ZWYzOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzE0MjZiZWE3ZmFiYTA1YTEyYzFlMWM4NjBkYTY3YzYxNzM4ZmZjY2NjYTRmNjc2ZTRiOTI2ZGVhNjZlMDIifQ"
+          "resource": "repo://tests/conftest.py#L20-L88",
+          "version": "repo-lines-v1:sha256:24555175c2230a36e1b441b8cac754a0a1f346f8cf56d3529964389c12da80ba:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmViZmY4ZmE2MTdkZjkzMTdlMGFmNzE2OTY2YWVhYTU0YzI2NDIwN2RmMjNlNTIwNDdiNGFhNWE2ODVkOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1OGU2M2RjOGQ1MzNmMDFiMTczNWQ2MDFkNDMwYTNhYzZmMjM0N2UyODMxYjJjMWRiYzU0OGUzNGU5NTRhZTYifQ"
         }
       ]
     },
     {
       "id": "claim_2b02a33155854a1faae5f145fd793919",
-      "statement": "The benchmark harness uses a separately obtained local dataset, makes billable GPT-6 Sol requests, records failures, skips existing nonempty outputs, and measures remote latency plus rendering rather than local GPU speed.",
+      "statement": "The benchmark harness uses a separately obtained local dataset, makes billable GPT-6 Sol requests, attempts local V3, records failures, skips outputs larger than 10 bytes, and measures layout plus remote latency and rendering without isolating GPU speed.",
       "evidence": [
         {
-          "resource": "repo://benchmarks/README.md#L7-L28",
-          "version": "repo-lines-v1:sha256:f5e38f1971c1cde420d024fe23f8b45f249a44095755cc6cb91a15cd72def170:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2ZjY0YWY2M2UxNmYxYmYzOWViYjE0NTEzZTdiZGUxYmNkODAwMzk3NGYzOWJkMjUyMTRiY2M5YjE5ZTc3YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMTI5ZTVmZmY5OTZlMDQwOGQ3NTY3MWNhZWRmMDNjNWIyNjg2ZmNlZTc3OWI2MTUwMGI1YzAwZmViYjIwYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZTQxN2VjMmUxNmUzODhiYTA4ZjIzNzEwOWI5YTdlZDQyMjVjYjU1NTNiYWFmY2E2ZWUxOGJlMjJlNzliODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMzVmYzE5OTM4ZjJjMTZhYTBhN2I2NmZmZWZmZmU2MWU4OTMzZDBjY2I5YTcyYjY0ODA0NDJkNjUwYmYyYzQifQ"
+          "resource": "repo://benchmarks/README.md#L1-L40",
+          "version": "repo-lines-v1:sha256:8c5e688556225e9efe12d3787fdb98617920de381b0a89c428dafdabc40c1cae:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyODIzMjQxYjU5ZDY2N2Y2Y2E0YTNlZDk1NjdlMzNhOTExZjFkZGFhZGQ1MzZjNDc5NjFiYjI5MGVhMzM4YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNjkyM2Q2OTVkNWZlODE0MzEyYzAwMjQzYjMzNjc4NjAyOWFhY2I4OTBhZTI2NjEzMDExNWJjOGVlMmVlZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiYWUzOTIxMWYwOTg4ZGRhNjU3ZjBlM2NjY2QyYWIzNTQwNzYxYzJmY2FmMTliYWZlMzBlNmJhMjhjODc0ZWQifQ"
+        },
+        {
+          "resource": "repo://benchmarks/inference.py#L18-L55",
+          "version": "repo-lines-v1:sha256:08c953f0b54138fa1fea038bac46d03ab0f01d941d10f5f097f423e7c6e33d35:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMzExM2ViOTNmMzdkZGYzYTY5ZjRiYWRkOWUyZGUzODg2YmIzYjdiYzJjYzBhMWQ4MzQ2YWJhMTE1MTEwNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2Y2NjMDNlMTdiMjE4OTk5NGQxYjVmODI5ZTE2MWVkMzJiMDIzM2QyODg1YWJmNGMzM2IxNDVjOTdlZTU1MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlYmU4MzY4MTU5NzllOTIxOGM4YmJmMzc3MDVmNzNkMTNiMDFhM2I5YjcxM2ZlZWM2NGRlNzdhMTk1NzFlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViNzQ0MWFhNjM2NjRmZGI5Y2IyMzQzOTA5NGEyYWQyNGMzMGI3OGZjMDgwYzM0NTBlY2I2OGM2MWE0ZTA4OTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9701d9667f6d4d5f833b595be352e617",
+      "statement": "Operator layout policy, device and cache are configured outside HTTP requests; absent matching policy preserves Sol geometry/order, while malformed policy and guide-limit failures abort conversion.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/schema/layout.py#L29-L100",
+          "version": "repo-lines-v1:sha256:206aca9bbae83f944363cff36981aeaaba6feb2c855c91b4ab6c3faaf72885c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0YzE1MjY5YmRkMzIzMGRlODc3NjcxZGYyZThhM2QwNjk5OGJiZmNmMThlYjczYzE4NzQ5ODkxZDY1NTQ3OWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOTgyNmU5MDc0MWQ0ZmEzYjk3MmQ0ZDY4YTk1MGU4YmM5NmFhNDlhNWY3YWI4M2EyODgwMWUxZmMyMzMyYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
+        },
+        {
+          "resource": "repo://doclayout/scripts/server.py#L160-L176",
+          "version": "repo-lines-v1:sha256:3aaeec48543cf938142883d13c301070d5a1c8aa1faef6b43cdb4b8df9ae2d21:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxNWM4MGI3MTcxYzFlMTlhZTczMzQzMTk5ZTkzYmYxN2RkMjhkODA3MmEyMjY5MDJkMDhmNWY2MTNmNzFjNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOTQyZGE3ZWZjZTA0NmRhNThjMmY1OTA3YzM1ZTkzYjNiNWE1MDBiY2U5YzAzYTY5MzExMWE2Mzg4YjkyOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQwNWNlOGVkOTg5YzMwYjdhMzJiMDZkNWFjNjAyYjljOTc5MzI4YjFiNThkNGYwNjlkM2YxMTU5Mzk4YTJlMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMTkzZWUzZDc4NWI0NWYxYmQ3MmE2NDI1M2YxOGJjYzcxYjM0ZGJiOWU4OWU4ZTI4YjVjY2MyZGNiOGVmZjAifQ"
+        },
+        {
+          "resource": "repo://doclayout/settings.py#L22-L37",
+          "version": "repo-lines-v1:sha256:b169b3e8d53f03f5b3b069bbe3fb966039459c26f987f2a69bf3ee6a6f1dfc80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NGE3OWE2ZDA3OTY2ZDkwNTYwMjdhNTRjMDM4M2FiMDc2YjYzMmNlMTFkMGEyMTQwY2MyMDQxNjg5ZmUwYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkYzg0ODBkMjM2OTNmMTQ3ZTZiODlhNGQxOWZjNDM0MDZlNTY3NWMxNWQyOGJhOWViZGQxN2EzNmFiMjJiNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1MmIwOGY4YmVkZTdhYzZhOWYzN2Q0MzhlM2ZhMjc3N2U1MjIzYjBmYTllMzY2OTc1MGFiNTg3YjhjZTFmNzgifQ"
         }
       ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:42:04.191Z"
   }
 }

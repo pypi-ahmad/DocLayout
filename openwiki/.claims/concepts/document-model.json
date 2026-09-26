@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4e62337472bd129cabea1d83c3a7ef94bbc92af57a0a558f735d5036f10a2456",
+  "pageVersion": "sha256:b59d7dabc66546e4a4518ca5c117f0aa98cafd115e8c67fdaa9bc5f290497238",
   "claims": [
     {
       "id": "claim_4739925c74424449b1ba2cb11e9679f2",
@@ -73,10 +73,42 @@
           "version": "repo-lines-v1:sha256:c180f7ee9142e6e8f4b373695e5fdeb3d266e6fb2b2a994ad4c3fd579841cce0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MzBhNzYxYmQ0NGRhNzc1MTViYWI0MDM0YWNlNzVlMDNhMWRlMjJiMmNhYjEzZWY4ZTRmMmNlZTFlOGFmM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzllMDIyZTBkODU0MTIwMDAzZDc5MGMyOGI3NTk2MmVkZDMwMzc1NmQ1MTMzM2RmNzQ1Y2ZiODZlYTExY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3MjYyYzM2NzFlOWUyMjg2MDJlMDkxYzllMzgwZjM5MjVmNWI2YTY1MjhjN2NjOTgwMmE0YWQxOGM0ODhmYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_651890ca52f146eba55cdbf42d801f41",
+      "statement": "PageLayout stores original detections, match diagnostics and source bindings separately from additive BlockMetadata; the converter checks source identity, geometry, membership and order after grouping and processors.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/converters/pdf.py#L201-L228",
+          "version": "repo-lines-v1:sha256:12ca0f52ba61f2a2cbef0535ab7dfa27cd27279b5237af667633b8d8e110b61e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzOWIzZTQwMzg1OTVkMmM3MDMwNDNjYTM3Mzc3OTI4ZGMwYjE3YmQwOWUxYWY1NmI4MDdiOTRjNWY3ZDdjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0NTZmMTcyYjFkMDM1YmJjMmI0Y2I5NzU2NWM0OTgwYzBlMjlmY2RmYzg2MzZlYzNjN2ZkYzhkY2E0MzY5NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3NjM5MzVjNzNmNThlMjM5ZjM0NjFmNTQ1OTZiNjc0Y2Q4NTEwNzVhNGFmMzkxZjI4ZjNmNzRiZGY5YjM3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5NmZkYTc5YTFiMTdmZWU5OGQ4ODM2ZjcwY2RmMjFjYWI0ZTAyMTEzY2NjZjRjNjI1NGU1ZjY3MWI5MWJjZDgifQ"
+        },
+        {
+          "resource": "repo://doclayout/schema/layout.py#L103-L143",
+          "version": "repo-lines-v1:sha256:fdd19ac211eea4a134c90927385aa918939221ff181106425b129729ff1aa7d0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwNmZjZTJkYTExNzdhNjgwNDE1MzQ0NmE2MTBjNzFhZTk5MzUxNmEyZDY3MWJjZmEyM2NhYjMzYmYzZmZkOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwY2UzZjI0YWI0N2MyZjVhOWQzMzdmMzc3ZWQ4NTczZmE1NjU4NDA3NjQwMmYxYWYwNTRhM2RlZDYxOTQ2MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyMzUzOWJhZTdmYTg2OWQzYTJkYzY1MDM2Yjk2YzMxMWFkMWRmZTUxYmE0MWJlYzhkY2JmYjdiNzdlMDc2ZDIifQ"
+        },
+        {
+          "resource": "repo://doclayout/schema/layout.py#L196-L233",
+          "version": "repo-lines-v1:sha256:1485b02fec9188b9ac4dfead0d4d708b8d16ea37a4bb284c13aad570bc0e2458:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxNTUyZjhhOTE3MDZlOGI3YTAzNjdiNmJkZjliNWIxZWMxNzY0M2MxOTI4ZDhkZWFiYzFmZDdjNTQxMzBmNTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiMTM3OGJmZGU4NjYwMzA0YzhhMDEyNTQ0N2IyZjE3ZTVjZGQ0MDM5NDczMjcxZjVlNjQ3OGE1MTg0MGRhMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkZjYyMzY1NjEwMjMxMmRkYTc3Mjk1M2U2M2JkZjJjMDU4ZGY3OTAzZDkwMGQxNWJkNmU2YTM1OTg5NjM0OGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b711e1480a049359fc1ec7bee420624",
+      "statement": "Alignment turns Sol's normalized boxes and V3 pixel rectangles into ordered source blocks; only configured confident matches apply V3 geometry and order, while unmatched Sol content remains.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/alignment.py#L225-L439",
+          "version": "repo-lines-v1:sha256:9950b83ce2af47a2de042444388eade85d6c4ef072af74003875d013cac135ce:eyJzZWxlY3RlZExpbmVDb3VudCI6MjE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNDNlZmVlZjJkZWU2ZjA4OTEyZDI4YjRmYTY3YzdiMDMwNGJlNmMyN2QyNTEyNDc1MTJmZDRjOWU3ZTUxMDJkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5NDMzZDBlYTllY2YyZjM5YzlhNTA0MDczOTVlZTQxMTcyZmU2ODJjOWM4ODVhMzUwOGY3NWJkZWUxNTFlZmZmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4Y2M0YTdkMWNjNzk2YWJhM2U0NjcyMzMyN2Y1MTdlOWY4MTE5ODJkMjUwZjA3MDI5ODZlNGI1NzY0YWQ5NTg5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzMGMxZjE4OGYxNDJlZDdhODI0NjgwYjIwNzE3MmM1NTE5YmM2MTRhNDhmZGE3Y2YxNjdlZGI4ZGRmNzk5NTZjIn0"
+        },
+        {
+          "resource": "repo://doclayout/builders/document.py#L118-L157",
+          "version": "repo-lines-v1:sha256:89f7f773dba809c725f17d7f6aaadee4fe097f3ad9d384f71742498a9629234f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyMTk2YWQ1YWM5ZTRkNmI5OWNjNzdjMmE1ZjQ3ODg4YWI3MDUwMTY4MjNkMjk3ZWZmYzEzZTAwNzM2NTU3YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYWYyOTMwZmQwNzUyZjk5OTlkNDY3ZWMwNGRmN2ZhNzQ4YmFjMzk2MTk1YmFmNTRhZTc5ZTA1NTQ2MjQxZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2NGI5MWE1NmE2NDY1NTNjOTM2NDc5ZWVhYjIzZTE0YzdhYTVhNDQ5YjgwMzE5MDhiYTYxZDYxN2U1MjAxMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2Yjg4YjczOGRiMjczNzkzNzY2MTI2NGRjZjZlMTc2ZWVmNjliZDE0YjNkNDRmZmRkYzkwZGM4Y2I0NjY3ZmEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.5.2",
-    "at": "2026-09-23T13:33:56.448Z"
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-26T10:42:04.191Z"
   }
 }
