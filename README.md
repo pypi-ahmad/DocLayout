@@ -30,9 +30,9 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 ## How DocLayout works
 
-The generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
-[system architecture](docs/diagrams/doclayout-architecture.html) are historical
-snapshots. The [layout integration record](docs/layout-v3-plan.md) describes the
+The [data-flow diagram](docs/diagrams/doclayout-dataflow.html) reflects the current
+parsed-text and layout path; the [system architecture](docs/diagrams/doclayout-architecture.html)
+is a high-level snapshot. The [layout integration record](docs/layout-v3-plan.md) describes the
 local unreleased contour integration, pipeline v4 diagnostics, and validation limits.
 In the GUI, authorization-field
 extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
@@ -204,6 +204,9 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, troubleshooting |
 | [Configuration](docs/configuration.md) | Settings, defaults, limits, environment, precedence |
 | [Development](docs/development.md) | Setup, tests, builds, extension and prompt-change practices |
+| [Onboarding](docs/onboarding.md) | First offline checks and a source-code map |
+| [Tutorial](docs/tutorial.md) | Hands-on path from coordinates and tests to a bounded live check |
+| [Contributor runbook](CONTRIBUTING.md) | Change workflow, review checklist, and failure handling |
 | [Changelog](CHANGELOG.md) | Current changes and compatibility history |
 | [Architecture](docs/architecture.md) | Extraction pipeline, model calls, renderers, prompts, session state |
 | [Validation](docs/gpt6-validation.md) | Dated live observations, offline checks, known limitations |

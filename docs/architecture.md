@@ -13,13 +13,19 @@ the exact matching rules, and dated runtime evidence.
 
 ### Interactive architecture and workflow diagrams
 
-The conversion workflow was refreshed for contour matching on September 27.
-The other standalone HTML diagrams retain their September 26 high-level views;
-use the prose below for the complete local contour and diagnostics contracts.
+The September 27 sequence, data-flow, and lifecycle diagrams were regenerated
+from their Archify specifications with source-checked wording. The architecture
+map remains a high-level view. The conversion workflow was regenerated from
+its prior passing specification; its compact labels omit some input formats and
+combine response validation with contour matching. Use the prose below for
+the complete contour and diagnostics contracts.
+The workflow has excess right-side whitespace. In the lifecycle viewer, the
+Export control remains partly clipped at 1440 px despite passing automated
+containment checks; the generated diagram itself remains readable.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. The existing composition still leaves excess right-side whitespace.
-- [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and audit scoring.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. Its existing composition still leaves excess right-side whitespace.
+- [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and an independent approval request.
 - [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
 
