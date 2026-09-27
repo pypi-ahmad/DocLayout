@@ -45,9 +45,9 @@ its external evaluator. Competitor scripts run independently.
 
 See [validation notes](../docs/gpt6-validation.md) for the three-page smoke result.
 
-See [development checks](../docs/development.md#offline-checks) for offline tests
-and [live evaluation](../docs/development.md#live-evaluation) for the explicit,
-billable fixture-test command.
+The [development guide](../docs/development.md#offline-checks) lists offline
+tests and the [live evaluation](../docs/development.md#live-evaluation) section
+has the explicit, billable fixture-test command.
 
 The original three-page sample covers selected reading-order, small-text, and
 header/footer rules. These cover only part of the benchmark. Preserve the

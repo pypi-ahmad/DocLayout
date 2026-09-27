@@ -1,6 +1,6 @@
 # Optional local olmOCR-bench pages
 
-This guide describes three single-page PDFs from
+The optional local sample contains three single-page PDFs from
 [olmOCR-bench](https://huggingface.co/datasets/allenai/olmOCR-bench)
 (allenai, Apache-2.0) and the benchmark tests that apply to them. The PDFs and
 JSONL records are local-only and excluded from fresh clones and package builds.

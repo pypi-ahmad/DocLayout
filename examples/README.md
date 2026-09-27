@@ -24,10 +24,11 @@ For uploads, send a multipart `file` and optional `page_range`,
 Page extraction and optional refinement incur API charges. Conversion requests require
 `Authorization: Bearer <token>`. Filepath access is disabled by default; use uploads.
 Add deployment TLS, request timeouts and resource controls before remote use.
-It requests no GPU. This checkout attempts V3 with CPU ONNX Runtime before Sol;
-the first uncached container conversion can download the pinned weights. The
-example declares no persistent model-cache volume, so a fresh container can need
-another download. Layout failure continues through Sol with fallback metadata.
+The example requests no GPU. Before Sol, this checkout attempts V3 with CPU
+ONNX Runtime. The first uncached container conversion can download the pinned
+weights. The example declares no persistent model-cache volume, so a fresh
+container can need another download. Layout failure continues through Sol
+with fallback metadata.
 Successful API responses retain layout evidence, including decoded contours and
 matching diagnostics; this example does not generate annotated image/PDF downloads.
 Use the [layout settings](../docs/configuration.md#local-layout-inference) for a
