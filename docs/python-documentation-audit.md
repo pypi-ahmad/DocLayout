@@ -44,8 +44,8 @@ adding documentation.
   providers, conversion orchestration, export naming, and CLI boundaries.
 - The new contributor path separates [first-day onboarding](onboarding.md),
   [guided exercises](tutorial.md), [developer reference](development.md),
-  and the [contributor runbook](../CONTRIBUTING.md). This avoids turning one
-  setup page into a second copy of the architecture guide.
+  and the [contributor runbook](../CONTRIBUTING.md). Onboarding covers setup;
+  the linked guides carry the detailed architecture and review procedures.
 - Offline tests can check syntax, behavior, and fixture contracts. They do
   not show whether a new document is matched correctly, whether contours
   align on warped scans, or whether a GPU ran a live ONNX session.

@@ -4,8 +4,8 @@ Live extraction observations and offline application checks appear separately
 below. See [development](development.md) for verification commands,
 [usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
 
-The measurements below are dated historical results. They do not evaluate the
-current V3/Sol fallback pipeline. See the [layout integration record](layout-v3-plan.md)
+The dated measurements below predate the current V3/Sol fallback pipeline.
+See the [layout integration record](layout-v3-plan.md)
 for its bounded runtime observations and the [documentation verification record](documentation-sync.md)
 for later offline checks. Neither record establishes a general accuracy improvement.
 
@@ -101,7 +101,6 @@ classification limitation or other model variation.
 - Runtime import checks confirmed Surya, Torch, Transformers, google-genai and
   Anthropic are absent from the environment.
 
-These counts describe the original checks.
 The current offline suite also covers prompt-resource fingerprints, session
 invalidation, chat verification, export artifacts, clipboard operations, and
 browser downloads with mocked extraction. It does not establish live endpoint
