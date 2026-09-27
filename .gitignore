@@ -43,6 +43,11 @@ exports/
 *.[eE][pP][uU][bB]
 *.[hH][tT][mM]
 *.[hH][tT][mM][lL]
+!/docs/diagrams/doclayout-architecture.html
+!/docs/diagrams/doclayout-dataflow.html
+!/docs/diagrams/doclayout-lifecycle.html
+!/docs/diagrams/doclayout-sequence.html
+!/docs/diagrams/doclayout-workflow.html
 *.[zZ][iI][pP]
 *.[cC][sS][vV]
 *.[pP][aA][rR][qQ][uU][eE][tT]
