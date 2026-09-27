@@ -3,9 +3,11 @@
   "diagram_type": "sequence",
   "meta": {
     "title": "DocLayout grounded chat verification",
+    "locale": "en",
     "viewBox": [820, 500],
     "animation": "none",
     "quality_profile": "showcase",
+    "column_fit": "spread",
     "legend": { "mode": "hidden" },
     "views": [
       {
@@ -32,9 +34,9 @@
     { "id": "user", "type": "external", "label": "User", "sublabel": "browser session" },
     { "id": "ui", "type": "frontend", "label": "Streamlit", "sublabel": "chat interface" },
     { "id": "doc_model", "type": "database", "label": "Doc Model", "sublabel": "active page text" },
-    { "id": "luna_chat", "type": "cloud", "label": "Luna Chat", "sublabel": "draft generation" },
+    { "id": "luna_chat", "type": "cloud", "label": "GPT-6 Luna", "sublabel": "draft generation" },
     { "id": "verifier", "type": "security", "label": "Verifier", "sublabel": "exact substring" },
-    { "id": "luna_judge", "type": "cloud", "label": "Luna Judge", "sublabel": "audit verifier" }
+    { "id": "luna_judge", "type": "cloud", "label": "GPT-6 Luna", "sublabel": "audit verifier" }
   ],
   "messages": [
     { "id": "submit-question", "from": "user", "to": "ui", "y": 160, "label": "ask question", "variant": "default" },

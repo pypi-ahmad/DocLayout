@@ -3,6 +3,7 @@
   "diagram_type": "dataflow",
   "meta": {
     "title": "DocLayout data flow",
+    "locale": "en",
     "quality_profile": "showcase",
     "legend": { "entries": { "dashed": { "label": "refinement" }, "security": { "label": "verification" } } },
     "viewBox": [1080, 620],
@@ -11,7 +12,7 @@
         "id": "extraction-pipeline",
         "label": "Extraction pipeline",
         "focus": ["inputs", "provider", "sol_extract", "validator", "processors", "doc_model"],
-        "note": "Rendered pages get a V3 prior when available. Sol supplies content; rejected matches or failed layout retain Sol geometry."
+        "note": "Sol supplies content; accepted V3 matches use contours or boxes. Unmatched blocks keep Sol geometry."
       },
       {
         "id": "rendering-exports",
@@ -66,7 +67,7 @@
       "id": "validator",
       "type": "security",
       "label": "Block Validator",
-      "sublabel": "sanitize + match V3",
+      "sublabel": "validate + match V3",
       "stage": 1,
       "row": 2,
       "tag": "Pydantic"

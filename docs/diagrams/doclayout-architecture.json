@@ -3,6 +3,7 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "DocLayout architecture",
+    "locale": "en",
     "quality_profile": "showcase",
     "viewBox": [
       1160,
@@ -62,7 +63,7 @@
       "id": "conversion",
       "type": "backend",
       "label": "Conversion core",
-      "sublabel": "V3 prior + whole-page Sol",
+      "sublabel": "V3 contours + whole-page Sol",
       "pos": [
         340,
         90
@@ -217,7 +218,7 @@
       "title": "Conversion",
       "items": [
         "192-DPI pages pass through V3; Sol supplies text and HTML.",
-        "Missed/rejected regions keep Sol boxes; failed V3 uses Sol fallback."
+        "V3 contours or boxes survive; unmatched Sol text stays."
       ]
     },
     {

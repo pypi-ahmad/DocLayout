@@ -3,6 +3,7 @@
   "diagram_type": "lifecycle",
   "meta": {
     "title": "DocLayout conversion lifecycle",
+    "locale": "en",
     "quality_profile": "showcase",
     "viewBox": [
       980,
@@ -19,7 +20,7 @@
           "validating",
           "ready"
         ],
-        "note": "Prepare V3 before new conversion. Failed layout uses whole-page Sol; saved field retries skip both stages."
+        "note": "Prepare V3 before new conversion. Failed layout uses whole-page Sol without a guide; saved field retries skip both stages."
       },
       {
         "id": "failures",
