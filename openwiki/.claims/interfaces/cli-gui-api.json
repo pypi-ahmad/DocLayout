@@ -1,100 +1,52 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d60748d403004ad40e85cf38ab5c573f2b72021fc5a8ec69691d6eb62e71a531",
+  "pageVersion": "sha256:8e1f56e4ecd943a09466311e5c4699b00be6ce24fb0a24540c7b5486af20c647",
   "claims": [
     {
-      "id": "claim_b920202005254a3485d3412fe5a8d261",
-      "statement": "The main CLI supports mutually exclusive file export selection modes and validates a file destination before conversion, while folder mode can partition sorted files and use spawned worker processes.",
+      "id": "claim_4fa13120872c46ed8c2545dd45ec6eb1",
+      "statement": "The package exposes four entrypoints; the main CLI selects file export formats or bounded folder worker conversion and rejects conflicting export flags.",
       "evidence": [
         {
-          "resource": "repo://doclayout/scripts/convert.py#L99-L236",
-          "version": "repo-lines-v1:sha256:543b64d3b616ba4fef463730368afdd6781c913b634a79bc3d04624734d90b54:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMGY4ZjAyZjhiNzE1MTIzMjIzY2FiOTVjMWFjYWY4ZDA4NjM4YjQwZGEyZWE4YjU3MmI2ODlmNzEyMzdjZjUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNzYxOWZjZjNiYjQzODk2YWE2YTYwMGI1MzJjN2ZmMTY2MThiM2I2YjgxMGQ0ZWZiN2Q3YWRiMDg1N2VhYTI0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNmFkNjhkMzI2MGI2YzFkMmRmODIyZTMxOWJjNDc2NjNiNjZiMGJhNzgwNzBlODM1Y2JlNWVmNWE2NDZlOGE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        }
-      ]
-    },
-    {
-      "id": "claim_09fd7674033d41629f88aaa6d3f5ceae",
-      "statement": "Each CLI conversion owns and closes its model artifacts in a finally block and reports API cost when an OpenAIService was constructed.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/scripts/convert.py#L21-L64",
-          "version": "repo-lines-v1:sha256:21e12942b50bf4a6b721860af81be3c437ea83fabc35a534a2b699240475e539:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMzMzMjNjYWFiZTdhNmUzNGI5MTJjOWExODNhMjZmNTRjNjA5ZTUzY2UxZTVhMGQ1ZGI1YWE0NDdhOGViZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzMTkxMDRiMzFlOGQxZDI5MTljYzY1YTJkOTA3ZDVlYzY3ZmQwYTY4NzQ5MWNmZWEzNWQyZWQ2ZWFiMzZmM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYWI1MDIzODY3ZGNjZTYyMjQ0ZWMyNDdhYTgzMDgzODZjMzlhN2JlNGZlMjBlNDE5ZjQzNzY4NDcxMDY5NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3MzViYWRlMzgyYjIyYWI5NWU3OTM4ZDIxOWU2YmY3Y2RjN2Q0NGQzNGViNjkyZTAxODUwOTA2YzZkMDdkNDMifQ"
+          "resource": "repo://doclayout/scripts/convert.py#L105-L220",
+          "version": "repo-lines-v1:sha256:d57b8ea336c44fdc413e265b830a6dc2d526d6cc762c14a8925fa43bbd360b01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMGY4ZjAyZjhiNzE1MTIzMjIzY2FiOTVjMWFjYWY4ZDA4NjM4YjQwZGEyZWE4YjU3MmI2ODlmNzEyMzdjZjUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjZmIwM2VjNzdjYmRiMDMzZDFjMzJmZjNlMDhmZGI0OWVhYWVhY2Y2MTMwNTIzODJlMjI0NzJmMzkzMGM5Y2EzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNmFkNjhkMzI2MGI2YzFkMmRmODIyZTMxOWJjNDc2NjNiNjZiMGJhNzgwNzBlODM1Y2JlNWVmNWE2NDZlOGE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwNTRmOWMxNmNkNTdiNTYzN2JmY2I3YzYzMjhkOGI0MGFiNDIwYTg3NjI3ZjgzZTU1NmVjZTZjMDk1ZWI2ZjZmIn0"
         },
         {
-          "resource": "repo://doclayout/scripts/convert_single.py#L16-L43",
-          "version": "repo-lines-v1:sha256:bef5c414ea1a073c62382d28a150db85137c8ffc2c7fe6faaea950fec14821a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwN2FjMjRlMGJhYjllMjQwMTZhN2Y0NzIxMWRhZDhjY2M4YmRkMjVhMTNiMDJmMjI3NTRlMTc4NmJkYzZiYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzMTkxMDRiMzFlOGQxZDI5MTljYzY1YTJkOTA3ZDVlYzY3ZmQwYTY4NzQ5MWNmZWEzNWQyZWQ2ZWFiMzZmM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZTI3OGI3ZDY0YjAxOTIxOTBiMzc2Y2NiOGY5ZTg2NjYzOWE2NjVjNjBhMDA4YjFjZGZjYmI0M2NkYzhhOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://pyproject.toml#L65-L69",
+          "version": "repo-lines-v1:sha256:d4f31ccc2f864fa948e5d3c4159be9bbf0a5793e5de03295caf8c2a6e1c78c61:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGVhYjRlYzYzZGU1MTdkYTRjZDhlNWM4MzA3ZmIyYzc3MzdkMzkxOTBhYjY5ZjMyYTVlOWVmODFlYTQ0MTZkZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTA0OGY1OGQxZWEzYmE2ZjUzMjNlYTZiOThiMzE3MzE3MjA3ZTdhNjFkMjBhNDk4ZTJlN2FmNDE5MGU5ZTM5MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M5ZjEyN2NiNDU3ODNjM2MyM2IzYmU0MTk3ODFlNTE0NGJkNmFmMmJiOGJkMDIxYzA2NzE5MWE0NDFjOTE2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjg0Yjg2YjYyMTI4YjZiYmQ0YTUyZDRkMzg2NjNhNmY3OTc1YzAwM2Y3YWZlNTc3MTAwNDc1OWY1OWVhYmZkNCJ9"
         }
       ]
     },
     {
-      "id": "claim_792c879e1afe485a924c9182aef8ef34",
-      "statement": "The Streamlit application hashes each upload and invalidates extraction and chat state when the upload or extraction scope changes; only the explicit run button starts conversion.",
+      "id": "claim_5425f804c0074d8f85452c0d60769e87",
+      "statement": "The GUI validates layout policy, prepares V3 before extraction, reports actual device and fallback, and blocks required-mode preparation failures.",
       "evidence": [
         {
-          "resource": "repo://doclayout/scripts/streamlit_app.py#L53-L107",
-          "version": "repo-lines-v1:sha256:2dd9d9ec02b1d05b3fe31fca54c1290bf839d4eb482e88cafaa0bc8a867b958f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZWY0ZWUyMDAxMjM1NjkwYzNkNTllYjg0NTZjMTExNmY1YWVkYTZiY2E5YjZiYTc2ZjQ0MjQ0YjdkZDVjYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2NWUzMzhiMWNlZTFmMzRjMjZjMmUxNjcxMjVmN2EzNjJmMjZkZmViOGRiYjU3NTdhMTAyNzFlYjM1MDJiZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3M2Y5ZmI2ODdjOWUyNGEyOGI3Zjk4MzExMTNjMWM1ODFhODQ3Yjg4NmNhYzFiNjA3YjU5MzNiYjIxY2E1YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1OGQyZTc3MzBjMTQzZTRiZTMxNDIyZjA2NWQwY2E3MmJkOTVkYmQ3NDgwODYzOWU4MmZkYmI2NTI0YmE5ZTMifQ"
+          "resource": "repo://doclayout/scripts/streamlit_app.py#L111-L155",
+          "version": "repo-lines-v1:sha256:83d5187a9eb480a75dd786baac294ae373710521b3ddbeced4ea72db8be70b2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNzZjZjUzNjRiYzcxMzlmYjE4M2U4MTRhOTkxMWJhYTcyOGFlY2U3NTYyMzgzZWE4YWMwMGRmZGE0ZmFiOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3MGRhMDMyZmJmZGJkMWI0MjRlODE0YzIxMmFlNTg0ODRlNzZmNTdkYzU2ZGJmZDEzYmY4MDM3MzZkMzI0YjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1OGQyZTc3MzBjMTQzZTRiZTMxNDIyZjA2NWQwY2E3MmJkOTVkYmQ3NDgwODYzOWU4MmZkYmI2NTI0YmE5ZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwZTBlZjI1YjA4ODk4MWYyN2RhY2RmYmRlNTAzZDVjMWY3YThhOGY5MWNkMzhhZDgwY2YzYzkzYTc0YTExYTEifQ"
         }
       ]
     },
     {
-      "id": "claim_e45aaed28f484e698ee01a7d4066cf10",
-      "statement": "Streamlit upload preparation detects and counts the source, persists normalized PDF bytes for converted document formats, and run_document creates all main rendered forms from one extracted Document in a temporary workspace.",
+      "id": "claim_9836ab76503d40e594decfd537fa02f6",
+      "statement": "The API accepts only its declared conversion fields, requires bearer authentication for path and upload routes, and turns fatal layout errors into sanitized HTTP 503 responses.",
       "evidence": [
         {
-          "resource": "repo://doclayout/ui/documents.py#L24-L39",
-          "version": "repo-lines-v1:sha256:052687f3ccb45882f1ccb7b1693d5d7eae3d0cd0db20da17b3f2b8cb7aa691e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0OGU5NjU0NDY0ODZjMThjM2FiMWMyNDY1ZDQ4MmNkNmRhMTBmMWMwZDM0ZTUwNTVhNDZhZjM3NGNjMzhiNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlNDFiMTVjMjE0ZDkxOGRhN2JhNjcwMGZiOTA4ZjczZThhNGNjMzE3ZmZmYjNmNjBmN2ZjMmU0YWYxOTMyYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiYWU2OTQ0N2YxMGNlMGMwMzdjZDljOWU4ZjkwYTRkYTU5Y2Q0ZjA3MDdjOWJhNmU5ZDY4MmFjNmU2ZmY2NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NjU4ZGM2NmJkZDUzMzNkNjE0MjY5ZjBkYjIxMGRjYmM2OTI5ZWQ0ZTVkMDc0MGNlMzU0ZTFiODc5ZjNjMTkifQ"
+          "resource": "repo://doclayout/scripts/server.py#L148-L175",
+          "version": "repo-lines-v1:sha256:6274ad6541fef1e29936e1fb3b0f4054dd2228d927af65667ddf71a0c40c9efe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyYmE1YTkzZmM0YzdjZWM4ZWRiNmM3MzA5MGVlZTZiNjllNmZiY2RjOGQ2ZDhlZmI1YjNjZGM0MTFjZmNhOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxYjU3NGE4ZTcwOTFjMDMxZTk0NmM0NzAwZDVlZWViYmNlNDc2NTE2OGI2OTY1MWYyZTY5N2Q3NGZhZDg1NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhZjkxYjM5ZmVjNWM2ZWJhNWEwZGRlNDY0MDc4ZDhiMzNiN2IyY2Q3ZmNjMzMwMTJiNzQzZTIwMWU5OWRjNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ODRiNDE1YjM5MzA4MGQwMmMwZGQ0NmU2NjFmMDhkNTU0Mjg5Y2MyMDBmMmQyYWU5OGQwMzM1ZTA0ZmFjYjkifQ"
         },
         {
-          "resource": "repo://doclayout/ui/documents.py#L59-L105",
-          "version": "repo-lines-v1:sha256:06e140bd26eb8403910b040f410893be3a79b8c9eb21be5753662b8baaa0a16b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYjYzZDlkM2Q4ZDk0NmMzMjY1NGJlYjAyOTA3MzI0NzVkMTcwNDgyNGM4ZjNiODk3Njk3MmZjZTIzMmU0MWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwODIzOTdmOGQ4M2FjN2E5YzkwODY3MTE5MDQzYzdhZGIyMmU3Y2Q4NWZmZDc1ODk1M2QwMWI4NzIzOWQyZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_01836906986544ed8781e0de4c4f2dba",
-      "statement": "The FastAPI lifespan owns shared model artifacts and a one-request guard; its upload endpoint ignores the supplied filename as a path and writes the upload under a fixed temporary name.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/scripts/server.py#L262-L287",
-          "version": "repo-lines-v1:sha256:d817aecae3ee50df4c84f02793ad6f5e6d342fe14839f41c7468b8bc5793d5b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwOGJhODAxNzg4MDE2MzY5ODI4ZDBiNjhhNDgyMWNjNzBmMTg0MTBmZGIzMzc2Y2QwZTEzY2NlNjAyZDliNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZGE4NzQyMWZhMDY4OTRjNGI0YjNkNmI0MTE0ZmMzZDhlNjA5YjAyODFkZjZmZDY3M2U5MzliMDcxZTJhZTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3MzUzYWVjNzVjMTZjZjJhNTgzNTE0NDVjMzE0MTQzYTFiZDM0OGRlMWU4ZjU2MmUzODA1NjFlNGRmYmI2NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NjBkYjFiMDU4Njk0NGIyZjY1MjNjOGVhNmNiYzE0MmQ2NTFlNzYwZTE0YTg2MGE4MDc1OTEwY2FjZGY2YTIifQ"
+          "resource": "repo://doclayout/scripts/server.py#L242-L284",
+          "version": "repo-lines-v1:sha256:392cdbe3d1543cff8f481ce165cbb5369bdf15ebca64013314938f9420f63177:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZmNmYzJhYTc5OWJmMmQyYThlYjViNWM0MGM3MmZjMGJiOWUxMDdkNzdhZDA3YjNiNTYwMGMxYWViZTc2ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhNzg2NzUyNzJlYzRjMDhjNDk3MDhjMzY3ZDcxMTVjYTUxZDU0MmIwNDg3OTg2ODMyZjNiZWRhYzAyZWJmMzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyZGFhMjhmZjk1MTZmMTY4ZGEzMGFmZTdmZDdmYjMwZDIzYWU5ZmQ5OTkwZTFiOTY4ZTZkZjE4YWE2ZjBlNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YjY3ZTg1OTZmM2JkYjJlYjdmMjcxMWExNGM4OTc0YWY1NTQ5MGRjNzEyYzM5YWIwZWFlNzgzM2M1M2UyZTMifQ"
         },
         {
-          "resource": "repo://doclayout/scripts/server.py#L37-L115",
-          "version": "repo-lines-v1:sha256:e57fbcd07b672f6a396bf41fc07a2f9b2befe8712c46b41bff9f38e048da00ef:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3Y2ZmM2YxNzg0MmRlYzZlN2U5MWMzZTNiOGZjZTBhODIyZmMzMTEyNzM4MWIwMGY0NGE5ZjEzMzMzMDNhMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDkyYzlmNDAzNGVmOGU1MTExZDU5MTYyZjQ5YTA4YTM0Yjk0OGQzYjhiYzQ4ZjMyZTNkNTJjMGMxMDRkYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNTlhNWFlOGFhOWE3MWZmMWEzNGI0ZTU0ODgyMTI0MGQ0MzIzMTBlMzg2OGRjYTFkODdmMmJlZjZjMTZhMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2OTE0NTUwNDQ0N2Q5YTZjZjQwNzAzOTJkY2M2MDVmMTIyYTc1Y2M3ZDRmZDE2NzJjODRmMzg5ZWJkZDdlNDkifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_4a175db1cbc7412c992796ca5e9903b6",
-      "statement": "The browser smoke test verifies that export navigation and downloads do not repeat extraction and that a changed page scope removes the prior downloadable result before another run.",
-      "evidence": [
-        {
-          "resource": "repo://tests/test_ui_browser.py#L20-L145",
-          "version": "repo-lines-v1:sha256:cd3eb93432a4241986da371fb4ac090204d62e43d54c87572bc2593b234019bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiOTVmMTYwNTQ5ZDQxYjRiMjUxNWFmMmM5ZTAzMDZmNTNkNjQ4NmQ2ZmI5YjA3MmQ0ZjMzZGUzNWJhNjM3MWZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxM2FhMjcwODA2ZTIwNWE0YmFhOWI2NGZhZjZiMjE1NTMyM2U3NTI5ZDU3ODc4OTBhNjVlNDIzMWMwM2Y0NGI4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0YTY4MThhYzllYTc3ZTdlMGFhZmU5MWY5MWQ1NWZjYmVlNjBmMGI5YzU3YTUyYWE2ZDExYTVkZjg3NDgxOTc5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNjQxNjczYmJkMGNjODJlNzIzMDBhMDI2Yjc5MzFkNWQ2ZmFkMmY5YmE5M2EzMDhjZDFjNmNiMDg4NjZhMmRiIn0"
-        }
-      ]
-    },
-    {
-      "id": "claim_6501a697cfee4c208a352558afea6e58",
-      "statement": "The GUI displays V3 preparation and fallback status, while the API returns successful Sol fallback results with layout metadata and uses sanitized HTTP 503 for fatal layout errors.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/scripts/server.py#L148-L199",
-          "version": "repo-lines-v1:sha256:0173b0cc07f4c9eeef9224371139e6f0cb1869c36e3d2352fc0ddef1f5dbad24:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyYmE1YTkzZmM0YzdjZWM4ZWRiNmM3MzA5MGVlZTZiNjllNmZiY2RjOGQ2ZDhlZmI1YjNjZGM0MTFjZmNhOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhZjkxYjM5ZmVjNWM2ZWJhNWEwZGRlNDY0MDc4ZDhiMzNiN2IyY2Q3ZmNjMzMwMTJiNzQzZTIwMWU5OWRjNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjYWYxMTQ0ZWJmZGM2MzhkMjFlMzZjNDc3MjZkNzM5MGRjNTgwYTNhZGQzYjU0MDU4YzZjNzVlMzgwYmM1NGIifQ"
-        },
-        {
-          "resource": "repo://doclayout/scripts/streamlit_app.py#L107-L153",
-          "version": "repo-lines-v1:sha256:c0b1d32fcec2eb33625df82df9180263d093fd5de6c88235ef1abc12682f062e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2NWUzMzhiMWNlZTFmMzRjMjZjMmUxNjcxMjVmN2EzNjJmMjZkZmViOGRiYjU3NTdhMTAyNzFlYjM1MDJiZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NzM0OTlhZmUwNTMwNTM1YTNhZTE0YTllNWUwZWY5ODVkYzg2MGUzODFlNmYwZjg2MDBlODRmYWVlMTg4NDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2NDJlZWMyNzk3ZThmYTVjOWYyMTJmOTRmZTM5ZDJhZmQ3YWQzNjRjNjU1OWE3OWI5OWIxYzVmYmZjZTMyZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMWJiZGIyZjEzYTEwOGZmMjI2YmY3MDMwODA0NDY3OGVhMTVjYjgzZmFkZmIxM2VkZTJkYjgyZGUzMWM3MmYifQ"
-        },
-        {
-          "resource": "repo://tests/test_entrypoints.py#L119-L158",
-          "version": "repo-lines-v1:sha256:cdeedd6a6d60900bad718a9620f608ef68e46f15e918841266ccba7c91072da2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxM2U1ZDVhOTQwNDg1Y2MzZTQ3Y2U0OWQ0YzNlNGQ5N2JhZTY1OWQzYTIzZTJkZTBiOWU3NzdkNDEwNjIwODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmNjYwNzIwZDE1NWQwMmZkMzljOTRhZGRiNWNkMjM2YTI5NmQ3ODAzYTY4NjM5MWJhZDgwY2M4YmE3NjJlZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwMjVlMjliZDJmZDczMTcxZGNhNjEwMjlmMWZhZjBkNjkwMzg0MTExOTYwOTA5ZDE0OTBlNTg5YWJmZTk3ZmUifQ"
+          "resource": "repo://tests/test_entrypoints.py#L120-L166",
+          "version": "repo-lines-v1:sha256:5aab11b127a1198056a8b870ce4159281952313d8ecae24716df4be0c3f9a6db:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NTExOGY2NGQ3ZmYwOWNiYjQxMzhlYjhmODc2OGY4OWM2ZTQwMDliNGI2ZDFlNzQ3NWU1M2RjY2FiYWJmMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0OTY0YzgxYzhlZDM4MWQyZDRkYzNjOWIwNDQ4ZDg1MGUzNDY2NTlkM2RhMWEyZGUwNjQyMjk4YTdkYzkzY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkZTIyZThlMDk2MTIzNDNhYWRlNjFjNTliZWVmZmNkNzRjY2Q5NGZhZjcwYzkwYWU2NjNlZTVkYmJiZGE5ODMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:42:04.191Z"
+    "at": "2026-09-27T09:43:51.061Z"
   }
 }

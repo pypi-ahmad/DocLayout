@@ -1,96 +1,62 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:01e534c2422a4d27421657fdd369047b0a3ba8456b8988f3f92b633a38a92cce",
+  "pageVersion": "sha256:6a7dce5fa9e4c844b645ae3ae4aa0696125f1f9e0ba8b98a6aa056d0bf6c784d",
   "claims": [
     {
-      "id": "claim_a11ac5d2790046818b6ce26bf9818ebb",
-      "statement": "BaseRenderer controls image extraction and output visibility options and emits shared usage, cost, extraction, table-of-contents, page-stat, and dedicated layout metadata.",
+      "id": "claim_8dea4c67ba264a719e5d4f56e7d02553",
+      "statement": "A completed Document is reused for requested file exports, with Markdown rendered once and HTML, JSON, chunks, annotations, and ZIP derived without another extraction call.",
       "evidence": [
         {
-          "resource": "repo://doclayout/renderers/__init__.py#L104-L158",
-          "version": "repo-lines-v1:sha256:a84552130b18e62e3c71464d25a10245eef776c49950f3d199cfb6a819572cf7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNzY4NjNhM2NkNjFlMGRiZTgwYmE0YTQ5NGU4M2VkNzQ2YmI0N2I2NWVlZmFjMWEzNGE5OTU3MjU2NTRiY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzYTU2ZTdlOTE4MGExNTVlMDVhMWQ3MDYwOThjZDMwMWIwZDdmNWU0YWVmMTlkYzZiYjEwOTIzNjNlNTc3NGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNzY2YWExYjg3MzVjYTRjZmZjYTA0Njg1ODE5ZTkxY2E1YWFiMWQ0NDdjZjExYmZlY2E1ZGU0MjFhZWUxYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMTg2Y2U4OWE4NzFiZTM4MzJmMmI0NTc2OTMyYjIwMjY0MGY1YzUxNGNlODVkNGY3ZjJiNDkyYzJkMWM5MWQifQ"
+          "resource": "repo://doclayout/exports.py#L64-L114",
+          "version": "repo-lines-v1:sha256:7afcda8c05281a81c695534ef55e47a8ad1e6c2d85c8c2a50dd70a822c56df42:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyZTIxNzc2MTg2M2JjMmQ2MGU1MWI3MDYxZDQwZmRkMWQ3Y2U5NmFhM2U1MjJjMWFiOWJiNzU5MzMwZTg0ZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3Y2MxZWRmYjI5N2IxOWFlYjQ3ZTU0MmZhNzBmODlhOWViNzVkMzAzNDNiNWRlOThmNzU1YTU0MGQyN2Y1ZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwZWNjYjRiNWYzOTI2ZGU4YmM2YTc0ZDRiZjQ5NTFiNDNmODVhYzdlODY5Y2U1M2Q0NzE1MGQwODVjMmQ3MmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f523a8ad471d48fdb7634e4c855e65ee",
+      "statement": "Hierarchical JSON retains additive matched layout_geometry beside existing bbox and polygon fields; chunk exports collect member contours by source ID.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/renderers/chunk.py#L75-L112",
+          "version": "repo-lines-v1:sha256:d37ee9dac4d7583f290e69faa9a53ee3a38a3b65cb799e9def56fc112a6d6784:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZDVhYTkxOTdiNmI2Y2Q1YmM5MDAyZWRjMjQ5MGIzNTg2Y2ZiNzhkNDdlN2Q0MDI5YjRlNjRjZDkxNzViZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhMWJmODg3ZTBhMDcwMTVjNTM4NjY5NDcwZjIwZjY4MWJmMmVmZDU5ZDAxMTIwNzFjMWU4ZDFhMzY4YzE5YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxNWVhNWVmNDIyMWRmZDUxMjgzMTFjZDJiOGU0MDI5ZGQ0OTNkYTEwMmE2MDAxNTQwNzQ2YTUwNGIwOTA1ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhZTA1ZmY2ZWQ3OThmMjI5NmM2OTE2N2YyNmZiY2M4N2VjMDM5ODFmNDdjYzcwNmRiNWRlNGQ4Y2MzYmUyODUifQ"
         },
         {
-          "resource": "repo://doclayout/renderers/__init__.py#L21-L69",
-          "version": "repo-lines-v1:sha256:7dabc721bd709b3f51097cceeb7f1370ff53b9f9d6d157cf57e87d1a7db6d237:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMzVhNjBkMTI5Y2YwYjhhMDhlY2RkZDBkOGNkZTIzZWRkNmU0NjIwNzY3YzhlZDcxNGE1YmYyNzEzYzNlYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ODY4ZDczOGZmOWEzNjZkM2Q4ZGE2NzM5ZWFiMDFjZmUyNWUzNGVlMTBlODhlYzU4NDE4ZDdmZWNkNGRhOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMzUxNzkwMWJkZGY0MzMwYjM2NjRlZjdmMzk1ODMyYjEyYWI1NTFlYzhhMzJkOGYwMzI1OTA4MTY1YjJjN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhYmUyMTIwZmYwMWYyYjE4ODYyNmQyMTIzNWQwOTg1Yjc4NjcwMDI3ODM1ZTExZGZmNjBkZWI1ZjM1OTM2YTQifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_e1d8a3761a3e4a0b947343d3ea9b253e",
-      "statement": "HTMLRenderer recursively resolves content references, extracts image crops, optionally annotates block IDs and page wrappers, and returns complete HTML with images and metadata.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/html.py#L23-L143",
-          "version": "repo-lines-v1:sha256:f0acb1b09faf04bc43934ff0bbfe60b989fb08d0fa49528edd4d3c610041358f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWI3MDI1NzU5M2RhMDZmNjgyYTNkZGRhNTRhOWQyNjBkNGZjNTE0ZjY0NTIzN2Y1Y2E3NGIwOGY4ZGE2MWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNTA4MmYyYzQyMjQ3MjkyNzU1ZTI2NmYxY2MwNGE3ZDM3MWQxYTI3ZjA5MmVkNDYyNGQxMmZlODQ4Mzk3NGMzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMTY3ZWYxOGMxMjliMjljYjQwMDZiNjEzMGQxYjA4Yjg1Mjg0YjY1ZWZiMzgwOThhNzc0NmQzYjMyYTk4MTk2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlMGQwYzJkOGE1ZTIzNDVmMTdlMjQ3MzgwYjdhN2ZhMzhkYjk0Mzk0N2RmN2VmMGUzNTJkODY0MjFiMDBmMGE0In0"
-        }
-      ]
-    },
-    {
-      "id": "claim_5c1ce11f957a4ca6a22dfa427dce2256",
-      "statement": "MarkdownRenderer converts the recursively assembled HTML into Markdown and returns text, extracted images, and shared metadata.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/markdown.py#L181-L231",
-          "version": "repo-lines-v1:sha256:04de994fff1f74cc36d69f35e453b93e77c38d55a1b1ecc325d7dc53baeca1fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZDdjODk0ZDRhMDM1OTFhYzNjZDA0Y2M4NmQ0NzI5OGNmZjc2MWIyYzNkYzI4MmY3ODI3ZWQyMWNkZTNkNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2OWU1MmRjZWZlYzZkNWIwZDE0NWZjMTdiNDcxYzY2YTM2MDI2MDQ5MDI4ZjM0NTRiYjllZWIzOTIzYjQ5NzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjOGQ2OWNkNzI3ZDU2NmExYjFkZTQ1MzM0YzRlYTRlMDJjZTAzMjZkYzQzMmQ2NTZiZTU1N2I0MWUyOWM3MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NmE4ZjNhNjhiMmFiZmZjNGJlNGM2ODFjYmNjZDkzZTZlYjY0Nzc3MjRhYWZiZmEyZTZmM2JmY2YzNzYxNzMifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_b4f1b37ece50446e848cfae39c9ccc32",
-      "statement": "JSONRenderer preserves hierarchical blocks, while ChunkRenderer flattens top-level page blocks and retains page geometry and recursively collected images.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/chunk.py#L11-L111",
-          "version": "repo-lines-v1:sha256:43383ab66f09d54fa694ba4b8c86a6c9bd1205b7eee35d32f03fc8a2b271d2d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWI3MDI1NzU5M2RhMDZmNjgyYTNkZGRhNTRhOWQyNjBkNGZjNTE0ZjY0NTIzN2Y1Y2E3NGIwOGY4ZGE2MWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjNzRmYjk2NmU4ZjE2ZmQ2YWMyZWI5ODNlMDExOGFmNDdmNDVlYTcwZmVmYjM0ZTg0MTAwMjc5MjJmMGQ3ZjAzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhMDU0NmQ2ZjkxZGQ2OTM5ODdkNTFjMWQ4ZmYwOGU0ZTk5MTQ0YTA2NWI2ZGRmMTAxMDljNGZiZDEzN2ZmZDZmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxY2JmZTk4ZjQwMDEyMjJkYzhmZWQ3ZTFjOWUxYTUwYjllMDJlODY0NGUzMDViMWJlYmE5ZTE0MDk0OGQ1ZDBhIn0"
+          "resource": "repo://doclayout/renderers/json.py#L16-L30",
+          "version": "repo-lines-v1:sha256:39187d85bc7fdbe07e5a598d173a6c2f871e9e567144058f623bc0fe4e9abd63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNGUxZTFmMGQ0NWE1M2YyNjdkZDY5NWM1ZmI5NjExZjBmOWNmYWVkYTIxZjRiOWE0OTJiZjNlNjlkOTVkZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlYjcwMjU3NTkzZGEwNmY2ODJhM2RkZGE1NGE5ZDI2MGQ0ZmM1MTRmNjQ1MjM3ZjVjYTc0YjA4ZjhkYTYxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMWNmMjZiMzk2MjBlZTEwZjRhMzc2NzVkNGM5ZWZmMWRhYWNlMzE3MTg3YTJhMjUwZTU4MThkNTQyMmIxNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiM2M5YTAzZmUzMmQ1MDA1ZWU2MjA4Yjk5YzJhYjFmYTAwZjg2Y2E3ZGYxZTFmNTc0MjJiNmMyNjVlMWZkMWYifQ"
         },
         {
-          "resource": "repo://doclayout/renderers/json.py#L9-L86",
-          "version": "repo-lines-v1:sha256:918df80da78841c1b11da4519c22fce20e5f88fb993f3033c4129579be5b5a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzNzNlZTNmYjNkNjE1ZWIxMGEwMjg3OWZjNzZjYWQyMjYwMTUyMjJhYzE4NTMxMWVlYzQwYTFhOGZkMTk2ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZWNmZGRmZDUyZDRkNDNhZjBkNDdiZDdiN2YzMDgzY2FiZTFmMjgzOGJhMzgzNmU0MzFlODhhOGYyOTkyZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4MzM4ZDg5MWY3YTg3ZTM2OTlmODgyZDgwNjAyMzFlOTg3ZmE0ODI4OTAyOTJlOTk4ZTdhYTRiNjYxMWM4YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhY2FmMjdkNzc5ZDFiNGE0YjgyZDRkMDdlNzJkYzA0Mzk5NDEzNmJkMTgyYWZkZDkzNWE1ZjNkMzFlYjIwM2YifQ"
+          "resource": "repo://doclayout/renderers/json.py#L42-L90",
+          "version": "repo-lines-v1:sha256:d72784bf33b497f0a4d38885a47ce889055f6aba9c399318e2afdf7d1491f890:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmODczZThlZDA1N2RiZmM5ZGJkZTA3NWI1ZTQ3MmU5NWE3MjMzZmJjODBiYzY4NDI3OTJhMmQyMWJiZmNmZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZWNmZGRmZDUyZDRkNDNhZjBkNDdiZDdiN2YzMDgzY2FiZTFmMjgzOGJhMzgzNmU0MzFlODhhOGYyOTkyZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzNWRkZTU4MDExYjZhY2YzYjQwNDc3N2I0YTFkOWM0NzU1OWY4NzhmMzBlYTAwMWE4MTA0ZjJmMzk4NDE2ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhY2FmMjdkNzc5ZDFiNGE0YjgyZDRkMDdlNzJkYzA0Mzk5NDEzNmJkMTgyYWZkZDkzNWE1ZjNkMzFlYjIwM2YifQ"
         }
       ]
     },
     {
-      "id": "claim_52fcd2d626fd4052960814533fced980",
-      "statement": "document_exports derives requested formats from one Document, while output_targets validates containment, collisions, input overwrite, and unsafe names before save_document_exports writes any bytes.",
+      "id": "claim_6246ee88053e4723a9bc97c293bf2380",
+      "statement": "The annotation exporter draws visible native matched contours, otherwise rectangles, and does not draw V3-only regions; current visibility follows source block semantic types.",
       "evidence": [
         {
-          "resource": "repo://doclayout/exports.py#L24-L114",
-          "version": "repo-lines-v1:sha256:2faf292e1ea023f55b7be162b5e84f0133219c993fd461282d396c0c9f79c7a2:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxYzdlYmQxYzRiODdkZjNkYjJhMDMzMzE2NTEyZDk2YzFjMjc0ZjBmZWUyMTdhMGVlOTViODJhZWZmZDE5NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3Y2MxZWRmYjI5N2IxOWFlYjQ3ZTU0MmZhNzBmODlhOWViNzVkMzAzNDNiNWRlOThmNzU1YTU0MGQyN2Y1ZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlYzUwNWU0ZWE1MTc0NGIzZjYyYjVhZjkwNDdlOWVhZTNmZDFmMzAxNWNjOGJlN2E4OTNhMzYyZjFlMDE0NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_4f949b3796554f588965db5c0e7e7088",
-      "statement": "Tests verify unsafe multi-output paths leave prior files untouched and input/output collisions are rejected before extraction.",
-      "evidence": [
-        {
-          "resource": "repo://tests/test_cli_exports.py#L247-L273",
-          "version": "repo-lines-v1:sha256:009044c06fda9961548b5dc2030383c9021dd44bd77c25a287025ca3c8f8a69d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZTU1NDRhZmNkZGFkNzcxM2EzY2VkZGY2YTNjMTc5YjM4OGY5NWRlMmZmZDFlNGI3Y2I4NzVkNmUzMGNiMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmNDJkOWE5ZTYxMTE0YTE2YjdjOGZlNzZhY2YxOTc2MmMzYzQwMTBkZWQxMzFiMzFhZDdmYjMxZTBiOWQ0NzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMGZkMjQyZTRiNWNiMDdjODZhNjk5YmY3MTBiNmJmMzEzMzRjYzBkNTdiZWNhNzJhYjg4ZTVkY2M4ODE4YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhOWI2ZTFmYTBmMmUxYTQ4M2E1ZjU3ZjBkMjdlMTA3ZTBjZDkyMmY1MTk4Njc5M2Y1MTY2NGZhNmZkY2M0ODMifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_253de8398de84dd589563fd86806b16d",
-      "statement": "OCRJSONRenderer emits aligned visible source blocks with page-space boxes and four-corner polygons; annotations draw V3-derived rectangles for matched leaves and Sol-estimated rectangles for unmatched leaves.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/renderers/ocr_json.py#L1-L58",
-          "version": "repo-lines-v1:sha256:9077f88450eac135a8c3746c4e242781e3c58b80ff4b83b29a46635461da5b2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1MGI4OGI0MGMxYTNmZjI0NDlhNmUyNzdkNWQ4MzJhNjg1MGU3NWMyOGI3NGNmZGJmNGMyNWQxNWYzNDI4YTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/schema/layout.py#L282-L297",
+          "version": "repo-lines-v1:sha256:50b8131ee98c698d395a105c0137c341158cdb1f50f0ef75ee0ec8d510510822:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxNmViZGY5Y2JjNDcxOTkyZGFiNWJjNjFlN2JkMjU3NThjODIwMTAyMDFkMzYzYzQxZmZiODhiZmI4YzU0NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlN2I0OTNkZGFmYWNiMGFjYWZmOTNjYzMyNzYwNDdhYWZhYzIwYzAxYWRhNGM0MTY4ODQ1ZTNmMDEwZjVhMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZGZiZjQ1M2Y3ZjFiZWJhYjcyODM2MWIwZjM5M2VlYjRjMWZiNjY4ZjllYTIyYjkxNmRhY2Y1ZGZmODFkODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://doclayout/ui/exports.py#L184-L217",
-          "version": "repo-lines-v1:sha256:e7255f80209852c1118ba49a8e9a9fa1908f7e94a0e30d55d2126475ea0c0bfd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4ZDVkOWM4NThhMTg5ZDU3NDM1NDU5N2E0ZjQwM2YxNDU3OGJlNzYwNTZhMWY0NGZjNmI0MmMyOTgwNTM0N2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MjI1ZDA0ZWNiOTQ4NjUzZjVmYjBjYzZmODc0YmU0NWFmZDE1OWVlMzY3NzY5ZTUzMjhjZjJjYjBjNjY2NWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2YTI2ZDljODRkNzZiZmY3NDllOGQ4NTZiYTRhOWE3ZTZkMDUzZTU5MWY0MjU5NjY4MzU2ODI2NjAwYWEwNDEifQ"
-        },
+          "resource": "repo://doclayout/ui/exports.py#L184-L226",
+          "version": "repo-lines-v1:sha256:f44fbb971a290bcc87d1d2748fa514252b5dc1ec86914795268ef22b4b035489:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4ZDVkOWM4NThhMTg5ZDU3NDM1NDU5N2E0ZjQwM2YxNDU3OGJlNzYwNTZhMWY0NGZjNmI0MmMyOTgwNTM0N2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyZjFiYjljZjQ5ZjJkMGY1YzZmMjY0Mzc1NjE2M2Y4NmZmMzRmYzgxZDg2ZGQ1Y2M5M2M3YzgxZTFmYWE3YjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYzRhN2QxY2M3OTZhYmEzZTQ2NzIzMzI3ZjUxN2U5ZjgxMTk4MmQyNTBmMDcwMjk4NmU0YjU3NjRhZDk1ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmYmQwMDkzMTRiYzI3MDg0MTY3MzRhMDJhZTVmZjM5YTFlNDhhMDUwYmU5MWY0M2IyZmFhOTIwMDJjNjJiZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3da2bdffb1cb47b4ae7ba6ee5175a835",
+      "statement": "Page layout metadata retains original region evidence, match decisions, counts, provider and timing, policy, filtered sources, and diagnostic events.",
+      "evidence": [
         {
-          "resource": "repo://tests/builders/test_alignment.py#L457-L483",
-          "version": "repo-lines-v1:sha256:a0375df4e37442b808d1800a3c313d158b953623f2ab981be7d00b75cc21f33c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViYWNiMzBlMTFlYTI4Y2RhOWRkZDIxNmU1NDg0Y2NmY2U2MjQ5Y2E5NjhjZjE1YWQ1MDZhNzY0OTg5YWNmNDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4YTljZmEwOTAwMjA4NjM0NmUzYjk5MjRlYzQ2YjVmYTk2Yjk2NzIxM2Y3NDA0ZjhhNzE1NTk1MTU5Y2IzOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4MmZkYTk1YTQwZWZiNWExYjgxMGRlYWRlYzA4ZjZjZTMwOTEyMjExYzY0ZTQ3NTQ2YjNlMTBlMWNiMGEzM2MifQ"
+          "resource": "repo://doclayout/schema/layout.py#L149-L179",
+          "version": "repo-lines-v1:sha256:94787fb8e4d3adbca7fd0f3f66181af6975a7dae9a93331e58f8431a75513c3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMjc4ZTAzZjk3ZGIzYzRlYzljOGI1Y2EyYTBkOWFkZTRiNDhjMzNlZWM3ZThkYmI3ZjZlODk5MTRlNDJlZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3N2RjMGE1MTE2MDE2OTMzN2IwNjQ1ZGY1MjBmY2M4MWU4MjM3ZTY2ZGQ5MmNjNzJmNGUwZWY0MmQ3NjI2OGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzYTkzMDZiZjgyMjM0NjMwMDE4OTU2Mzk0NTkyYzJlZGUwZjFkYjkxZjZmOThkZDJmYmQxMzdmNjdkZmFhMzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNGZhNTg3MzM3OTg2NTczNWM2ZmY2OTgzMDNhOTU1MWU1NzhhNTBmYzRkMTUzMTk2ZTZjYmZlYmZiMzIxYzgifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:42:04.191Z"
+    "at": "2026-09-27T09:43:51.061Z"
   }
 }

@@ -1,3 +1,3 @@
 # Files
 
-- [Document Conversion Workflow](document-conversion.md) - A step-by-step trace of provider selection, page rendering, structured extraction, document building, processing, sanitization, and final rendering.
+- [Document conversion workflow](document-conversion.md) - The sequence from validated input to local layout guidance, whole-page Sol extraction, protected blocks, and output.

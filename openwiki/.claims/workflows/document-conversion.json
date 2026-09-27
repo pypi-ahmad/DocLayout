@@ -1,92 +1,58 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7d513afedee9d22e17f87063f640a59d191dfac77240c492c31da05f0ff90ed0",
+  "pageVersion": "sha256:812d89f11d38e685fb6e3e9210197eb372e52d59ad2896746d26cdb1815d9125",
   "claims": [
     {
-      "id": "claim_1136a632f542450890c51fb51d131714",
-      "statement": "PdfConverter validates configuration and optional alignment policy, requires a Sol extraction service, resolves processors and renderer, chooses Markdown by default, and runs structure building before its ordered processor chain.",
+      "id": "claim_ae976bb33b4c49ae92fe166871aebdfa",
+      "statement": "The builder renders selected full pages at 192 DPI serially, obtains V3 layout before issuing up to three concurrent whole-page Sol requests, and treats successful empty detections as success.",
       "evidence": [
         {
-          "resource": "repo://doclayout/converters/pdf.py#L101-L161",
-          "version": "repo-lines-v1:sha256:0673e439aa312eb53e62c927bae4e317d768a694150cfb1fb939cc43b8a323b6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmZDdhMDdhODNkZDE5OTZmYjUxNjg0YjQyYWVjYWY0ZTkwZmI3OGJhNzIzMGU1NDJlZDdiZDAxZDQyMzAxYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NzE1YzUxZjUzMzM2NDFiMmVmM2Q3NDdkYjYyMzY2YzRiOTE0ZjU4ZTJiODJlZjM3YTc2M2E2NzU4NWFmNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzY2FjMmVkZmNlNzQ5NWExOWI2ZjBmZDFiY2U3ODcyYzdhMWFmZjJkNTI2YmJiYTE5YzdmMjVkZTYxYTcxMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2YTIwZmQ0ZTlhZjY0MmVlZDI3NmRmMzllNGU0MTRkM2NhZmFkYmQxZmJkY2I1ZGNiOTY0NzA5NDlhZTg3MTcifQ"
+          "resource": "repo://doclayout/builders/document.py#L44-L126",
+          "version": "repo-lines-v1:sha256:e4a1d4725a54ab987af8095edf4c5839e70e28eb8ce493e25ff78816f63af3a0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNGM1NDNhZDI3YzMzODFhNTAzMjMxOTk2Y2Y2MjIyNjVkMWQzOTMzMzUxMGEyZGEzZjFjZDBjMTBhZTdmMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDA5N2U0YWE1MDA2OGJhMTU3ZjlhMjczOWZhZDg2OTk1ZTFlMGNkY2NkYWRjNTg5N2MyMDM0Yzc0ZDNlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjOGY5Mjg3YWJjNTQ4N2RiMDFmYTE1Y2MwMzEyMDg2N2E4ZDUyYTEzMWJiN2E1OGNmMmIxOTNiNzEyNGNlM2MifQ"
         },
         {
-          "resource": "repo://doclayout/converters/pdf.py#L193-L241",
-          "version": "repo-lines-v1:sha256:bb9fa6bf627ed3e5a124896c851c8c849197e88283e44723db580c8ad0c54075:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ZGNjZmI5NzI2YTJlMWU0MTBkMmEzM2MxNmE4ZjNiODM4ODU0YWM5ZThiNjVkYjQ2ODJmZGM4MGE1OTY3ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwMzc3MjEwYjAwNmM4YTg0ZGUxODAzOTQ4YWEwZDdjYzhiMmEyM2ZmY2MwODc2ZjhiNTk3NDBjZWU0ODI4YWIifQ"
+          "resource": "repo://tests/builders/test_document_builder.py#L13-L29",
+          "version": "repo-lines-v1:sha256:6aff7534d3ea66e76351ef5394747e329c1923cbcfaa91eb8820c6601589e2fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhYTk0NWUxYTAzNWFlZDAzMmY1ZDdkOTI3ZTNkNzE4MmM0YjVjNzEwNTVlNzcwOTUwNDcyNGQ0ZDYyMzE5MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYmQzZjA0NDU1ZGFiMGY5ODRlOTkxY2Q2ZDQ2NjM5NjNhMWI1NTZiMmFiMTEwNDU2MzhiNmQyYTQ5MmQ5YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlYWQ2MDdiN2JmZTgzOGE4NzM0ZmYzMjM3MWEwMzQyYmQxZGYzOWY4YzViYjVhY2YzYzk1YjlhOTQwZjJjMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxNTlkMzUwNjc5ZjE5N2JhN2JiYmJhNDMwOTgyYTA4ODkzOTM4ZDdiNWQ0MzgwOTdjZTc5ODA2ZjNiZWI2OTEifQ"
         }
       ]
     },
     {
-      "id": "claim_c29bab510a544c7ab6d1e1b4917e4882",
-      "statement": "DocumentBuilder batches one Sol request per selected page with concurrency one through three, renders and attempts V3 on each image before submitting requests, validates responses, aligns blocks, and appends pages in input order.",
+      "id": "claim_9806804e62c64ba0be84a7ab67a10825",
+      "statement": "The bounded given_layout guide serializes all valid class, score, bbox, contour, provenance and order fields or fails above 512 regions or 64 KiB.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L36-L164",
-          "version": "repo-lines-v1:sha256:9c1db1d5183dee4425914f09176ea6fe3e95fee07664c7745af84ede16b73710:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNGM2Y2ExMWYxZGJjOGU1MzZhYzk1NzMxM2QyYmNhMDE2N2ZkMjM4NjUyMzkyYmEzZDE1Njg3MjkzZDU0Y2Q3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzZGU1NTUzYmFhNzUzYjljMjhiMWYwMDVmOTQyYzMxYjg4NThhYTc4MGY3MDk2ZmU2NDZlZmZhNDVhN2Y0NDc5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2MjAwOTdlNGFhNTAwNjhiYTE1N2Y5YTI3MzlmYWQ4Njk5NWUxZTBjZGNjZGFkYzU4OTdjMjAzNGM3NGQzZWZhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://doclayout/schema/layout.py#L58-L115",
+          "version": "repo-lines-v1:sha256:d919b9f8fe7e286d302ffd068f9e99d6590c55cb6bc80dbc9aafb6efd112e928:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkZmQyOGY2ZWVlNzFlNTgyMzE3ZTI2NDBmYmI5ODBlNmE2YmNkZTQ3ODU1ZGRiMTM3YTllMTAwNjdmY2FmN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMzEzZjYwNzQ3N2IwZWQzNjQ3ZmU3MjVhMzUzMGI4NjM4ZmM1ZjBhMzQ1ZWM4M2UzOTVhNmU4NDY0ZDQ0MjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
         }
       ]
     },
     {
-      "id": "claim_88ae1121bd9a4a41b8412aae29eca473",
-      "statement": "Tests enforce that page rendering occurs only on the caller thread while extraction requests run on worker threads.",
+      "id": "claim_105b73886e1945139db4811afab1ec5c",
+      "statement": "The builder attaches page-coordinate V3 contours only to matched blocks and stores source bindings plus region evidence; unmatched Sol blocks retain content.",
       "evidence": [
         {
-          "resource": "repo://tests/builders/test_document_builder.py#L52-L69",
-          "version": "repo-lines-v1:sha256:1ef615d10a9c4bd09e1deae4204462c37b61b84f19216caf57691eeb5c6bfbb7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiZWU4YzFlYWU5NjEyODhiYTk1YzIzODRmZTk3MTI2NWUzNWM2MjdhNjhmZDRlMTA5MTExZjlkYWNlNjk0ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNjEzM2ZhMjE2NWMyZWE4MGY4YjU2Zjg4ZmY1ZDEyZjkzYWM2ZjVlNWRjM2ExOGQwZjI4NzQzZDg3MTY4NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjNTdkNGFiMDc2MjgzY2EyNzljMTM2NzI3MjVmOGMwZTBhNmEyNmJlODhhOGI4ZmNmNDgzY2Y2OTlmMTkxZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1Y2NiZmJkMmY5NDY4Yjk3NzA4ODE5ZTk3NmI2Nzk1MTI0ZTJiNGY4ZDRhNzBhOTAxNzAwZjM0M2JmMzJkYzIifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_daa7ffc7c6fe4495b31d9670488d9784",
-      "statement": "Extracted page validation rejects inconsistent blank state, unknown block types, empty textual blocks, invalid rectangles, and coordinates outside the normalized 0–1000 range.",
-      "evidence": [
-        {
-          "resource": "repo://tests/builders/test_document_builder.py#L29-L49",
-          "version": "repo-lines-v1:sha256:7f579a31d6bf738e0a169aa98bb856c5765d88379f4479195f6f9904647e35ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkZGE4YTc3MTQ1NTg1N2YyM2ZjODgxYzZkZTI0YmQ1MzNkMmZmMGY5M2MwZGMwMTI0ZTc0MjRmZjFhZTUyMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzYjA2OTM0MzEzYzMxNjAwMjk5MWQ3OGY1YmYyMGVkNWI3YTFiMGVmODVjNjdhYWM0ODY2ZjVlZGIxYmE3OWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlOGEzODk4Y2JhODJlOGMxYjBlMjBjYTcxZGEyYzExODM5YWIzMDM1NTBiOTBkZDVkYTBjZTc3MTM1MmIzOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MDdmMjUxNWI2MTE2Mjc0MTkxNTkxZmJlZmVmOTA5Yzc1NTA5ODNjNjBhYWNlMmNlZWMyYzQ2YTljNmMwN2EifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_49e4561a88914e61961598d238034752",
-      "statement": "After processors complete, PdfConverter checks layout invariants, sanitizes block HTML and descriptions, attaches service usage to the Document, and only then resolves and invokes the renderer.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/converters/pdf.py#L201-L249",
-          "version": "repo-lines-v1:sha256:575623981a105e729af5b694368e3a75eeac8deac16287fc7325eaf09961ff53:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzOWIzZTQwMzg1OTVkMmM3MDMwNDNjYTM3Mzc3OTI4ZGMwYjE3YmQwOWUxYWY1NmI4MDdiOTRjNWY3ZDdjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0OTZmNmVlYjEwN2MzMDA4NWIzODc1NjMxMzU4YmYwZmY4NGQ0ZjZhN2UxOTY5ZDA4NjdjMmFlY2QyMzZhN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3NjM5MzVjNzNmNThlMjM5ZjM0NjFmNTQ1OTZiNjc0Y2Q4NTEwNzVhNGFmMzkxZjI4ZjNmNzRiZGY5YjM3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_4dbb3450b63046b4b7c8d1417b67ed76",
-      "statement": "Tests show extraction failure preserves prior output, while folder conversion continues to process a valid later document before returning failure status.",
-      "evidence": [
-        {
-          "resource": "repo://tests/converters/test_pdf_converter.py#L46-L81",
-          "version": "repo-lines-v1:sha256:85ce13690c6243626d0c6fbe18739b85977e342da7e53d9c3a9c3ac68848be92:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNmEzZjcwNTQ1YmI2MTY4MDY3ODg4ZWZkMWZlYmVjNjJiNDgyYzM1ZmIwM2I3ZDdiMjk1MmIzNTQzYTEyMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZTFiNzNiYTVjMjI1ZDg1YmIzYzBiZWM3NDFlOWI3MjdjYTRjYjU3Y2I4NWE0NDVkYThkMzE4ZGQ4YzhhMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhODJlYmU5ZWQ0MDdjM2E2YmE0YjAwMzQyOTJiYWE1MmMxMWNlNWFlMjg2MTA3NDAyZGU0NzkyZWVlY2FjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_bf3dba8b91b143e7a930b129c164dcda",
-      "statement": "V3 runtime errors omit the layout guide and retain a full-image Sol request; invalid policy, guide overflow, Sol extraction failure, or source-layout mutation still abort conversion.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/builders/document.py#L64-L124",
-          "version": "repo-lines-v1:sha256:2db4bd2f0ef870027c054fd78f84ed4aec8cca1d6540250ed88ee3d54311e6ea:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NzZjNjEyMGVkYzM3N2NhN2Y0N2E2NTljYWU3MWYxMTdiZWQ4ZGU0NjA2MGY0MTFmZDg3ZDk4MjRjZjc5OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhZDZjOGVhYTg1M2RmYjcwNzIwNTFhNWY1OTYyOWJiNzZmMDJkMTMzMDQyZjY0MTQzNDNmYTAxOWFiOGU2ZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2OTVhY2JiMjE2MTYwYWU4NWMxOTZlOGMxNzY3OTVkMGZiNzdjMjU5OWQyNmI3OTE5YzE5NzExNDNmZDU4ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ODdlNTkwNjg0ZTlhZTgxYTY4OWJiZjExY2ViYjhjNzBjOWI0YjgyODMwOTk0ZjcyYzAyNjFkZjA1NTU3MDYifQ"
+          "resource": "repo://doclayout/builders/alignment.py#L394-L420",
+          "version": "repo-lines-v1:sha256:552ec81dad9b0f51ff1e759b4f96f9ed837cb60ec6c7082c25f78a445c56dfbb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMjgyMjM2YzM0ODk5MzhlODgyN2VjNzFjNzg4M2Y3MmYyY2VlMWQyMjgxNjY3ZjAzYWE1YzI0MzhhNjg2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2YjQ4YWI0YjdjMjk4NzNmYTc4MTU2YzE1YzI4YTgwNzZkODg5ZmMwOWE4YTY0ODE3N2I0YzMwM2Q0YmM1ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjZDEzNDZhODI3NTg2YWViMWYwNWRjODcxMzc2NTgyMjIxYjM0YThlOTdjYTAzY2M4NjEwMzM1YzQ5N2I3NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNWJiZTA1N2E4NzBmYmFlNGU5ZDQ5NjQ1MjUzMmQ4ZTcyNWJkMDZlN2JhNGJjN2Q4YmEzN2QyMGEzZThiOWYifQ"
         },
         {
-          "resource": "repo://doclayout/converters/pdf.py#L201-L228",
-          "version": "repo-lines-v1:sha256:12ca0f52ba61f2a2cbef0535ab7dfa27cd27279b5237af667633b8d8e110b61e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzOWIzZTQwMzg1OTVkMmM3MDMwNDNjYTM3Mzc3OTI4ZGMwYjE3YmQwOWUxYWY1NmI4MDdiOTRjNWY3ZDdjZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0NTZmMTcyYjFkMDM1YmJjMmI0Y2I5NzU2NWM0OTgwYzBlMjlmY2RmYzg2MzZlYzNjN2ZkYzhkY2E0MzY5NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3NjM5MzVjNzNmNThlMjM5ZjM0NjFmNTQ1OTZiNjc0Y2Q4NTEwNzVhNGFmMzkxZjI4ZjNmNzRiZGY5YjM3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5NmZkYTc5YTFiMTdmZWU5OGQ4ODM2ZjcwY2RmMjFjYWI0ZTAyMTEzY2NjZjRjNjI1NGU1ZjY3MWI5MWJjZDgifQ"
-        },
+          "resource": "repo://doclayout/builders/document.py#L128-L186",
+          "version": "repo-lines-v1:sha256:f3265f1180625724249e52ae948229ae66dbea4c447c75d6a0c8238569f78f34:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyMTk2YWQ1YWM5ZTRkNmI5OWNjNzdjMmE1ZjQ3ODg4YWI3MDUwMTY4MjNkMjk3ZWZmYzEzZTAwNzM2NTU3YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTZjYzI1ZWU5YWQ5MzAxYWE4MjIyZDViMWJmMDA4OGJiZTU0OGZiNWU5MzNmYjJmYjliMTFlMDkyNzY5YzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2NGI5MWE1NmE2NDY1NTNjOTM2NDc5ZWVhYjIzZTE0YzdhYTVhNDQ5YjgwMzE5MDhiYTYxZDYxN2U1MjAxMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwN2VjMmNjY2YzNmE2OTk5NWZjYmY5MjY5MjJlYjdmNjI1OTg2NGU1YzNlZDU4MThiNWVmMzliMGM4MjcyMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96009a6075bf48e6aa964614d270c3dc",
+      "statement": "PdfConverter checks layout after grouping and each processor, records permitted filtering, sanitizes final HTML, and renders the completed document.",
+      "evidence": [
         {
-          "resource": "repo://doclayout/schema/layout.py#L29-L100",
-          "version": "repo-lines-v1:sha256:206aca9bbae83f944363cff36981aeaaba6feb2c855c91b4ab6c3faaf72885c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0YzE1MjY5YmRkMzIzMGRlODc3NjcxZGYyZThhM2QwNjk5OGJiZmNmMThlYjczYzE4NzQ5ODkxZDY1NTQ3OWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOTgyNmU5MDc0MWQ0ZmEzYjk3MmQ0ZDY4YTk1MGU4YmM5NmFhNDlhNWY3YWI4M2EyODgwMWUxZmMyMzMyYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
+          "resource": "repo://doclayout/converters/pdf.py#L193-L249",
+          "version": "repo-lines-v1:sha256:59f494b6055e7a63349b219ebd91f33c9a1f1ddc866d1532055363f268fccd9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0OTZmNmVlYjEwN2MzMDA4NWIzODc1NjMxMzU4YmYwZmY4NGQ0ZjZhN2UxOTY5ZDA4NjdjMmFlY2QyMzZhN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:42:04.191Z"
+    "at": "2026-09-27T09:43:51.061Z"
   }
 }
