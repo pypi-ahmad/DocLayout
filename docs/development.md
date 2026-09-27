@@ -4,9 +4,9 @@
 [Contributor runbook](../CONTRIBUTING.md) · [Tutorial](tutorial.md) ·
 [Architecture](architecture.md) · [Configuration](configuration.md)
 
-This page is the environment and verification reference. New contributors can
-start with [onboarding](onboarding.md), practice with the [tutorial](tutorial.md),
-and use the [runbook](../CONTRIBUTING.md) when preparing a change.
+Use this page for environment setup and verification commands. If you are new
+to the project, start with [onboarding](onboarding.md). The [tutorial](tutorial.md)
+walks through a change, and the [runbook](../CONTRIBUTING.md) covers review.
 
 ## Environment
 

@@ -3,8 +3,8 @@
 [Back to README](../README.md) · [Contributor runbook](../CONTRIBUTING.md) ·
 [Development reference](development.md)
 
-This is a source-first map for contributors. You can complete the setup and
-offline exercises without an API key, a model download, or a sample PDF.
+Start with the source map and offline exercises below. They need no API key,
+model download, or sample PDF.
 
 ## First 15 minutes
 

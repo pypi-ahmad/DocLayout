@@ -1,10 +1,9 @@
 # DocLayout
 
-Turn scans and images into structured Markdown.
-
-DocLayout turns PDFs, scans, images, and office documents into structured content.
-The browser app lets you inspect pages, copy or download results, and ask questions
-about the extracted text. You can also use the CLI, Python library, or local HTTP API.
+DocLayout turns PDFs, scans, images, and office documents into structured Markdown
+and other outputs. In the browser app, you can inspect pages, copy or download
+results, and ask questions about the extracted text. The CLI, Python library,
+and local HTTP API provide other ways to convert documents.
 
 ## Features
 
@@ -34,8 +33,8 @@ The [data-flow diagram](docs/diagrams/doclayout-dataflow.html) reflects the curr
 parsed-text and layout path; the [system architecture](docs/diagrams/doclayout-architecture.html)
 is a high-level snapshot. The [layout integration record](docs/layout-v3-plan.md) describes the
 v3.1.0 contour integration, pipeline v4 diagnostics, and validation limits.
-In the GUI, authorization-field
-extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
+In the GUI, authorization-field extraction starts after conversion and saves
+its results in [Extracted information](docs/field-extraction.md).
 The CLI and HTTP API remain conversion-only. See the [architecture guide](docs/architecture.md)
 for the complete workflow, including optional classification.
 

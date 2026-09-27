@@ -3,9 +3,9 @@
 [Back to README](../README.md) · [Onboarding](onboarding.md) ·
 [Contributor runbook](../CONTRIBUTING.md)
 
-This learning path begins offline. “Mastery” here means you can trace a change
-through source, tests, outputs, and stated verification limits. It does not
-imply a model-accuracy claim or require a live inference run.
+The exercises start offline and trace a change through source, tests, outputs,
+and verification limits. Live inference is optional; completing the exercises
+does not establish model accuracy.
 
 ## 1. Establish a clean baseline
 
