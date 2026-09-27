@@ -27,6 +27,7 @@ class ExtractionError(RuntimeError):
 
 
 class OpenAIService(BaseService):
+    """Send whole-page image requests through the shared bounded API client."""
     model: ClassVar[str] = "gpt-6-sol"
     timeout: Annotated[int, "API request timeout in seconds."] = 180
     max_output_tokens: Annotated[int, "Maximum output tokens per request."] = 32768
@@ -67,6 +68,7 @@ class OpenAIService(BaseService):
         return service
 
     def process_images(self, images):
+        """Encode page images as request-ready image inputs."""
         return [
             {
                 "type": "input_image",
@@ -131,4 +133,5 @@ class OpenAIService(BaseService):
                 self.usage.append(entry)
 
     def close(self):
+        """Close the underlying HTTP client."""
         self.client.close()

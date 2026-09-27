@@ -24,6 +24,7 @@ from doclayout.schema.registry import get_block_class
 
 
 class DocumentBuilder(BaseBuilder):
+    """Build page blocks from whole-page Sol responses and local layout evidence."""
     highres_image_dpi: Annotated[int, "Page extraction rendering DPI."] = 192
     page_concurrency: Annotated[int, "Concurrent page requests (1–3 per process)."] = 3
 

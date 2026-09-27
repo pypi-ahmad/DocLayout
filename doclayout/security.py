@@ -83,6 +83,16 @@ def check_file(path):
 
 
 def check_pixels(width, height, *, source=False):
+    """Reject nonpositive, nonfinite, or oversized source/render dimensions.
+
+    Args:
+        width: Image width in pixels.
+        height: Image height in pixels.
+        source: Apply the source-image limit instead of the render limit.
+
+    Raises:
+        DocumentLimitError: If dimensions exceed the applicable pixel limit.
+    """
     limit = (
         settings.DOCLAYOUT_MAX_SOURCE_PIXELS
         if source
@@ -110,6 +120,12 @@ def check_resource(raw):
 
 
 def image_data_uri(raw, mime_type):
+    """Validate an embedded image and encode it as a base64 data URI.
+
+    Raises:
+        DocumentLimitError: If the image exceeds resource or pixel bounds.
+        ValueError: If the MIME type is not an allowed image type.
+    """
     check_resource(raw)
     # Metadata is emitted inside an HTML attribute by the format adapters.
     if not mime_type.startswith("image/") or any(

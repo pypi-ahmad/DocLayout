@@ -16,6 +16,7 @@ PDFIUM_LOCK = RLock()
 
 
 class PdfProvider(BaseProvider):
+    """Render selected PDF pages under the process-wide PDFium lock."""
     page_range: Annotated[list[int] | None, "Zero-based pages to process."] = None
     flatten_pdf: Annotated[bool, "Render PDF form fields."] = True
 
@@ -58,6 +59,7 @@ class PdfProvider(BaseProvider):
 
     @contextmanager
     def get_doc(self):
+        """Yield an open PDFium document and close it while holding the lock."""
         with PDFIUM_LOCK:
             doc = pdfium.PdfDocument(self.filepath)
             try:
@@ -71,6 +73,15 @@ class PdfProvider(BaseProvider):
         return self.page_count
 
     def get_images(self, idxs, dpi):
+        """Render requested zero-based pages as RGB images at ``dpi``.
+
+        Args:
+            idxs: Page indices in the original PDF.
+            dpi: Requested raster resolution.
+
+        Returns:
+            Page images in the same order as ``idxs``.
+        """
         images = []
         with self.get_doc() as doc:
             for idx in idxs:
@@ -90,7 +101,9 @@ class PdfProvider(BaseProvider):
         return images
 
     def get_page_bbox(self, idx):
+        """Return the rendered page bounds in PDF point coordinates."""
         return PolygonBox.from_bbox(self.page_bboxes[idx])
 
     def get_page_refs(self, idx):
+        """Return no embedded-text references for the image-only PDF path."""
         return []

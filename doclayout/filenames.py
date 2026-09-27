@@ -6,6 +6,7 @@ from pathlib import PurePosixPath, PureWindowsPath
 
 
 def source_stem(source):
+    """Return a bounded, Windows-safe stem for a source filename."""
     stem = PureWindowsPath(str(source)).stem
     stem = re.sub(r"[^\w.-]", "_", stem).strip(" .") or "document"
     # Leave room for timestamps, crop identifiers, and extensions on Windows.
@@ -13,10 +14,12 @@ def source_stem(source):
 
 
 def export_basename(source):
+    """Append a UTC timestamp to the sanitized source stem."""
     return f"{source_stem(source)}_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}"
 
 
 def export_filename(base, name):
+    """Apply an export basename while retaining subdirectories and suffixes."""
     if base is None:
         return name
     path = PurePosixPath(name)
@@ -25,6 +28,7 @@ def export_filename(base, name):
 
 
 def rename_images(text, images, base):
+    """Rename image keys and generated Markdown or HTML references."""
     renamed = {}
     for name, image in images.items():
         new = export_filename(base, name)
@@ -37,6 +41,7 @@ def rename_images(text, images, base):
 
 
 def name_result(result, base):
+    """Apply an export basename and image renames to a mutable result."""
     result["export_base"] = base
     result["markdown"], result["images"] = rename_images(
         result["markdown"], result["images"], base

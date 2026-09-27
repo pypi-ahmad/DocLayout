@@ -19,6 +19,7 @@ from doclayout.settings import settings
 
 
 def unwrap_outer_tag(html: str):
+    """Remove a sole outer paragraph tag while preserving its inner HTML."""
     soup = BeautifulSoup(html, "html.parser")
     contents = list(soup.contents)
     if len(contents) == 1 and isinstance(contents[0], Tag) and contents[0].name == "p":
@@ -41,6 +42,7 @@ def _splice_json_html(block: JSONBlockOutput | BlockOutput) -> str:
 
 
 def json_to_html(block: JSONBlockOutput | BlockOutput):
+    """Resolve nested content references and return the block's HTML."""
     # Utility function to take in json block output and give html for the block.
     # Resolves <content-ref> placeholders by string substitution (fast, no
     # per-node BeautifulSoup re-parse; this runs per block inside the LLM
@@ -52,6 +54,16 @@ def json_to_html(block: JSONBlockOutput | BlockOutput):
 
 
 def output_exists(output_dir: str, fname_base: str, *, fingerprint: str | None = None):
+    """Find a saved export, optionally requiring a matching layout fingerprint.
+
+    Args:
+        output_dir: Directory containing prior exports.
+        fname_base: Source-derived export stem.
+        fingerprint: Required pipeline fingerprint, if cache identity matters.
+
+    Returns:
+        Whether a matching Markdown, HTML, or JSON export exists.
+    """
     if fingerprint is not None:
         root = Path(output_dir)
         if not root.is_dir():
@@ -93,6 +105,14 @@ def output_exists(output_dir: str, fname_base: str, *, fingerprint: str | None =
 
 
 def text_from_rendered(rendered: BaseModel):
+    """Return export text, extension, and images for a supported renderer output.
+
+    Returns:
+        A tuple of serialized text, filename extension, and image mapping.
+
+    Raises:
+        ValueError: If the renderer output type is unsupported.
+    """
     from doclayout.renderers.chunk import ChunkOutput  # Has an import from this file
 
     if isinstance(rendered, MarkdownOutput):
@@ -110,12 +130,18 @@ def text_from_rendered(rendered: BaseModel):
 
 
 def convert_if_not_rgb(image: Image.Image) -> Image.Image:
+    """Return an RGB image suitable for JPEG output."""
     if image.mode != "RGB":
         image = image.convert("RGB")
     return image
 
 
 def save_output(rendered: BaseModel, output_dir: str, fname_base: str):
+    """Write a timestamped renderer result, metadata, and referenced images.
+
+    The caller must create the output directory before calling this function.
+    This function writes local files but makes no model requests.
+    """
     text, ext, images = text_from_rendered(rendered)
     fname_base = export_basename(fname_base + ".source")
     text, images = rename_images(text, images, fname_base)

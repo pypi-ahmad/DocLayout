@@ -6,6 +6,7 @@ from importlib.util import find_spec
 
 
 def streamlit_app_cli(app_name: str = "streamlit_app.py"):
+    """Start the loopback Streamlit app and exit with its status code."""
     if find_spec("streamlit") is None:
         raise SystemExit(
             "The GUI needs the 'gui' extra. Reinstall DocLayout with [gui]; see the README installation steps."

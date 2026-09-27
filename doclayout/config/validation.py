@@ -56,6 +56,11 @@ REMOVED = {
 
 
 def validate_config(config):
+    """Reject removed configuration keys in a mapping or Pydantic config.
+
+    Raises:
+        ValueError: If a removed key or provider prefix is present.
+    """
     if config is None:
         return
     values = config if isinstance(config, dict) else config.model_dump()

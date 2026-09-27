@@ -147,6 +147,10 @@ class PdfConverter(BaseConverter):
 
     @contextmanager
     def filepath_to_str(self, file_input: Union[str, io.BytesIO]):
+        """Yield a path for a PDF path or bounded byte stream.
+
+        Temporary files created for byte streams are removed on exit.
+        """
         temp_file = None
         try:
             if isinstance(file_input, str):
@@ -173,6 +177,7 @@ class PdfConverter(BaseConverter):
                 os.unlink(temp_file.name)
 
     def build_document(self, filepath: str) -> Document:
+        """Convert a PDF into structured blocks using layout, Sol, and processors."""
         if isinstance(self.extraction_service, OpenAIService):
             self.extraction_service.usage.clear()
         from doclayout.layout import get_layout_engine, prepare_for_conversion
@@ -204,6 +209,7 @@ class PdfConverter(BaseConverter):
         return document
 
     def prepare_document(self, document):
+        """Apply structure assembly to the extracted document."""
         StructureBuilder(self.config)(document)
 
     def __call__(self, filepath: str | io.BytesIO):

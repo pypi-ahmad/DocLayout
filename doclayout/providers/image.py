@@ -10,6 +10,7 @@ from doclayout.security import check_file, check_pixels
 
 
 class ImageProvider(BaseProvider):
+    """Expose one raster image as a page with optional DPI upscaling."""
     page_range: Annotated[
         List[int],
         "The range of pages to process.",
@@ -45,6 +46,15 @@ class ImageProvider(BaseProvider):
         return self.image_count
 
     def get_images(self, idxs: List[int], dpi: int) -> List[Image.Image]:
+        """Return copies of selected images, upscaled above native 96 DPI.
+
+        Args:
+            idxs: Image page indices; an image source has only page zero.
+            dpi: Requested resolution relative to the native 96 DPI baseline.
+
+        Returns:
+            Independent PIL images owned by the caller.
+        """
         # Treat the native image as 96 dpi - higher dpi requests (OCR) get an
         # upscaled copy so small images stay legible for the model
         scale = dpi / 96
@@ -67,14 +77,17 @@ class ImageProvider(BaseProvider):
         ]
 
     def get_page_bbox(self, idx: int) -> PolygonBox | None:
+        """Return the native-image page bounds."""
         bbox = self.page_bboxes[idx]
         if bbox:
             return PolygonBox.from_bbox(bbox)
 
     def get_page_refs(self, idx: int) -> List[Reference]:
+        """Return no text references for a raster source."""
         return []
 
     def close(self):
+        """Close source images and clear their references."""
         for image in self.images:
             image.close()
         self.images.clear()

@@ -114,6 +114,17 @@ def document_exports(document, config, formats, basename=None):
 
 
 def save_document_exports(outputs, directory, source):
+    """Validate destinations, then write the selected export bytes to disk.
+
+    Args:
+        outputs: Mapping from relative export names to file bytes.
+        directory: Destination directory.
+        source: Input path, which an export must never overwrite.
+
+    Raises:
+        ValueError: If a destination escapes the directory or collides with
+            the input or another output.
+    """
     targets = output_targets(directory, source, outputs)
     for name, target in targets.items():
         target.parent.mkdir(parents=True, exist_ok=True)

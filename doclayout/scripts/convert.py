@@ -19,6 +19,11 @@ from doclayout.usage import cost_message
 
 
 def convert_file(fpath, destination, options, formats):
+    """Convert one file and write the selected validated export formats.
+
+    This makes page-model requests and writes local files. Conversion and
+    export errors become Click errors; model usage is reported on exit.
+    """
     from doclayout.exports import (
         EXPORT_FILES,
         document_exports,
@@ -66,6 +71,12 @@ def convert_file(fpath, destination, options, formats):
 
 
 def process_single_pdf(args):
+    """Convert one folder entry in a worker and report pages and success.
+
+    Returns:
+        A tuple of converted page count and success flag. A fingerprinted
+        cache hit returns zero pages and success without model requests.
+    """
     fpath, options = args
     models = None
     converter = None
@@ -176,6 +187,7 @@ def process_single_pdf(args):
 @ConfigParser.common_options
 @click.pass_context
 def convert_cli(ctx, input_path, destination, all_outputs, **kwargs):
+    """Route file or folder conversion from the Click command line."""
     from click.core import ParameterSource
 
     from doclayout.exports import ALL_FORMATS
