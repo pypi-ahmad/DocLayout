@@ -8,6 +8,14 @@ from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING
 
 from doclayout.builders.alignment import AlignmentPolicy, AlignmentResult
+from doclayout.schema.geometry import (
+    GUIDE_FRAME,
+    LayoutGeometry,
+    convert_bbox,
+    convert_points,
+    image_frame,
+    validate_contour,
+)
 from doclayout.services.layout import (
     LayoutConfigurationError,
     LayoutInferenceError,
@@ -68,17 +76,24 @@ def given_layout(layout: LayoutResult, image_size: tuple[int, int]) -> str:
         ):
             raise LayoutInferenceError("Layout returned invalid regions or order.")
         seen.add(region.order_index)
+        try:
+            validate_contour(
+                region.contour, region.bbox, image_size, region.geometry_source
+            )
+        except (ValueError, TypeError) as exc:
+            raise LayoutInferenceError(
+                "Layout returned invalid contour geometry."
+            ) from exc
         regions.append(
             {
                 "class_id": region.class_id,
                 "label": region.label,
                 "score": round(region.score, 4),
-                "bbox": [
-                    round(v * 1000 / size, 2)
-                    for v, size in zip(
-                        region.bbox, (width, height, width, height), strict=True
-                    )
-                ],
+                "bbox": convert_bbox(region.bbox, image_frame(image_size), GUIDE_FRAME),
+                "contour": convert_points(
+                    region.contour, image_frame(image_size), GUIDE_FRAME
+                ),
+                "geometry_source": region.geometry_source,
                 "order": region.order_index,
             }
         )
@@ -105,6 +120,7 @@ class SourceBinding:
     block_index: int
     sol_index: int
     polygon: tuple[tuple[float, float], ...]
+    layout_geometry: LayoutGeometry | None = None
 
 
 @dataclass
@@ -114,6 +130,24 @@ class PageLayout:
     page_polygon: tuple[tuple[float, float], ...]
     filtered: dict[str, str] = field(default_factory=dict)
     events: list[str] = field(default_factory=list)
+    _protected: str = field(init=False, repr=False)
+
+    def __post_init__(self):
+        self._protected = self.geometry_snapshot()
+
+    def geometry_snapshot(self) -> str:
+        # Independent value snapshot includes V3-only evidence and every binding.
+        return json.dumps(
+            {
+                "regions": [asdict(r) for r in self.alignment.layout.regions],
+                "region_alignment": [asdict(r) for r in self.alignment.regions],
+                "sol": [asdict(s) for s in self.alignment.sol],
+                "sources": [asdict(s) for s in self.sources],
+                "page": self.page_polygon,
+            },
+            sort_keys=True,
+            allow_nan=False,
+        )
 
     def metadata(self) -> dict:
         result = self.alignment
@@ -201,6 +235,16 @@ def check_layout(document: Document, *, filter_reason: str | None = None) -> Non
             raise LayoutInvariantError(
                 "Conversion lost its authoritative layout state."
             )
+        try:
+            unchanged = state.geometry_snapshot() == state._protected
+        except (ValueError, TypeError, AttributeError) as exc:
+            raise LayoutInvariantError(
+                "Processor malformed protected layout evidence."
+            ) from exc
+        if not unchanged:
+            raise LayoutInvariantError(
+                "Processor changed protected layout evidence or bindings."
+            )
         if tuple(tuple(point) for point in page.polygon.polygon) != state.page_polygon:
             raise LayoutInvariantError(
                 "Processor changed the authoritative page coordinate space."
@@ -213,7 +257,11 @@ def check_layout(document: Document, *, filter_reason: str | None = None) -> Non
                 )
             block = children[source.block_index]
             polygon = tuple(tuple(point) for point in block.polygon.polygon)
-            if str(block.id) != source.id or polygon != source.polygon:
+            if (
+                str(block.id) != source.id
+                or polygon != source.polygon
+                or block.layout_geometry != source.layout_geometry
+            ):
                 raise LayoutInvariantError(
                     "Processor changed authoritative layout geometry or identity."
                 )

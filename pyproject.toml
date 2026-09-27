@@ -59,6 +59,7 @@ layout = [
     "onnxruntime-gpu==1.30.0 ; python_full_version >= '3.11'",
     "paddleocr==3.7.0 ; python_full_version >= '3.11'",
     "paddlex==3.7.2 ; python_full_version >= '3.11'",
+    "shapely==2.1.2 ; python_full_version >= '3.11'",
 ]
 
 [project.scripts]
