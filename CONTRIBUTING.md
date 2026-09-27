@@ -40,6 +40,19 @@ live model checks, and the integration benchmark can download artifacts or make
 billable requests. Run them only when the task calls for live validation. Report
 mocked checks, CPU/GPU execution, and evaluated quality separately.
 
+Choose the smallest test set that exercises the changed boundary:
+
+| Change | Start with |
+| --- | --- |
+| Provider, page conversion, or block assembly | `tests/providers/`, `tests/converters/`, `tests/builders/` |
+| V3 decode, matching, fallback, or lineage | `tests/test_layout*.py` and affected processor/export tests |
+| Rendered Markdown, JSON, or chunks | `tests/renderers/` and `tests/test_cli_exports.py` when files change |
+| Saved fields or GUI retry | `tests/test_fields.py`, `tests/test_field_summary.py`, relevant UI tests |
+| Documentation or docstrings | Link/command review, syntax-tree comparison, affected tests, Ruff |
+
+The [Python API reference](docs/python-api.md) identifies entry points and
+return shapes; check the source and fixtures for the current behavior.
+
 ## Change review
 
 - Add a regression test at the owning boundary. Check the visible output as
@@ -72,3 +85,11 @@ trace the responsible source and fixture, and fix failures caused by your patch.
 If local model files or credentials are absent, record that as an unverified live
 path rather than replacing a deterministic test with a live call. See
 [troubleshooting](docs/usage.md#troubleshooting) for operator-facing failures.
+
+| Observation | First distinction to make | Report or action |
+| --- | --- | --- |
+| Offline test tries an external model call | Is the test actually marked as live, or did the patch cross a mocked boundary? | Do not add credentials to make an offline test pass; restore the fixture boundary or report the live scope. |
+| V3 page falls back to Sol | Preparation failure, inference failure, or valid empty detections? | Inspect page runtime metadata. Empty detections are successful inference, not a runtime failure. |
+| More blocks are matched | Did content, classes, reading order, or contour alignment improve? | Keep thresholds provisional until representative fixtures or authorized live pages support a quality claim. |
+| Saved field retry differs | Did it reuse the saved raw Markdown, definition snapshot, and chunks? | Reproduce from the saved artifacts; do not reconvert solely to retry fields. |
+| A documentation-only patch changes a prompt or schema | Did the edit touch packaged prompts or model-response class descriptions? | Revert that part and review it as a behavior change with fingerprint tests. |

@@ -7,6 +7,9 @@ The exercises start offline and trace a change through source, tests, outputs,
 and verification limits. Live inference is optional; completing the exercises
 does not establish model accuracy.
 
+The [Python API reference](python-api.md) can help you look up an entry point
+while following the exercises.
+
 ## 1. Establish a clean baseline
 
 Follow [onboarding](onboarding.md#first-15-minutes) to sync the project and run
@@ -97,6 +100,14 @@ checks. Review `git diff` to confirm only intended files changed. State which
 checks are mocked, which use actual CPU/GPU inference, and which evaluate
 accuracy. If no representative corpus is available, say so.
 
+As a documentation-only practice change, find one undocumented helper in a
+renderer. Read its callers and tests, write a Google-style docstring that names
+the input and output, and run its renderer test. Compare the Python syntax tree
+before and after while ignoring docstrings. Do not add a docstring to a
+model-response Pydantic class: its description can enter a model request.
+This exercise is complete when the diff contains prose only and the focused
+renderer test still passes.
+
 ## 6. Trace a layout failure
 
 Run the mixed-page regression:
@@ -124,3 +135,21 @@ the page and hardware details with any report. A single smoke test verifies a
 path, not segmentation quality across document types. See
 [usage](usage.md#command-line-conversion) and
 [validation limits](gpt6-validation.md) before broader evaluation.
+
+## Mastery checkpoint
+
+You should now be able to answer these from the checked-out source and tests:
+
+1. Which object owns Sol text, which owns matched geometry, and where is an
+   unmatched Sol block preserved?
+2. How do raw model order keys differ from derived ranks, and where does a
+   processor-derived block retain its original source footprints?
+3. Which metadata counts describe initial association and which describe the
+   final visible structure?
+4. Why can a saved field-only retry run without opening the PDF, and which
+   artifact supplies its source text?
+5. What evidence would you need before claiming that a new overlap threshold
+   improves real-document accuracy?
+
+If a question is unclear, revisit [layout evidence](layout-v3-plan.md),
+[field extraction](field-extraction.md), or the relevant test.
