@@ -9,7 +9,7 @@ manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v3.0.0`; see the [release notes](../CHANGELOG.md#300-2026-09-26).
+wheel installs `v3.1.0`; see the [release notes](../CHANGELOG.md#310-2026-09-27).
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
@@ -30,7 +30,7 @@ Python environment:
 uv pip install ".[gui]"
 python -m pip install ".[gui]"
 uv build --wheel
-uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui]"
+uv pip install ".\dist\doclayout-3.1.0-py3-none-any.whl[gui]"
 ```
 
 See [build checks](development.md#build-and-package-checks) for verification.

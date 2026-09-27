@@ -120,7 +120,7 @@ every selected page still uses Sol extraction. There is no local OCR fallback.
 
 ## Local layout inference
 
-The local pipeline (`sol-layout-v3/v4`, unreleased) runs pinned PP-DocLayoutV3 before each whole-page
+The v3.1.0 pipeline (`sol-layout-v3/v4`) runs pinned PP-DocLayoutV3 before each whole-page
 Sol request, which includes a compact `given_layout` prior. It uses the official
 `PaddlePaddle/PP-DocLayoutV3_onnx` artifact with direct ONNX Runtime. The Windows
 AMD64 base dependency is `onnxruntime-gpu==1.30.0`, including CPU execution; there
