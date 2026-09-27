@@ -13,17 +13,21 @@ the exact matching rules, and dated runtime evidence.
 
 ### Interactive architecture and workflow diagrams
 
-All five standalone HTML diagrams were regenerated from their JSON specifications
-on September 27. They are high-level maps; use the prose below and the
-[layout integration record](layout-v3-plan.md) for the complete decode,
-matching, and diagnostics contracts. All five fit the checked desktop viewports.
-The workflow still leaves substantial unused space to the right of its nodes;
-see the [delivery record](documentation-sync.md) for visual-review details.
+The September 27 sequence, data-flow, and lifecycle diagrams were regenerated
+from Archify specifications with source-checked wording. The architecture map
+stays high-level. The conversion workflow was regenerated from its prior passing
+specification. Its compact labels omit some input formats and combine response
+validation with contour matching; the prose below has the complete contour and
+diagnostics contracts.
+
+The workflow leaves excess whitespace on the right. In the lifecycle viewer,
+the Export control is partly clipped at 1440 px despite passing automated
+containment checks. The diagram remains readable.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour/AABB matching, and exports.
-- [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and audit scoring.
-- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; processed blocks feed local exports, while parsed page text supports chat.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. Its existing composition still leaves excess right-side whitespace.
+- [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and an independent approval request.
+- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
 
 
@@ -35,9 +39,9 @@ extraction can reuse them.
 
 The document builder renders each selected page at 192 DPI by default. PDFium
 renders pages one at a time. A process-shared, batch-one V3 engine analyzes each
-image, then the page worker sends that same whole image and the layout prior for Sol extraction
-(without a prior when V3 fails);
-the shared Sol service permits at most three concurrent requests per process.
+image. The page worker then sends the whole image and layout prior to Sol, or
+the image alone if V3 fails. The shared Sol service permits at most three
+concurrent requests per process.
 Every selected page goes through image extraction, including pages with embedded
 PDF text.
 

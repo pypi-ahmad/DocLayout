@@ -1,51 +1,76 @@
-# New contributor onboarding
+# Developer onboarding
 
-This is a first-day route through the checkout. It does not require API
-credentials or a document upload.
+[Back to README](../README.md) · [Contributor runbook](../CONTRIBUTING.md) ·
+[Development reference](development.md)
 
-## 1. Prepare the Windows environment
+Start with the source map and offline exercises below. They need no API key,
+model download, or sample PDF.
 
-Install Git and [uv](https://docs.astral.sh/uv/getting-started/installation/),
-then open PowerShell at the repository root. The package supports Python
-`>=3.11,<4`; the recorded Windows checks used Python 3.14.
+## First 15 minutes
+
+Use PowerShell in the checkout. DocLayout requires Python `>=3.11,<4`; uv
+resolves and syncs the environment from `pyproject.toml` and `uv.lock`.
 
 ```powershell
+git status --short --branch
 uv sync --locked --group dev --extra full
-uv run --no-sync python -m pytest tests/test_layout_contours.py tests/test_cli_exports.py
+uv run --no-sync python -m pytest tests/test_fields.py tests/test_layout_contours.py
+uv run --no-sync python -m ruff check doclayout tests benchmarks examples convert.py convert_single.py doclayout_app.py doclayout_server.py --select F,E9
+uv lock --check
 ```
 
-The first command needs a reachable package index or a populated uv cache.
-The tests use fixtures and mocked services; they do not download model weights
-or make OpenAI requests. A passing result shows the local test environment is
-ready, not that live extraction is accurate.
+The `full` extra enables optional document formats; some formats also need
+native libraries. A failing package-index or native-library setup is an
+environment issue, not evidence that extraction works or fails. See
+[environment details](development.md#environment).
 
-## 2. Follow one page through the code
+## Follow one page through the code
 
-Read the [architecture guide](architecture.md), then trace these modules:
+| Stage | Start here | What it owns |
+| --- | --- | --- |
+| Input and page rendering | [`providers/`](../doclayout/providers), [`PdfConverter`](../doclayout/converters/pdf.py) | Selected pages and rendered image bounds |
+| Local layout | [`layout.py`](../doclayout/layout.py), [`layout_geometry.py`](../doclayout/layout_geometry.py) | Pinned ONNX inference, masks, contours, order, and fallback evidence |
+| Whole-page reading | [`services/openai.py`](../doclayout/services/openai.py), [`schema/extraction.py`](../doclayout/schema/extraction.py) | Sol request, HTML/text, and response validation |
+| Assembly | [`builders/document.py`](../doclayout/builders/document.py), [`layout.py`](../doclayout/layout.py) | Source blocks, one-to-one layout reconciliation, lineage |
+| Output | [`renderers/`](../doclayout/renderers), [`ui/exports.py`](../doclayout/ui/exports.py) | Markdown, JSON, chunks, HTML, annotations, ZIP |
+| Downstream fields | [`fields.py`](../doclayout/fields.py), [`field_store.py`](../doclayout/field_store.py), [`ui/batch.py`](../doclayout/ui/batch.py) | Raw-Markdown extraction, grounding, saved runs and retries |
 
-| Question | Start here |
-| --- | --- |
-| Who renders source pages? | `doclayout/providers/pdf.py` and `image.py` |
-| Who prepares and decodes local layout? | `doclayout/layout.py` and `layout_geometry.py` |
-| Who sends the whole page to Sol? | `doclayout/builders/document.py` and `services/openai.py` |
-| Who assembles and refines blocks? | `doclayout/converters/pdf.py` and `processors/` |
-| Who writes file and GUI exports? | `doclayout/exports.py` and `ui/exports.py` |
-| Who reuses saved Markdown for fields? | `doclayout/fields.py` and `field_store.py` |
+The GUI lives under [`ui/`](../doclayout/ui) and starts at
+[`scripts/streamlit_app.py`](../doclayout/scripts/streamlit_app.py). The file
+CLI starts at [`scripts/convert.py`](../doclayout/scripts/convert.py); the
+local HTTP API starts at [`scripts/server.py`](../doclayout/scripts/server.py).
+The GUI's field workflow is not an automatic CLI/API field-export feature.
+See [architecture](architecture.md) for the full flow.
 
-The [layout integration record](layout-v3-plan.md) gives the verified ONNX
-decode and fallback policy. The [field extraction guide](field-extraction.md)
-explains the separate saved-result workflow. Source and tests take precedence
-over either document when behavior has changed.
+## Read the right contract
 
-## 3. Make a safe first contribution
+- Change extraction or layout: read [architecture](architecture.md),
+  [layout integration evidence](layout-v3-plan.md), and the layout tests.
+  Contours are separate from the four-corner `PolygonBox` contract.
+- Change fields or persistence: read [field extraction](field-extraction.md),
+  `tests/test_fields.py`, and `tests/test_field_summary.py`. A saved field-only
+  retry must not reconvert a page.
+- Change configuration or an entrypoint: read [configuration](configuration.md),
+  [usage](usage.md), and `tests/test_entrypoints.py`.
+- Change a prompt: inspect its packaged file, fingerprint tests, and the
+  request builder. Treat prompt bytes as behavior.
 
-Choose a small issue or an in-scope documentation correction. Read its test
-first, change the narrowest owning module or page, and run the matching focused
-tests. For a prose-only change, check links and `git diff --check`; for Python
-docstrings, also verify the executable syntax tree did not change. The
-[contributor runbook](../CONTRIBUTING.md) gives the complete review checklist.
+## Before your first live run
 
-You are ready to work independently when you can identify the source owner,
-run the offline checks, explain whether a test used mocks or live services,
-and show that unrelated files stayed untouched. Continue with the
-[zero-to-mastery tutorial](tutorial.md) for hands-on exercises.
+A conversion can fetch the pinned layout artifact and call Sol for each page.
+Configure credentials as described in [configuration](configuration.md), use a
+document you are allowed to send to the endpoint, and choose a bounded page
+range. `DOCLAYOUT_LAYOUT_DEVICE=auto` verifies CUDA execution when available
+and otherwise uses CPU; a provider listing is not GPU proof. The current code
+records Sol fallback if layout cannot run. Test results with fixtures do not
+measure real extraction accuracy.
+
+For the next hands-on exercise, continue to the [zero-to-mastery tutorial](tutorial.md).
+
+## Make a first contribution
+
+Choose a small issue or a source-backed documentation correction. Read its
+test first, change the narrowest owning module or page, and run the matching
+focused checks. For prose, check links and `git diff --check`; for docstrings,
+also confirm the executable syntax tree is unchanged. The
+[contributor runbook](../CONTRIBUTING.md) has the full review checklist.

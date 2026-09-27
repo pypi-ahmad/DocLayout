@@ -3,7 +3,6 @@
   "diagram_type": "dataflow",
   "meta": {
     "title": "DocLayout data flow",
-    "locale": "en",
     "quality_profile": "showcase",
     "legend": { "entries": { "dashed": { "label": "refinement" }, "security": { "label": "verification" } } },
     "viewBox": [1080, 620],
@@ -12,7 +11,7 @@
         "id": "extraction-pipeline",
         "label": "Extraction pipeline",
         "focus": ["inputs", "provider", "sol_extract", "validator", "processors", "doc_model"],
-        "note": "Sol supplies content; accepted V3 matches use contours or boxes. Unmatched blocks keep Sol geometry."
+        "note": "Rendered pages get a V3 prior when available. Sol supplies content; rejected matches or failed layout retain Sol geometry."
       },
       {
         "id": "rendering-exports",
@@ -67,7 +66,7 @@
       "id": "validator",
       "type": "security",
       "label": "Block Validator",
-      "sublabel": "validate + match V3",
+      "sublabel": "schema + V3 match",
       "stage": 1,
       "row": 2,
       "tag": "Pydantic"
@@ -102,7 +101,7 @@
       "id": "page_text",
       "type": "database",
       "label": "Parsed Page Text",
-      "sublabel": "normalized quotes",
+      "sublabel": "parsed page text",
       "stage": 3,
       "row": 3,
       "yOffset": -15
@@ -171,7 +170,7 @@
       "id": "sanitized-blocks",
       "from": "validator",
       "to": "processors",
-      "label": "sanitized blocks",
+      "label": "matched blocks",
       "classification": "validated blocks",
       "variant": "emphasis"
     },
@@ -221,7 +220,7 @@
       "id": "extract-page-text",
       "from": "doc_model",
       "to": "page_text",
-      "label": "normalized text",
+      "label": "page text",
       "classification": "page text",
       "variant": "default"
     },

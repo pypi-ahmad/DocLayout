@@ -10,8 +10,8 @@ GitHub hosts release assets; PyPI publication is deferred.
 - Add a contributor runbook, first-day onboarding path, offline source tutorial,
   and Python docstring coverage audit. Document the core conversion, provider,
   export, and CLI interfaces without changing runtime behavior.
-- Refresh all five Archify specifications and HTML diagrams for the current
-  layout, field, and chat paths; record showcase and desktop visual checks.
+- Record the earlier local five-diagram Archify validation while retaining the
+  later source-checked diagram artifacts already on `main`.
 
 ## 3.1.0 (2026-09-27)
 

@@ -1,18 +1,21 @@
 # Documentation sync verification
 
-## September 27, 2026: five-diagram Archify refresh
+## September 27, 2026: earlier local five-diagram Archify snapshot
 
-The editable JSON specifications and delivered HTML now reflect the current
+This snapshot was superseded by the later source-checked diagram files merged
+from `origin/main`. The hashes below identify the earlier local artifacts,
+not the current checked-in diagrams. In that snapshot, the editable JSON
+specifications and delivered HTML reflected the then-current
 whole-page Sol, V3 contour/AABB matching, local exports, saved field, and chat
 paths. This was a local documentation change; it made no model calls and did
 not alter conversion code. Existing sections below remain dated records of
 earlier output and visual checks.
 
-Each final specification passed all nine Archify showcase artifact checks with
+Each specification in that snapshot passed all nine Archify showcase artifact checks with
 zero composition errors and zero warnings. `deliver` produced the HTML from a
 frozen specification snapshot. `visual-check` captured both themes and found
 no scrolling at 1440×900, 1600×1000, 1920×1080, or 2048×1320. Receipt hashes
-were compared with the current HTML files after delivery.
+were compared with the then-current HTML files after delivery.
 
 | Diagram | Specification SHA-256 | HTML SHA-256 | Visual review | Correction rounds |
 | --- | --- | --- | --- | ---: |
@@ -22,13 +25,13 @@ were compared with the current HTML files after delivery.
 | Data flow | `c46e4dea762e11cb3d52d00717b745913907c6b4eb8ea04cde81280ac4f18f0a` | `ccb63cea898a42cf69ddb01771703abd3546128ceb366d54e4266a61371edd6c` | Passed | 0 |
 | Lifecycle | `63899d3b9c954a289742d692dae845e525403aae9d2fa0fd8b71fce85f6eb0fd` | `d7b348b32428ae3856ef15dbaa02bbb8c49ef05950b2e0b899e4f64092bdfb51` | Passed | 0 |
 
-The workflow remains legible and contained, but its nodes occupy only the
+The workflow was legible and contained, but its nodes occupied only the
 left portion of the panel. Removing its explicit viewBox and reducing its
 width both produced desktop overflow, so the last contained artifact was
 restored. This is an unresolved composition issue, not a showcase-validation
-or containment pass failure. The visual-check JSON and screenshot sidecars
-record the automated measurements and inspected images; their automated
-`visualReview: pending` field is not a claim of human review.
+or containment pass failure. The snapshot's visual-check JSON and screenshot
+sidecars recorded the automated measurements and inspected images; their
+automated `visualReview: pending` field is not a claim of human review.
 
 ## September 27, 2026: pipeline v4 code-to-doc sync
 
@@ -54,11 +57,10 @@ fallbacks, deterministic one-to-one assignment, global matched ordering, retaine
 source footprints, and initial-versus-final diagnostics. Generated indexes and
 provenance remain OpenWiki-owned.
 
-The requested writing skills kept this pass source-first and task-oriented.
-Humanizer simplified revised prose while preserving identifiers and technical
-limits. Code-documenter guided the API/example review; no inline docstrings or
-response models changed. This is document coverage, not a claim of complete
-repository-wide public-symbol docstring coverage.
+The writing pass stayed close to source and task scope. Humanizer revised prose
+while preserving identifiers and technical limits, and code-documenter guided
+the API/example review. No inline docstrings or response models changed. This
+records document coverage, not repository-wide public-symbol docstring coverage.
 
 SHA-256 comparison found all 142 package Python, Markdown, and JSON files
 byte-identical to the start of this pass, including the six runtime prompts and

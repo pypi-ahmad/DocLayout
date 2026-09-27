@@ -1,11 +1,15 @@
 # Developing DocLayout
 
-[Back to README](../README.md) · [Architecture](architecture.md) · [Configuration](configuration.md)
+[Back to README](../README.md) · [Onboarding](onboarding.md) ·
+[Contributor runbook](../CONTRIBUTING.md) · [Tutorial](tutorial.md) ·
+[Architecture](architecture.md) · [Configuration](configuration.md)
 
-New contributors can start with [onboarding](onboarding.md), then work through
-the [offline tutorial](tutorial.md). Use the [contributor runbook](../CONTRIBUTING.md)
-for the local change checklist. The [Python documentation audit](python-documentation-audit.md)
-records the scope and limits of the current docstring pass.
+Use this page for environment setup and verification commands. If you are new
+to the project, start with [onboarding](onboarding.md). The [tutorial](tutorial.md)
+walks through a change, and the [runbook](../CONTRIBUTING.md) covers review.
+
+The [Python documentation audit](python-documentation-audit.md) records the
+scope and limits of the current docstring pass.
 
 ## Source ownership
 
@@ -214,6 +218,9 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Configuration | Defaults, limits, input mechanisms, precedence, supported controls |
 | Architecture | Data flow, responsibilities, state, prompt locations |
 | Development | Setup, checks, builds, extension and change practices |
+| Onboarding | First offline setup, source ownership and safe live-run boundary |
+| Tutorial | Hands-on exercises from geometry to evidence and validation |
+| Contributor runbook | Change workflow, review and failure handling |
 | Changelog | Changes and compatibility history |
 | Validation | Dated observations and verification limits |
 | Benchmark/example/fixture guides | Their specific workflows and provenance |

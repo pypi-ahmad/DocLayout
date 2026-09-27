@@ -1,116 +1,126 @@
-# DocLayout: zero-to-mastery tutorial
+# From first test to confident changes
 
-Work through these offline exercises in order. They teach the code and test
-contracts; they do not measure document-extraction accuracy. Use PowerShell
-from the repository root. If setup is new, complete
-[onboarding](onboarding.md) first.
+[Back to README](../README.md) · [Onboarding](onboarding.md) ·
+[Contributor runbook](../CONTRIBUTING.md)
 
-## Level 1: Find the public entry points
+The exercises start offline and trace a change through source, tests, outputs,
+and verification limits. Live inference is optional; completing the exercises
+does not establish model accuracy.
+
+## 1. Establish a clean baseline
+
+Follow [onboarding](onboarding.md#first-15-minutes) to sync the project and run
+the focused field and contour tests. Record the current branch and any
+pre-existing edits before touching files. Read one test failure in full before
+changing implementation. The goal is to distinguish a source regression from
+a missing dependency or optional native library.
+
+## 2. Learn the coordinate frames
+
+Layout contours are stored in page-image pixels. Sol's guide uses normalized
+0–1000 coordinates. The provider document and annotation image can have other
+bounds; non-square images scale each axis independently. Try the shared helper:
 
 ```powershell
-uv run --no-sync doclayout --help
-uv run --no-sync doclayout_single --help
+uv run --no-sync python -c "from doclayout.layout_geometry import transform_points; print(transform_points([[100, 50]], (0, 0, 200, 100), (0, 0, 1000, 1000)))"
 ```
 
-Find the corresponding `[project.scripts]` entries in `pyproject.toml` and
-the Click commands in `doclayout/scripts/`. The file CLI selects exports;
-folder conversion uses its existing renderer path. Both reach a converter, but
-the GUI's saved field-extraction workflow is separate. Read
-[usage](usage.md) before making a real conversion: it needs credentials and
-can incur API charges.
+The result is `[[500.0, 500.0]]`. Read `transform_points` and
+`region_geometry` in [`layout_geometry.py`](../doclayout/layout_geometry.py),
+then run:
 
-## Level 2: Decode a tiny mask
+```powershell
+uv run --no-sync python -m pytest tests/test_layout_contours.py tests/test_layout_prior.py
+```
 
-The ONNX layout result retains a compressed, row-major mask. Run this local
-example; it has no model or network dependency:
+Find a test with a nonrectangular contour. Explain why its AABB alone cannot
+establish polygon overlap, and where explicit rectangle-fallback provenance is
+recorded. The [layout evidence record](layout-v3-plan.md) distinguishes
+fixture checks from live artifacts and hardware observations.
+
+Decode a tiny retained mask without downloading the model:
 
 ```powershell
 uv run --no-sync python -c "from doclayout.layout_geometry import mask_from_rle; print(mask_from_rle([2, 2], (2, 2)).tolist())"
 ```
 
-Expected output: `[[0, 0], [1, 1]]`. The runs alternate background and
-foreground, starting with background. The real decode associates each mask
-with its detection row, class, score, box, and raw reading-order key; see
-`doclayout/layout.py`. Verify this against the independent fixture:
+The expected result is `[[0, 0], [1, 1]]`: runs alternate background and
+foreground, starting with background. Check the independent contour fixture
+in `tests/test_layout_contours.py`; it verifies the decode contract, not live
+model accuracy.
+
+## 3. Trace a whole-page conversion
+
+Start at [`PdfConverter.build_document`](../doclayout/converters/pdf.py). Follow
+the provider render, `LayoutEngine`, the Sol extraction service, document
+builder, processors, and renderers using the
+[onboarding map](onboarding.md#follow-one-page-through-the-code). Run the
+offline entrypoint and renderer checks:
 
 ```powershell
-uv run --no-sync python -m pytest tests/test_layout_contours.py -k decode_matches_independent_paddlex_reference
+uv run --no-sync python -m pytest tests/test_entrypoints.py tests/renderers/test_json_renderer.py tests/renderers/test_chunk_renderer.py
 ```
 
-The fixture tests the implemented contour contract, not live-model accuracy.
+Check three cases in the tests: an accepted V3 match uses layout geometry/order
+while preserving Sol HTML; unmatched Sol text remains once; an unmatched V3
+region contributes metadata but no text. Do not infer these properties from a
+successful model download alone.
 
-## Level 3: Change coordinate frames
+## 4. Follow downstream evidence and persistence
 
-Contours originate in rendered-page pixels. Sol receives normalized guide
-coordinates, while saved annotations may use provider page coordinates. Test
-a nonzero target origin:
+The GUI batch workflow snapshots raw Markdown before export naming changes.
+[`extract_fields`](../doclayout/fields.py) uses that Markdown for an optional
+classification request and one logical field request, then local quote checks
+and block mapping. [`FieldStore`](../doclayout/field_store.py) saves manifests,
+runs, and record JSON. A field-only retry reads the saved Markdown and chunks;
+it does not invoke page conversion.
 
 ```powershell
-uv run --no-sync python -c "from doclayout.layout_geometry import transform_points; print(transform_points([[0, 0], [200, 100]], (0, 0, 200, 100), (10, 20, 410, 220)))"
+uv run --no-sync python -m pytest tests/test_fields.py tests/test_field_summary.py
 ```
 
-Expected output: `[[10.0, 20.0], [410.0, 220.0]]`. Open
-`tests/test_layout_contours.py` and find the nonzero-origin and rotated-page
-cases. Do not interpret a page-grid mask as a local crop mask.
+In `tests/test_fields.py`, locate the fixtures for one verified quote and one
+ambiguous or missing mapping. Compare the resulting `status`, `issues`, and
+`locations`. A verified quote supports source presence, not semantic truth.
+The [field guide](field-extraction.md) explains what reviewers see and retain.
 
-## Level 4: Follow a page through reconciliation
+## 5. Make and prove a small change
 
-Trace `DocumentBuilder` in `doclayout/builders/document.py` into the layout
-matching functions in `doclayout/layout.py`. Sol reads the entire page and
-provides text/HTML. Qualified V3 matches supply geometry and relative order.
-Unmatched Sol blocks keep their text and geometry; unmatched V3 detections
-remain diagnostic evidence without fabricated text. A V3 preparation or
-inference failure falls back to a whole-page Sol request and records why.
+Choose a task in one owning module. First add a failing regression test for
+the visible behavior; then make the smallest implementation change and rerun
+that test. If the change affects exports, assert the serialized result or
+annotated image too. If it affects prompt text, verify packaged fingerprints
+and get representative evaluation input before making quality claims.
 
-```powershell
-uv run --no-sync python -m pytest tests/test_layout_prior.py tests/test_layout_readiness.py tests/test_layout_contours.py
-```
+Use the [contributor runbook](../CONTRIBUTING.md#local-workflow) for final
+checks. Review `git diff` to confirm only intended files changed. State which
+checks are mocked, which use actual CPU/GPU inference, and which evaluate
+accuracy. If no representative corpus is available, say so.
 
-Locate tests for split/merge preservation, global matched order, page-furniture
-visibility, and mixed success/fallback pages. A higher match count alone does
-not establish better associations.
+## 6. Trace a layout failure
 
-## Level 5: Check final outputs and saved fields
-
-Follow the assembled `Document` through `doclayout/exports.py` and
-`doclayout/ui/exports.py`. Annotations use final visible structure and source
-lineage: V3 contours where usable, V3 rectangles on contour fallback, and Sol
-rectangles for Sol-only blocks. Then read `doclayout/fields.py`: the optional
-GUI field workflow starts from saved raw Markdown and metadata. Retrying fields
-must not reconvert the PDF.
-
-```powershell
-uv run --no-sync python -m pytest tests/test_cli_exports.py tests/test_fields.py
-```
-
-Compare the [field guide](field-extraction.md) with its tests. Exact evidence
-quotes and block-level boxes are different from word-level grounding.
-
-## Level 6: Propose a change safely
-
-Write down the owning module, relevant existing test, expected behavior,
-fallback, and output metadata before editing. Add one regression test, make
-the smallest implementation change, run the focused tests, and finish with
-the [offline checks](development.md#offline-checks). Update the owning guide
-and [contributor checklist](../CONTRIBUTING.md) as needed.
-
-For a real-document accuracy study, use only an authorized fixture set and
-report false matches, missed associations, contour alignment, order, and text
-preservation separately. A mocked pass is not a live CUDA or model evaluation.
-
-## Level 7: Trace a failure without losing the document
-
-Use the existing mixed-page test as a capstone:
+Run the mixed-page regression:
 
 ```powershell
 uv run --no-sync python -m pytest tests/test_layout_prior.py -k mixed_page_failure_keeps_sol_box_and_successful_v3_match -v
 ```
 
-In the test and implementation, identify the successful page's V3 geometry,
-the failed page's Sol geometry, and the metadata that distinguishes them.
-Then locate the final annotation path and explain why it cannot draw a V3
-contour for the failed page. Check that the Sol request still contains the
-whole-page image and that failure handling does not catch an invalid Sol
-response or processor defect. If you can trace those facts to source and a
-specific assertion, you can investigate a layout regression without
-relabeling every fallback block as a detector miss.
+Find the successful page's V3 geometry, the failed page's Sol geometry, and
+the metadata that distinguishes them. Confirm the failed page still sends its
+whole image to Sol and that processor defects are not labeled layout fallback.
+
+## 7. Optional, billable end-to-end validation
+
+Only run this stage when you have approved source material, configured API
+access, and a task that calls for live validation. The CLI command below can
+download the pinned layout model and make Sol requests:
+
+```powershell
+uv run doclayout document.pdf output --markdown --json --chunks --metadata --page_range 0
+```
+
+Use a small authorized page, inspect the emitted metadata and files, and keep
+the page and hardware details with any report. A single smoke test verifies a
+path, not segmentation quality across document types. See
+[usage](usage.md#command-line-conversion) and
+[validation limits](gpt6-validation.md) before broader evaluation.

@@ -1,4 +1,6 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
+"""Provider-backed PDF conversion with shared layout and Sol extraction."""
+
 import io
 import os
 import tempfile
@@ -51,8 +53,10 @@ from doclayout.util import strings_to_classes
 
 
 class PdfConverter(BaseConverter):
-    """
-    A converter for processing and rendering PDF files into Markdown, JSON, HTML and other formats.
+    """Build a processed document from a provider and render it locally.
+
+    Layout preparation precedes provider conversion. The extraction service reads
+    whole rendered pages; configured processors run before the selected renderer.
     """
 
     override_map: Annotated[
@@ -103,6 +107,21 @@ class PdfConverter(BaseConverter):
         llm_service: str | None = None,
         config=None,
     ):
+        """Configure extraction, processors, and rendering without opening a PDF.
+
+        Args:
+            artifact_dict (dict): Artifacts from ``create_model_dict()``, including
+                an extraction service and optionally a layout engine.
+            processor_list (list[str] | None): Processor import paths; None uses
+                the default processor sequence.
+            renderer (str | None): Renderer import path; None uses Markdown.
+            llm_service (str | None): Retired argument; any value is rejected.
+            config (dict | None): Validated converter and processor settings.
+
+        Raises:
+            ValueError: Configuration is invalid, the retired service is supplied,
+                or the extraction artifact is missing.
+        """
         validate_config(config)
         if llm_service is not None:
             raise ValueError("llm_service was removed; all tasks use gpt-6-sol")
@@ -147,9 +166,18 @@ class PdfConverter(BaseConverter):
 
     @contextmanager
     def filepath_to_str(self, file_input: Union[str, io.BytesIO]):
-        """Yield a path for a PDF path or bounded byte stream.
+        """Yield a filesystem path, removing temporary byte-stream copies on exit.
 
-        Temporary files created for byte streams are removed on exit.
+        Args:
+            file_input (str | io.BytesIO): Existing path or in-memory PDF.
+
+        Yields:
+            str: Existing or temporary PDF path.
+
+        Raises:
+            DocumentLimitError: The byte-stream PDF exceeds the input limit.
+            TypeError: Input is neither a path nor a BytesIO stream.
+            OSError: Temporary file creation, writing, or cleanup fails.
         """
         temp_file = None
         try:
@@ -177,7 +205,21 @@ class PdfConverter(BaseConverter):
                 os.unlink(temp_file.name)
 
     def build_document(self, filepath: str) -> Document:
-        """Convert a PDF into structured blocks using layout, Sol, and processors."""
+        """Extract selected pages, process blocks, and finalize layout metadata.
+
+        Args:
+            filepath (str): Source path accepted by a registered provider.
+
+        Returns:
+            Document: Processed pages with sanitized HTML and source lineage.
+
+        Raises:
+            ValueError: Source or conversion settings are invalid.
+            ExtractionError: Whole-page Sol extraction fails.
+
+        Layout preparation may download verified model artifacts. A supported
+        layout failure is recorded as Sol fallback; it is not an empty detection.
+        """
         if isinstance(self.extraction_service, OpenAIService):
             self.extraction_service.usage.clear()
         from doclayout.layout import get_layout_engine, prepare_for_conversion
@@ -209,10 +251,25 @@ class PdfConverter(BaseConverter):
         return document
 
     def prepare_document(self, document):
-        """Apply structure assembly to the extracted document."""
+        """Build document structure in place before the processor sequence.
+
+        Args:
+            document (Document): Extracted document to organize.
+        """
         StructureBuilder(self.config)(document)
 
     def __call__(self, filepath: str | io.BytesIO):
+        """Convert a path or in-memory PDF with the configured renderer.
+
+        Args:
+            filepath (str | io.BytesIO): Document source.
+
+        Returns:
+            object: The configured renderer's document representation.
+
+        The call may perform local layout inference and billable Sol requests.
+        The temporary PDF, if any, is removed before returning.
+        """
         with self.filepath_to_str(filepath) as temp_path:
             document = self.build_document(temp_path)
             self.page_count = len(document.pages)

@@ -25,9 +25,9 @@ fields, not generated SQL columns. The GUI processes every upload with three act
 file jobs, supports multiple requests per PDF, and includes persistent two-way
 field/PDF review on a separate page. Oversized inputs are flagged without splitting.
 
-The research below records earlier thinking. Its recommendations on activation,
+The research below predates implementation. Its recommendations on activation,
 prompt readiness, grounding input, and long documents no longer describe the
-implemented workflow; the decisions above supersede them.
+implemented workflow. Use the decisions above for current behavior.
 
 ## Decisions and boundaries
 

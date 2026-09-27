@@ -1,10 +1,9 @@
 # DocLayout
 
-Turn scans and images into structured Markdown.
-
-DocLayout turns PDFs, scans, images, and office documents into structured content.
-The browser app lets you inspect pages, copy or download results, and ask questions
-about the extracted text. You can also use the CLI, Python library, or local HTTP API.
+DocLayout turns PDFs, scans, images, and office documents into structured Markdown
+and other outputs. In the browser app, you can inspect pages, copy or download
+results, and ask questions about the extracted text. The CLI, Python library,
+and local HTTP API provide other ways to convert documents.
 
 ## Features
 
@@ -30,12 +29,12 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 ## How DocLayout works
 
-The [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
-[system architecture](docs/diagrams/doclayout-architecture.html) have current
-Archify outputs. The [layout integration record](docs/layout-v3-plan.md) describes the
+The [data-flow diagram](docs/diagrams/doclayout-dataflow.html) reflects the current
+parsed-text and layout path; the [system architecture](docs/diagrams/doclayout-architecture.html)
+is a high-level snapshot. The [layout integration record](docs/layout-v3-plan.md) describes the
 v3.1.0 contour integration, pipeline v4 diagnostics, and validation limits.
-In the GUI, authorization-field
-extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
+In the GUI, authorization-field extraction starts after conversion and saves
+its results in [Extracted information](docs/field-extraction.md).
 The CLI and HTTP API remain conversion-only. See the [architecture guide](docs/architecture.md)
 for the complete workflow, including optional classification.
 
@@ -204,9 +203,9 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, troubleshooting |
 | [Configuration](docs/configuration.md) | Settings, defaults, limits, environment, precedence |
 | [Development](docs/development.md) | Setup, tests, builds, extension and prompt-change practices |
-| [Onboarding](docs/onboarding.md) | A first-day, offline route through the source and tests |
-| [Tutorial](docs/tutorial.md) | Progressive exercises from CLI entry points to layout and saved outputs |
-| [Contributing](CONTRIBUTING.md) | Local change, verification, and review runbook |
+| [Onboarding](docs/onboarding.md) | First offline checks and a source-code map |
+| [Tutorial](docs/tutorial.md) | Hands-on path from coordinates and tests to a bounded live check |
+| [Contributor runbook](CONTRIBUTING.md) | Change workflow, review checklist, and failure handling |
 | [Python documentation audit](docs/python-documentation-audit.md) | Focused docstring pass and remaining coverage gaps |
 | [Changelog](CHANGELOG.md) | Current changes and compatibility history |
 | [Architecture](docs/architecture.md) | Extraction pipeline, model calls, renderers, prompts, session state |

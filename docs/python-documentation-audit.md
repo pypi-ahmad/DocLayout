@@ -9,7 +9,8 @@ it does not change runtime prompts, response schemas, or executable logic.
 
 An AST inventory counted public top-level classes/functions and public methods
 directly inside classes. It excluded names beginning with `_` and nested local
-functions. The same method was run on `HEAD` and the working tree:
+functions. The original local pass compared its then-current `HEAD` and
+working tree before reconciling a newer remote branch:
 
 | Scope | Before | After |
 | --- | ---: | ---: |
@@ -17,6 +18,10 @@ functions. The same method was run on `HEAD` and the working tree:
 | Symbols with docstrings | 156 | 192 |
 | Symbols without docstrings | 401 | 365 |
 | Selected core-interface symbols with docstrings | 77 / 113 | 113 / 113 |
+
+After that reconciliation, the same inventory found 556 public symbols, 192
+with docstrings, and 364 without. The earlier table remains a dated comparison,
+not a claim that the merged checkout still has 557 counted symbols.
 
 The focused set covers layout and geometry, page/document builders, the PDF
 converter, PDF/image providers, Sol service, file/GUI exports, output and

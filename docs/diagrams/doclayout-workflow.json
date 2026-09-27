@@ -3,9 +3,11 @@
   "diagram_type": "workflow",
   "meta": {
     "title": "DocLayout conversion workflow",
-    "locale": "en",
     "quality_profile": "showcase",
-    "viewBox": [1200, 720],
+    "viewBox": [
+      1200,
+      720
+    ],
     "views": [
       {
         "id": "conversion-path",
@@ -145,7 +147,7 @@
       "col": 3,
       "type": "security",
       "label": "Match blocks",
-      "sublabel": "contour/AABB IoU",
+      "sublabel": "contour IoU",
       "tag": "bounds check"
     },
     {
@@ -256,7 +258,7 @@
       "title": "Validation & Assembly",
       "items": [
         "Sol failure stops conversion; V3 failure uses Sol boxes",
-        "Matched V3 geometry persists; Sol keeps text and HTML"
+        "Matched V3 contours persist; Sol keeps text and HTML"
       ]
     },
     {

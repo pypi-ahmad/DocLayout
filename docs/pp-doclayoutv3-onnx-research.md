@@ -2,7 +2,10 @@
 
 Research date: 2026-09-27.
 
-This report records internet research, upstream source inspection, and an ONNX artifact probe performed in this session. It does not claim that the local DocLayout application implements every behavior described here. No application code, conversion prompts, or model settings were changed by this research.
+This research combined internet sources, upstream source inspection, and an
+ONNX artifact probe in one session. It does not establish that the local
+DocLayout application implements every behavior described here. No application
+code, conversion prompts, or model settings changed during the research.
 
 ## Required weight repository
 
