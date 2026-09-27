@@ -26,10 +26,10 @@ sources:
     resource: repo://tests/test_cli_exports.py
   - id: openwiki-source-97c2d91c6ec415fd43007ed6
     resource: repo://tests/test_fields.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # Rendering and exports
@@ -40,7 +40,9 @@ Conversion JSON describes block hierarchy and geometry. Chunk JSON flattens page
 
 Layout-aware exports follow processed structure, not the original V3 detection list. Metadata includes the layout manifest, device and timing, initial match counts, original regions, final block bounds/order, and source lineage. Unmatched V3 regions remain diagnostics and add no duplicate Markdown. Unmatched Sol blocks preserve their validated content and box with `sol_only` provenance, subject to the normal downstream processors.
 
-Annotations draw rectangles around visible final structure. For cross-page merges, they retain source-page footprints rather than projecting one union onto every page. Raw V3 mask data is metadata only: neither the annotated image nor raster PDF is polygon-accurate. OCR JSON likewise reports block boxes, not invented character coordinates.
+Annotations draw authoritative source contours from visible final structure, with V3 rectangles for unusable contours and Sol rectangles for Sol-only content. Same-page and cross-page merges retain their separate source footprints; no union contour is invented. Existing header/footer settings and removed/ignored state govern visibility. V3-only detections remain diagnostic and are not duplicate extracted blocks. Original compressed masks stay in metadata. Derived contours are simplified and can be misaligned even when geometrically valid.
+
+The annotation receipt records drawn/skipped parts, contour/rectangle usage by page, and invalid-contour fallbacks. These counts differ from initial reconciliation and final unique source-footprint counts. Annotated PDF is raster output, not a searchable PDF text layer. OCR JSON and legacy JSON/chunk envelopes remain block rectangles, not character coordinates.
 
 Filesystem outputs are named from a sanitized source stem and timestamp. `output_targets()` resolves every intended path before writing anything. It rejects traversal, absolute or drive-like names, output/input collisions, directories in place of files, and duplicate targets. Export construction checks image-name collisions with reserved output names and annotation paths. Focused tests show that an unsafe target leaves prior output untouched and that an input collision is rejected before extraction.
 

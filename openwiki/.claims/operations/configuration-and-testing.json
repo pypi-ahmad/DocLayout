@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:03ab04d9c0d49406c10081efdd0345d8446ba5398e4fb5e611df2079363f6fd4",
+  "pageVersion": "sha256:4a0813f6cc8a785ea9d6cde4e9b26a410785df93e85e805d73465f8dca5b0edc",
   "claims": [
     {
       "id": "claim_c9eddd13703b4dd394481487c09831a3",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://pyproject.toml#L11-L79",
-          "version": "repo-lines-v1:sha256:3ab6804b1b6019ae356287e4ce85b7fab680903fbc980087a1972221448a7cfb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNDIwOTQxMDFjOWE3YjgyZjczNTZlMjE3NDc1YWFkZWRiYTQ5MWI4ZjRmMzk1MDk4ODRlZmY4NGQ1YjNkNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZGE4NjdlNWY1OGEyMDIzNmRjYzZmZjU1NDNkODc2NGE2NDI1ZjA2MDI2ZmQ4ZjA1YTg1ZmJkNjY4ZTVmNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3M2YxNWQyMWQwZTE1NmE4MDUwNTZhMmFkYmJhYWI1NzA3MGYwMWRmOTQ4YzBkZDBkNzI0NmE4NGU3MDAxYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliZWUxMjc2YTM1YjFkOTA1NGY5MzU0ZWJjNDk1ZjgwM2Y2MzFiMWY4YTQ2MDc3NjRhYjRkYzdlNGZjMWEzNDIifQ"
+          "version": "repo-lines-v1:sha256:9630a06d26ac0a7364b9ded2528ec756c7a94994c11bcb95ace32a31930cfcee:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNDIwOTQxMDFjOWE3YjgyZjczNTZlMjE3NDc1YWFkZWRiYTQ5MWI4ZjRmMzk1MDk4ODRlZmY4NGQ1YjNkNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZGE4NjdlNWY1OGEyMDIzNmRjYzZmZjU1NDNkODc2NGE2NDI1ZjA2MDI2ZmQ4ZjA1YTg1ZmJkNjY4ZTVmNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3M2YxNWQyMWQwZTE1NmE4MDUwNTZhMmFkYmJhYWI1NzA3MGYwMWRmOTQ4YzBkZDBkNzI0NmE4NGU3MDAxYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliZWUxMjc2YTM1YjFkOTA1NGY5MzU0ZWJjNDk1ZjgwM2Y2MzFiMWY4YTQ2MDc3NjRhYjRkYzdlNGZjMWEzNDIifQ"
         }
       ]
     },
@@ -70,7 +70,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
@@ -98,7 +98,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/layout.py",
-          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
         },
         {
           "resource": "repo://doclayout/settings.py#L34-L42",
@@ -112,21 +112,39 @@
       "evidence": [
         {
           "resource": "repo://tests/test_layout_prior.py",
-          "version": "repo-file-v1:sha256:d22e9c7d9c3fdecaddfa85ad099834bb4edef75d57f14b77c037f1c0e6d9fb60"
+          "version": "repo-file-v1:sha256:76a180b188ce5dfba72e2fcc2319a7c1508d1f088fb041cf7693aa33321b235c"
         },
         {
           "resource": "repo://tests/test_layout_readiness.py",
-          "version": "repo-file-v1:sha256:ce5900f62d2f6f13abfad88886def78083840195a6c8df79bb37e0edc1d77ef8"
+          "version": "repo-file-v1:sha256:3226f85ae4f4f90cd551ce729da83cba542c168d94025d975032be1d1fd5e35a"
         },
         {
           "resource": "repo://tests/test_layout_runtime.py",
-          "version": "repo-file-v1:sha256:abb15179606059fd820fe392042b7e778bf39092d8afd134996cad6e6307c608"
+          "version": "repo-file-v1:sha256:c5d1194a02f21ccc639910cca66e9d7eafed37c6e5249b03fa4d4e04aebffbb8"
+        }
+      ]
+    },
+    {
+      "id": "claim_8919ff4e9639431b96081693f52441a2",
+      "statement": "Auto CPU fallback is sticky, preparation failures latch until explicit retry, and contour-only failure retains a valid V3 AABB with distinct provenance from runtime failure.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://tests/test_layout_contours.py",
+          "version": "repo-file-v1:sha256:c07b04d95849603cd012cc603bd3d3ce912cd04fc3761e79661b4bcaaa90cc21"
+        },
+        {
+          "resource": "repo://tests/test_layout_runtime.py",
+          "version": "repo-file-v1:sha256:c5d1194a02f21ccc639910cca66e9d7eafed37c6e5249b03fa4d4e04aebffbb8"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:44:56.859Z"
   }
 }

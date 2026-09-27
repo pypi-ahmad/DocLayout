@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:30b2ac439c8bf8faa3557883bb0bd2147e5547d84521c24a201a8ecf3536e192",
+  "pageVersion": "sha256:44503d075c009763e3693591fa479fc68354be2c5098fc684a9a9880e95e58a9",
   "claims": [
     {
       "id": "claim_265ec24327ba4fac9d71903c336b85d6",
@@ -8,11 +8,11 @@
       "evidence": [
         {
           "resource": "repo://README.md",
-          "version": "repo-file-v1:sha256:9cc09d0dd5c47bfb13320e243d1a310e3fa043778e25ebbac0b6f546b826e235"
+          "version": "repo-file-v1:sha256:1e728a281b075c885a7aa387d5377412fc5c976c60d716b2be0c631e8a3b0885"
         },
         {
           "resource": "repo://pyproject.toml",
-          "version": "repo-file-v1:sha256:b4a6af4de7bf6ee880ed277b9911f09562df1eac144eb4e8a7a20c86d060e255"
+          "version": "repo-file-v1:sha256:b023d2f84bb1816bbf2f808e861f69866dc3067ba5022f3c39981d4d547b62d2"
         }
       ]
     },
@@ -26,11 +26,11 @@
         },
         {
           "resource": "repo://doclayout/scripts/convert.py",
-          "version": "repo-file-v1:sha256:3a6836198b985f629ac973ed9ef3f07885131e341a51c17d3993aab1e39b4ba1"
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         },
         {
           "resource": "repo://tests/test_cli_exports.py",
@@ -126,7 +126,7 @@
         },
         {
           "resource": "repo://doclayout/layout.py",
-          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
         },
         {
           "resource": "repo://doclayout/settings.py#L34-L38",
@@ -137,10 +137,28 @@
           "version": "repo-lines-v1:sha256:1f1488d156a9ba0b5f621610727b0776bb403294d91850e38b3c509cb2b0b928:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzk2ZmQ3ZGI1M2U3NzRkMjQ1YzU4ZTdiMmRmNjc5ODNjNzY3OWFjNmQ3YmNhODkxMTExNjdkZDViY2U1NDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlYjdjYmQwOGUzMmE4M2MyNDBhYjhmNDhlMWU4NGViZDQ5NDNkMzI1YzdhMmY4YzJjN2MyMWFjZDNkYjdjNmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzYTEzZDY5Y2E0NzRjZTg4YzcyMjU0ZWUwZTI4YTVjNTFiNjBkNGEzMTg5NmY3YjBiN2U2M2E3NTJlNGIxMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNDI3MzU4MjdjZmQ2YWI4ZmQzM2I2MmM2YTU4MDQ0NmVhNmMwNWZiMjQ2ZDlhM2ZhZmE3ZTIzNTI2NDMwZjQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_b42774ca42ab456fa624e6abd8f1716d",
+      "statement": "Local pipeline v4 uses matched V3 mask-derived contours and order while retaining Sol content, contour-to-AABB fallback, and rectangular downstream field evidence.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py#L308-L352",
+          "version": "repo-lines-v1:sha256:723d51cc5c625a0a99d2222c16991835691a08cd288d1f3e056d46075416079b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlNWVjODYzNzRjZGQwMDk5MDYzZWVmZjI2NmIxNTBjZTQ4YTQ4Y2VkODZhYTg4YmQ4ODcxZDEyZTQ3MTlkNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZmUzZDIxMmIyZmZhYjE5YTdjY2ZhOWM1MDM5NGIxOWUyYzA5YTk2ZDZiNTE3OTQ0MTc5MjJmYzI0ZjdjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZGI5NjBkM2U2ZWJmMjM4MzM2YmNkYTE1ZjZlN2RjZjZhMjQwMGI1ZjdiYmQ5YjE3M2RmMmIzMDQyNTk3MDIifQ"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:44:56.859Z"
   }
 }

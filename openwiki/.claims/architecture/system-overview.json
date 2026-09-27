@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ceb50fd74873f7329123ac547ef7dd0d07fe19243dc6f7fad980713447feb1cc",
+  "pageVersion": "sha256:eaf81e49b8448aedd2adfe56e5d03730ef8f10828539f44039ccad7e96c12994",
   "claims": [
     {
       "id": "claim_8c62d49bfdec4ae7ac1b6f5c08c274a4",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://doclayout/converters/pdf.py",
@@ -26,7 +26,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         },
         {
           "resource": "repo://tests/test_fields.py",
@@ -58,7 +58,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
@@ -68,11 +68,11 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
@@ -92,17 +92,35 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py#L29-L157",
-          "version": "repo-lines-v1:sha256:024b28dbd86270ad655890a64058c602620aa14f1a841795be3223a224ca55c6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Y2JkNDgzMjk4MmU0ZTk3ODFlMDAyNmJjODYxMjVjYWQ4YWE1ZGY2ZjI0M2ZlYzlkZmUyNWQyOTJkMWVhMDQyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMjljNTI0NDM0YzAwOWFhZjBkN2ZlOWUyZmZlNzIyYjE3MGNmOGViMWM4YzE1NzVlNGUzYmQ1MWU5MjZjNzFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0MDJmM2UyYTAxMmRmZGZlNTZkYjk4NWZiOWUxNmY1YWMxOGM5OGEwMTVlMWFjZGUwZDM0MWEwNTlhMGQzMTE0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNmNmMzBmOTU3MGUzOTY5Yjg1NjJiMzYyMjM0OGMxMzA1YjMzNGZmMzYwZDliMjZhNTBkYjNjNjI2YmI4YWE3In0"
+          "version": "repo-lines-v1:sha256:9475a337f4ea2211c6be9565a9ae5639cf2d5128b56286dab34eb1b4f73b7b57:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Y2JkNDgzMjk4MmU0ZTk3ODFlMDAyNmJjODYxMjVjYWQ4YWE1ZGY2ZjI0M2ZlYzlkZmUyNWQyOTJkMWVhMDQyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMjljNTI0NDM0YzAwOWFhZjBkN2ZlOWUyZmZlNzIyYjE3MGNmOGViMWM4YzE1NzVlNGUzYmQ1MWU5MjZjNzFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0MDJmM2UyYTAxMmRmZGZlNTZkYjk4NWZiOWUxNmY1YWMxOGM5OGEwMTVlMWFjZGUwZDM0MWEwNTlhMGQzMTE0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNmNmMzBmOTU3MGUzOTY5Yjg1NjJiMzYyMjM0OGMxMzA1YjMzNGZmMzYwZDliMjZhNTBkYjNjNjI2YmI4YWE3In0"
         },
         {
           "resource": "repo://doclayout/layout.py",
-          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        }
+      ]
+    },
+    {
+      "id": "claim_ffa8ffa15f304df89739aba0afcde44d",
+      "statement": "Local pipeline v4 applies matched V3 contours with AABB fallback, globally orders matched slots, retains source footprints, and reports initial and final geometry separately.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/schema/layout.py",
+          "version": "repo-file-v1:sha256:47dc72b6888ae99edadc05b48c126b144fa3ed42be507f38e555359bc7ec1143"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

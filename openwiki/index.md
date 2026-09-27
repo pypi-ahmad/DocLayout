@@ -14,4 +14,5 @@ okf_version: "0.2"
 - [interfaces](interfaces/)
 - [operations](operations/)
 - [outputs](outputs/)
+- [testing](testing/)
 - [workflows](workflows/)

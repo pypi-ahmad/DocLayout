@@ -34,10 +34,10 @@ sources:
     resource: repo://tests/test_field_summary.py
   - id: openwiki-source-ff268f9389aaadf9064c3be8
     resource: repo://tests/test_ui_browser.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # CLI, GUI, and API interfaces
@@ -59,6 +59,14 @@ All real conversion paths, including the Python converter, attempt V3 preparatio
 Normal V3 preparation or inference failure continues with Sol content, geometry, and order, recorded in output provenance. HTTP can therefore return a successful fallback conversion. The defensive 503 handler applies only if a layout exception escapes that boundary. Sol request and schema failures still fail the conversion. Saved field-only retries do not prepare V3 or reconvert pages.
 
 ## Related pages
+
+GUI and CLI summaries read saved layout metadata rather than probing hardware.
+They show actual providers, CPU and Sol fallback stages, eligible and retained
+regions, initial matched/Sol-only/V3-only counts, geometry use, and rejection
+reasons. Final visible source counts are separate. The API exposes the structured
+metadata. Summed page analysis time includes queue waiting and in-call preparation;
+it is neither pure kernel latency nor document wall-clock time. Missing historical
+diagnostics are not relabeled as zero.
 
 - [Quickstart](../quickstart.md)
 - [Field extraction](../workflows/field-extraction.md)

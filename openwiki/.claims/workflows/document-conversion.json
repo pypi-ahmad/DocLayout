@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2fd8d2474445552e3c5e4bfc37ca67224736d91ba87ea00e355a739135cb3f83",
+  "pageVersion": "sha256:f4c76dd04562eb9c80ce6432ce4710e9bced728da73d8ecb57e632f150bd53d6",
   "claims": [
     {
       "id": "claim_1d14c56f09ba41f39b7dfd2a9ba99c52",
@@ -18,11 +18,11 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://tests/builders/test_document_builder.py",
-          "version": "repo-file-v1:sha256:4bf5c306505bdbbd08b72b026038653778375a8e4b229f36a388e70b8c65c3b6"
+          "version": "repo-file-v1:sha256:04c02e1a7c3f9161f23bc9e928dacc9ddcbb62b092134235e6f3e0dcd9925b6f"
         }
       ]
     },
@@ -32,7 +32,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://tests/converters/test_pdf_converter.py",
@@ -46,11 +46,11 @@
       "evidence": [
         {
           "resource": "repo://doclayout/exports.py",
-          "version": "repo-file-v1:sha256:eb92ee18e3ac7f3b86b0452e5fbd2a744a0a35be0baf51c4cd4874c5459934b8"
+          "version": "repo-file-v1:sha256:dc5ba1e32f4138141e11ac3d442b9ff72f7d2cc6a92b778b12ec3652b322b3dc"
         },
         {
           "resource": "repo://doclayout/scripts/convert.py",
-          "version": "repo-file-v1:sha256:3a6836198b985f629ac973ed9ef3f07885131e341a51c17d3993aab1e39b4ba1"
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
         },
         {
           "resource": "repo://tests/test_cli_exports.py",
@@ -64,59 +64,67 @@
       "evidence": [
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
     {
       "id": "claim_d74c3c7929f84f7aa25f9a9fee024f0b",
-      "statement": "Conversion attempts prepared V3 before whole-page Sol and records Sol fallback on layout failure; successful reconciliation preserves Sol content while selecting accepted V3 rectangles.",
+      "statement": "Conversion attempts V3 before whole-page Sol, records Sol fallback for layout failure, and preserves Sol content while applying accepted V3 contours or AABB fallback.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L42-L153",
-          "version": "repo-lines-v1:sha256:06b803c9c264b38ba7beb81801873f318db349da7295dfd4c2af52131935bd0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NGM0NjY1YWU2M2E2NTE5OTAxNjIxZWM1ZDgwNDc2YWMwMTg3YTBlNmNiNDE3Zjc2MjhmNWFjODhkZTI2YjU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2MDZiMDNkYzZkOGZiYzg0MTk5NzYxY2Y0NDNhMDFkOTBlZmUyNzUzMzY3M2U1MzhiOTZkYjVmYTU0NDFhZWJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTYwMzZlYmE2NjJiNDBlMDUwYzQyNGEyZWYyMDQ0YjZkNTU2NGM1ZTJjNGMxNzk5NWJlZWUxMWMxYWUwNzA4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhNDVjMzMyNzIyYmMxMjNkNjYyNjYyNTNjYTQ5NDdhOWVkODRkNzA3N2E1NTdkMGMzODQyMThlYjQwYjc3OTdlIn0"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
-          "resource": "repo://doclayout/converters/pdf.py#L175-L203",
-          "version": "repo-lines-v1:sha256:7de1fac3c74e71ebcb28b8959a15a58c3ebb6138e518b6e88d77a5554bc87fd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkNTAxYmU5MzAzYzg2NjBiZDQxZDI1ZmE3ZjY2MTIxYWE5ZGUzYjIyMmNhMjZiN2Q0MzkzMjIwZDlkZjc4NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlZDk2NzE3YmU5ZDYwZTA3MGE2MmRhMGQyNmU0MWU3MTM4ZWE5OThkM2I3NTdkYTRhMzE4YmU5NjA1MTA1ODkifQ"
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
     {
       "id": "claim_9f354492ec8a4b16b3b4a678978d6d04",
-      "statement": "Matching uses compatible mutual-best IoU >=0.5 with 0.10 margins, rejects ties and strong-containment split/merge ambiguity at 0.8, and only reorders contiguous matched runs, leaving sol_only anchors and unmatched V3 diagnostics.",
+      "statement": "Qualified compatible-family contour/AABB IoU pairs at >=0.5 use deterministic greedy one-to-one assignment; margin, ties and containment are warnings, matched slots sort globally, and unmatched content/evidence survives.",
       "evidence": [
         {
-          "resource": "repo://doclayout/layout.py#L808-L920",
-          "version": "repo-lines-v1:sha256:b78f030f2c870e33ab81f7dc978e56bb11990a5f8b58bb7e7ba83e90ce7c1192:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NTdmZDQ2OTVmMzZlYWNhMGVhYjdkOTM0OWRjNWIyMjJlZTU5MWM2YmZjMjZmMjJhOTQ4NGE1NTI3NzkzNDZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNTgwMzE5ZjUwNGJmODUwMmMxNWU1YjBlZjc2NGQwYTFmODExYTNjZWM2N2IyNDNhYjE5YjBiNTdmZDUzY2EzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YTgyZWJlOWVkNDA3YzNhNmJhNGIwMDM0MjkyYmFhNTJjMTFjZTVhZTI4NjEwNzQwMmRlNDc5MmVlZWNhY2ZjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MzVkMzZlMWRhODg2NDcwZWQwNGI4N2IzOWU5OTNmYTAyZDM0OTE2NGUwMDExMWZlMDY5MTM1ZjNkNTdmZTg1In0"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
-          "resource": "repo://doclayout/layout.py#L89-L93",
-          "version": "repo-lines-v1:sha256:f0b70a46fa36153755f95ebb4295ecad6462506ba6e0e0b776eda50da1c1673a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmYjhlZjg5ZmNlZjM1MzA3ZjY1MmU1YzlhNzBkMjU0NWYwYmZiOTM4YzQwNTViMDQ3MTBiZGJiYWQzOGM0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzlmNzY0NzdjODFjNjViYzY0MjkwOWYzMTcyZjMyY2Y5MmI4MWE1OTI2ZmRlY2JhYjQ3ZDlkNWI4MWQ2Y2UwZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWYxMTJlYzdkYjk4Y2I5N2M0NDM3ZDM5OTYzMmQ0ODdmZDRkN2NlOTE5NjA2M2QwMmY5YjYxYzg0MjI0MTQ0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGQ1ZWYwNGM3MzlmOTJlYWJjYTIxNWZiZDRlNzkwMmUxZDZmZTc2MjBiYTVhYTY4M2IyYmFjMGZkZjc4MzdlZCJ9"
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
     {
       "id": "claim_14eceb79f4bc476e8b9ead3893052e41",
-      "statement": "GUI identity includes the pipeline fingerprint and policy versions; saved fallback is reusable and field-only retry reads raw Markdown/chunks without reconversion.",
+      "statement": "GUI identity includes pipeline v4 decode, guide, matching, order, source, reporting, execution and fallback policies; actual device availability does not invalidate saved fallback, and field retry reuses raw Markdown/chunks.",
       "evidence": [
         {
-          "resource": "repo://doclayout/layout.py#L235-L271",
-          "version": "repo-lines-v1:sha256:513caa36d773fb4ea96f01e1cca75418b780cee7ab5831cf2703034462bf6f76:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmODQ2MzEwYTA4NzRmNGQyNjIxZGZlODIzYmE3YjQ2NDIyZjFjMGI3N2ZkZWY2MjhlNGM3YmRjNWU2YmM5Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyM2M1YzJhNmE1Y2UzOTEwNzI1N2JhODYxY2ZjODUzMDZlYmUxMjA4NmE4ZGQ3NmE1MzgzYTc3MGJhNjc1ZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxOTZlYjY0NTI1ZjYwZWU5MDQyNjFmYmUxZDA2MGNhMTU0Nzc4MGY1NWEyZmEzZGEyZDllODc3ZDVmMzkyMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlNjM4NDlhOGQ3NzY5NWJlZGQ3NDM4NzA1NjM3Mjg3NjA5MmUzYzg0M2U0M2I1YTA3Yjk0ZjUxZWE1NGI1MzgifQ"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
-          "resource": "repo://doclayout/ui/batch.py#L183-L213",
-          "version": "repo-lines-v1:sha256:9f63164419e2b6d96388aa7e6dd3269aca2d58a4dc42a664648c81063009dd48:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxY2E3YWJiNzg3Mzc2NTY1ODQxNzRlNjcyMGIwYjk1MGU3NmU0ZDlkNjJlMjdhODJiYWNkY2I4NGViNTZkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4ZWQ2YjJhMDUxMzY3OTA0YjAyZDFjZDA0MDUxNTRmZmY1NjdlYzM4ZWZhYzM3OGNjYzllMDYxODdlY2ZhNzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwNzY1ZDZmODk5MWI0OGUzMTcyNDZjODlhNTllMTAwYzljNzlhOWM4OGQ2YzY1MDdjODgzNjdkNGUyNjZjMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YjJhZTEzYWE5ZTVmMWQzMmI5ZTYzYjQwMDA5YzU3ZDNjMmRmYmI2YTQ2OTAyZDhiN2FhYTU2NzA2NDMzYzgifQ"
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
         },
         {
-          "resource": "repo://doclayout/ui/batch.py#L31-L44",
-          "version": "repo-lines-v1:sha256:a89bbbfdcb6bd8fed263f546db7874d384ec1f2b97c4a79a81c95fd856057973:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYjdiMDFlYzM3MjU2MmZkYTE2NTFiYjVhM2NkMmEyN2U0NmFkNWMwN2RjOWNjZGZiYWMwNDA5MTlkNmM3MDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ODNiOGExZTk0OTI4NWQ2OTg4MjcwMGYxYTNhMjFhNjEwODgwOTc0YWEyMzQzYWFmNDQ5YWY5MDgyMzM0ZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzNjljYjA5OTZmODdhYzRiNDBiYTY0MTg2MzI0ODczOWNiZGExNDk1NTVlOTg1YjMzNjE4YjAxNmQ5NzkxYmYifQ"
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

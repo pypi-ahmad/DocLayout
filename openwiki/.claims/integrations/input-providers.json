@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c428adf98be24af5ca185655ef401042e8ad1aa60a51b834a0cee1428e756e52",
+  "pageVersion": "sha256:c61a18761dbdad1f9f4c185160c3b61561e1216948ff3f26301fb741ae2c8c1e",
   "claims": [
     {
       "id": "claim_565cf0eedfdb40ffa9ccde20731f0544",
@@ -56,13 +56,31 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py#L42-L159",
-          "version": "repo-lines-v1:sha256:7b49814527af20e4a31ea4f5b93a3fb7f0208ab0da322440039cad5abe34713b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NGM0NjY1YWU2M2E2NTE5OTAxNjIxZWM1ZDgwNDc2YWMwMTg3YTBlNmNiNDE3Zjc2MjhmNWFjODhkZTI2YjU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1YjhlMDgwZGZiNWQxOGIxZGZkN2IwMGRiN2M2YjYzYTZiMmRlNzcyY2ZlNWJiMjYxMGJiODQzYmU2ODA2OWM4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTYwMzZlYmE2NjJiNDBlMDUwYzQyNGEyZWYyMDQ0YjZkNTU2NGM1ZTJjNGMxNzk5NWJlZWUxMWMxYWUwNzA4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "version": "repo-lines-v1:sha256:00d3db191d3e9e6ad65e694c8dcf0f60406a19fc150019e517826b809ada871a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NGM0NjY1YWU2M2E2NTE5OTAxNjIxZWM1ZDgwNDc2YWMwMTg3YTBlNmNiNDE3Zjc2MjhmNWFjODhkZTI2YjU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1YjhlMDgwZGZiNWQxOGIxZGZkN2IwMGRiN2M2YjYzYTZiMmRlNzcyY2ZlNWJiMjYxMGJiODQzYmU2ODA2OWM4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTYwMzZlYmE2NjJiNDBlMDUwYzQyNGEyZWYyMDQ0YjZkNTU2NGM1ZTJjNGMxNzk5NWJlZWUxMWMxYWUwNzA4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b53b77bcf3a84e6697ec1ef69d490c02",
+      "statement": "Layout transforms rendered pixels independently on each axis into normalized request or provider coordinates with page origins; PDF size and rendering already account for rotation.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout_geometry.py",
+          "version": "repo-file-v1:sha256:644cc3b5205b6282a7abde416aa3d8d7ebc588647c2c6fad71cf071bdfb41963"
+        },
+        {
+          "resource": "repo://doclayout/providers/pdf.py#L49-L60",
+          "version": "repo-lines-v1:sha256:e7b2d521665569ac63f581b5543167a295744d8885f61dbd74200eb6e89534c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlNGMxM2FjZWY1ZmM1MjNjMTZkNGZhZjE4MjQwZTBkMWEyY2FjNDM2NGUzMmRkN2RmMWUyYTlhYTEyZTFhYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzZlMTIzODBmNGNkOTBjMjAyZmI1NmE4YjgyM2I4ZTFiMWI4MDEwMTYxOTY0YTFmODQ5Mjc4Y2UxZDViZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NWQ2ZDY3ODkwM2QxMTU5MTY3MzA5ZTdjZGJkMGEzNDYwMjljN2FkZmZjYjQwMmYzNDhmMzU3NmRmZTM5ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMzNhMTU0NjJhMGFiMWU3NTBlYmQyODM5YTI0NzIxNDBhMWM2Y2EwNjUxMjAwMDc4MTBmYWE1YTc4OGRhM2QifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

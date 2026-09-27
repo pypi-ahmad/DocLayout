@@ -26,10 +26,10 @@ sources:
     resource: repo://tests/test_chat_prompts.py
   - id: openwiki-source-97c2d91c6ec415fd43007ed6
     resource: repo://tests/test_fields.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # OpenAI processing
@@ -49,6 +49,13 @@ Classification uses Luna/medium only when explicitly enabled. Its closed JSON re
 `openai_credentials()` resolves API key and optional base URL from process variables or the launch folder's `.env`, with each process variable taking precedence. The converter service may share an HTTP client across configured copies while keeping usage ledgers separate. Local cost estimates depend on reported tokens and configured model rates. The GUI shows GPT-6 Sol and GPT-6 Luna subtotals by model; these do not isolate processing stages. Unknown usage remains flagged as partial.
 
 ## Related pages
+
+Guide version 2 includes normalized contour components, AABBs, region IDs,
+classes, scores, raw order keys, and derived ranks. Masks and RLE stay local.
+Payload bytes and vertex counts are measured; there is no silent region or byte
+cap. Sol is instructed to read the entire page, preserve content outside the guide,
+and avoid empty or duplicate blocks made only to cover detections. The application
+assigns matched geometry afterward.
 
 - [Document conversion](../workflows/document-conversion.md)
 - [Field extraction](../workflows/field-extraction.md)

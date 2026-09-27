@@ -30,16 +30,18 @@ sources:
     resource: repo://tests/test_fields.py
   - id: openwiki-source-747ce984286d9a8fb9342632
     resource: repo://tests/test_launcher.py
+  - id: openwiki-source-5012927e69660b3b63fa1941
+    resource: repo://tests/test_layout_contours.py
   - id: openwiki-source-302aace0465b65581c3853df
     resource: repo://tests/test_layout_prior.py
   - id: openwiki-source-e21a991204779b8d3c0240c6
     resource: repo://tests/test_layout_readiness.py
   - id: openwiki-source-b1623b7b40e27202adf3b061
     resource: repo://tests/test_layout_runtime.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:44:56.859Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:44:56.859Z
 ---
 
 # Configuration and testing
@@ -54,7 +56,13 @@ V3 uses the official `PaddlePaddle/PP-DocLayoutV3_onnx` artifact through direct 
 
 `DOCLAYOUT_LAYOUT_DEVICE=auto` attempts CUDA, verifies actual execution, and falls back to an exercised CPU session. Explicit `cuda` never substitutes a CPU session; its failure reaches conversion-level Sol fallback instead. The pinned CUDA policy places the single ScatterND node on CPU and verifies its assignment before execution. One locked, process-cached engine serves batch-size-one inference. Ordinary preparation/inference errors produce recorded Sol fallback; they do not prove the model ran on CPU. See the [layout record](../../docs/layout-v3-plan.md) for artifact hashes and output-contract evidence.
 
-Layout tests inject fake engines and sessions to cover download-once behavior, races, device selection, fallback, parsing, matching, and export provenance without downloading weights. These tests do not validate a real GPU, memory fit, speed, or accuracy improvement.
+Layout tests inject fake engines and sessions to cover download-once behavior, races, device selection, fallback, parsing, matching, and export provenance without downloading weights. `tests/test_layout_contours.py` also checks a reference-grounded mask fixture and coordinate transforms. Regression cases cover split/merge warnings, global matched order, processor lineage, visible contour overlays, and mixed successful/fallback pages. These tests do not validate a real GPU, memory fit, speed, or accuracy improvement.
+
+Default auto mode keeps a working CPU fallback sticky and latches preparation
+failures until explicit retry. It does not reprobe each page. An exercised CUDA
+session includes CPU execution, including the verified ScatterND assignment.
+Valid empty detections, invalid contours, unmatched regions, and runtime failure
+have distinct metadata. A contour failure alone retains a valid V3 AABB.
 
 From the repository root, synchronize dependencies with `uv sync --locked --group dev --extra full`. Run the offline suite with `uv run --no-sync python -m pytest` and a focused field check with `uv run --no-sync python -m pytest tests/test_fields.py`. For a browser test, install Playwright's Chromium shell first. `tests/conftest.py` blocks real Responses API calls by default and skips `integration` tests unless `--run-integration` is given. The latter is billable.
 
@@ -66,6 +74,7 @@ The GUI retains sources, derived conversion artifacts, JSON, and SQLite below `O
 
 ## Related pages
 
+- [Layout regression evidence](../testing/layout-regressions.md)
 - [Quickstart](../quickstart.md)
 - [OpenAI processing](../integrations/openai-processing.md)
 - [Field extraction](../workflows/field-extraction.md)

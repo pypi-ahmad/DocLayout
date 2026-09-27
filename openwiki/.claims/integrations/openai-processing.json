@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:087f7b9fa5fd595dbff2a0284a64f85fcf131594e3c5d051326d3d3ca7b16a4f",
+  "pageVersion": "sha256:0223af4716230e366eb8b1a27d465fb6a72f572610a991de02fa54d52dcf749f",
   "claims": [
     {
       "id": "claim_7eb3613486d04c0ba3aa9423cefbf02a",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://doclayout/services/openai.py",
@@ -84,25 +84,25 @@
     },
     {
       "id": "claim_c80daed1eb0f4fd88c188da4f653c1a3",
-      "statement": "V3 success adds a compact given_layout prior to whole-page Sol extraction; layout failure omits it without suppressing Sol or validation failures, and the prompt allows content missed by V3 while treating document text as untrusted.",
+      "statement": "Successful V3 analysis adds version 2 normalized contours, boxes and order as a measured, untruncated whole-page guide without masks; failure omits the guide while Sol/validation failures propagate and Sol retains content ownership.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L42-L61",
-          "version": "repo-lines-v1:sha256:f32690484934111d80df80938b8b6782fdaa48ec12ecd43afc36eef90b4cfa71:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YzQ2NjVhZTYzYTY1MTk5MDE2MjFlYzVkODA0NzZhYzAxODdhMGU2Y2I0MTdmNzYyOGY1YWM4OGRlMjZiNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDVhODUxNTUxMjJkODYxNWJlNTJkNTk0NmRhZmUzMDI1OTQ5MzMxMDBmZjY5YjA3NzNkMzc3NWE5ZWUyZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NjAzNmViYTY2MmI0MGUwNTBjNDI0YTJlZjIwNDRiNmQ1NTY0YzVlMmM0YzE3OTk1YmVlZTExYzFhZTA3MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5YWZlZWVlZTAzY2NiMDk1NjBmZGFiNzRmMDFiODI5M2NhNTI2ZTk2YTcyMGIyM2ZhOWNiOTM5N2I3ZTI3NGMifQ"
+          "resource": "repo://doclayout/builders/document.py#L45-L65",
+          "version": "repo-lines-v1:sha256:51a860ae35a5927a2a65b1d05e5ebd4fd983b414002aa9d2fb30946ee94ce986:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1NzgwNWMzZmU3YWM2MzA3NGY2OWNkYjI1YjlhY2Q3YTg2NzkyZGZlNTQwODE4YWM0Zjg3NjRiNDllN2QxNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYjQwNmQ0MWNjMDRjMzE4OGM3ODJjZDQ2Njg1MmFkN2UzZTljYTA0ZGNiNzkyZjBjYTcxNzg3NDE3ZTZkMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YmJiYmU2MTcxMDU2ZTk0YTE2YjViMjExMjZhMmFlNTA0M2ZlMzQxMTYwNmZlNjIzMzU3NzE3ODY2NmI0YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhYjY4MGI4NjMxMGIzMWMzNzYwNjBjOWJhZTJhZTQ4MGMyM2Y4MTBlZWVmOTk4NTM4ODU0OWQwMTdjMzM4YmYifQ"
         },
         {
-          "resource": "repo://doclayout/layout.py#L186-L221",
-          "version": "repo-lines-v1:sha256:272d11e056571ac32cde5d988a26f46cdef6b0a1204af53c2ba25089f3639ef3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzNWE3MTAzMTUzN2ZmOTczY2EzYzQ4MzVmNmRkOGQxZmEwMzRlNDU3YWQ1MTU0OTMyYzhiMWNkODQ5MDY4NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNDRlMmVhYThhNTJhYWJlOTk3MmI0N2RiY2I4NWY5MWYwMzUyNTRjMDI0MjEwOTFmODJhZjUxYWI4MzUzYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MWZhOTFlZWU2MjZjMjA3NWI3OTdjNmMzMjVjYTc2YTA0ZjVhYjY4ODMzZjIwMjQ1ODVkNDY4OWYyOTA3ODEifQ"
+          "resource": "repo://doclayout/layout.py#L214-L296",
+          "version": "repo-lines-v1:sha256:7bcf90f2321466c3c35e2735f535cdd6c42792125296380b149e21634e14ddda:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2YmQzODM1MDMxZDQwZDMyYjhiZDczY2YyOTM0NTAxNDJiZDZmY2E0MzA1ZmM5YmMwMTQwYTQ3YzkwZDRjODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxOTZlYjY0NTI1ZjYwZWU5MDQyNjFmYmUxZDA2MGNhMTU0Nzc4MGY1NWEyZmEzZGEyZDllODc3ZDVmMzkyMmUifQ"
         },
         {
           "resource": "repo://doclayout/prompts/extraction.md",
-          "version": "repo-file-v1:sha256:57d05c2a4b72fac16d380fe4da5b7bd23e547520156ca648fafbfef203efaefc"
+          "version": "repo-file-v1:sha256:c5314c92f8b77c94166efb54e91184ea09629c04d5501596b01b4fc0cad9d099"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

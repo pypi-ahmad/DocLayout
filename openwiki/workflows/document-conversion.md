@@ -22,17 +22,17 @@ sources:
     resource: repo://tests/converters/test_pdf_converter.py
   - id: openwiki-source-154e6a78b00ef865edbb429b
     resource: repo://tests/test_cli_exports.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # Document conversion
 
 1. The entrypoint resolves configuration, builds or borrows an extraction service, and selects a provider for the source file. `PdfConverter` can also accept `BytesIO`; it bounds the bytes, writes a temporary PDF, and removes it afterward.
 2. The converter prepares the process-cached V3 engine before opening the provider. The provider validates the zero-based selected page range and supplies page geometry and rendered images. `DocumentBuilder` renders each image at 192 DPI by default on its caller thread, then schedules V3 analysis followed by one whole-page Sol structured extraction request. It accepts `page_concurrency` from 1 through 3; the service also caps simultaneous calls at three per process. Preparation or analysis failure continues without a layout prior and records Sol fallback.
-3. The builder validates and sanitizes `ExtractedPage`, reconciles its normalized boxes with image-pixel V3 regions, and creates semantic blocks in page coordinates. Sol retains content and HTML semantics; accepted matches select V3 rectangles. Pages remain in provider order even if requests finish in another order. A Sol blank page has no blocks; disagreeing V3 regions remain diagnostics. Invalid Sol schema output aborts the document rather than creating a partial normal result.
+3. The builder validates and sanitizes `ExtractedPage`, reconciles its normalized boxes with image-pixel V3 regions, and creates semantic blocks in page coordinates. Sol retains content and HTML semantics; accepted matches select V3 contours or valid V3 rectangles. Pages remain in provider order even if requests finish in another order. A Sol blank page has no blocks; disagreeing V3 regions remain diagnostics. Invalid Sol schema output aborts the document rather than creating a partial normal result.
 4. `StructureBuilder` groups initial blocks, then `PdfConverter` runs processors sequentially. Sol refinement processors can add requests when `use_llm` is enabled. A final HTML sanitization pass covers processor output. The converter copies request usage onto the document.
 5. A renderer turns the final document into a requested conversion format. The CLI export path builds one document and derives multiple formats locally. Destination checks run before writing files, so an extraction failure or unsafe output target does not replace prior normal output.
 
@@ -40,11 +40,11 @@ Focused tests confirm one mandatory extraction per page, the model recorded in m
 
 ## Matching and saved identity
 
-Matching requires compatible classes and a mutual-best one-to-one match with IoU at least 0.5 and a 0.10 margin over the next candidate on both sides. Strong containment of at least 0.8 identifies ambiguous split/merge components, which retain Sol boxes without splitting text or averaging geometry. Ties are rejected. These are provisional policy thresholds, not verified accuracy guarantees; a visually wrong match can still pass them.
+Matching qualifies compatible class families at IoU >= 0.5, using concave V3 contours against Sol rectangles or AABBs when contours fail. Pairs sort by descending overlap, descending V3 confidence, raw region row, then Sol ordinal. Greedy assignment reserves each side once. A 0.10 ambiguity margin, 0.8 strong containment, and ties generate warnings; they do not veto a qualified best pair. Sol text is never divided between regions or fitted to averaged geometry. A merged Sol block can contain text beyond its assigned V3 footprint. These thresholds remain provisional; a visually wrong match can pass them.
 
-Only contiguous matched runs follow V3 order keys. Unmatched Sol blocks remain `sol_only` anchors, and ambiguous order keys retain Sol order. Unmatched V3 detections do not create content blocks or duplicate Markdown. Normal processors may still change geometry, order, or visibility afterward.
+All matched positions receive the globally sorted matched sequence, even across Sol-only blocks. Sorting uses raw order key, region row, then Sol ordinal; tied keys retain an uncertainty warning. Unmatched Sol blocks preserve relative order, with fallback placement. IDs stay stable. Unmatched V3 detections do not create content. Processors retain authoritative source footprints through assembly; final visible structure controls annotations, including header/footer settings.
 
-Saved GUI conversion identity includes source bytes, filename, options, and the pipeline fingerprint, including execution and fallback policies. Historical Sol-only results are not relabeled as current V3 conversions. A saved fallback result can be reused even after V3 becomes available; actual execution is recorded in page metadata. Explicit field-only retries use saved raw Markdown and chunks without conversion.
+Saved GUI conversion identity includes source bytes, filename, options, and the pipeline fingerprint. Local pipeline v4 fingerprints decode, guide, matching, order, source geometry, reporting, execution, and fallback policies. Historical Sol-only results are not relabeled as current V3 conversions. A saved fallback result can be reused even after V3 becomes available; actual execution is recorded separately in page metadata. Explicit field-only retries use saved raw Markdown and chunks without conversion.
 
 ## Related pages
 

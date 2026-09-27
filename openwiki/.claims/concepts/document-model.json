@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1dfada070ee01a149cc88a92804d11987a3b850da4c4ad067a5b2baa76d1ce5a",
+  "pageVersion": "sha256:c7ca5b61f97af952e521b3b4ae55e3c6a5e4ca8a835deac08111d4dd43bd5628",
   "claims": [
     {
       "id": "claim_35db54b622a746f997fde94ce187bb99",
@@ -12,7 +12,7 @@
         },
         {
           "resource": "repo://doclayout/schema/groups/page.py",
-          "version": "repo-file-v1:sha256:f400faceb33651b6cf2947eb17ddcd9809615057f039405971601f632d36fbb8"
+          "version": "repo-file-v1:sha256:29a656935fda9b4d7a5bb50f91499592257ffac5885fa71606e6c982a7d575c8"
         }
       ]
     },
@@ -22,7 +22,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/schema/blocks/base.py",
-          "version": "repo-file-v1:sha256:cb33df9936989459420068876752a297a8221ab498b3079d4f872eac805753aa"
+          "version": "repo-file-v1:sha256:db391a86166c93fecf85062683569cafb90f33155bb92d11ee51c46886d09830"
         },
         {
           "resource": "repo://doclayout/schema/document.py",
@@ -30,7 +30,7 @@
         },
         {
           "resource": "repo://doclayout/schema/groups/page.py",
-          "version": "repo-file-v1:sha256:f400faceb33651b6cf2947eb17ddcd9809615057f039405971601f632d36fbb8"
+          "version": "repo-file-v1:sha256:29a656935fda9b4d7a5bb50f91499592257ffac5885fa71606e6c982a7d575c8"
         }
       ]
     },
@@ -40,11 +40,11 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/document.py",
-          "version": "repo-file-v1:sha256:baa56b09bdc4c6a7a49af5dadce55c178b634caed78f2694f5ea278e603d9f33"
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
           "resource": "repo://doclayout/schema/blocks/base.py",
-          "version": "repo-file-v1:sha256:cb33df9936989459420068876752a297a8221ab498b3079d4f872eac805753aa"
+          "version": "repo-file-v1:sha256:db391a86166c93fecf85062683569cafb90f33155bb92d11ee51c46886d09830"
         }
       ]
     },
@@ -54,7 +54,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/builders/structure.py",
-          "version": "repo-file-v1:sha256:6a7a276ddcee07dd2a572d95d6fa70fb05531f9944ce3e037edbfb4d0f14748a"
+          "version": "repo-file-v1:sha256:4ba7b0b06264c354308c7b114d5f6bb7bebbf7cc7ff6151cdfe1796abddc5a07"
         },
         {
           "resource": "repo://tests/schema/groups/test_list_grouping.py",
@@ -96,17 +96,17 @@
       "evidence": [
         {
           "resource": "repo://doclayout/schema/layout.py",
-          "version": "repo-file-v1:sha256:ed283a6be905d33a55ed0876e0d0df9db905944be020b92f28d592c0a8244969"
+          "version": "repo-file-v1:sha256:47dc72b6888ae99edadc05b48c126b144fa3ed42be507f38e555359bc7ec1143"
         }
       ]
     },
     {
       "id": "claim_2cf2aad67bf94d33859fd7b9515b22a6",
-      "statement": "Reconciliation preserves Sol HTML and unmatched anchors, keeps unmatched V3 regions diagnostic, and exports final processed rectangular geometry rather than mask contours.",
+      "statement": "Reconciliation preserves Sol HTML, globally orders matched slots, retains unmatched Sol blocks and diagnostic-only V3 detections, and carries separate source contours into visible annotations while PolygonBox remains four-corner.",
       "evidence": [
         {
           "resource": "repo://doclayout/layout.py",
-          "version": "repo-file-v1:sha256:f90a8dfe71d1cc7dc623593cbcd4276a7c085ca0d54b120557108d9047f5c9f2"
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
         },
         {
           "resource": "repo://doclayout/schema/polygon.py",
@@ -114,13 +114,13 @@
         },
         {
           "resource": "repo://doclayout/ui/exports.py",
-          "version": "repo-file-v1:sha256:bbe1d08330fff184a460efefd463568776b4397856de81a11fb9d8976ce1c976"
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

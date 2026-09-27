@@ -28,6 +28,8 @@ sources:
     resource: repo://doclayout/settings.py
   - id: openwiki-source-4ed424df535efedbec384488
     resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
   - id: openwiki-source-e7faa3ddaca50993ae19c88a
     resource: repo://launch.cmd
   - id: openwiki-source-05ccef8d4cf1698187f20464
@@ -44,10 +46,10 @@ sources:
     resource: repo://tests/test_entrypoints.py
   - id: openwiki-source-97c2d91c6ec415fd43007ed6
     resource: repo://tests/test_fields.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:44:56.859Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:44:56.859Z
 ---
 
 # Quickstart
@@ -68,6 +70,14 @@ The process environment takes precedence over `.env` in the launch folder. Keep 
 The current checkout also includes the PP-DocLayoutV3 ONNX runtime. On first conversion it resolves and verifies pinned model files in `cache/pp-doclayoutv3`, then exercises CUDA or CPU. `auto` tries CUDA and falls back to a working CPU session; a layout engine failure continues with Sol and records that fallback. The GUI reports preparation, actual device, or fallback status. Sol still supplies the whole-page transcription, including content V3 misses; V3 is a layout prior, not OCR text. See [configuration](operations/configuration-and-testing.md) for device, cache, offline, and exact-directory settings.
 
 ## Convert and review
+
+The local unreleased `sol-layout-v3/v4` pipeline matches V3 mask-derived contours
+and relative order to Sol blocks. Sol keeps wording and HTML. Unmatched content
+survives; contour failures can use V3 rectangles. Annotations follow visible source
+geometry, while field review still uses rectangular block evidence. The
+[conversion workflow](workflows/document-conversion.md) explains assignment and
+ordering limits; the [export guide](outputs/rendering-and-exports.md) explains
+geometry counts and fallback overlays.
 
 ```powershell
 uv run doclayout input.pdf output --all
@@ -110,3 +120,4 @@ Default tests are offline and block unexpected OpenAI calls. Live integration te
 | Change output formats or persistence | [Rendering and exports](outputs/rendering-and-exports.md) |
 | Change routing, evidence, or retries | [Field extraction](workflows/field-extraction.md) |
 | Configure and test the checkout | [Configuration and testing](operations/configuration-and-testing.md) |
+| Check layout regression coverage and limits | [Layout regression evidence](testing/layout-regressions.md) |

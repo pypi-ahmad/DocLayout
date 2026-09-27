@@ -30,10 +30,10 @@ sources:
     resource: repo://tests/schema/groups/test_list_grouping.py
   - id: openwiki-source-97c2d91c6ec415fd43007ed6
     resource: repo://tests/test_fields.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # Document model and structure
@@ -48,7 +48,9 @@ Every block has a page identity, semantic type, polygon, optional child structur
 
 `Document.layout` records the pipeline manifest, raw V3 regions, and page runtime results separately from the Sol response schema. Regions retain class ID/label, score, page-image pixel rectangles, binary-mask RLE, and the model's order key. `observed_rank` is a derived stable sort, not another model prediction. `Block.layout` records matched, `sol_only`, or processor provenance and source footprints.
 
-Reconciliation transforms V3 pixels into page coordinates. It substitutes accepted V3 rectangles without replacing Sol HTML, and only sorts contiguous matched runs; unmatched Sol blocks remain anchors. Unmatched V3 detections stay diagnostic and do not become Markdown blocks. Later processors can merge geometry or change structure, so exports use the final processed graph. `PolygonBox` still requires four points: annotations use rectangular projections, not mask contours.
+Reconciliation transforms V3 rendered-image pixels into provider page coordinates, including nonzero page origins. Sol request coordinates use a 0-to-1000 frame. Accepted matches retain Sol HTML and semantic types, then use V3 contours or valid V3 rectangles. Matched positions are replaced by the globally V3-sorted sequence; Sol-only blocks retain their relative order and fallback placement. Unmatched V3 detections stay diagnostic and never become Markdown blocks.
+
+`PolygonBox` still requires four points. General contours are separate in layout metadata; JSON/chunk bounds remain rectangular envelopes. Processors retain source footprints rather than inventing a single contour for a merge. Annotations draw those footprints from the final visible graph, including cross-page sources. Old records without contours remain readable with their original provenance.
 
 Business authorization records are a different model. The GUI sends raw Markdown to field extraction, then saves field/evidence JSON in `FieldStore`'s SQLite tables. Those records do not add SQL columns or new block types to the conversion graph.
 

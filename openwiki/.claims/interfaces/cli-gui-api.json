@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0859e34dd4f814984c0f9ff8981cd39861aa8983c8b7fbd679f7ceba63225fe0",
+  "pageVersion": "sha256:51b90c2fe4c86ac2400faccb4777e890c56e278dd6abc4d63c8d4b257e02fdaf",
   "claims": [
     {
       "id": "claim_f28eea53d8a94c36bf9384b6899b7965",
@@ -12,7 +12,7 @@
         },
         {
           "resource": "repo://doclayout/scripts/convert.py",
-          "version": "repo-file-v1:sha256:3a6836198b985f629ac973ed9ef3f07885131e341a51c17d3993aab1e39b4ba1"
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
         },
         {
           "resource": "repo://doclayout/scripts/server.py",
@@ -20,7 +20,7 @@
         },
         {
           "resource": "repo://pyproject.toml",
-          "version": "repo-file-v1:sha256:b4a6af4de7bf6ee880ed277b9911f09562df1eac144eb4e8a7a20c86d060e255"
+          "version": "repo-file-v1:sha256:b023d2f84bb1816bbf2f808e861f69866dc3067ba5022f3c39981d4d547b62d2"
         }
       ]
     },
@@ -34,11 +34,11 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         },
         {
           "resource": "repo://tests/test_ui_browser.py",
-          "version": "repo-file-v1:sha256:aa53dc08a014ed1ad9592e8e9b7f8762d020829acf735bc5697af7df812c67b9"
+          "version": "repo-file-v1:sha256:1ac6808b72e5e215386b84410c3ebf9ec2aacfe7893dd52f79d7bfeb664e083f"
         }
       ]
     },
@@ -56,7 +56,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
@@ -130,7 +130,7 @@
       "evidence": [
         {
           "resource": "repo://doclayout/layout.py#L151-L183",
-          "version": "repo-lines-v1:sha256:8fc00bbedc9d9eba0a1718050d9a9f1275af79d0d71c8e717550ddd6903f0940:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlM2JjZGRmZjY4ZjU0YTA1YmE1YmFlNDQyZGMzOTQyMTQxZTRhMWY4YjZhMTRjZDc3ZDE1ZjJjZTY2NDI0MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMzEzODk0N2RiNGEyYTcwODAwM2M4NzBhZDcyMDE4MWU2YTk3YTdhOGMzNWFkZjA1MDdhYTkyOGI5MDg1M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3MGQ3ZDQ0NjUxYTY3MGUxNTQ3NmZiN2JlNWU1ZmFkZWQ4OGZlYjQ3ZWY5OGQyMmFhN2IwZTZmNGFhYmVhYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYmI2OTg2ZDg3YWQ4ODM4YjEzNGZkYmNhMTdiMDYwN2JhYWZmMTg2ODYwN2I3YzZkZTFiNzMxYjAyYTllNWMifQ"
+          "version": "repo-lines-v1:sha256:c9daf5e4fafff99776ea172278bc3a433a4b0eb3c72472860f6a1cff705617e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlM2JjZGRmZjY4ZjU0YTA1YmE1YmFlNDQyZGMzOTQyMTQxZTRhMWY4YjZhMTRjZDc3ZDE1ZjJjZTY2NDI0MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMzEzODk0N2RiNGEyYTcwODAwM2M4NzBhZDcyMDE4MWU2YTk3YTdhOGMzNWFkZjA1MDdhYTkyOGI5MDg1M2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3MGQ3ZDQ0NjUxYTY3MGUxNTQ3NmZiN2JlNWU1ZmFkZWQ4OGZlYjQ3ZWY5OGQyMmFhN2IwZTZmNGFhYmVhYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYmI2OTg2ZDg3YWQ4ODM4YjEzNGZkYmNhMTdiMDYwN2JhYWZmMTg2ODYwN2I3YzZkZTFiNzMxYjAyYTllNWMifQ"
         },
         {
           "resource": "repo://doclayout/scripts/server.py#L221-L235",
@@ -141,10 +141,28 @@
           "version": "repo-lines-v1:sha256:9f63164419e2b6d96388aa7e6dd3269aca2d58a4dc42a664648c81063009dd48:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxY2E3YWJiNzg3Mzc2NTY1ODQxNzRlNjcyMGIwYjk1MGU3NmU0ZDlkNjJlMjdhODJiYWNkY2I4NGViNTZkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4ZWQ2YjJhMDUxMzY3OTA0YjAyZDFjZDA0MDUxNTRmZmY1NjdlYzM4ZWZhYzM3OGNjYzllMDYxODdlY2ZhNzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwNzY1ZDZmODk5MWI0OGUzMTcyNDZjODlhNTllMTAwYzljNzlhOWM4OGQ2YzY1MDdjODgzNjdkNGUyNjZjMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YjJhZTEzYWE5ZTVmMWQzMmI5ZTYzYjQwMDA5YzU3ZDNjMmRmYmI2YTQ2OTAyZDhiN2FhYTU2NzA2NDMzYzgifQ"
         }
       ]
+    },
+    {
+      "id": "claim_861a241138904971b4098eced2872eac",
+      "statement": "Existing GUI/CLI summaries format saved provider, fallback and initial/final geometry diagnostics without hardware probes; page analysis timing includes waiting and in-call preparation.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/scripts/convert.py",
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L57-L59",
+          "version": "repo-lines-v1:sha256:dde181f89c551963c8e9a67e762f8a5820542589f66282617fdfac18ebd8fd8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjg2M2U4OGIyOTU2ZGM2MjgxMTllZDBhMTQ3NGRkN2YwZjJiNTFmODhiZDQ4MzAwOTE2MTQwM2JhYjg3ZmRkNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJiODkzZTFkNjI2YTI1OTViZmE3Yjc4NTQ3YmYyZDNjNWE2MTFmNjU0ZTMzNTUzMzU2ODc0YjY1NTlmYWNkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmVjYmNkZWQ0NTUyMTQ4NDI3NjM4Y2I2ZThmMWZiNjgzNWE5M2Q3NmQ3MDJmM2RmMjdmNDViYTMxOGVmZGFjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjFmMDk5ZWY2MDEwMTRjMDM1Nzk5M2I4M2YwOGRhODZkZjY5MWJlMjJhNDRmMjkzZjVhOGMzZjQzMzdlZTNiNyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

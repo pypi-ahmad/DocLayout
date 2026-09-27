@@ -18,14 +18,16 @@ sources:
     resource: repo://doclayout/scripts/app_pages/review.py
   - id: openwiki-source-4ed424df535efedbec384488
     resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
   - id: openwiki-source-51b6aa7d36018bd3566db002
     resource: repo://tests/test_field_summary.py
   - id: openwiki-source-97c2d91c6ec415fd43007ed6
     resource: repo://tests/test_fields.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # Classification, fields, and review
@@ -57,6 +59,11 @@ The GUI processes at most three files concurrently and isolates failures per fil
 New conversions may supply V3-selected geometry or recorded Sol fallback geometry; the field request still receives only raw Markdown. A successful Sol fallback conversion can proceed to fields normally. Field-only retry never prepares V3, downloads weights, or reconverts the PDF. Local grounding refuses a single-page location for a block whose layout lineage spans multiple source pages, leaving it for review rather than inventing coordinates.
 
 ## Related pages
+
+Conversion metadata can retain several source contours for a processed block.
+Field evidence still uses the existing rectangular chunk envelope and provider
+page bounds. It does not send contours to the field model or claim word-level
+locations. Conversion annotation overlays are separate from field-review highlights.
 
 - [Document conversion](document-conversion.md)
 - [Interfaces](../interfaces/cli-gui-api.md)

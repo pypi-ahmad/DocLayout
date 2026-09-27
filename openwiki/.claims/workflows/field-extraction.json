@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:42e00f7edd694f538e361c6002803d039ab37a2a040edfb4565e2b6ae954f11f",
+  "pageVersion": "sha256:946f15e208df3b084ded647005f440d54532128f6a080e994bee5b6458ed8b27",
   "claims": [
     {
       "id": "claim_d0f8ff328f2e4165a1445dbe92f4aab5",
@@ -16,7 +16,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     },
@@ -76,7 +76,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         },
         {
           "resource": "repo://tests/test_fields.py",
@@ -94,7 +94,7 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py",
-          "version": "repo-file-v1:sha256:576997aef52ba9d34cf6e0675fbeb4e8aa71fbf29f2c65e55c17f680bfb9ed56"
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         },
         {
           "resource": "repo://tests/test_field_summary.py",
@@ -144,13 +144,27 @@
         },
         {
           "resource": "repo://doclayout/ui/batch.py#L252-L289",
-          "version": "repo-lines-v1:sha256:bca70d67fce3e60e6b213e18fa225cea40b3b4b8be7b104cd618941c6bf66776:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZWZmMzYwYTkxZDhkNzUwMTA5NDZmNjM5ZTFhNjEwYmMzYTMyZDk1NTc2OTRmNWMxOGMzOWUxMTkxZjJjOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5YzA3ZDNkOTM0ZmE2YjFhYjkzYjRjNWFlYzdlNWI3ODMwYTQyMTM2ZTVmYmE3MDJhZDg0Zjc5MzFlYWNkYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYjJlMjU2YzQ0Mzk4NDhmMzk0YTNhN2EyNzY0YWU2NWIxZDYzNTUyODgyNmJkMTEwZTkyZjU5OTdjYmU1ZjAifQ"
+          "version": "repo-lines-v1:sha256:ca1c88b8be0831b6b37e95db0a39825c23b6252aa8f7b6c46ba8d84d17a7533e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZWZmMzYwYTkxZDhkNzUwMTA5NDZmNjM5ZTFhNjEwYmMzYTMyZDk1NTc2OTRmNWMxOGMzOWUxMTkxZjJjOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5YzA3ZDNkOTM0ZmE2YjFhYjkzYjRjNWFlYzdlNWI3ODMwYTQyMTM2ZTVmYmE3MDJhZDg0Zjc5MzFlYWNkYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYjJlMjU2YzQ0Mzk4NDhmMzk0YTNhN2EyNzY0YWU2NWIxZDYzNTUyODgyNmJkMTEwZTkyZjU5OTdjYmU1ZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7dc6bca5a0a44f759f4b666dbb6ce2cb",
+      "statement": "Field grounding continues to use rectangular chunk envelopes and page bounds, independently of conversion source contours and annotation overlays.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py#L308-L352",
+          "version": "repo-lines-v1:sha256:723d51cc5c625a0a99d2222c16991835691a08cd288d1f3e056d46075416079b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlNWVjODYzNzRjZGQwMDk5MDYzZWVmZjI2NmIxNTBjZTQ4YTQ4Y2VkODZhYTg4YmQ4ODcxZDEyZTQ3MTlkNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZmUzZDIxMmIyZmZhYjE5YTdjY2ZhOWM1MDM5NGIxOWUyYzA5YTk2ZDZiNTE3OTQ0MTc5MjJmYzI0ZjdjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZGI5NjBkM2U2ZWJmMjM4MzM2YmNkYTE1ZjZlN2RjZjZhMjQwMGI1ZjdiYmQ5YjE3M2RmMmIzMDQyNTk3MDIifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:40:37.445Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

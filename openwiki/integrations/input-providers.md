@@ -6,6 +6,8 @@ tags: [providers, pdf, images, normalization]
 sources:
   - id: openwiki-source-5dcb620e5737ce6818a4678d
     resource: repo://doclayout/builders/document.py
+  - id: openwiki-source-85776b268dd7f1ddad4fc925
+    resource: repo://doclayout/layout_geometry.py
   - id: openwiki-source-c0def149d0f62564f4806923
     resource: repo://doclayout/providers/converted.py
   - id: openwiki-source-de7b9fa19ea13aa3e3f3869f
@@ -14,14 +16,16 @@ sources:
     resource: repo://doclayout/providers/pdf.py
   - id: openwiki-source-4c3a42078ee20de7168b9f84
     resource: repo://doclayout/providers/registry.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
   - id: openwiki-source-6188cdfc089804761aa67459
     resource: repo://tests/providers/test_document_providers.py
   - id: openwiki-source-aa58b2614cdad072afd30d5c
     resource: repo://tests/providers/test_pdf_provider.py
-generated: { by: "codex", at: "2026-09-26T10:40:37.445Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
 verified:
   - by: openwiki/0.6.0
-    at: 2026-09-26T10:40:37.445Z
+    at: 2026-09-27T09:39:18.635Z
 ---
 
 # Input providers and normalization
@@ -37,6 +41,13 @@ Optional document formats normalize to temporary PDFs before using the PDF provi
 Provider rendering stays on the calling thread within `DocumentBuilder`. Each worker analyzes the rendered image with V3, then sends that same whole-page image to Sol; layout failure removes the prior, not the Sol request. Conversion may use multiple page requests concurrently, but PDFium access remains serialized. The page owns the rendered image on success. On failure, the builder waits for workers before closing all images it rendered.
 
 ## Related pages
+
+Geometry conversion uses the rendered page's top-left frame. For an image of
+width `W` and height `H`, request coordinates are `1000*x/W`, `1000*y/H`.
+Provider coordinates add the page origin and scale each axis independently.
+PDF rotation is already reflected in rendering and page size; no second rotation
+is applied. Source contours remain in provider coordinates until annotation
+maps them back to image pixels.
 
 - [Document conversion](../workflows/document-conversion.md)
 - [Configuration and testing](../operations/configuration-and-testing.md)
