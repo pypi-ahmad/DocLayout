@@ -1,10 +1,10 @@
 # Markdown field extraction and review
 
-After conversion, the local GUI extracts authorization fields from the completed
-Markdown. This does not change conversion internals, prompts, models, the CLI, or
-the HTTP API. The CLI, Python converter, and HTTP endpoints do not run this field
-workflow automatically. Its model settings are separate from Sol page conversion
-and Luna chat.
+The local GUI extracts authorization fields from completed Markdown after
+conversion. This separate workflow leaves conversion internals, prompts,
+models, the CLI, and the HTTP API unchanged. The CLI, Python converter, and
+HTTP endpoints do not start field extraction automatically. Its model settings
+are separate from Sol page conversion and Luna chat.
 
 ## Use the GUI
 
@@ -132,8 +132,7 @@ is not automatically replaced when the local engine becomes available.
 Matched conversion blocks now retain V3 contours and source lineage. Field review
 still highlights rectangular block evidence; it does not infer field contours from
 the masks. A processor assembly can have several source footprints, and ambiguous
-cross-page evidence remains a review issue. Conversion overlays and field-evidence
-highlights serve different purposes. See [source geometry](architecture.md) for
+cross-page evidence remains a review issue. See [source geometry](architecture.md) for
 the conversion path and [layout diagnostics](usage.md) for saved provenance.
 
 | Status | Meaning |

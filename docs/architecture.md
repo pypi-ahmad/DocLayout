@@ -25,7 +25,7 @@ the Export control is partly clipped at 1440 px despite passing automated
 containment checks. The diagram remains readable.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. Its existing composition still leaves excess right-side whitespace.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports.
 - [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and an independent approval request.
 - [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
@@ -77,9 +77,10 @@ processed structure rather than the initial detection list.
 ## Rendering and output ownership
 
 The GUI builds one document, then renders Markdown, hierarchical JSON, and flat
-chunks from it. Local code generates styled HTML from the resulting Markdown,
-draws authoritative source contours/rectangles on copies of source images, creates a raster PDF, and
-assembles the ZIP. These operations do not call a model.
+chunks from it. Local code generates styled HTML from the resulting Markdown.
+It also draws authoritative source contours or rectangles on copies of source
+images, creates a raster PDF, and assembles the ZIP. These operations do not
+call a model.
 
 The file command builds one document and uses the same Markdown-to-HTML,
 annotation, and ZIP helpers as the GUI. It renders the selected representations
