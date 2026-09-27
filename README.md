@@ -33,7 +33,7 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 The generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
 [system architecture](docs/diagrams/doclayout-architecture.html) are historical
 snapshots. The [layout integration record](docs/layout-v3-plan.md) describes the
-local unreleased contour integration, pipeline v4 diagnostics, and validation limits.
+v3.1.0 contour integration, pipeline v4 diagnostics, and validation limits.
 In the GUI, authorization-field
 extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
 The CLI and HTTP API remain conversion-only. See the [architecture guide](docs/architecture.md)
@@ -42,10 +42,10 @@ for the complete workflow, including optional classification.
 ## Installation
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
-needed for GitHub-source installs. DocLayout v3.0.0 requires Python `>=3.11,<4`;
+needed for GitHub-source installs. DocLayout v3.1.0 requires Python `>=3.11,<4`;
 Windows checks use Python 3.14. PyPI publication is deferred. The Git commands
-below install the current `main` branch. The release wheel installs `v3.0.0`;
-see its [release notes](CHANGELOG.md#300-2026-09-26).
+below install the current `main` branch. The release wheel installs `v3.1.0`;
+see its [release notes](CHANGELOG.md#310-2026-09-27).
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -102,16 +102,16 @@ uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git
 python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
 ```
 
-The `v3.0.0` release wheel avoids the Git requirement. Either installer can use
+The `v3.1.0` release wheel avoids the Git requirement. Either installer can use
 this URL:
 
 ```powershell
-uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v3.0.0/doclayout-3.0.0-py3-none-any.whl"
+uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v3.1.0/doclayout-3.1.0-py3-none-any.whl"
 ```
 
 The wheel command above installs the base CLI. To add extras to a downloaded
 wheel, use its local path, for example
-`uv pip install ".\doclayout-3.0.0-py3-none-any.whl[gui]"`.
+`uv pip install ".\doclayout-3.1.0-py3-none-any.whl[gui]"`.
 
 | Installation | Includes |
 | --- | --- |
