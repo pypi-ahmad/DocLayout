@@ -2,11 +2,11 @@
   "schema_version": 1,
   "diagram_type": "lifecycle",
   "meta": {
-    "title": "DocLayout conversion lifecycle",
+    "title": "DocLayout lifecycle",
     "quality_profile": "showcase",
     "viewBox": [
       980,
-      566
+      600
     ],
     "views": [
       {
@@ -89,7 +89,7 @@
       "id": "ready",
       "type": "success",
       "label": "Ready",
-      "sublabel": "matched + processed",
+      "sublabel": "processed pages",
       "lane": "main",
       "col": 4,
       "step": "05",

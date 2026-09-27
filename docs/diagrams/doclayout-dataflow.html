@@ -5049,13 +5049,13 @@
         <path data-edge-from="inputs" data-edge-to="provider" data-edge-label="document bytes" data-edge-key="0" data-edge-id="doc-bytes" data-composition-points="100,300;100,300;100,356;100,356" d="M 100 300 L 100 300 L 100 356 L 100 356" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="provider" data-edge-to="sol_extract" data-edge-label="image + prior" data-edge-key="1" data-edge-id="rendered-pages" data-composition-points="156,385;207.5,385;207.5,271;259,271" d="M 156 385 L 207.5 385 L 207.5 271 L 259 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <path data-edge-from="sol_extract" data-edge-to="validator" data-edge-label="ordered blocks" data-edge-key="2" data-edge-id="raw-blocks" data-composition-points="315,300;315,300;315,356;315,356" d="M 315 300 L 315 300 L 315 356 L 315 356" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="validator" data-edge-to="processors" data-edge-label="sanitized blocks" data-edge-key="3" data-edge-id="sanitized-blocks" data-composition-points="371,385;422.5,385;422.5,271;474,271" d="M 371 385 L 422.5 385 L 422.5 271 L 474 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="validator" data-edge-to="processors" data-edge-label="matched blocks" data-edge-key="3" data-edge-id="sanitized-blocks" data-composition-points="371,385;422.5,385;422.5,271;474,271" d="M 371 385 L 422.5 385 L 422.5 271 L 474 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <path data-edge-from="processors" data-edge-to="sol_refine" data-edge-label="refinement request" data-edge-key="4" data-edge-id="refine-req" data-composition-points="530,300;530,300;530,356;530,356" d="M 530 300 L 530 300 L 530 356 L 530 356" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <path data-edge-from="processors" data-edge-to="doc_model" data-edge-label="document tree" data-edge-key="5" data-edge-id="doc-tree" data-composition-points="586,271;689,271" d="M 586 271 L 689 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <path data-edge-from="sol_refine" data-edge-to="doc_model" data-edge-label="refined blocks" data-edge-key="6" data-edge-id="refined-tree" data-composition-points="586,385;637.5,385;637.5,271;689,271" d="M 586 385 L 637.5 385 L 637.5 271 L 689 271" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <path data-edge-from="doc_model" data-edge-to="renderers" data-edge-label="in-memory document" data-edge-key="7" data-edge-id="doc-model-out" data-composition-points="801,271;852.5,271;852.5,157;904,157" d="M 801 271 L 852.5 271 L 852.5 157 L 904 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="renderers" data-edge-to="gui_export" data-edge-label="rendered formats" data-edge-key="8" data-edge-id="rendered-output" data-composition-points="960,186;960,186;960,242;960,242" d="M 960 186 L 960 186 L 960 242 L 960 242" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="doc_model" data-edge-to="page_text" data-edge-label="normalized text" data-edge-key="9" data-edge-id="extract-page-text" data-composition-points="745,300;745,300;745,455;745,455" d="M 745 300 L 745 300 L 745 455 L 745 455" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="doc_model" data-edge-to="page_text" data-edge-label="page text" data-edge-key="9" data-edge-id="extract-page-text" data-composition-points="745,300;745,300;745,455;745,455" d="M 745 300 L 745 300 L 745 455 L 745 455" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="page_text" data-edge-to="luna_draft" data-edge-label="page context" data-edge-key="10" data-edge-id="chat-context" data-composition-points="801,484;852.5,484;852.5,385;904,385" d="M 801 484 L 852.5 484 L 852.5 385 L 904 385" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="luna_draft" data-edge-to="quote_verify" data-edge-label="draft quotes" data-edge-key="11" data-edge-id="draft-answer" data-composition-points="960,414;960,414;960,455;960,455" d="M 960 414 L 960 414 L 960 455 L 960 455" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
 
@@ -5097,8 +5097,8 @@
         <text data-detail="fine" x="315" y="289" class="t-cloud" font-size="7" text-anchor="middle">3 concurrent max</text>
         </g>
 
-        <g id="node-validator" data-node-id="validator" data-node-label="Block Validator" tabindex="0" role="button" aria-label="Focus Block Validator, sanitize + match V3, 02 / Extract" aria-pressed="false" data-node-kind="security" data-node-sublabel="sanitize + match V3" data-node-tag="Pydantic" data-node-context="02 / Extract">
-          <title>Block Validator · sanitize + match V3 · 02 / Extract · Pydantic</title>
+        <g id="node-validator" data-node-id="validator" data-node-label="Block Validator" tabindex="0" role="button" aria-label="Focus Block Validator, schema + V3 match, 02 / Extract" aria-pressed="false" data-node-kind="security" data-node-sublabel="schema + V3 match" data-node-tag="Pydantic" data-node-context="02 / Extract">
+          <title>Block Validator · schema + V3 match · 02 / Extract · Pydantic</title>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(265 362) scale(0.6875)">
@@ -5106,7 +5106,7 @@
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Block Validator</text>
-          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">sanitize + match V3</text>
+          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">schema + V3 match</text>
         <text data-detail="fine" x="315" y="403" class="t-security" font-size="7" text-anchor="middle">Pydantic</text>
         </g>
 
@@ -5146,8 +5146,8 @@
         <text data-detail="fine" x="745" y="289" class="t-database" font-size="7" text-anchor="middle">in-memory</text>
         </g>
 
-        <g id="node-page_text" data-node-id="page_text" data-node-label="Parsed Page Text" tabindex="0" role="button" aria-label="Focus Parsed Page Text, normalized quotes, 04 / Model" aria-pressed="false" data-node-kind="database" data-node-sublabel="normalized quotes" data-node-context="04 / Model">
-          <title>Parsed Page Text · normalized quotes · 04 / Model</title>
+        <g id="node-page_text" data-node-id="page_text" data-node-label="Parsed Page Text" tabindex="0" role="button" aria-label="Focus Parsed Page Text, parsed page text, 04 / Model" aria-pressed="false" data-node-kind="database" data-node-sublabel="parsed page text" data-node-context="04 / Model">
+          <title>Parsed Page Text · parsed page text · 04 / Model</title>
           <rect x="689" y="455" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="689" y="455" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(695 461) scale(0.6875)">
@@ -5155,7 +5155,7 @@
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="745" y="476" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Parsed Page Text</text>
-          <text data-detail="context" x="745" y="492" class="t-muted" font-size="7" text-anchor="middle">normalized quotes</text>
+          <text data-detail="context" x="745" y="492" class="t-muted" font-size="7" text-anchor="middle">parsed page text</text>
         </g>
 
         <g id="node-renderers" data-node-id="renderers" data-node-label="Local Renderers" tabindex="0" role="button" aria-label="Focus Local Renderers, Markdown &amp; chunks, 05 / Deliver &amp; Verify" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Markdown &amp; chunks" data-node-context="05 / Deliver &amp; Verify">
@@ -5223,9 +5223,9 @@
           <text x="315" y="342" class="t-backend" font-size="8" text-anchor="middle">ordered blocks</text>
         <text data-detail="fine" x="315" y="353" class="t-dim" font-size="7" text-anchor="middle">raw model output</text>
         </g>
-        <g data-detail="context" data-edge-from="validator" data-edge-to="processors" data-edge-label="sanitized blocks" data-edge-key="3" data-edge-id="sanitized-blocks">
+        <g data-detail="context" data-edge-from="validator" data-edge-to="processors" data-edge-label="matched blocks" data-edge-key="3" data-edge-id="sanitized-blocks">
           <rect x="377.3" y="307" width="90.4" height="27" rx="4" class="c-mask"/>
-          <text x="422.5" y="318" class="t-backend" font-size="8" text-anchor="middle">sanitized blocks</text>
+          <text x="422.5" y="318" class="t-backend" font-size="8" text-anchor="middle">matched blocks</text>
         <text data-detail="fine" x="422.5" y="329" class="t-dim" font-size="7" text-anchor="middle">validated blocks</text>
         </g>
         <g data-detail="context" data-edge-from="processors" data-edge-to="sol_refine" data-edge-label="refinement request" data-edge-key="4" data-edge-id="refine-req">
@@ -5253,9 +5253,9 @@
           <text x="960" y="204" class="t-muted" font-size="8" text-anchor="middle">rendered formats</text>
         <text data-detail="fine" x="960" y="215" class="t-dim" font-size="7" text-anchor="middle">exports</text>
         </g>
-        <g data-detail="context" data-edge-from="doc_model" data-edge-to="page_text" data-edge-label="normalized text" data-edge-key="9" data-edge-id="extract-page-text">
-          <rect x="702.25" y="356.5" width="85.5" height="27" rx="4" class="c-mask"/>
-          <text x="745" y="367.5" class="t-muted" font-size="8" text-anchor="middle">normalized text</text>
+        <g data-detail="context" data-edge-from="doc_model" data-edge-to="page_text" data-edge-label="page text" data-edge-key="9" data-edge-id="extract-page-text">
+          <rect x="716.95" y="356.5" width="56.1" height="27" rx="4" class="c-mask"/>
+          <text x="745" y="367.5" class="t-muted" font-size="8" text-anchor="middle">page text</text>
         <text data-detail="fine" x="745" y="378.5" class="t-dim" font-size="7" text-anchor="middle">page text</text>
         </g>
         <g data-detail="context" data-edge-from="page_text" data-edge-to="luna_draft" data-edge-label="page context" data-edge-key="10" data-edge-id="chat-context">

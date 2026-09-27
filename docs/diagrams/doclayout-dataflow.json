@@ -66,7 +66,7 @@
       "id": "validator",
       "type": "security",
       "label": "Block Validator",
-      "sublabel": "sanitize + match V3",
+      "sublabel": "schema + V3 match",
       "stage": 1,
       "row": 2,
       "tag": "Pydantic"
@@ -101,7 +101,7 @@
       "id": "page_text",
       "type": "database",
       "label": "Parsed Page Text",
-      "sublabel": "normalized quotes",
+      "sublabel": "parsed page text",
       "stage": 3,
       "row": 3,
       "yOffset": -15
@@ -170,7 +170,7 @@
       "id": "sanitized-blocks",
       "from": "validator",
       "to": "processors",
-      "label": "sanitized blocks",
+      "label": "matched blocks",
       "classification": "validated blocks",
       "variant": "emphasis"
     },
@@ -220,7 +220,7 @@
       "id": "extract-page-text",
       "from": "doc_model",
       "to": "page_text",
-      "label": "normalized text",
+      "label": "page text",
       "classification": "page text",
       "variant": "default"
     },

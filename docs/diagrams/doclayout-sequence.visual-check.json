@@ -5,9 +5,9 @@
   "status": "pass",
   "visualReview": "pending",
   "artifact": {
-    "path": "D:\\HCSC\\DocLayout\\docs\\diagrams\\doclayout-sequence.html",
-    "sha256": "253ee24894963a4472e42719ea02100c8940ad2f990abd3084c60580aff49fbd",
-    "bytes": 723849
+    "path": "D:\\AI\\DocLayout\\docs\\diagrams\\doclayout-sequence.html",
+    "sha256": "5f5d284498849407f7dd7f7efe181990f827b5d592886cdeb56acabfc8f2170a",
+    "bytes": 723802
   },
   "state": {
     "detail": "read",
