@@ -1,3 +1,3 @@
 # Files
 
-- [System Overview](system-overview.md) - How DocLayout turns supported source files into a structured document and multiple export formats, including the ownership and lifecycle of each runtime component.
+- [System overview](system-overview.md) - How DocLayout renders inputs, uses local layout guidance and Sol extraction, then builds and exports a document.

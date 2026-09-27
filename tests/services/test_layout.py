@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
+from doclayout.schema.geometry import rectangle_contour
 from doclayout.services import layout
 
 
@@ -45,6 +46,7 @@ def clean_runtime_registry():
 @pytest.fixture
 def runtime(monkeypatch, tmp_path):
     """Replace only external dependencies; exercise the real cache/state logic."""
+    monkeypatch.setattr(layout, "_observe_native_decoder", Mock())
     cache = tmp_path / "layout"
     snapshot = cache / "hub" / "snapshots" / layout.MODEL_REVISION
     snapshot.mkdir(parents=True)
@@ -127,7 +129,7 @@ def test_lazy_cached_session_and_actual_device(runtime, device):
     for call in model.predict.call_args_list:
         assert call.kwargs == {
             "batch_size": 1,
-            "layout_shape_mode": "rect",
+            "layout_shape_mode": "poly",
             "skip_order_labels": [],
         }
     page = model.predict.call_args.args[0]
@@ -435,6 +437,8 @@ def box(class_id=22, order=1, rectangle=(10, 20, 120, 100)):
         "score": np.float32(0.75),
         "coordinate": rectangle,
         "order": np.int64(order),
+        "polygon_points": rectangle_contour(rectangle),
+        "geometry_source": "rectangle_fallback",
     }
 
 
@@ -503,7 +507,7 @@ def test_invalid_output_does_not_trigger_cpu_retry(runtime, output):
     model = fake_model(layout.CUDA_PROVIDER)
     model.predict.return_value = output
     runtime.factory.side_effect = [model]
-    with pytest.raises(layout.LayoutInferenceError, match="rectangle-mode result"):
+    with pytest.raises(layout.LayoutInferenceError, match="contour-mode result"):
         service(runtime, "auto").predict(runtime.image)
     runtime.factory.assert_called_once()
 

@@ -2,10 +2,12 @@
 from pydantic import BaseModel
 
 from doclayout.renderers import BaseRenderer
+from doclayout.schema.geometry import LayoutGeometry
 from doclayout.schema.layout import visible_source_blocks
 
 
 class OCRJSONLineOutput(BaseModel):
+    layout_geometry: LayoutGeometry | None = None
     id: str
     block_type: str
     html: str
@@ -41,6 +43,7 @@ class OCRJSONRenderer(BaseRenderer):
                         block_type=str(block.block_type),
                         html=getattr(block, "html", "") or "",
                         polygon=block.polygon.polygon,
+                        layout_geometry=block.layout_geometry,
                         bbox=block.polygon.bbox,
                     )
                 )

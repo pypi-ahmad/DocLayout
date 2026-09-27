@@ -19,9 +19,11 @@ This makes billable API requests through the configured
 worker and no extra refinement by default. Add `--use-llm` for refinement or
 `--workers` for more processes. The model is fixed to gpt-6-sol. `--raw`
 disables olmOCR output normalization.
-The harness uses `PdfConverter`, so each page attempts V3 guidance. An absent
-matching policy retains Sol geometry/order; V3 runtime failure also retains Sol
-extraction. Such fallback is a successful conversion, not a benchmark failure.
+The harness uses `PdfConverter`, so each page requires V3 guidance by default.
+An absent matching policy retains Sol geometry/order after successful V3
+inference. A V3 runtime failure fails that conversion unless the operator sets
+`DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`. With that setting, successful
+whole-page Sol fallback is recorded as a conversion, not a V3-assisted result.
 Keep the runtime warnings when evaluating results: `latency.jsonl` does not store
 V3 provider or alignment diagnostics. Use a normal JSON/metadata export when
 those details are needed.

@@ -1,3 +1,3 @@
 # Files
 
-- [CLI, GUI, and API Interfaces](cli-gui-api.md) - The responsibilities, state, lifecycle, and output behavior of DocLayout's command-line, Streamlit, and FastAPI entrypoints.
+- [CLI, GUI, and HTTP API](cli-gui-api.md) - User entrypoints, export choices, operator layout controls, and conversion error surfaces.

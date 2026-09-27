@@ -10,7 +10,8 @@ flowchart TD
     B --> C[Render selected pages at 192 DPI]
     C --> V[Attempt local PP-DocLayoutV3]
     V -->|Success: image and given_layout| D[GPT-6 Sol: transcribe visible content]
-    V -->|Runtime failure: image only| D
+    V -->|Runtime failure with operator fallback: image only| D
+    V -->|Runtime failure by default| X[Abort conversion]
     D --> E[Validate ExtractedPage and align blocks]
     E --> F[Page structure and protected document processors]
     F --> G[Optional HTML refinement with layout invariants]
@@ -30,15 +31,16 @@ flowchart TD
 Open these standalone HTML diagrams of the architecture and workflows:
 
 - [System architecture](diagrams/doclayout-architecture.html): Local V3, external Sol, alignment, processing, and output boundaries.
-- [Conversion workflow](diagrams/doclayout-workflow.html): Page rendering, optional V3 guidance, Sol fallback, validation, and exports.
+- [Conversion workflow](diagrams/doclayout-workflow.html): Page rendering, required V3 guidance, opt-in Sol fallback, validation, and exports.
 - [Chat verification sequence](diagrams/doclayout-sequence.html): Luna draft, local quote checks, and independent verification.
 - [Data flow](diagrams/doclayout-dataflow.html): Page images, region data, validated content, and local exports.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html): Model preparation, page extraction, fallback, completion, and fatal errors.
 
-All five pass Archify's showcase checks and fit the checked desktop viewports
-from 1440×900 through 2048×1320 without page scrolling. The diagrams reflect
-the current code and tests; the [dated validation notes](gpt6-validation.md#documentation-sync-2026-09-26)
-record earlier diagram revisions.
+The four refreshed conversion diagrams passed automated showcase and viewport
+containment checks at 1440×900 through 2048×1320. Their 1440×900 light-theme
+captures were inspected. The [dated validation notes](gpt6-validation.md#documentation-sync-2026-09-26)
+record limits on earlier revisions; the unchanged chat sequence was not
+rechecked in this pass.
 
 ## Extraction
 
@@ -50,7 +52,8 @@ The document builder renders each selected page at 192 DPI by default. PDFium
 renders pages one at a time. The same whole-page image first attempts
 PP-DocLayoutV3 using PaddleOCR's ONNX Runtime engine, batch size 1. Sol receives
 the image and a bounded `given_layout` guide (512 regions, 64 KiB maximum).
-If V3 cannot run, the request contains the full image and no guide.
+If V3 cannot run, conversion aborts by default. With the explicit operator
+fallback setting, Sol instead receives the full image without a guide.
 A limited thread pool sends page images for extraction;
 the shared Sol service permits at most three concurrent requests per process.
 Every selected page goes through image extraction, including pages with embedded
@@ -60,7 +63,7 @@ Sol transcribes content and returns blocks with type, HTML, and estimated bounds
 to 0 to 1000. Pydantic validation rejects invalid geometry and inconsistent blank
 pages. Deterministic alignment converts both coordinate systems into page space
 before creating blocks. Confident one-to-one matches keep Sol HTML/type and use
-V3 rectangles and order in `page.structure`. Ambiguous splits/merges retain Sol
+V3 bbox envelopes, separate native contours/provenance, and order in `page.structure`. Ambiguous splits/merges retain Sol
 content and boxes; unmatched V3 regions remain diagnostics, not empty blocks.
 With no evaluated matching policy, alignment instead preserves all validated Sol
 blocks and their order/geometry, while retaining the available V3 guide and
@@ -70,7 +73,8 @@ Structure groups retain member order and use union boxes. Invariant checks after
 processors protect source IDs, types, geometry, and order; destructive table
 merging is skipped. Page correction may edit validated HTML only. Invalid replies
 are ignored atomically and recorded; a layout invariant violation aborts conversion.
-A V3 runtime failure sends the full image to Sol without a guide and preserves
+By default a V3 runtime failure aborts. With explicit operator Sol fallback enabled,
+it sends the full image to Sol without a guide and preserves
 validated Sol geometry/order with `sol_fallback` diagnostics. A successful empty
 V3 result remains distinct from a failed detector. Sol extraction, configuration,
 guide-limit, and downstream block-integrity failures still abort the document.
@@ -81,8 +85,9 @@ client. Services with identical device/cache settings share one locked runtime.
 uses that same session. CPU never probes CUDA; auto mode falls back to CPU and
 stays there after a CUDA failure; explicit CUDA fails instead. Startup failures
 remain cached until process restart. Base imports do not require the layout extra.
-These errors are raised by the standalone service and handled as Sol fallback by
-conversion. No runtime path loads Transformers or safetensors weights.
+These errors are raised by the standalone service; conversion permits Sol fallback
+only with `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`. No runtime path loads
+Transformers or safetensors weights.
 
 `PdfConverter` groups the aligned source blocks with `StructureBuilder` before
 running processors. `OCRConverter` uses the same rendering, extraction, and

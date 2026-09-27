@@ -1,7 +1,6 @@
 """Local PP-DocLayoutV3 inference for conversion layout guidance.
 
-PaddleOCR owns preprocessing and decoding. The selected rectangle interface does
-not expose masks or native polygons. Dependencies load on first prepare/predict.
+PaddleOCR owns preprocessing and contour decoding. Dependencies load lazily.
 """
 
 from __future__ import annotations
@@ -11,7 +10,9 @@ import logging
 import math
 import os
 import sys
+import types
 from dataclasses import dataclass, field
+from importlib.metadata import version
 from numbers import Integral
 from pathlib import Path
 from threading import Lock
@@ -21,6 +22,7 @@ from typing import Any, Literal
 import numpy as np
 from PIL import Image
 
+from doclayout.schema.geometry import Contour, GeometrySource, validate_contour
 from doclayout.schema.polygon import PolygonBox
 
 MODEL_ID = "PaddlePaddle/PP-DocLayoutV3_onnx"
@@ -75,7 +77,15 @@ class LayoutDeviceError(LayoutError):
 
 
 class LayoutInferenceError(LayoutError):
-    """Inference failed or returned an invalid rectangle-mode result."""
+    """Inference failed or returned an invalid result."""
+
+
+class LayoutCapabilityError(LayoutInferenceError):
+    """The pinned native segmentation decoding contract is unavailable."""
+
+
+class LayoutGeometryError(LayoutInferenceError):
+    """The runtime returned malformed contour geometry."""
 
 
 LAYOUT_RUNTIME_ERRORS = (
@@ -103,6 +113,8 @@ def layout_error_message(error: LayoutError) -> str:
         LayoutPromptLimitError: "The complete page layout exceeds the 512-region or 64-KiB guide limit.",
         LayoutInvariantError: "A processor attempted to change protected layout; check processor configuration.",
         LayoutInferenceError: "Layout inference failed or returned invalid regions; check the local runtime.",
+        LayoutCapabilityError: "The pinned runtime must expose native segmentation and contour decoding.",
+        LayoutGeometryError: "The native decoder returned malformed geometry; check the layout runtime.",
     }
     return "Layout conversion failed. " + messages.get(
         type(error), "Check the local layout runtime."
@@ -116,6 +128,8 @@ class LayoutRegion:
     score: float
     bbox: tuple[float, float, float, float]
     order_index: int
+    contour: Contour
+    geometry_source: GeometrySource
 
     def as_polygon_box(self) -> PolygonBox:
         """Derive four rectangle corners, not a model segmentation polygon."""
@@ -219,8 +233,107 @@ def _model_directory(cache_dir: Path, download: Any) -> Path:
 
 def _invoke(model: Any, image: np.ndarray) -> Any:
     return model.predict(
-        image, batch_size=1, layout_shape_mode="rect", skip_order_labels=[]
+        image, batch_size=1, layout_shape_mode="poly", skip_order_labels=[]
     )
+
+
+def _observe_native_decoder(model: Any) -> None:
+    """Observe official fallback branches without modifying package globals.
+
+    Function copies execute the installed decoder unchanged, with only its
+    rectangle factory rebound. Identity distinguishes native four-point contours
+    from documented degenerate-mask fallbacks. Calls are serialized by _Runtime.
+    """
+    from paddlex.inference.models.layout_analysis import processors as native
+
+    post = getattr(model.paddlex_predictor, "post_op", None)
+    if version("paddlex") != "3.7.2" or type(post) is not native.LayoutAnalysisProcess:
+        raise LayoutCapabilityError("Unsupported native contour decoder version/type.")
+    rectangles = []
+
+    def rectangle(box):
+        value = native._rect_from_box(box)
+        rectangles.append(value)
+        return value
+
+    def rebind(function, **overrides):
+        return types.FunctionType(
+            function.__code__,
+            function.__globals__ | overrides,
+            function.__name__,
+            function.__defaults__,
+            function.__closure__,
+        )
+
+    normalize = rebind(native._normalize_layout_polygon, _rect_from_box=rectangle)
+    extract = rebind(
+        native.extract_polygon_points_by_masks,
+        _rect_from_box=rectangle,
+        _normalize_layout_polygon=normalize,
+    )
+    apply = rebind(
+        native.LayoutAnalysisProcess.apply, extract_polygon_points_by_masks=extract
+    )
+
+    def observed(
+        self,
+        boxes,
+        img_size,
+        threshold,
+        layout_nms,
+        layout_unclip_ratio,
+        layout_merge_bboxes_mode,
+        masks=None,
+        layout_shape_mode="auto",
+        polygon_points=None,
+    ):
+        if masks is None or layout_shape_mode != "poly" or polygon_points is not None:
+            raise LayoutCapabilityError(
+                "Native segmentation output is required, including empty results."
+            )
+        if (
+            not isinstance(masks, np.ndarray)
+            or masks.ndim != 3
+            or masks.dtype.kind not in "biuf"
+            or len(masks) != len(boxes)
+            or min(masks.shape[1:]) <= 0
+            or not np.isfinite(masks).all()
+        ):
+            raise LayoutGeometryError("Malformed segmentation output.")
+        rectangles.clear()
+        try:
+            result = apply(
+                self,
+                boxes,
+                img_size,
+                threshold,
+                layout_nms,
+                layout_unclip_ratio,
+                layout_merge_bboxes_mode,
+                masks,
+                layout_shape_mode,
+                polygon_points,
+            )
+            for box in result:
+                polygon = box.get("polygon_points")
+                if polygon is None:
+                    raise LayoutCapabilityError(
+                        "Native decoder did not expose a contour."
+                    )
+                box["geometry_source"] = (
+                    "rectangle_fallback"
+                    if any(polygon is r for r in rectangles)
+                    else "native_contour"
+                )
+            return result
+        except (LayoutCapabilityError, LayoutGeometryError):
+            raise
+        except (ValueError, TypeError, IndexError, KeyError) as exc:
+            raise LayoutGeometryError("Native contour decoding failed.") from exc
+        finally:
+            rectangles.clear()
+
+    post.apply = types.MethodType(observed, post)
 
 
 def _close(model: Any) -> None:
@@ -268,6 +381,7 @@ class _Runtime:
                 engine_config={"providers": providers},
             )
             session = model.paddlex_predictor.runner.session
+            _observe_native_decoder(model)
             # ORT may silently substitute CPU during construction. During run(),
             # let this service control fallback instead of ORT rebuilding itself.
             session.disable_fallback()
@@ -312,7 +426,11 @@ class _Runtime:
                 try:
                     self.create("cuda")
                     return
-                except LayoutDependencyError:
+                except (
+                    LayoutDependencyError,
+                    LayoutCapabilityError,
+                    LayoutGeometryError,
+                ):
                     raise
                 except Exception as exc:
                     if device == "cuda":
@@ -332,7 +450,7 @@ class _Runtime:
                     )
             try:
                 self.create("cpu")
-            except LayoutDependencyError:
+            except (LayoutDependencyError, LayoutCapabilityError, LayoutGeometryError):
                 raise
             except Exception as exc:
                 raise LayoutInferenceError(
@@ -349,6 +467,8 @@ class _Runtime:
     def predict(self, image: np.ndarray, device: Device) -> Any:
         try:
             return _invoke(self.model, image)
+        except (LayoutCapabilityError, LayoutGeometryError):
+            raise
         except Exception as exc:
             if device != "auto" or self.provider != CUDA_PROVIDER:
                 raise LayoutInferenceError(
@@ -366,7 +486,11 @@ class _Runtime:
         self.model = None
         try:
             self.create("cpu")
-        except LayoutDependencyError as exc:
+        except (
+            LayoutDependencyError,
+            LayoutCapabilityError,
+            LayoutGeometryError,
+        ) as exc:
             self.error = type(exc), str(exc)
             raise
         except Exception as exc:
@@ -377,6 +501,8 @@ class _Runtime:
             raise error from exc
         try:
             return _invoke(self.model, image)
+        except (LayoutCapabilityError, LayoutGeometryError):
+            raise
         except Exception as exc:
             raise LayoutInferenceError(
                 f"Layout inference also failed on CPU ({type(exc).__name__})."
@@ -408,12 +534,25 @@ def _regions(output: Any, size: tuple[int, int]) -> tuple[LayoutRegion, ...]:
                 or not label
                 or not all(math.isfinite(x) for x in (score, x1, y1, x2, y2))
                 or not 0 <= score <= 1
-                or not 0 <= x1 <= x2 <= width
-                or not 0 <= y1 <= y2 <= height
+                or not 0 <= x1 < x2 <= width
+                or not 0 <= y1 < y2 <= height
             ):
                 raise ValueError("Invalid region fields or page-pixel rectangle")
+            if "polygon_points" not in box or "geometry_source" not in box:
+                raise LayoutCapabilityError("Native contour/provenance is missing.")
+            contour = validate_contour(
+                box["polygon_points"], (x1, y1, x2, y2), size, box["geometry_source"]
+            )
             regions.append(
-                LayoutRegion(int(class_id), label, score, (x1, y1, x2, y2), int(order))
+                LayoutRegion(
+                    int(class_id),
+                    label,
+                    score,
+                    (x1, y1, x2, y2),
+                    int(order),
+                    contour,
+                    box["geometry_source"],
+                )
             )
         regions.sort(key=lambda region: region.order_index)
         if [region.order_index for region in regions] != list(
@@ -421,9 +560,11 @@ def _regions(output: Any, size: tuple[int, int]) -> tuple[LayoutRegion, ...]:
         ):
             raise ValueError("Expected consecutive one-based reading order")
         return tuple(regions)
+    except LayoutCapabilityError:
+        raise
     except Exception as exc:
-        raise LayoutInferenceError(
-            "Invalid PP-DocLayoutV3 rectangle-mode result."
+        raise LayoutGeometryError(
+            "Invalid PP-DocLayoutV3 contour-mode result."
         ) from exc
 
 

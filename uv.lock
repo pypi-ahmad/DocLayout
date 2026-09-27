@@ -1118,6 +1118,7 @@ layout = [
     { name = "onnxruntime-gpu", marker = "python_full_version >= '3.11'" },
     { name = "paddleocr", marker = "python_full_version >= '3.11'" },
     { name = "paddlex", marker = "python_full_version >= '3.11'" },
+    { name = "shapely", marker = "python_full_version >= '3.11'" },
 ]
 server = [
     { name = "fastapi" },
@@ -1177,6 +1178,7 @@ requires-dist = [
     { name = "regex", specifier = ">=2024.4.28" },
     { name = "requests", specifier = ">=2.32,<3" },
     { name = "scikit-learn", specifier = ">=1.6.1,<2" },
+    { name = "shapely", marker = "python_full_version >= '3.11' and extra == 'layout'", specifier = "==2.1.2" },
     { name = "streamlit", marker = "extra == 'gui'", specifier = ">=1.59,<2" },
     { name = "tqdm", specifier = ">=4.66.1,<5" },
     { name = "uvicorn", marker = "extra == 'server'", specifier = ">=0.32.0" },

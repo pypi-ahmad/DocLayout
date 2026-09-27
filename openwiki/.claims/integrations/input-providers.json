@@ -1,78 +1,52 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:267626afec308c587a9afb6d47cb4c93ee0d79a136a133217ee87a6b6dfb5f3d",
+  "pageVersion": "sha256:b9a0f6077acacb8d625fc9c9ce271408f4f97ea54ca356e458f5bd8f01caa5f0",
   "claims": [
     {
-      "id": "claim_962c4bfd95c94fdb8ae9ef85e218e274",
-      "statement": "Provider selection validates the file, uses binary signatures for supported image and document formats, attempts HTML parsing, then falls back to extension-based selection and ultimately PdfProvider.",
+      "id": "claim_ed0467109d984ec68de05807affaab6d",
+      "statement": "Provider selection validates input files and detects supported formats before using an extension fallback; converted document providers create a temporary PDF and clean it up.",
       "evidence": [
         {
-          "resource": "repo://doclayout/providers/registry.py#L60-L87",
-          "version": "repo-lines-v1:sha256:49f403c3967be423047d1df5244ee3dd5e002e0bf2cf9fa77db2d04b0565317e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjMzAwNjRlOWFmMmJjYmRiMzU0YWI4NGE5ZDA5ZGQzNzA5ZDkxNmJmMjY4ODQ4NzgwMmZiNzE0MGJlNDY5ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMTA4OWRlZDZmYTk1YTNlZWViOWYyZmFjNDFiMjA2YmI2YjJiNzQ2ZDM0YmEzNWZlYjY1MTM5MDc0ZWNlZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjdlZmE0Zjg4NmZkMzVhZjNkNzczYTg1NzhjOTAwZWRlMGFiMTY3NGVhZTJhNmI0NmQzOTcyOWY3ZWMzNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_141cb3b5a78641a18cdf42b1bd258c29",
-      "statement": "PdfProvider validates zero-based page ranges, records rotation-aware page sizes, serializes PDFium access with a process-wide reentrant lock, checks render pixel limits, and closes document, page, and bitmap resources.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/providers/pdf.py#L15-L96",
-          "version": "repo-lines-v1:sha256:811134369ee63b6b0c50010ae0bb9f8f720fe4dc4c01158d945c17c6cf6ee2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0OGRhZjA3ODBkYmFiN2VkM2M5OWU1MzBmOWFjYjc5YmM4OTMyODhhNTgzNjJiNzI2MTdkZDM1ODBhNzRlZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJmOTJmNWMwNDFkN2FkNzcxNGUwMDM5ZGI5NzBjMmU4ZDViY2ZmZjFmN2RiMTIwY2YzNDkzODJmNWNlY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwNWUyMTNkOGU0ZGM4MGE5YzUzNWVlYzk3N2ZiZjhmOTg2ODM0M2I3NGNjZTA4ZTVmYjE1MDczNTA5NGJhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_67fc2633c2a64101b01fc9bda8432905",
-      "statement": "ImageProvider represents one native image as one page, checks pixel limits, and upsizes requests above 96 DPI with Lanczos resampling.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/providers/image.py#L19-L79",
-          "version": "repo-lines-v1:sha256:e4dbb02cdc56370b9c7cb6d66f8a9f6291fe68ba393a6b0f0b37911a70b80cd0:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNzNjNTFiMzBmZDVmNWVhY2FmNjY0YzhkZTQ2NzBkODVmNzk5YWE4MDY3ZWNiM2Y0YzU1ZDg4ZWQwMGU2YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjQyNGVlMjA5ZWIzOThiZjI1ZTFiOTUyYTAyMjYxYTJiMjA0ZjA0N2VlZmRlYWI3ZTUzMDRlNzM2YjkzYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0MTM4NTQ3NWI3Y2U0Zjg4ZDE0NThlMDIyYThjN2NhNzY0YmFmNzU3ZDQ2NTkwYzI1MGIwMzI0YmZjNDU3ZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkNWE2YjUyYTkzMzY5NGE1NmE1YzVlNTJlYmYzYTdjZmM4YTQwYTA0NDM1YzMzMTA5Mjk2MDE0MmY2YjY3YTcifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_40aef5f476ae492ba61362af3c0c482e",
-      "statement": "DOCX, EPUB, HTML, PPTX, and XLSX providers normalize their source into temporary PDFs before inheriting PdfProvider behavior.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/providers/converted.py#L10-L25",
-          "version": "repo-lines-v1:sha256:02ad73f9dc8242ef4ffb434de40df8c5ba40550c55455ef4c1232e86b609b038:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3M2NlNDZiYjVhNTkwYTI1ODliMTI1NTg3MDM2ZDNkMjkzZjMxNzc0ODNjMDU3Y2MzMzVjOTlmZjc0NmFmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2YThhYzA4NWFiNTQ3OTc4NjI1NGFhYWMyMmQyYTJmZTRjZDUxZjExN2M5MzMzMTFiMTQzNjkwYzRlNjg4MzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyNmExZDVjMDVkMTZjZWNlODIwZGNjNzA5ZjZiYzZjZDdiY2IyNDYxMTliNDRjMDg2NDM2MTYzMDFiY2M2MzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2OTFlNTM0ODhiMzczZGU3ZDNiYjY4ZDJiYTg4MjdiNzgyZGZjYmVjNzBmYmZlMjA5ZTllYmRkMmNhYzBlOGUifQ"
+          "resource": "repo://doclayout/providers/converted.py#L11-L40",
+          "version": "repo-lines-v1:sha256:af692f6f559e0d7ffcdccfda2d86022edd8b122b98a9c2030a10880f9a7a7bb5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMWU3NDk1Y2UyMzJlZDViYTlkZjRkM2JhZGIxZTRiZGZiOTM3MjkyNjhkY2ZkNzA2ZGEyYWY1MGY3YTQ0ZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlZWM1MGM5NjU0NDFlMGUxNWQ3ZjI3ZDc5M2QxZTg0NjhjY2M5MzczMWI5OGJiNDFhOWEwYzY2MDUxMDhjNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMzJjMjU4MThlYWM0NmRmMWJkY2U2YzVmNjg3YzkwZTQ0MmNlNzQ2MDkxODdlNGNjM2I1ZDg4ZmNkOWM0MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://tests/providers/test_document_providers.py#L14-L30",
-          "version": "repo-lines-v1:sha256:5cbe327660465da8281aa50efc2f8f76b5ddd1d443ad7d5e079063f0a49397bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMzQ1ODNhNTk4NzY3YmY1NmFlZmViNjVlMjAzM2ExNjUxY2M0YzhkN2U2ZjBhZjNlNWNmZDMyOTNmOTMzYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxYzAwMGRhNzUyMzRhOWY5ZTg5ODZkYTNiNWMwMDE3MmFhMjIyNzMwZDhjZTk3NDhlM2E2ZjE4YzY2NzZkOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1YzE0MTExN2VjMDc2OTBlMGJkMzZiMzdiYTY5Njg2ZDZhNWIxNDVhMDJmOTBmMDc1NTA5NDM5OGQwYThhMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/providers/registry.py#L43-L87",
+          "version": "repo-lines-v1:sha256:9fa7e057c8144b7c08962c2619fc90ceb9b1646761b33beeff45f8422c3d61b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGYyOWVlYzZhZGViYWI1NTgxZjNiODU3ZGY0Mzc4YjU5OWM0M2I3YzEyZmUzMGVjOTI3ZTljYjYzNWI2MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMTA4OWRlZDZmYTk1YTNlZWViOWYyZmFjNDFiMjA2YmI2YjJiNzQ2ZDM0YmEzNWZlYjY1MTM5MDc0ZWNlZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkOWRlOTYwYmNhNzFiNjRhNmFiODAxNTVkNjJlYTE2NmIzODRlOGUwYTViZTU2ZmZmMmM4ZDk4MTgwOGYxMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
-      "id": "claim_607ea5e48d1c41fe8b4507e40cfa26ab",
-      "statement": "DocumentProvider converts DOCX through Mammoth and WeasyPrint; its ConvertedPdfProvider base removes the owned temporary PDF during context cleanup or conversion failure.",
+      "id": "claim_b598ca8fdaf3414382d11ac05ea108e2",
+      "statement": "PdfProvider validates zero-based page selection and renders RGB pages through a PDFium lock with render-pixel checks and top-left page geometry.",
       "evidence": [
         {
-          "resource": "repo://doclayout/providers/converted.py#L10-L37",
-          "version": "repo-lines-v1:sha256:3f1e032028285bd4a35e4c91829401c44e0c4dbf7dc84de097e0f3b5c27f3da4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3M2NlNDZiYjVhNTkwYTI1ODliMTI1NTg3MDM2ZDNkMjkzZjMxNzc0ODNjMDU3Y2MzMzVjOTlmZjc0NmFmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1NzgwNWMzZmU3YWM2MzA3NGY2OWNkYjI1YjlhY2Q3YTg2NzkyZGZlNTQwODE4YWM0Zjg3NjRiNDllN2QxNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyNmExZDVjMDVkMTZjZWNlODIwZGNjNzA5ZjZiYzZjZDdiY2IyNDYxMTliNDRjMDg2NDM2MTYzMDFiY2M2MzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4NzkzMDMxYzJiOWVmZTY2NjhkYzZlNTFkYzJjMzJjNTIxYTVlOTAzZWJiMTU1YTJiOGM4OWYyOGQ5NDg1YzgifQ"
+          "resource": "repo://doclayout/providers/pdf.py#L14-L96",
+          "version": "repo-lines-v1:sha256:dc722034ab53b6e4e21b9f3195fbced48e87278d68c454e6f72f11272bfefea3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJmOTJmNWMwNDFkN2FkNzcxNGUwMDM5ZGI5NzBjMmU4ZDViY2ZmZjFmN2RiMTIwY2YzNDkzODJmNWNlY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4YThiZGY4ZjM3ZjE1ZDExYzcyNTZiMWZhM2E3N2UyMzc3OWYxZmY0YmU2ZWRlMmE1ZWFiN2I0NjFiMmRlOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://doclayout/providers/document.py#L52-L74",
-          "version": "repo-lines-v1:sha256:6ba3b2a124f37e61fca0e6808466b2df9a53610f6e04fdb55def4beea3ce6dc4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNjI1Yzk2YzE2OGM2MDNjYjIwZDU4MzcxM2I1Y2I5M2VhYmM2MzBlZTlhODBjYmQ2OGY5ZTRkYTExNGU5MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMDAwNzg3NWRlOGY5MmQ5MmI3ODdhMDE4YzE2YzAwMDQxOGJkNWY5NDk5MjNiOTBmNGQ2M2M3ZWMxNmQ4M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0ODQxOWZjM2NjOTFhY2IwYTFhYjA1MTIyMDk5OWZkOWQ4MjdjYzA1YTA0Mzg1Nzc5NmYyZWJkMDY5NzA0NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3M2EwNzIzNmIwYmNmNDM0MWNmYzJlOWZiOTQ2NTlmZTE3YmRhNDZhMDY3ZmI3NWIzNDQ3YTJkYjUxMGQxMTIifQ"
+          "resource": "repo://tests/providers/test_pdf_provider.py#L6-L28",
+          "version": "repo-lines-v1:sha256:ce1c953eb5bf97526481081ab5498aa2d90041e4a1828f3897d15b0dd68f68fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZTc0YzhmZWU3ZGEzOGZjOTkwOTk4ZmZjN2QxOWZmNzFiNzA2NmI5ODJiNTJmMzBkYWYwMmJkZDI1MjM0MTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NTk3ZmU5ZDg3MzNjOWU5MGY4NTQwM2U2M2MyODMxNWNmNzAzZDg2MDk3ZWVhZTcyMzY0YzE2YThkNTFlY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
-      "id": "claim_6e1fc79076df44919825fca4a9079142",
-      "statement": "PDF provider tests reject empty, negative, and out-of-range page selections and verify that rotated page geometry matches the rendered image size.",
+      "id": "claim_e4d78e8d064b41ed88b8280fe2b69029",
+      "statement": "ImageProvider validates pixels, exposes one page, and returns a scaled image copy for the builder's 192 DPI request.",
       "evidence": [
         {
-          "resource": "repo://tests/providers/test_pdf_provider.py#L13-L28",
-          "version": "repo-lines-v1:sha256:029158cfa6888927fb328d9208d1c7b085ce3ccc26ec6ea0d7c85212314baa39:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyMThlM2Q5NDUxMTlhMTNiZGI4ZjYzMWJlYzliOTRmNzYyNzMxZDhlZTI5ZGU1MTg1Yjg1ZDQ5NTIwZmZjMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZTc0YzhmZWU3ZGEzOGZjOTkwOTk4ZmZjN2QxOWZmNzFiNzA2NmI5ODJiNTJmMzBkYWYwMmJkZDI1MjM0MTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNmRhMTI1YTIwNjhmNmExNTI4NTEwNDUxYjYzNWYzMWIyOTVhNGRkMjNmOTM2ZDE1ZjMxODdmMTBlZjFhZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/builders/document.py#L44-L70",
+          "version": "repo-lines-v1:sha256:c71047008db2f507de6f11e32d4068e762bf565584db390367d4f738567ce0eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1YTVjMGZlMjgxZjNjNDFmYjAxMDcyZmI5Yjk0Njg3MzU2ZDQyMzAzNjExNDRhNjhiYzQxMTM0NGM3ZWU2YTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDA5N2U0YWE1MDA2OGJhMTU3ZjlhMjczOWZhZDg2OTk1ZTFlMGNkY2NkYWRjNTg5N2MyMDM0Yzc0ZDNlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyYjdmYTZjZWE0YTE1OTk1OWUyOGQ0OTlkZDk0OTdlODkxNzllZjNlYmJjMDNiNTE2ZTFjYmVkMjZkNDhkZGEifQ"
+        },
+        {
+          "resource": "repo://doclayout/providers/image.py#L13-L79",
+          "version": "repo-lines-v1:sha256:7529e140ba8bf2f0004b6f147de81ebc0534f8ef95026f9959b1136a1e83eef2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYWQ5OGM2MTUzMzg3NmIwZjRhMDYzOWZmYjU4YWNkMDVmODYxZWYyNmUxNWMxOGRlMDY1YmVlZDc4NGI4NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjQyNGVlMjA5ZWIzOThiZjI1ZTFiOTUyYTAyMjYxYTJiMjA0ZjA0N2VlZmRlYWI3ZTUzMDRlNzM2YjkzYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlNmM4MWJlZGViMzI0MzBlOGEyZWNmOWUyYzAzNzIzNWUyNmQwNjE0OTY1NzJiMDVjYTk3YzYzYWJmZDFmMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkNWE2YjUyYTkzMzY5NGE1NmE1YzVlNTJlYmYzYTdjZmM4YTQwYTA0NDM1YzMzMTA5Mjk2MDE0MmY2YjY3YTcifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:42:04.191Z"
+    "at": "2026-09-27T09:43:51.061Z"
   }
 }

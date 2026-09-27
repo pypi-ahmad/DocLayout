@@ -1,100 +1,70 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ad33f225f92f6482111313729a2dbb00a3458b0f1c8dbf9e4b00b624854573e2",
+  "pageVersion": "sha256:164fe82e297bfc1d4a12098bdd42d8a995ba15c0466a28be1557118894d394a6",
   "claims": [
     {
-      "id": "claim_1f4dc1b6718f43288c83e44ba3044f25",
-      "statement": "ConfigParser preserves explicit falsy values, translates debug, page-range, JSON, and image-extraction options, validates the merged dictionary, and resolves renderer, processor, and converter selections.",
+      "id": "claim_d78e07774186428ab65b80f2c9408151",
+      "statement": "The project advertises Python 3.10+, while its pinned layout extra and runtime guard require Python 3.11+ for local V3 execution.",
       "evidence": [
         {
-          "resource": "repo://doclayout/config/parser.py#L21-L147",
-          "version": "repo-lines-v1:sha256:dfb181c1e40e4fa8a9d92067279d0113f44ac1cbdaadce01825f93435b11d0d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4MzNiMTUwNGY1ZDJhOTcyNTI5MWExYTdiN2MwZmExNTRiYWI1NmM3YzhhMmE2MmQxMzFhNmM3Mzg2MTk2OThhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMjExNWE0NjNmMzliOTcwZGM3ZGUwMGZkZmYxYmVmMTczMDY5ZGRiOTFiNzYzM2Q2NDkxN2VmYmVhOTVmYzljIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MDAxZDEyNmE2ZjdlMzhmNWJjZjJkNzgwNmNjYzc4ODRiOWEyZTkxNmFhMzZkYWEyZjU1NmRhYzM4YTA4MTBhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZDEwZGZjYTljNzQxNjdiMzM3M2EyNTUyY2Y3MTk2YmI1ZDJjOWQ0ZmUwZjBjMGNlZjNiMTFlYTNhZmQwNmFhIn0"
-        }
-      ]
-    },
-    {
-      "id": "claim_99bb6c280c8849d3b478f51bd3e3bb08",
-      "statement": "ConfigCrawler discovers subclasses across configurable component families and gathers inherited annotated class attributes, defaults, and class-prefixed aliases.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/config/crawler.py#L16-L115",
-          "version": "repo-lines-v1:sha256:3ea9988d9bd9daa76cd2992ad90315bfe5a7a96bfa159307b67d2ea4008d5228:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwYTljMzU0NmQzZGVlNWVmNTJhNzY3NjZlYjJiODUxYjgwMDFjMTVlZjViMDFhYmJiOTZkZGM0ODhmMDBlOWI1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZTExYjUwMjBiMGFlZTU0NDZlM2Q1ZjhjZDRmOTU0ZmNkMDcyOTUxMGY5NTQ1OWRlNzM1ZjM0MGM0YTg0Nzc5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiMzBlMTMzMzNmYWQ2NjRiZmIzNTE0NTYwYTdjOTYwYzk5NzU3YWRhOWQ3Mzg4Y2VjZDAyZjcxNzgwMWFlNWM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        }
-      ]
-    },
-    {
-      "id": "claim_f7007b794c254875a265dbf84c2183f6",
-      "statement": "Configuration validation rejects retired OCR, model, hardware, credential, and alternate-provider settings, including class-prefixed variants.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/config/validation.py#L1-L90",
-          "version": "repo-lines-v1:sha256:74e84e9c69c73dd8f4c6e89a407854065d11d8fe8812d44cb6153c824af0cdd7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NGNhODNiNWQxZmI5N2E2NDA3Mzc0NzFjZTE2Zjc5NzllNGQ4YmE1MDdkZDUwYTZhODEwNmIxZmY2MDI2ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/services/layout.py#L155-L165",
+          "version": "repo-lines-v1:sha256:589917a871f13a5a62999791fa3210d53a93d3b7f24d4062e68a4a805016e965:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjFkNWZmZTc3MzcyZmUxOWJhNmNjMDJhNTg4NjlmM2I4MmJhNjU4NDRmOTgzNWViNTQxYmY1YjA3ZGEzZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1MzRjYWI4MzkyZTMzNGI1NGEyNmQwMmI1Nzc4YzAwNWRlNjhmOTFhNjkzNmE3MDAyMGNmNDc5ZTRmYzU5ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3MjJmMmVlYjlhYzU0NjMxNWY4OThmN2ViNDAyYTBkNTg1NTllMzg5MmE1ZTU2Y2ExNjBmNTBlOGY2MTc3ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMzJhYzY1YjUwODBiN2U2YTc0N2M1ZTY2ZWQ1OTIwYTRmOTZmMzI5N2MxMzgxNGI4MjI2MjJhOGRkMzQzOTAifQ"
         },
         {
-          "resource": "repo://tests/config/test_config.py#L11-L34",
-          "version": "repo-lines-v1:sha256:954b6678e3b174a69a9532ab4d9dfca355b8b459c4a250a1e625a91127aff9f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMzQ1ODNhNTk4NzY3YmY1NmFlZmViNjVlMjAzM2ExNjUxY2M0YzhkN2U2ZjBhZjNlNWNmZDMyOTNmOTMzYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwOTJmZjA5YzZiNzM0ZjU1NmQwZTQyMjljYzZjMTE4ZmVjMjc1NzI0YzMyYmViMDFhOTJkYTY1YTIwN2MwMzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5ZjczMjYzMzE3MzcwNWMxOTQxNTZiNTI1NjYyOWFlOTRjYmQxN2M3YTBlZmI0M2YzZTA0Y2E5Yzg3ZWExODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYmIyOWNiOThiZWY2NmUyOWEzMDYyODZjNmEwYzc1ZDliNWVkZDA4ZWJlNTVkMTNjYTkwMjJhODAxZTJkZGEifQ"
+          "resource": "repo://pyproject.toml#L1-L12",
+          "version": "repo-lines-v1:sha256:239e9c6ace54f4cf7dc508798e9a61ae6fe2df1212e0914118cb24c5a18f4963:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmE4MWMzODM2ZWRlZjJkMGJhMTFkMjM1M2ZiNmRhYmM3NzcxNTBhN2NhODNlYTBkOWU5YTcwMzEzZmVhYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiMDFlN2QzMDRjZmI2NzQ3NWRjMTgxMTY3YjcwOTY3YWE5NjYxMDNjMjYxYzMyYTNhYzMzNmE3OWRiNzc2NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1YTlkNDY1ZWI0YjNkY2VkMDMyZWVmNzFmMjA3ZDhkZjY0M2YxYzQ5YTM3MTAyZGQzZTgzMzg1ZDRlNjNkNDgifQ"
+        },
+        {
+          "resource": "repo://pyproject.toml#L52-L63",
+          "version": "repo-lines-v1:sha256:2b1409b3608448cd613d9cfd77824286574b3418c0b2e377fe5b66789d42e70a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjYjRhYjQwMWVlZDQ4MmIyNmQwNDYwOGM3Yzk0MDllYjY4Y2YxMGU2MzgyYjMxNGFiYmVjMDE3NGQzZTIyMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZTI3ZDA4ZTVlYThjMGIxOWEwOWQyNDI2YTk4NmFiZWFiMDEzNDk1NWZhNTAzYmQzY2QxYWEzODJiOTQxOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhNTI5MDczZDUzNzY1YjE4NTAyYWQ3YTU1OGEwMDY2NGQxOTVlZWFjNjI4NWFhNzMwNTdmNjIzNjNlMWY2OTMifQ"
         }
       ]
     },
     {
-      "id": "claim_2287bcce8f6c45b8b1090102028d4d55",
-      "statement": "The project separates optional full document-format, GUI, server, and layout extras from the development dependency group; layout requires Python 3.11+.",
+      "id": "claim_b8d0892cb59846aab6417323601b01b9",
+      "statement": "Operator layout settings default to auto device, no alignment policy, and disabled Sol runtime fallback; API request models do not accept these settings.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L38-L91",
-          "version": "repo-lines-v1:sha256:57a772560a27f54cf9f035cfbf578e0967bfac04eb0feceaf06b65e6d5b360b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3YjQzMjNmNWU1ZWI3NmMzMWJkOTdjZGQ5MjIyNDExN2Q2ZWUzODg3OTY3YjQ1MmUyY2VhZWNkZWEwYThkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3OGYwNGVmOThjZDEwNjY1MmFhNzA0Y2EyMGEzZTM0NjdhMDc2MjNmOGZhZjEzMDFhMGJhZWIwZWU4MDJmMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlYWNhNmM2MDIzYjc2MzE0NTZiOTAxNTE1ZTEwOTMwMjM3ZjZkMTVmMGUzODYwNjRmMGQ3N2FlM2U3ZjdjNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MDViZGVkMDY0NDAxOTgyODQ5MGIxZDU2YzkwNmE0OGE5OGMyMDNiZTE2OTAzYjRmZjUyMDJiOTU0ZmI2YWUifQ"
+          "resource": "repo://doclayout/scripts/server.py#L159-L173",
+          "version": "repo-lines-v1:sha256:ed5e896cdf48da5060443ebce7508662b180e37d20878eae381bb95de4a63a95:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkNWRhZDBlOTYyYTE3MzNlZmQ4Yjc5N2I4YjFhYzdmMjc2OWM5OGFiNzJkYmQwYzVmZWQwNzRlODg2ZTlmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyYzRhNGVlNDliOTdkZmIwYTFlYzllNWNmZTM0MjBlYmVhNWUxM2YzZGNmZDk4YTVkYTFkNGI5NGI1NmI4Y2UifQ"
+        },
+        {
+          "resource": "repo://doclayout/settings.py#L23-L27",
+          "version": "repo-lines-v1:sha256:2d6c19f1d9976f05367bf7c5bae37fdd3b536c9077f7e195c660c29a02f70895:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjc4ZTZlMzYyZjU0NmUyZjU5MjY1MzBmZmE2MWY4NmFkOWRmZGI2YzIxMjJiNjRhZTNhM2MxNGNiNjJlNGEzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWNlMDhmMjA4YmZlZjJlMGJmYWE4YmJmM2M4YTkyNzg5OWYzZTMyZjIxYTViODhiZTkzMjU5Zjg4M2IwZDRkYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzVjZDA1OTMxMTFlMDI4MWFhNGM2ODM2NDQ0NmMwM2Q2MTNkMmQ5NGI4NzljZmIyNDFkZDFjYmVmMGI2ZjgxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRjOTY5MmVkM2EyYmRhMjI1MDFkNzhlYWMxZDg4MjdmNGE3YjM5ZDg3OWE3MzgzMTAwMTE2YmU2ZDMyNGExZCJ9"
+        },
+        {
+          "resource": "repo://tests/test_entrypoints.py#L162-L166",
+          "version": "repo-lines-v1:sha256:bd7db7be339a80528c4435d80ba09f3a726d06b1afd555dd19b04d89cba462bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Y3MDQwMWNiMzcyOTFiYjI1ODMwNDQzNWI1YjZhMWVlMDVjNWZjN2U2MmI1YTI1Zjk0ZGUxMmE5MzU0ODIxYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZhMzdjMDQ2NTRmMGZmYzA0OWQzYjgyZGU4MDA0ODQxZjBjOGQzNTIxOTYwY2ZmYzVjOWViYzAwYTQ5ZThlMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWRlMjJlOGUwOTYxMjM0M2FhZGU2MWM1OWJlZWZmY2Q3NGNjZDk0ZmFmNzBjOTBhZTY2M2VlNWRiYmJkYTk4MyJ9"
         }
       ]
     },
     {
-      "id": "claim_48b4de985152483d82f4af59180d8ecf",
-      "statement": "Offline tests block real OpenAI Responses calls by default, inject a fake layout engine, and integration-marked billable tests require the explicit --run-integration option.",
+      "id": "claim_f40066d156554ab9a5ab86357b1e2405",
+      "statement": "Default tests block OpenAI requests and inject a fake layout service with synthetic alignment thresholds; opt-in integration tests include a billable CPU conversion and a local GPU layout test.",
       "evidence": [
         {
-          "resource": "repo://pytest.ini#L1-L8",
-          "version": "repo-lines-v1:sha256:b7a3cfbdac31badf57f11c0415e089c05393579a9642ce4d637c7c03bba651ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc4ZmMxY2QxMmQ4ZDY0MmRmOGVmZjQxZDcxZDUxMTk2MjZlOWY4OGYyMWZhZmFkYmE2YjEwOTJhYzg0MGE5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWJjOTU0YzhiMmViMmEyNWI1YzAwNjdkMWFlYzZhODQ4OTQ1ZjJhZGJlYWY5NDBmNjZiYWJkYjc0OTUxMDM5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://tests/conftest.py#L22-L91",
+          "version": "repo-lines-v1:sha256:0704c33076479b6afe06082419c015d8bf3514a3bc2ace0823bd581a06170e07:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlY2VlNzE5YmJjOWFmNThhZTBjNWU0ZTkwN2ZkMTdlNTViN2NhYjYxNmY3NWMzNjYyMGNlOWIzMzJhYzQ1MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzZjM2NmI5YmQ5YThkMGYzNDBhMmJjMGJlMWUyMmVlYTIwNTY4ZGQ3OGE0NTI4MWI3MjFiMzBmMjJkMDg3ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZmRiYzcyZGNlODkyZGNiMjY1NjBmZDM4YmZjZDZjZjA5ZmNiOTVhMTRiYzg0NGFmYjNhMTMxYzFjMjU4NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3MWUyOTlmYzhmMWU2MzQ2YjQyNzJjYzk0YzVlYTZiMjRkMmRmNzRmMWFjODc0NTE0NmQwZDQwZDBhMWY0YWIifQ"
         },
         {
-          "resource": "repo://tests/conftest.py#L20-L88",
-          "version": "repo-lines-v1:sha256:24555175c2230a36e1b441b8cac754a0a1f346f8cf56d3529964389c12da80ba:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmViZmY4ZmE2MTdkZjkzMTdlMGFmNzE2OTY2YWVhYTU0YzI2NDIwN2RmMjNlNTIwNDdiNGFhNWE2ODVkOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1OGU2M2RjOGQ1MzNmMDFiMTczNWQ2MDFkNDMwYTNhYzZmMjM0N2UyODMxYjJjMWRiYzU0OGUzNGU5NTRhZTYifQ"
+          "resource": "repo://tests/converters/test_layout_live.py#L55-L152",
+          "version": "repo-lines-v1:sha256:124831580060ab028e0ad91e313e76c75a0f0698ad49212fd24e09203205b2fc:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NDJiMDA5ZTk2ZjgwZmJkMTI2MjA4NDllNDg2MDcyMWVjY2EzMjhjMWYzNTAyYmUzODdhODVjZWZjZDFiOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YTIwYzdmNWFlODg4NDA5OTZjZGY0ZmVlNzU5NzI4MjkwOGNkYzc5Zjg5YzBiNTI5OGI4NThjZDk0ZTVjMDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlYzRlYjkxZmQ3ZjE3NjRiMDFhODZjODZmYjgxMWQzM2I5MDY0ZjQ5ZGU5Mjc5ZjYxNjg3NzlmMzg3ZDRlZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzMWQwYjNjZGQ1Yzk0NmE2NmMzOTRiMGU0Y2JlNTU2N2FiNzYwMTRmMGE4YTY1NjhmNzcyZWQ2M2MzOTQ3MTIifQ"
         }
       ]
     },
     {
-      "id": "claim_2b02a33155854a1faae5f145fd793919",
-      "statement": "The benchmark harness uses a separately obtained local dataset, makes billable GPT-6 Sol requests, attempts local V3, records failures, skips outputs larger than 10 bytes, and measures layout plus remote latency and rendering without isolating GPU speed.",
+      "id": "claim_eaba1e0473f74286b9702ba76cebfc2e",
+      "statement": "API credentials and an optional base URL are resolved from the process or launch-folder .env; the API token must be separate and at least 32 non-whitespace ASCII characters.",
       "evidence": [
         {
-          "resource": "repo://benchmarks/README.md#L1-L40",
-          "version": "repo-lines-v1:sha256:8c5e688556225e9efe12d3787fdb98617920de381b0a89c428dafdabc40c1cae:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyODIzMjQxYjU5ZDY2N2Y2Y2E0YTNlZDk1NjdlMzNhOTExZjFkZGFhZGQ1MzZjNDc5NjFiYjI5MGVhMzM4YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNjkyM2Q2OTVkNWZlODE0MzEyYzAwMjQzYjMzNjc4NjAyOWFhY2I4OTBhZTI2NjEzMDExNWJjOGVlMmVlZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiYWUzOTIxMWYwOTg4ZGRhNjU3ZjBlM2NjY2QyYWIzNTQwNzYxYzJmY2FmMTliYWZlMzBlNmJhMjhjODc0ZWQifQ"
-        },
-        {
-          "resource": "repo://benchmarks/inference.py#L18-L55",
-          "version": "repo-lines-v1:sha256:08c953f0b54138fa1fea038bac46d03ab0f01d941d10f5f097f423e7c6e33d35:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMzExM2ViOTNmMzdkZGYzYTY5ZjRiYWRkOWUyZGUzODg2YmIzYjdiYzJjYzBhMWQ4MzQ2YWJhMTE1MTEwNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2Y2NjMDNlMTdiMjE4OTk5NGQxYjVmODI5ZTE2MWVkMzJiMDIzM2QyODg1YWJmNGMzM2IxNDVjOTdlZTU1MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlYmU4MzY4MTU5NzllOTIxOGM4YmJmMzc3MDVmNzNkMTNiMDFhM2I5YjcxM2ZlZWM2NGRlNzdhMTk1NzFlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViNzQ0MWFhNjM2NjRmZGI5Y2IyMzQzOTA5NGEyYWQyNGMzMGI3OGZjMDgwYzM0NTBlY2I2OGM2MWE0ZTA4OTMifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_9701d9667f6d4d5f833b595be352e617",
-      "statement": "Operator layout policy, device and cache are configured outside HTTP requests; absent matching policy preserves Sol geometry/order, while malformed policy and guide-limit failures abort conversion.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/schema/layout.py#L29-L100",
-          "version": "repo-lines-v1:sha256:206aca9bbae83f944363cff36981aeaaba6feb2c855c91b4ab6c3faaf72885c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0YzE1MjY5YmRkMzIzMGRlODc3NjcxZGYyZThhM2QwNjk5OGJiZmNmMThlYjczYzE4NzQ5ODkxZDY1NTQ3OWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOTgyNmU5MDc0MWQ0ZmEzYjk3MmQ0ZDY4YTk1MGU4YmM5NmFhNDlhNWY3YWI4M2EyODgwMWUxZmMyMzMyYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
-        },
-        {
-          "resource": "repo://doclayout/scripts/server.py#L160-L176",
-          "version": "repo-lines-v1:sha256:3aaeec48543cf938142883d13c301070d5a1c8aa1faef6b43cdb4b8df9ae2d21:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxNWM4MGI3MTcxYzFlMTlhZTczMzQzMTk5ZTkzYmYxN2RkMjhkODA3MmEyMjY5MDJkMDhmNWY2MTNmNzFjNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOTQyZGE3ZWZjZTA0NmRhNThjMmY1OTA3YzM1ZTkzYjNiNWE1MDBiY2U5YzAzYTY5MzExMWE2Mzg4YjkyOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQwNWNlOGVkOTg5YzMwYjdhMzJiMDZkNWFjNjAyYjljOTc5MzI4YjFiNThkNGYwNjlkM2YxMTU5Mzk4YTJlMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMTkzZWUzZDc4NWI0NWYxYmQ3MmE2NDI1M2YxOGJjYzcxYjM0ZGJiOWU4OWU4ZTI4YjVjY2MyZGNiOGVmZjAifQ"
-        },
-        {
-          "resource": "repo://doclayout/settings.py#L22-L37",
-          "version": "repo-lines-v1:sha256:b169b3e8d53f03f5b3b069bbe3fb966039459c26f987f2a69bf3ee6a6f1dfc80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NGE3OWE2ZDA3OTY2ZDkwNTYwMjdhNTRjMDM4M2FiMDc2YjYzMmNlMTFkMGEyMTQwY2MyMDQxNjg5ZmUwYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkYzg0ODBkMjM2OTNmMTQ3ZTZiODlhNGQxOWZjNDM0MDZlNTY3NWMxNWQyOGJhOWViZGQxN2EzNmFiMjJiNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1MmIwOGY4YmVkZTdhYzZhOWYzN2Q0MzhlM2ZhMjc3N2U1MjIzYjBmYTllMzY2OTc1MGFiNTg3YjhjZTFmNzgifQ"
+          "resource": "repo://doclayout/credentials.py#L15-L68",
+          "version": "repo-lines-v1:sha256:13c459551b6e0176d7aee25500bebca65101c77f9db6b39f7ce1518784a41661:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4OGJhNTcxZTQxZThlYmNlODk4OWExNzAwZjI4MzI4ODhiYTk4OWQzMWFhNDliMGYwNjlmNDllMjE2MzA3ZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlZTQxZTE5NzQxNTdjZmY3ZDE2ZTFlOTBiN2UyYThkNzgyNzM0NzI5ZTkwYzUyYTllZDRlZWY3NGE1MDE0NDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmYzBjMmYxN2E4YjkxMGM1NmYwNjdjMTYyNGRkM2RjMmQyYzRiNzEyMzQ0NDQ5YzUwMjJmMDg2YTNhNjMwMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-26T10:42:04.191Z"
+    "at": "2026-09-27T09:43:51.061Z"
   }
 }

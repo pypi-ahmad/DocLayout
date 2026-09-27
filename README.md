@@ -11,8 +11,8 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 - GPT-6 Sol transcribes every selected page into text, tables, equations and
   headings. Local PP-DocLayoutV3 supplies layout guidance when available;
   an evaluated matching policy enables confident V3 box and order replacements.
-- Sol content is retained when V3 misses or disagrees. If V3 cannot run, Sol
-  processes the full image without a layout guide and the result records fallback.
+- Sol content is retained when V3 misses or disagrees. If V3 cannot run, conversion
+  fails unless the operator explicitly enables Sol-only fallback.
 - Markdown has a native rendered view and an exact raw view. The separate HTML
   preview uses a white page, serif typography, embedded crops, and MathML.
 - Download Markdown, HTML, JSON, chunks, annotated page images, or an annotated
@@ -128,17 +128,19 @@ also requires native WeasyPrint libraries; see [format prerequisites](docs/usage
 Tool-installed commands run directly as `doclayout ...`. Inside a clone,
 `uv run --extra layout doclayout ...` uses the project's environment.
 
-## Local layout with Sol fallback
+## Local layout and opt-in Sol fallback
 
 Every real GUI, CLI, API, PdfConverter and OCRConverter extraction attempts V3 on
 the same whole-page image sent to Sol. Sol receives a compact `given_layout`
 guide, then validated blocks are aligned before grouping and processing.
 TableConverter uses this same path and retains only its table-related blocks.
-If V3 dependencies, cache, preparation, or inference fail, Sol receives the full
-image without a guide; its validated boxes, HTML, types, and order are retained.
-The GUI warns and metadata records `sol_fallback` and a sanitized error code.
+V3 must execute successfully by default. Operators may explicitly set
+`DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true` to permit Sol-only extraction on runtime
+failure. In that mode Sol receives the full image without a guide; its validated
+boxes, HTML, types, and order are retained. The GUI warns and metadata records
+`sol_fallback` and a sanitized error code.
 There is no layout-off switch. Invalid configuration, oversized guides, and
-downstream layout-invariant violations still fail; corrupt model files trigger Sol fallback.
+downstream layout-invariant violations still fail. Corrupt model files fail by default.
 Sol still reads the full page, transcribes visible content, and writes block HTML;
 V3 supplies the layout guide, matched geometry, and reading order, not transcription.
 Preview-only operations and base-package imports do not load the runtime.
@@ -174,8 +176,9 @@ diagnostics without creating empty rendered blocks. Export metadata records the
 model, device, policy, region classes/scores, matching decisions and source IDs.
 Each page also records region/matched/Sol-only/V3-only counts, preparation time,
 page inference time, and sanitized CPU/Sol fallback diagnostics when applicable.
-Annotations show V3-derived matched boxes and Sol-estimated unmatched boxes:
-rectangles, not irregular masks.
+Annotations draw accepted native V3 contours; documented rectangle fallbacks and
+unmatched Sol boxes remain rectangles. JSON/OCR records carry page-coordinate
+`layout_geometry`; chunks retain member geometries keyed by source ID.
 
 Use the same environment to run your Python caller:
 
@@ -232,12 +235,15 @@ weights are not loaded by this implementation, even if separately cached.
 Results contain model/revision, actual device/provider, image `(width, height)`,
 elapsed seconds, and immutable ordered regions. Timing excludes initial loading,
 warm-up, and queue waiting, but includes an inference fallback retry. Regions
-retain original class IDs/labels, scores, page-pixel rectangles, and one-based
+retain original class IDs/labels, scores, page-pixel bboxes and arbitrary-length
+contours, explicit `native_contour`/`rectangle_fallback` provenance, and one-based
 reading order, including graphics. PaddleOCR handles preprocessing, score
 filtering (artifact default 0.5), and decoding. The standalone service does not
 align content; conversion applies the separately configured conservative aligner.
-Rectangle mode exposes no native polygons or
-masks: `as_polygon_box()` derives four rectangle corners only.
+The pinned PaddleX decoder runs in `poly` mode with `skip_order_labels=[]`.
+An instance-local adapter observes its actual fallback branches; package globals
+and suppression settings are unchanged. `as_polygon_box()` still derives four
+rectangle corners for existing consumers. Raw masks are never exported.
 
 Failures use `LayoutDependencyError`, `LayoutCacheError`, `LayoutArtifactError`,
 `LayoutDeviceError`, or `LayoutInferenceError`, all under `LayoutError`.
@@ -326,6 +332,7 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Validation](docs/gpt6-validation.md) | Dated live observations, offline checks, known limitations |
 | [Benchmarks](benchmarks/README.md) | Running a bounded extraction evaluation |
 | [Deployment example](examples/README.md) | Optional Modal deployment and its verification limits |
+| [OpenWiki](openwiki/quickstart.md) | Generated, source-linked index of the current code and tests |
 
 ### Interactive diagrams
 

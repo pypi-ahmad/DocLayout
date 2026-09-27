@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # Files
 
-- [Quickstart](quickstart.md) - Install DocLayout with uv, configure API access, run the CLI, GUI, or local API, and find the right architecture guide for deeper work.
+- [DocLayout quickstart](quickstart.md) - A task-based map of the current conversion system and its source-grounded wiki pages.
 
 # Directories
 

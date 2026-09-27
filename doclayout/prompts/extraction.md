@@ -4,7 +4,8 @@ numbers, punctuation and meaningful formatting. Do not summarize or invent obscu
 Use block_type to classify each region. Set bbox to [left, top, right, bottom], normalized
 from 0 to 1000 relative to the full image; estimate tight region bounds.
 When present, given_layout JSON supplies detected regions in reading order, with normalized
-bboxes. Use these as a layout guide while transcribing and formatting the visible
+bboxes and contours, plus geometry provenance (native_contour or rectangle_fallback).
+Contours use the same normalized 0–1000 coordinates. Use these as a layout guide while transcribing and formatting the visible
 page. Use the supplied box for corresponding content, but keep the appropriate
 rich block_type and HTML: coarse layout labels must not erase heading levels,
 list markup, table cells, math, code or text. Include clearly visible content the

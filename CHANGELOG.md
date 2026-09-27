@@ -5,6 +5,15 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+### Documentation
+
+- Initialize the generated OpenWiki index from the current source and tests,
+  with source-linked claims and no scheduled CI refresh.
+- Correct the required-layout and opt-in Sol fallback guidance in the example,
+  benchmark, fixture, environment sample, and architecture/usage guides.
+- Refresh four interactive conversion diagrams to show contour output and
+  required-layout failure behavior.
+
 ## 3.0.0 (2026-09-26)
 
 ### Local layout with Sol fallback

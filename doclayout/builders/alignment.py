@@ -15,6 +15,7 @@ from types import MappingProxyType
 from typing import Literal
 
 from doclayout.schema.extraction import ExtractedBlock
+from doclayout.schema.geometry import GUIDE_FRAME, convert_bbox, image_frame
 from doclayout.services.layout import LayoutRegion, LayoutResult
 
 _TEXT = frozenset(
@@ -304,10 +305,7 @@ def align_blocks(
     for i, block in enumerate(blocks):
         if not _valid_box(block.bbox, 1000, 1000):
             raise ValueError(f"Sol block {i} must have a validated normalized box")
-        box = [
-            v * (width if j % 2 == 0 else height) / 1000
-            for j, v in enumerate(block.bbox)
-        ]
+        box = convert_bbox(block.bbox, GUIDE_FRAME, image_frame(layout.image_size))
         for r in valid_regions:
             iou, containment, ratio, distance = _metrics(box, r.bbox)
             fallback = (
@@ -406,10 +404,13 @@ def align_blocks(
     for i in indices:
         block = blocks[i].model_copy(deep=True)
         if i in matches:
-            block.bbox = [
-                v / (width if j % 2 == 0 else height) * 1000
-                for j, v in enumerate(region_map[matches[i]].bbox)
-            ]
+            block.bbox = list(
+                convert_bbox(
+                    region_map[matches[i]].bbox,
+                    image_frame(layout.image_size),
+                    GUIDE_FRAME,
+                )
+            )
             ExtractedBlock.valid_bbox(block.bbox)
         output.append(block)
     reverse_matches = {order: i for i, order in matches.items()}

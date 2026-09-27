@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # Operator policy; these settings are never accepted from HTTP requests.
     DOCLAYOUT_ALIGNMENT_POLICY: str | None = None
     DOCLAYOUT_LAYOUT_DEVICE: str = "auto"
+    DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK: bool = False
     DOCLAYOUT_LAYOUT_CACHE_DIR: str | None = None
     DOCLAYOUT_MAX_FILE_MIB: int = Field(default=200, gt=0)
     DOCLAYOUT_MAX_PAGES: int = Field(default=500, gt=0)

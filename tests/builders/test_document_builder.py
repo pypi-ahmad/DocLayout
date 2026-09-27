@@ -16,7 +16,7 @@ def test_pages_and_geometry(pdf_document, extraction_service):
     for call in extraction_service.call_args_list:
         prompt, guide = call.args[0].split("\n\ngiven_layout=", 1)
         assert hashlib.sha256(prompt.encode("utf-8")).hexdigest() == (
-            "a7ba7c1b7a7c901aa38e5219b394d6c36f7a9e307edff210f1b4cd8683559b8e"
+            "8ce9cbd623c363a6f9fdb03bb3565cdf3d040d750678da47fafd5729489016a4"
         )
         assert json.loads(guide)["image_size"] == list(call.args[1].size)
     page = pdf_document.pages[0]

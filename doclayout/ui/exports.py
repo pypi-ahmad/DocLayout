@@ -182,6 +182,7 @@ def markdown_html(markdown: str, images: dict) -> str:
 
 
 def annotations(document, config=None):
+    from doclayout.schema.geometry import convert_bbox, convert_points, image_frame
     from doclayout.schema.layout import visible_source_blocks
 
     pages, skipped, drawn = {}, 0, 0
@@ -190,16 +191,23 @@ def annotations(document, config=None):
         draw = ImageDraw.Draw(image)
         for block in visible_source_blocks(page, config):
             try:
-                x0, y0, x1, y1 = block.polygon.rescale(
-                    page.polygon.size, image.size
-                ).bbox
+                source, target = tuple(page.polygon.bbox), image_frame(image.size)
+                x0, y0, x1, y1 = convert_bbox(block.polygon.bbox, source, target)
                 if not (
                     all(math.isfinite(v) for v in (x0, y0, x1, y1))
                     and 0 <= x0 < x1 <= image.width
                     and 0 <= y0 < y1 <= image.height
                 ):
                     raise ValueError("invalid box")
-                draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
+                geometry = getattr(block, "layout_geometry", None)
+                if (
+                    geometry is not None
+                    and geometry.geometry_source == "native_contour"
+                ):
+                    points = convert_points(geometry.contour, source, target)
+                    draw.line([*points, points[0]], fill=(220, 30, 30), width=3)
+                else:
+                    draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
                 draw.text(
                     (x0, max(0, y0 - 14)), str(block.block_type), fill=(220, 30, 30)
                 )

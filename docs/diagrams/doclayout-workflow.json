@@ -39,8 +39,8 @@
       "lane": "page-pass",
       "col": 2,
       "type": "backend",
-      "label": "Attempt V3",
-      "sublabel": "Local rectangles"
+      "label": "Run V3",
+      "sublabel": "Local contours + order"
     },
     {
       "id": "transcribe-page",
@@ -68,7 +68,7 @@
     {
       "from": "attempt-layout",
       "to": "transcribe-page",
-      "label": "guide or image only"
+      "label": "guide on success"
     },
     {
       "from": "transcribe-page",
@@ -79,9 +79,9 @@
   "cards": [
     {
       "dot": "emerald",
-      "title": "Fallback and validation",
+      "title": "Failure and validation",
       "items": [
-        "V3 failure omits the guide; Sol still transcribes the full image.",
+        "V3 failure aborts by default; operator fallback sends the image without a guide.",
         "No policy, misses, and mismatches retain Sol boxes; invalid configuration and invariants still fail."
       ]
     }
