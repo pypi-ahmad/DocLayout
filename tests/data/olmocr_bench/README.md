@@ -25,9 +25,10 @@ uv run --no-sync pytest tests/converters/test_olmocr_bench.py --run-integration
 Missing data is skipped before creating an API client. Offline tests generate
 their own temporary documents and need no downloaded input files.
 Sync the [layout-enabled development environment](../../../docs/development.md#environment)
-first to evaluate V3 guidance. These tests use the shared converter, so a V3
-runtime failure can still produce Sol output. Inspect runtime warnings and layout
-metadata before describing a run as V3-assisted. Synthetic CPU/GPU layout checks
+first to evaluate V3 guidance. These tests use the shared converter. A V3
+runtime failure aborts by default; only an explicit operator setting
+(`DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`) permits whole-page Sol fallback.
+Inspect layout metadata before describing a run as V3-assisted. Synthetic CPU/GPU layout checks
 are separate from these three benchmark pages.
 
 ## Original three-page sample

@@ -27,17 +27,20 @@ Add deployment TLS, request timeouts and resource controls before remote use.
 The deployment has not been tested live.
 
 The example image installs the development group, including server dependencies,
-but does not select the `layout` extra. As written, it reports V3 dependency
-failure and continues with Sol on the full image. It needs no GPU or layout
-model-cache volume for that fallback path. Enabling V3 in a separate deployment
-would require the locked layout extra, a writable cache, and suitable native
-libraries; these are not configured by this example.
+but does not select the `layout` extra. As written, extraction fails on the
+missing V3 dependency because layout is required by default. An operator could
+explicitly set `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true` in the deployment
+environment to permit whole-page Sol extraction after that runtime failure;
+such results have fallback diagnostics and no V3 guidance. This example does not
+set that option. A V3-enabled deployment needs the locked layout extra, a
+writable cache, and suitable native libraries; these are not configured here.
 It supports PDFs and images. Other document formats need the `full` extra and native WeasyPrint
 libraries added to the image before use. The example does not serve the Streamlit
 workbench, document chat, annotations, or ZIP downloads.
 
 Keep the root `LICENSE` file; the image copies it. API clients should check HTTP
 status codes; ordinary conversion errors return HTTP 500, resource limits return
-413, and fatal layout configuration/guide/invariant errors return 503. Successful
-Sol fallback returns HTTP 200 with diagnostic metadata.
+413, and layout runtime, configuration, guide, or invariant errors return 503
+when conversion cannot continue. An explicitly enabled, successful Sol fallback
+returns HTTP 200 with diagnostic metadata.
 See [API usage](../docs/usage.md#http-api).

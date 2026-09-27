@@ -5033,7 +5033,7 @@
         <path d="M 72 112 L 1008 112" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
         <text x="72" y="100" class="t-dim" font-size="10" font-weight="600">01 / Conversion phases</text>
         <path d="M 72 264 L 1008 264" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
-        <text x="72" y="252" class="t-dim" font-size="10" font-weight="600">02 / Recoverable V3 failure</text>
+        <text x="72" y="252" class="t-dim" font-size="10" font-weight="600">02 / V3 failure path</text>
         <path d="M 72 436 L 1008 436" class="a-default" stroke-width="0.8" stroke-dasharray="3,8"/>
         <text x="72" y="424" class="t-dim" font-size="10" font-weight="600">03 / Outcomes</text>
 
@@ -5042,7 +5042,7 @@
 
         <!-- Transition paths -->
         <path data-edge-from="layout-attempt" data-edge-to="layout-unavailable" data-edge-label="runtime error" data-edge-key="0" data-composition-points="307,157;323,157;323,307;339,307" d="M 307 157 L 315 157 Q 323 157 323 165 L 323 299 Q 323 307 331 307 L 339 307" class="a-default" stroke-width="1.1" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="layout-unavailable" data-edge-to="sol-active" data-edge-label="image only" data-edge-key="1" data-composition-points="402,278;402,188" d="M 402 278 L 402 188" class="a-default" stroke-width="1.1" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="layout-unavailable" data-edge-to="sol-active" data-edge-label="operator opt-in" data-edge-key="1" data-composition-points="402,278;402,188" d="M 402 278 L 402 188" class="a-default" stroke-width="1.1" marker-end="url(#arrowhead)"/>
         <path data-edge-from="protected-tree" data-edge-to="conversion-failed" data-edge-label="invariant" data-edge-key="2" data-composition-points="615,157;631,157;631,307;647,307" d="M 615 157 L 623 157 Q 631 157 631 165 L 631 299 Q 631 307 639 307 L 647 307" class="a-default" stroke-width="1.1" marker-end="url(#arrowhead)"/>
 
         <!-- States -->
@@ -5103,8 +5103,8 @@
           <text data-detail="context" x="710" y="163" class="t-muted" font-size="7" text-anchor="middle">Local exports</text>
         </g>
 
-        <g id="node-layout-unavailable" data-node-id="layout-unavailable" data-node-label="V3 unavailable" tabindex="0" role="button" aria-label="Focus V3 unavailable, Keep Sol boxes, Recoverable V3 failure" aria-pressed="false" data-node-kind="failure" data-node-sublabel="Keep Sol boxes" data-node-context="Recoverable V3 failure">
-          <title>V3 unavailable · Keep Sol boxes · Recoverable V3 failure</title>
+        <g id="node-layout-unavailable" data-node-id="layout-unavailable" data-node-label="V3 unavailable" tabindex="0" role="button" aria-label="Focus V3 unavailable, Opt-in fallback, V3 failure path" aria-pressed="false" data-node-kind="failure" data-node-sublabel="Opt-in fallback" data-node-context="V3 failure path">
+          <title>V3 unavailable · Opt-in fallback · V3 failure path</title>
           <rect x="339" y="278" width="126" height="58" rx="7" class="c-mask"/>
           <rect x="339" y="278" width="126" height="58" rx="7" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="failure" class="semantic-sigil s-security" transform="translate(448 284) scale(0.6875)">
@@ -5112,11 +5112,11 @@
             <path d="m5.7 5.7 4.6 4.6m0-4.6-4.6 4.6"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="402" y="299" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">V3 unavailable</text>
-          <text data-detail="context" x="402" y="315" class="t-muted" font-size="7" text-anchor="middle">Keep Sol boxes</text>
+          <text data-detail="context" x="402" y="315" class="t-muted" font-size="7" text-anchor="middle">Opt-in fallback</text>
         </g>
 
-        <g id="node-conversion-failed" data-node-id="conversion-failed" data-node-label="Conversion failed" tabindex="0" role="button" aria-label="Focus Conversion failed, No final result, Recoverable V3 failure" aria-pressed="false" data-node-kind="failure" data-node-sublabel="No final result" data-node-context="Recoverable V3 failure">
-          <title>Conversion failed · No final result · Recoverable V3 failure</title>
+        <g id="node-conversion-failed" data-node-id="conversion-failed" data-node-label="Conversion failed" tabindex="0" role="button" aria-label="Focus Conversion failed, No final result, V3 failure path" aria-pressed="false" data-node-kind="failure" data-node-sublabel="No final result" data-node-context="V3 failure path">
+          <title>Conversion failed · No final result · V3 failure path</title>
           <rect x="647" y="278" width="126" height="58" rx="7" class="c-mask"/>
           <rect x="647" y="278" width="126" height="58" rx="7" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="failure" class="semantic-sigil s-security" transform="translate(756 284) scale(0.6875)">
@@ -5132,9 +5132,9 @@
           <rect x="285.15" y="211" width="75.7" height="16" rx="4" class="c-mask"/>
           <text x="323" y="222" class="t-muted" font-size="8" text-anchor="middle">runtime error</text>
         </g>
-        <g data-detail="context" data-edge-from="layout-unavailable" data-edge-to="sol-active" data-edge-label="image only" data-edge-key="1">
-          <rect x="371.5" y="257" width="61" height="16" rx="4" class="c-mask"/>
-          <text x="402" y="268" class="t-muted" font-size="8" text-anchor="middle">image only</text>
+        <g data-detail="context" data-edge-from="layout-unavailable" data-edge-to="sol-active" data-edge-label="operator opt-in" data-edge-key="1">
+          <rect x="359.25" y="257" width="85.5" height="16" rx="4" class="c-mask"/>
+          <text x="402" y="268" class="t-muted" font-size="8" text-anchor="middle">operator opt-in</text>
         </g>
         <g data-detail="context" data-edge-from="protected-tree" data-edge-to="conversion-failed" data-edge-label="invariant" data-edge-key="2">
           <rect x="602.95" y="235" width="56.1" height="16" rx="4" class="c-mask"/>
@@ -5353,7 +5353,7 @@
           <h3>Failure handling</h3>
         </div>
         <ul>
-          <li>&bull; V3 runtime errors use Sol boxes; invalid configuration, Sol extraction, guide limits, or invariants are fatal.</li>
+          <li>&bull; V3 runtime errors abort by default; operator fallback keeps Sol boxes. Other errors are fatal.</li>
           <li>&bull; Auto may use CPU after CUDA failure; explicit CUDA does not fall back.</li>
         </ul>
       </div>

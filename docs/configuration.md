@@ -112,7 +112,8 @@ geometry; an empty string, empty object, partial, or invalid policy aborts befor
 Metadata records `alignment_mode: sol_geometry`, `policy: null`, and
 `policy_not_configured` reasons. No candidate matches are attempted; all Sol blocks
 and V3 regions are retained as unmatched diagnostics, not evidence of detector misses.
-Configured policies use `alignment_mode: v3_matching`. V3 runtime failures use
+Configured policies use `alignment_mode: v3_matching`. Runtime failures abort by
+default. With `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`, V3 runtime failures use
 `alignment_mode: sol_fallback` with `layout_unavailable` reasons, `policy: null`,
 and no region matches. Sol retains its validated boxes, HTML, types, and order.
 The model record uses `actual_device`/`provider: unavailable`, a sanitized
@@ -121,7 +122,8 @@ There is no layout-off option.
 
 Operator settings use the existing Settings environment/`local.env` flow:
 `DOCLAYOUT_LAYOUT_DEVICE` defaults to `auto`; `cpu` never probes CUDA and `cuda`
-never falls back to CPU (conversion uses Sol if CUDA fails). `DOCLAYOUT_LAYOUT_CACHE_DIR` defaults to
+never falls back to CPU. `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK` defaults to `false`;
+only an explicit operator opt-in permits Sol-only conversion. `DOCLAYOUT_LAYOUT_CACHE_DIR` defaults to
 `.cache/layout` under the working directory. API request fields cannot configure
 policy, cache, or device. OpenAI credentials retain their separate `.env` flow.
 Do not place layout settings only in the credential `.env`: that loader does not
@@ -139,14 +141,18 @@ Each full-page guide is limited to 512 regions and 64 KiB UTF-8; overflow fails
 without truncation. Invalid configuration, guide limits, and downstream integrity
 violations still abort conversion; the API returns a sanitized 503 layout error.
 Missing dependencies, cache/download errors, corrupt weights, or inference failures
-instead continue with Sol on the full image and report fallback metadata (HTTP 200
-if extraction and conversion complete successfully).
+also abort by default. Only with the operator fallback setting enabled do they
+continue with Sol and report fallback metadata (HTTP 200 if conversion succeeds).
 Restart the process after repairing a cached startup failure. The GUI reports
 preparation and actual device without offering a layout-off control.
 
 Export metadata's `layout` list contains one record per page. Its `model` holds
 `model_id`, `revision`, `actual_device`, `provider`, `elapsed_seconds`,
 `preparation_seconds`, `fallback_reason`, and `error_code`, along with image size and regions.
+Regions retain image-pixel `contour` and `geometry_source` alongside bbox, class,
+score and order. Guides include normalized contours in the same complete-payload
+size limit. Matched JSON/OCR blocks carry page-coordinate `layout_geometry`;
+chunks collect member geometries by source ID without synthesizing group contours.
 On Sol fallback, model ID/revision identify the attempted model, and elapsed time
 measures the failed attempt (including any lazy startup), not successful inference.
 `counts` holds `regions`, `matched`, `sol_only`, and `v3_only` at alignment time;

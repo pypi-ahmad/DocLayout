@@ -16,7 +16,7 @@
     },
     {
       "id": "fallback",
-      "label": "Recoverable V3 failure"
+      "label": "V3 failure path"
     }
   ],
   "states": [
@@ -64,7 +64,7 @@
       "id": "layout-unavailable",
       "type": "failure",
       "label": "V3 unavailable",
-      "sublabel": "Keep Sol boxes",
+      "sublabel": "Opt-in fallback",
       "lane": "fallback",
       "col": 0
     },
@@ -86,7 +86,7 @@
     {
       "from": "layout-unavailable",
       "to": "sol-active",
-      "label": "image only"
+      "label": "operator opt-in"
     },
     {
       "from": "protected-tree",
@@ -100,7 +100,7 @@
       "dot": "rose",
       "title": "Failure handling",
       "items": [
-        "V3 runtime errors use Sol boxes; invalid configuration, Sol extraction, guide limits, or invariants are fatal.",
+        "V3 runtime errors abort by default; operator fallback keeps Sol boxes. Other errors are fatal.",
         "Auto may use CPU after CUDA failure; explicit CUDA does not fall back."
       ]
     }

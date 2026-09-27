@@ -8,9 +8,9 @@ Follow the [README installation steps](../README.md#installation) for uv tool,
 manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Add `layout` for V3 guidance;
-if V3 cannot run, conversion uses Sol. Without an [alignment policy](configuration.md#mandatory-layout-policy),
+V3 must run successfully by default. Without an [alignment policy](configuration.md#mandatory-layout-policy),
 Sol boxes/order are retained and V3 supplies guidance only.
-Guidance is omitted if V3 fails; the result then reports Sol fallback.
+Only `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true` permits Sol-only fallback on V3 failure.
 Extras can be combined; the layout runtime requires Python 3.11+.
 The Git commands in the README install the current `main` branch. The release
 wheel installs `v3.0.0`; later changes on `main` are recorded under
@@ -22,8 +22,8 @@ WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
 providers can download a font on first use. V3 uses local weights, downloaded
-only when absent; CPU execution is supported. If V3 cannot run, Sol still
-extracts the page and the result records fallback.
+only when absent; CPU execution is supported. V3 failures abort unless the
+operator explicitly enables Sol-only fallback.
 
 ### Installing the application package
 
@@ -77,10 +77,11 @@ without one, the GUI reports that it is retaining Sol boxes/order.
 Auto mode falls back to CPU if CUDA setup or inference fails; final results show
 the device actually used and the fallback reason. Explicit CPU never probes CUDA;
 explicit CUDA never falls back to CPU. No compatible GPU is required.
-V3 preparation/inference failures produce a visible warning and Sol processes the
+With operator fallback enabled, V3 failures produce a warning and Sol processes the
 full image without a guide, keeping its validated boxes and order. Invalid
 configuration, guide limits, and downstream layout-invariant violations remain
-errors. Corrupt cached weights trigger fallback. There is no layout toggle.
+errors. By default all V3 failures, including corrupt weights, stop conversion.
+There is no layout toggle.
 Preview and downloads do not reload the model.
 Debug metadata includes layout timing, region counts, and match counts.
 
@@ -89,7 +90,7 @@ Debug metadata includes layout timing, region counts, and match counts.
 | Input preview | View a source page; converted office documents use their prepared PDF |
 | Markdown | Sanitized theme-aware preview or raw Markdown; copy raw/formatted content or download `.md` |
 | HTML | Styled white-page preview generated from the exact Markdown; copy or download HTML |
-| Annotated | V3-derived matched boxes and Sol-estimated unmatched boxes; rectangles, not masks; download PNGs or a raster PDF |
+| Annotated | Accepted native V3 contours; explicit fallback and unmatched Sol rectangles; download PNGs or a raster PDF |
 | JSON | Hierarchical document output with metadata |
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
@@ -250,7 +251,8 @@ geometry, and flagged Sol-only estimates. Select other renderers by their full
 class paths. `OCRConverter` skips grouping and default processors. All converters
 use the alignment-policy and Sol-fallback behavior described above.
 Fatal layout configuration, guide, or invariant errors raise `LayoutError`
-subclasses. V3 runtime failures are handled by conversion and recorded in
+subclasses. V3 runtime failures abort conversion by default. Only an explicit
+operator fallback allows a result with `sol_fallback` diagnostics in
 `rendered.metadata["layout"]`; direct `LayoutService` calls still raise typed
 runtime errors. Other invalid configuration raises `ValueError`, and failed Sol
 extraction raises `ExtractionError`.
@@ -299,7 +301,7 @@ or invalid authentication, 403 for disallowed filepath access, 413 for resource
 limits, 422 for invalid fields, 429 while busy, 503 for fatal layout errors,
 and 500 for other conversion failures.
 Malformed multipart requests may return 400. Errors omit private exception detail.
-V3 runtime failure alone is not an HTTP failure: successful Sol fallback returns
+V3 runtime failure returns a sanitized 503 by default. With operator fallback enabled, successful Sol fallback returns
 200 with `alignment_mode: sol_fallback` and a sanitized layout `error_code` in
 metadata. There is no HTTP parameter to disable V3 or set its device/cache/policy.
 The API process runs one conversion at a time. GUI chat, annotations, and ZIP

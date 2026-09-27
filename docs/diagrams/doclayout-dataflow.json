@@ -71,7 +71,7 @@
       "id": "v3-regions",
       "type": "backend",
       "label": "V3 regions",
-      "sublabel": "Pixel boxes and order",
+      "sublabel": "Pixel contours and order",
       "stage": 1,
       "row": 2
     },
@@ -118,7 +118,7 @@
       "fromSide": "right",
       "toSide": "bottom",
       "via": [[530, 385]],
-      "label": "guide if ready"
+      "label": "guide on success"
     },
     {
       "id": "sol-response-to-aligned-content",
@@ -150,7 +150,7 @@
       "dot": "cyan",
       "title": "Geometry and order",
       "items": [
-        "V3 returns rectangles; four corners are derived for PolygonBox.",
+        "V3 exposes bbox and contour; PolygonBox retains four-corner geometry.",
         "An evaluated policy applies confident one-to-one matches before grouping."
       ]
     },
@@ -159,7 +159,7 @@
       "title": "Fallback and reuse",
       "items": [
         "Missing or incompatible regions retain Sol content and geometry.",
-        "V3 runtime failure omits the guide; all exports reuse the resulting document."
+        "V3 failure aborts by default; operator fallback omits the guide."
       ]
     }
   ]

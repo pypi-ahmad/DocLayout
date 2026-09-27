@@ -5044,7 +5044,7 @@
 
         <!-- Edge paths -->
         <path data-edge-from="render-page" data-edge-to="attempt-layout" data-edge-key="0" data-composition-points="134,119;254,119" d="M 134 119 L 254 119" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="attempt-layout" data-edge-to="transcribe-page" data-edge-label="guide or image only" data-edge-key="1" data-composition-points="346,119;454,119" d="M 346 119 L 454 119" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="attempt-layout" data-edge-to="transcribe-page" data-edge-label="guide on success" data-edge-key="1" data-composition-points="346,119;454,119" d="M 346 119 L 454 119" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="transcribe-page" data-edge-to="finish-document" data-edge-label="response" data-edge-key="2" data-composition-points="500,145;500,166;500,166;500,217" d="M 500 145 L 500 166 L 500 166 L 500 217" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
 
         <!-- Nodes -->
@@ -5059,15 +5059,15 @@
           <text data-detail="context" x="88" y="131" class="t-muted" font-size="8" text-anchor="middle">192 DPI image</text>
         </g>
 
-        <g id="node-attempt-layout" data-node-id="attempt-layout" data-node-label="Attempt V3" tabindex="0" role="button" aria-label="Focus Attempt V3, Local rectangles, Conversion" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Local rectangles" data-node-context="Conversion">
-          <title>Attempt V3 · Local rectangles · Conversion</title>
+        <g id="node-attempt-layout" data-node-id="attempt-layout" data-node-label="Run V3" tabindex="0" role="button" aria-label="Focus Run V3, Local contours + order, Conversion" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Local contours + order" data-node-context="Conversion">
+          <title>Run V3 · Local contours + order · Conversion</title>
           <rect x="254" y="93" width="92" height="52" rx="6" class="c-mask"/>
           <rect x="254" y="93" width="92" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(260 99) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="300" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Attempt V3</text>
-          <text data-detail="context" x="300" y="131" class="t-muted" font-size="8" text-anchor="middle">Local rectangles</text>
+          <text data-node-label="" data-detail-anchor="" x="300" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Run V3</text>
+          <text data-detail="context" x="300" y="131" class="t-muted" font-size="6.3" text-anchor="middle">Local contours + order</text>
         </g>
 
         <g id="node-transcribe-page" data-node-id="transcribe-page" data-node-label="GPT-6 Sol" tabindex="0" role="button" aria-label="Focus GPT-6 Sol, Image + guide*, Conversion" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="Image + guide*" data-node-context="Conversion">
@@ -5095,9 +5095,9 @@
 
         <!-- Edge labels -->
 
-        <g data-detail="context" data-edge-from="attempt-layout" data-edge-to="transcribe-page" data-edge-label="guide or image only" data-edge-key="1">
-          <rect x="349.4" y="99" width="101.2" height="14" rx="3" class="c-mask"/>
-          <text x="400" y="109" class="t-muted" font-size="8" text-anchor="middle">guide or image only</text>
+        <g data-detail="context" data-edge-from="attempt-layout" data-edge-to="transcribe-page" data-edge-label="guide on success" data-edge-key="1">
+          <rect x="356.6" y="99" width="86.8" height="14" rx="3" class="c-mask"/>
+          <text x="400" y="109" class="t-muted" font-size="8" text-anchor="middle">guide on success</text>
         </g>
         <g data-detail="context" data-edge-from="transcribe-page" data-edge-to="finish-document" data-edge-label="response" data-edge-key="2">
           <rect x="475.8" y="146" width="48.4" height="14" rx="3" class="c-mask"/>
@@ -5309,10 +5309,10 @@
       <div class="card">
         <div class="card-header">
           <div class="card-dot emerald"></div>
-          <h3>Fallback and validation</h3>
+          <h3>Failure and validation</h3>
         </div>
         <ul>
-          <li>&bull; V3 failure omits the guide; Sol still transcribes the full image.</li>
+          <li>&bull; V3 failure aborts by default; operator fallback sends the image without a guide.</li>
           <li>&bull; No policy, misses, and mismatches retain Sol boxes; invalid configuration and invariants still fail.</li>
         </ul>
       </div>

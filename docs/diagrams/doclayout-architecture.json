@@ -194,7 +194,7 @@
       "dot": "cyan",
       "title": "Layout guidance",
       "items": [
-        "* The same full image always reaches Sol; the guide is omitted if V3 fails.",
+        "* V3 success guides whole-page Sol; failure aborts unless operator fallback is enabled.",
         "V3 uses pinned ONNX weights; no policy means Sol geometry/order."
       ]
     },

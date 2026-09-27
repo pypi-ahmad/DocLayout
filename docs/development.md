@@ -183,6 +183,10 @@ Link to the guide that covers a topic instead of copying its tables. Record
 changes awaiting a release under Unreleased in the changelog, and date historical
 measurements. Check links, anchors, and executable examples. Run live requests
 only as part of an explicit evaluation.
-OpenWiki and graph indexes are generated snapshots, not code authorities.
+The [OpenWiki index](../openwiki/quickstart.md) is a generated snapshot with
+source-linked claims. It is initialized from current source and tests through
+OpenWiki's page lifecycle; no scheduled CI refresh is configured. The existing
+[`knowledge/` OKF bundle](../knowledge/index.md) is a separate index and currently
+contains no concept pages. Neither index overrides source or tests.
 Keep runtime Markdown prompts out of prose-only documentation edits. Preserve
 historical validation results and future-work plans as such.

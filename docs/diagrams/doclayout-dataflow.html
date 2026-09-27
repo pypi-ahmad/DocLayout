@@ -5049,7 +5049,7 @@
         <path data-edge-from="source-file" data-edge-to="page-image" data-edge-label="render" data-edge-key="0" data-edge-id="source-file-to-page-image" data-composition-points="156,157;259,157" d="M 156 157 L 259 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="page-image" data-edge-to="sol-response" data-edge-label="full image" data-edge-key="1" data-edge-id="page-image-to-sol-response" data-composition-points="371,157;474,157" d="M 371 157 L 474 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="page-image" data-edge-to="v3-regions" data-edge-label="analyze" data-edge-key="2" data-edge-id="page-image-to-v3-regions" data-composition-points="315,186;315,186;315,356;315,356" d="M 315 186 L 315 186 L 315 356 L 315 356" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="v3-regions" data-edge-to="sol-response" data-edge-label="guide if ready" data-edge-key="3" data-edge-id="v3-regions-to-sol-response" data-composition-points="371,385;530,385;530,186" d="M 371 385 L 530 385 L 530 186" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="v3-regions" data-edge-to="sol-response" data-edge-label="guide on success" data-edge-key="3" data-edge-id="v3-regions-to-sol-response" data-composition-points="371,385;530,385;530,186" d="M 371 385 L 530 385 L 530 186" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="sol-response" data-edge-to="aligned-content" data-edge-label="HTML + boxes" data-edge-key="4" data-edge-id="sol-response-to-aligned-content" data-composition-points="586,157;689,157" d="M 586 157 L 689 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="aligned-content" data-edge-to="result-document" data-edge-label="build" data-edge-key="5" data-edge-id="aligned-content-to-result-document" data-composition-points="801,157;904,157" d="M 801 157 L 904 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <path data-edge-from="aligned-content" data-edge-to="layout-diagnostics" data-edge-label="record" data-edge-key="6" data-edge-id="aligned-content-to-layout-diagnostics" data-composition-points="745,186;745,186;745,356;745,356" d="M 745 186 L 745 186 L 745 356 L 745 356" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
@@ -5114,15 +5114,15 @@
           <text data-detail="context" x="960" y="165" class="t-muted" font-size="7" text-anchor="middle">Protected source blocks</text>
         </g>
 
-        <g id="node-v3-regions" data-node-id="v3-regions" data-node-label="V3 regions" tabindex="0" role="button" aria-label="Focus V3 regions, Pixel boxes and order, 02 / Page data" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Pixel boxes and order" data-node-context="02 / Page data">
-          <title>V3 regions · Pixel boxes and order · 02 / Page data</title>
+        <g id="node-v3-regions" data-node-id="v3-regions" data-node-label="V3 regions" tabindex="0" role="button" aria-label="Focus V3 regions, Pixel contours and order, 02 / Page data" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Pixel contours and order" data-node-context="02 / Page data">
+          <title>V3 regions · Pixel contours and order · 02 / Page data</title>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 362) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">V3 regions</text>
-          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">Pixel boxes and order</text>
+          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">Pixel contours and order</text>
         </g>
 
         <g id="node-layout-diagnostics" data-node-id="layout-diagnostics" data-node-label="Diagnostics" tabindex="0" role="button" aria-label="Focus Diagnostics, Matches and fallback, 04 / Alignment" aria-pressed="false" data-node-kind="database" data-node-sublabel="Matches and fallback" data-node-context="04 / Alignment">
@@ -5161,9 +5161,9 @@
           <rect x="291.85" y="250" width="46.3" height="16" rx="4" class="c-mask"/>
           <text x="315" y="261" class="t-muted" font-size="8" text-anchor="middle">analyze</text>
         </g>
-        <g data-detail="context" data-edge-from="v3-regions" data-edge-to="sol-response" data-edge-label="guide if ready" data-edge-key="3" data-edge-id="v3-regions-to-sol-response">
-          <rect x="489.7" y="264.5" width="80.6" height="16" rx="4" class="c-mask"/>
-          <text x="530" y="275.5" class="t-muted" font-size="8" text-anchor="middle">guide if ready</text>
+        <g data-detail="context" data-edge-from="v3-regions" data-edge-to="sol-response" data-edge-label="guide on success" data-edge-key="3" data-edge-id="v3-regions-to-sol-response">
+          <rect x="484.8" y="264.5" width="90.4" height="16" rx="4" class="c-mask"/>
+          <text x="530" y="275.5" class="t-muted" font-size="8" text-anchor="middle">guide on success</text>
         </g>
         <g data-detail="context" data-edge-from="sol-response" data-edge-to="aligned-content" data-edge-label="HTML + boxes" data-edge-key="4" data-edge-id="sol-response-to-aligned-content">
           <rect x="602.1" y="136" width="70.8" height="16" rx="4" class="c-mask"/>
@@ -5386,7 +5386,7 @@
           <h3>Geometry and order</h3>
         </div>
         <ul>
-          <li>&bull; V3 returns rectangles; four corners are derived for PolygonBox.</li>
+          <li>&bull; V3 exposes bbox and contour; PolygonBox retains four-corner geometry.</li>
           <li>&bull; An evaluated policy applies confident one-to-one matches before grouping.</li>
         </ul>
       </div>
@@ -5398,7 +5398,7 @@
         </div>
         <ul>
           <li>&bull; Missing or incompatible regions retain Sol content and geometry.</li>
-          <li>&bull; V3 runtime failure omits the guide; all exports reuse the resulting document.</li>
+          <li>&bull; V3 failure aborts by default; operator fallback omits the guide.</li>
         </ul>
       </div>
     </div>
