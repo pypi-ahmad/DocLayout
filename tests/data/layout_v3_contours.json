@@ -1,0 +1,29 @@
+{
+  "reference": "PaddlePaddle/PaddleX@ffb64904d23708863ff5b8da312a5cbd52a7f462",
+  "function": "paddlex/inference/models/layout_analysis/processors.py:extract_polygon_points_by_masks",
+  "mode": "poly",
+  "generation": "Executed the unmodified reference functions (dependency decorator removed), with boxes [[22,0.9,*bbox,7]], binary int32 [1,200,200] masks filled by the half-open rectangles below, and scale_ratio=[800/W,800/H]. Expected arrays were captured independently of DocLayout.",
+  "cases": [
+    {
+      "name": "asymmetric",
+      "size": [400,1200],
+      "bbox": [40,200,280,800],
+      "rects": [[20,40,110,130]],
+      "expected": [[40,242],[40,781],[219,781],[219,242]]
+    },
+    {
+      "name": "concave_and_disconnected",
+      "size": [1000,600],
+      "bbox": [100,60,800,540],
+      "rects": [[20,20,100,60],[20,60,50,150],[130,110,140,125]],
+      "expected": [[499,60],[100,60],[100,449],[249,449],[249,180],[499,179]]
+    },
+    {
+      "name": "outside_page",
+      "size": [400,1200],
+      "bbox": [-40,120,240,720],
+      "rects": [[0,25,100,110]],
+      "expected": [[-40,150],[-40,659],[193,659],[193,150]]
+    }
+  ]
+}

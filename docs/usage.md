@@ -7,23 +7,19 @@
 Follow the [README installation steps](../README.md#installation) for uv tool,
 manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
-API, or `full` for Office/HTML/EPUB converters. Add `layout` for V3 guidance;
-V3 must run successfully by default. Without an [alignment policy](configuration.md#mandatory-layout-policy),
-Sol boxes/order are retained and V3 supplies guidance only.
-Only `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true` permits Sol-only fallback on V3 failure.
-Extras can be combined; the layout runtime requires Python 3.11+.
+API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v3.0.0`; later changes on `main` are recorded under
-[Unreleased](../CHANGELOG.md#unreleased).
+wheel installs `v3.0.0`; see the [release notes](../CHANGELOG.md#300-2026-09-26).
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
 WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
-providers can download a font on first use. V3 uses local weights, downloaded
-only when absent; CPU execution is supported. V3 failures abort unless the
-operator explicitly enables Sol-only fallback.
+providers can download a font on first use. The V3 pipeline
+attempts to load pinned layout model weights, downloaded during first preparation
+unless already present. V3 can run on CPU; if layout remains unavailable, conversion
+uses Sol with explicit fallback provenance.
 
 ### Installing the application package
 
@@ -31,16 +27,15 @@ For local source or wheel installation, choose one installer in your intended
 Python environment:
 
 ```powershell
-uv pip install ".[gui,layout]"
-python -m pip install ".[gui,layout]"
+uv pip install ".[gui]"
+python -m pip install ".[gui]"
 uv build --wheel
-uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui,layout]"
+uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui]"
 ```
 
 See [build checks](development.md#build-and-package-checks) for verification.
 Tool-installed commands run directly. In a checkout, prefix commands with
-`uv run --extra layout` (plus `--extra gui` or `--extra server` when needed) to use
-the project's environment. Python dependencies still need an
+`uv run` to use the project's environment. Python dependencies still need an
 available package index or local cache even when DocLayout comes from GitHub.
 
 ## Credentials and model settings
@@ -53,44 +48,44 @@ page extraction always uses Sol.
 
 ## Browser workbench
 
-In the source checkout, run `launch.cmd` for the browser on port 8471. It force-stops
-any process listening on that port, including unrelated apps or active conversions,
-then waits for the port to become free. Cleanup failure aborts startup with an
-error. The `doclayout_gui` command also
+In the source checkout, run `launch.cmd` for the browser on port 8471. It stops
+an existing DocLayout listener on that port automatically; other applications
+require confirmation. Stopping a process can discard in-progress work and resets
+the browser session; saved results remain. The `doclayout_gui` command also
 binds loopback, with Streamlit's default port. It leaves port cleanup
 to the caller and forwards extra arguments to the app without
 interpreting them as Streamlit server flags.
-The launcher selects both `gui` and `layout` extras using the existing frozen
-lockfile. A complete evaluated policy enables V3 geometry/order matching;
-without one, the GUI reports that it is retaining Sol boxes/order.
 
-1. Upload a PDF, PNG, JPEG, GIF, DOCX, PPTX, XLSX, HTML, or EPUB file.
-2. Choose Start page and End page. Both are inclusive and numbered from 1; the
-   default selects the entire document. Images are treated as a single page.
+The sidebar has two full-width buttons without icons: Convert documents and Extracted
+information. The active page is highlighted. Switching pages does not call a model.
+
+1. Open Convert documents and upload one or more PDF, PNG, JPEG, GIF, DOCX, PPTX,
+   XLSX, HTML, or EPUB files.
+2. For one file, choose Start page and End page, inclusive and numbered from 1.
+   Multiple files use all pages and have no page selectors.
 3. Optionally enable extra refinement or retain page headers and footers.
-4. Select Run DocLayout. Preparation verifies cached V3 weights, downloads absent
-   files on first use, and warms up the local model. Readiness shows the actual
-   CUDA or CPU provider, or a warning if V3 is unavailable. Each selected whole-page
-   image goes to Sol, with a guide when available, to transcribe content and write HTML.
-5. Inspect and download the result from the tabs.
-
-Auto mode falls back to CPU if CUDA setup or inference fails; final results show
-the device actually used and the fallback reason. Explicit CPU never probes CUDA;
-explicit CUDA never falls back to CPU. No compatible GPU is required.
-With operator fallback enabled, V3 failures produce a warning and Sol processes the
-full image without a guide, keeping its validated boxes and order. Invalid
-configuration, guide limits, and downstream layout-invariant violations remain
-errors. By default all V3 failures, including corrupt weights, stop conversion.
-There is no layout toggle.
-Preview and downloads do not reload the model.
-Debug metadata includes layout timing, region counts, and match counts.
+4. Select Run DocLayout. Matching saved runs are reused without loading V3.
+   If new conversion is needed, “Preparing layout model…” appears while pinned
+   weights are checked/downloaded and the provider is exercised. Conversion waits
+   for an exercised “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” state, or
+   continues with “Sol fallback · V3 unavailable” if preparation fails. Up to three file jobs
+   then run at once. V3 analyzes each whole page before the same image and layout
+   prior go to Sol. If page analysis fails, Sol receives the whole image without
+   that prior. Completed raw
+   Markdown goes to Sol/medium for authorization-field extraction.
+5. Select a document to inspect its conversion tabs. Click **View extracted
+   information** for its saved request details, or open **Extracted information**
+   in the sidebar. **Summary** shows readable sections and service tables;
+   **Source document** retains interactive highlighting. Missing values are hidden
+   until **Show missing information** is enabled. Review flags appear under
+   **Items to check**, and raw output is in **Technical details**.
 
 | Tab | Behavior |
 | --- | --- |
 | Input preview | View a source page; converted office documents use their prepared PDF |
 | Markdown | Sanitized theme-aware preview or raw Markdown; copy raw/formatted content or download `.md` |
 | HTML | Styled white-page preview generated from the exact Markdown; copy or download HTML |
-| Annotated | Accepted native V3 contours; explicit fallback and unmatched Sol rectangles; download PNGs or a raster PDF |
+| Annotated | Matched source contours and fallback rectangles; download individual PNGs or a raster PDF |
 | JSON | Hierarchical document output with metadata |
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
@@ -104,13 +99,43 @@ Clipboard operations require browser support and permission on localhost/HTTPS.
 The ZIP contains Markdown, HTML, document JSON, chunks, metadata, extracted crops,
 and annotated PDF/PNGs. All use the [output filename convention](#output-filenames).
 It excludes the uploaded source and chat. Annotations are raster copies with
-V3-derived matched boxes and Sol-estimated unmatched boxes, not masks. They
-contain no searchable PDF text layer.
+estimated source contours/rectangles. They contain no searchable PDF text layer.
 
 Switching tabs and downloading files reuse the result without new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
-results and chat. Running extraction again also starts a fresh result. Debug
-shows metadata and raw output; it does not save a GUI run history.
+session results and chat. Saved artifacts remain on disk. Matching documents,
+options, and definitions reuse saved runs. In Extracted information, **More actions →
+Extract again** requests new extraction from saved Markdown. **Download data (JSON)**
+exports the saved record without changing it. Debug shows conversion metadata and raw output.
+
+The result caption shows stored device/providers, fallback stages, retained and
+eligible regions, initial matched/Sol-only/V3-only counts and reasons, and final
+visible source geometry usage. Missing historical diagnostics say not recorded.
+Summed page-analysis time includes queue wait and any in-call preparation/fallback,
+not just model kernels; separately performed readiness preparation is excluded.
+Annotations draw simplified V3 contours, V3 rectangles when contours are unusable,
+and Sol rectangles for unmatched content, respecting visibility and source lineage.
+They are not character locations or lossless mask boundaries. V3-only detections
+remain separate metadata, not duplicate extracted blocks. These capabilities do
+not promise better Markdown accuracy.
+
+There is no layout switch. Failed V3 preparation or inference uses whole-page Sol
+instead, with “Sol fallback · V3 unavailable” and saved per-page provenance.
+Unassigned or incompatible V3 associations keep Sol content and geometry. A
+qualified split/merge or tied match can still be assigned, with a warning; Sol
+text is never divided between regions without reliable offsets.
+Sol/API/validation failures still fail conversion. Saved results, including fallback
+results, are reused without silently reconverting after V3 recovers. Field-only
+retries still use saved Markdown. Previewing or changing tabs does not retry
+loading. See [layout settings](configuration.md#local-layout-inference) for the
+cache/model-directory override, offline mode and CUDA/CPU policy. These settings
+belong in process variables or `local.env`, not credential `.env`.
+
+Classification is off by default and makes no extra request. Enabling it later
+requires category definitions, one extraction target, and an explicit process
+environment switch. See the [field guide](field-extraction.md) for activation,
+record schemas, local storage, failure statuses, and two-way evidence highlighting.
+The CLI and HTTP conversion endpoints do not perform these downstream stages.
 
 ### Document chat
 
@@ -125,7 +150,10 @@ status messages. Chat usage is separate from extraction metadata; Clear chat
 removes its local history and usage details. The Session API cost sidebar
 retains costs from cleared chats, previous uploads, repeat extractions, and failed
 requests in this browser session. Chat costs include both draft and verification
-requests. A new browser session starts a new total.
+requests. Field and enabled-classification usage also enters this ledger. The
+sidebar shows GPT-6 Sol and GPT-6 Luna subtotals, not a stage breakdown. A new browser session
+starts a new total. Reopening saved records does not replay their historical
+charges into that total.
 
 CLI commands print estimated cost per conversion. Metadata exports contain
 `usage` records and a `cost` summary for OCR and optional refinement; chat costs
@@ -139,17 +167,17 @@ results adds no model cost. See [rates and limitations](configuration.md#cost-es
 From a clone:
 
 ```powershell
-uv run --extra layout doclayout document.pdf output
-uv run --extra layout doclayout document.pdf output --all
-uv run --extra layout doclayout document.pdf output --markdown --html
-uv run --extra layout doclayout document.pdf output --json --chunks --metadata
-uv run --extra layout doclayout document.pdf output --annotated-pdf --annotated-images
-uv run --extra layout doclayout document.pdf output --zip
-uv run --extra layout doclayout document.pdf output --all --page_range 0,2-4 --use_llm
-uv run --extra layout doclayout --help
+uv run doclayout document.pdf output
+uv run doclayout document.pdf output --all
+uv run doclayout document.pdf output --markdown --html
+uv run doclayout document.pdf output --json --chunks --metadata
+uv run doclayout document.pdf output --annotated-pdf --annotated-images
+uv run doclayout document.pdf output --zip
+uv run doclayout document.pdf output --all --page_range 0,2-4 --use_llm
+uv run doclayout --help
 ```
 
-After a uv tool install, run the same commands without `uv run --extra layout`.
+After a uv tool install, run the same commands without `uv run`.
 The file command requires a destination, either the second positional argument
 or `--output_dir`. It builds one document and reuses it for every selected
 export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
@@ -164,7 +192,7 @@ export. CLI page numbers are zero-based; `0,2-4` selects pages 1, 3, 4, and 5.
 | `--chunks` | `BASE_chunks.json`, flattened blocks with metadata |
 | `--metadata` | `BASE_metadata.json` |
 | `--images` | Extracted crop files, when present and enabled |
-| `--annotated-pdf` | `BASE_annotated.pdf`, a raster PDF with V3-derived matched boxes and Sol-estimated unmatched boxes |
+| `--annotated-pdf` | `BASE_annotated.pdf`, a raster PDF with estimated region boxes |
 | `--annotated-images` | `annotations/BASE_page-N.png`, using original one-based page numbers |
 | `--zip` | `BASE.zip`, containing the complete GUI bundle |
 | `--all` | Every file above, including the ZIP |
@@ -204,9 +232,9 @@ limited to 140 characters to leave room for export suffixes.
 ### Folder and legacy single-file conversion
 
 ```powershell
-uv run --extra layout doclayout documents --output_dir output --workers 1 --skip_existing
-uv run --extra layout doclayout_single document.pdf --output_dir output --output_format markdown
-uv run --extra layout doclayout_single document.pdf --page_range 0,2-4 --output_format html
+uv run doclayout documents --output_dir output --workers 1 --skip_existing
+uv run doclayout_single document.pdf --output_dir output --output_format markdown
+uv run doclayout_single document.pdf --page_range 0,2-4 --output_format html
 ```
 
 These commands use a directory per document, with timestamped filenames, crops,
@@ -246,18 +274,13 @@ finally:
 
 `PdfConverter` accepts a filepath or PDF `BytesIO`. Its default renderer returns
 Markdown, images, and metadata. `TableConverter` selects tables, forms, and
-tables of contents; `OCRConverter` returns aligned blocks with HTML, V3-matched
-geometry, and flagged Sol-only estimates. Select other renderers by their full
-class paths. `OCRConverter` skips grouping and default processors. All converters
-use the alignment-policy and Sol-fallback behavior described above.
-Fatal layout configuration, guide, or invariant errors raise `LayoutError`
-subclasses. V3 runtime failures abort conversion by default. Only an explicit
-operator fallback allows a result with `sol_fallback` diagnostics in
-`rendered.metadata["layout"]`; direct `LayoutService` calls still raise typed
-runtime errors. Other invalid configuration raises `ValueError`, and failed Sol
-extraction raises `ExtractionError`.
-Close shared models after use to release the HTTP client. Local layout sessions
-remain cached for the process lifetime.
+tables of contents; `OCRConverter` returns ordered blocks with HTML and estimated
+geometry. Select other renderers by their full class paths.
+Invalid configuration raises `ValueError`; failed model extraction raises
+`ExtractionError`. Layout failures are caught by conversion and recorded as Sol
+fallback; direct `LayoutEngine.prepare()` and `analyze()` callers receive
+`LayoutModelUnavailable`. Close shared models after use to release the HTTP
+client; the borrowed layout engine remains cached until process exit.
 
 ## HTTP API
 
@@ -268,7 +291,7 @@ of source control and logs. Rotation requires restarting the API process.
 $env:DOCLAYOUT_API_TOKEN = uv run --no-sync python -c "import secrets; print(secrets.token_urlsafe(32))"
 # Optional: an existing dedicated input directory, needed only for filepath requests.
 $env:DOCLAYOUT_INPUT_ROOT = 'D:\documents\api-input'
-uv run --extra server --extra layout doclayout_server --host 127.0.0.1 --port 8000
+uv run doclayout_server --host 127.0.0.1 --port 8000
 ```
 
 Interactive API documentation is at `http://127.0.0.1:8000/docs`; the generated
@@ -298,12 +321,11 @@ Successful responses contain `success`, `format`, `output`, `images`, and
 `metadata`. `output` is a string, including serialized JSON for JSON/chunks;
 image values are base64 strings. Clients must check HTTP status: 401 for missing
 or invalid authentication, 403 for disallowed filepath access, 413 for resource
-limits, 422 for invalid fields, 429 while busy, 503 for fatal layout errors,
-and 500 for other conversion failures.
+limits, 422 for invalid fields, 429 while busy, and 500 for conversion failures.
 Malformed multipart requests may return 400. Errors omit private exception detail.
-V3 runtime failure returns a sanitized 503 by default. With operator fallback enabled, successful Sol fallback returns
-200 with `alignment_mode: sol_fallback` and a sanitized layout `error_code` in
-metadata. There is no HTTP parameter to disable V3 or set its device/cache/policy.
+Ordinary V3 preparation/inference failures continue to Sol and can return a normal
+successful response with fallback metadata. A defensive HTTP 503 handler remains
+for a layout error that escapes the shared conversion boundary.
 The API process runs one conversion at a time. GUI chat, annotations, and ZIP
 downloads have no HTTP endpoints. Defaults are 200 MiB and 500 selected pages;
 see [security limits](configuration.md#security-and-resource-limits).
@@ -314,14 +336,14 @@ see [security limits](configuration.md#security-and-resource-limits).
 | --- | --- |
 | Credentials unavailable | Check the launch folder's `.env`; after changing Windows environment variables, open a new terminal and restart the app |
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
+| Sol fallback / V3 unavailable | Conversion uses Sol content and boxes. Check runtime dependencies, pinned files and cache access for future conversions. Offline mode requires complete files; saved fallback results are not automatically reconverted |
+| CPU shown despite a GPU | `auto` requires successful CUDA execution and kernel verification, otherwise it uses working CPU. Explicit `cuda` rejects a failed CUDA engine without substituting CPU; conversion then uses Sol fallback |
+| Sol-only blocks on a successful V3 page | Inspect matching reasons in layout metadata. Filtering, incompatible classes, low overlap, or an already reserved region can prevent a match; this is not always a detector miss |
+| Contour falls back to a rectangle | A valid V3 AABB remains usable when contour decoding or export validation fails. Inspect the recorded contour reason; do not treat this alone as engine failure |
+| Match count differs from overlay count | Initial counts describe reconciliation. Final counts describe visible source footprints; overlays count drawn polygon parts after processing and visibility settings |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
-| Port 8471 remains occupied | `launch.cmd` tries to force-stop its listeners; check the cleanup error if it cannot. `doclayout_gui` does not stop listeners |
-| V3 unavailable, Sol fallback | Read the layout `error_code`; check the layout extra, model-cache access, or native runtime. Restart after repairing a cached startup failure |
-| V3 misses content or disagrees | Sol blocks are retained. Review their `sol_only` reasons; do not invent matching thresholds to force agreement |
-| Sol boxes/order, V3 guidance only | No matching policy is configured. This is supported; enable replacements only with a complete evaluated policy |
-| Fatal layout error | Check invalid policy/device settings, guide limits, or a processor changing protected layout. These do not trigger Sol fallback |
-| Hardlink warning during uv installation | uv falls back to copying across filesystems. `UV_LINK_MODE=copy` suppresses the warning; it does not fix missing packages |
+| Port 8471 remains occupied | The launcher retries after stopping its listener; if access is denied or the owner changes, close the owning application and retry |
 | Clipboard copy unavailable | Use localhost/HTTPS and allow clipboard access, or download the file |
 | Results disappear | Upload/processing changes invalidate them; a disconnected/replaced session can lose memory |
 | Header or table is wrong | Review the source and try optional refinement; correctness is not guaranteed |

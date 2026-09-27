@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, BlockId, BlockOutput
 from doclayout.schema.groups.page import PageGroup
+from doclayout.schema.layout import LayoutAudit
 
 
 class DocumentOutput(BaseModel):
@@ -24,6 +25,7 @@ class TocItem(BaseModel):
 
 
 class Document(BaseModel):
+    layout: LayoutAudit | None = None
     usage: list[dict] = Field(default_factory=list)
     filepath: str
     pages: List[PageGroup]

@@ -1,56 +1,164 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d2e5c2e1daaf1e8655f0f86f2eea9758b42a28305ba03c35784ac32335206bfb",
+  "pageVersion": "sha256:44503d075c009763e3693591fa479fc68354be2c5098fc684a9a9880e95e58a9",
   "claims": [
     {
-      "id": "claim_69c3726b50994cdd82686aaa570ebaf6",
-      "statement": "DocLayout exposes CLI, GUI, and server entrypoints and routes conversion through a shared provider, local V3, Sol, document, and renderer flow.",
+      "id": "claim_265ec24327ba4fac9d71903c336b85d6",
+      "statement": "The checkout installs development and full-format dependencies through uv and exposes CLI, GUI and server entrypoints.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L44-L126",
-          "version": "repo-lines-v1:sha256:e4a1d4725a54ab987af8095edf4c5839e70e28eb8ce493e25ff78816f63af3a0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNGM1NDNhZDI3YzMzODFhNTAzMjMxOTk2Y2Y2MjIyNjVkMWQzOTMzMzUxMGEyZGEzZjFjZDBjMTBhZTdmMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDA5N2U0YWE1MDA2OGJhMTU3ZjlhMjczOWZhZDg2OTk1ZTFlMGNkY2NkYWRjNTg5N2MyMDM0Yzc0ZDNlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjOGY5Mjg3YWJjNTQ4N2RiMDFmYTE1Y2MwMzEyMDg2N2E4ZDUyYTEzMWJiN2E1OGNmMmIxOTNiNzEyNGNlM2MifQ"
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:1e728a281b075c885a7aa387d5377412fc5c976c60d716b2be0c631e8a3b0885"
         },
         {
-          "resource": "repo://doclayout/converters/pdf.py#L193-L249",
-          "version": "repo-lines-v1:sha256:59f494b6055e7a63349b219ebd91f33c9a1f1ddc866d1532055363f268fccd9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0OTZmNmVlYjEwN2MzMDA4NWIzODc1NjMxMzU4YmYwZmY4NGQ0ZjZhN2UxOTY5ZDA4NjdjMmFlY2QyMzZhN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://pyproject.toml#L65-L69",
-          "version": "repo-lines-v1:sha256:d4f31ccc2f864fa948e5d3c4159be9bbf0a5793e5de03295caf8c2a6e1c78c61:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGVhYjRlYzYzZGU1MTdkYTRjZDhlNWM4MzA3ZmIyYzc3MzdkMzkxOTBhYjY5ZjMyYTVlOWVmODFlYTQ0MTZkZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTA0OGY1OGQxZWEzYmE2ZjUzMjNlYTZiOThiMzE3MzE3MjA3ZTdhNjFkMjBhNDk4ZTJlN2FmNDE5MGU5ZTM5MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M5ZjEyN2NiNDU3ODNjM2MyM2IzYmU0MTk3ODFlNTE0NGJkNmFmMmJiOGJkMDIxYzA2NzE5MWE0NDFjOTE2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjg0Yjg2YjYyMTI4YjZiYmQ0YTUyZDRkMzg2NjNhNmY3OTc1YzAwM2Y3YWZlNTc3MTAwNDc1OWY1OWVhYmZkNCJ9"
+          "resource": "repo://pyproject.toml",
+          "version": "repo-file-v1:sha256:b023d2f84bb1816bbf2f808e861f69866dc3067ba5022f3c39981d4d547b62d2"
         }
       ]
     },
     {
-      "id": "claim_2e12ecc6ef3847f795452ea42d133553",
-      "statement": "The package metadata allows Python 3.10+, but the local layout runtime requires Python 3.11+ and a pinned layout extra.",
+      "id": "claim_3da3edf49afe477fb4f12f5da530d55a",
+      "statement": "The CLI --all path derives conversion exports and a ZIP from one document, whereas GUI single upload permits page selection and multiple uploads process all pages in three file jobs.",
       "evidence": [
         {
-          "resource": "repo://doclayout/services/layout.py#L155-L165",
-          "version": "repo-lines-v1:sha256:589917a871f13a5a62999791fa3210d53a93d3b7f24d4062e68a4a805016e965:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjFkNWZmZTc3MzcyZmUxOWJhNmNjMDJhNTg4NjlmM2I4MmJhNjU4NDRmOTgzNWViNTQxYmY1YjA3ZGEzZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1MzRjYWI4MzkyZTMzNGI1NGEyNmQwMmI1Nzc4YzAwNWRlNjhmOTFhNjkzNmE3MDAyMGNmNDc5ZTRmYzU5ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3MjJmMmVlYjlhYzU0NjMxNWY4OThmN2ViNDAyYTBkNTg1NTllMzg5MmE1ZTU2Y2ExNjBmNTBlOGY2MTc3ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMzJhYzY1YjUwODBiN2U2YTc0N2M1ZTY2ZWQ1OTIwYTRmOTZmMzI5N2MxMzgxNGI4MjI2MjJhOGRkMzQzOTAifQ"
+          "resource": "repo://doclayout/scripts/app_pages/convert.py",
+          "version": "repo-file-v1:sha256:1521ddca8a72951279e4ff39f55eaf4b932ee8edee75dc54cdb208438ea33f12"
         },
         {
-          "resource": "repo://pyproject.toml#L1-L12",
-          "version": "repo-lines-v1:sha256:239e9c6ace54f4cf7dc508798e9a61ae6fe2df1212e0914118cb24c5a18f4963:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmE4MWMzODM2ZWRlZjJkMGJhMTFkMjM1M2ZiNmRhYmM3NzcxNTBhN2NhODNlYTBkOWU5YTcwMzEzZmVhYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiMDFlN2QzMDRjZmI2NzQ3NWRjMTgxMTY3YjcwOTY3YWE5NjYxMDNjMjYxYzMyYTNhYzMzNmE3OWRiNzc2NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1YTlkNDY1ZWI0YjNkY2VkMDMyZWVmNzFmMjA3ZDhkZjY0M2YxYzQ5YTM3MTAyZGQzZTgzMzg1ZDRlNjNkNDgifQ"
+          "resource": "repo://doclayout/scripts/convert.py",
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
         },
         {
-          "resource": "repo://pyproject.toml#L52-L63",
-          "version": "repo-lines-v1:sha256:2b1409b3608448cd613d9cfd77824286574b3418c0b2e377fe5b66789d42e70a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjYjRhYjQwMWVlZDQ4MmIyNmQwNDYwOGM3Yzk0MDllYjY4Y2YxMGU2MzgyYjMxNGFiYmVjMDE3NGQzZTIyMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZTI3ZDA4ZTVlYThjMGIxOWEwOWQyNDI2YTk4NmFiZWFiMDEzNDk1NWZhNTAzYmQzY2QxYWEzODJiOTQxOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhNTI5MDczZDUzNzY1YjE4NTAyYWQ3YTU1OGEwMDY2NGQxOTVlZWFjNjI4NWFhNzMwNTdmNjIzNjNlMWY2OTMifQ"
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
+        },
+        {
+          "resource": "repo://tests/test_cli_exports.py",
+          "version": "repo-file-v1:sha256:cb59cd5d1f48103bcf027ce3cf5e3bf3df2c1cfed8cb62ac6f37c5f8b5eaf4e3"
         }
       ]
     },
     {
-      "id": "claim_663aef74247144e6a3ebd57021e8b414",
-      "statement": "Default offline tests replace the local layout service and block unexpected OpenAI calls, while live tests are opt-in.",
+      "id": "claim_eeef5d42ef824cebaa554c8337521a08",
+      "statement": "GUI post-conversion fields read raw Markdown with Sol/medium; Luna classification remains disabled by default until configured and enabled, with an inclusive 0.75 gate.",
       "evidence": [
         {
-          "resource": "repo://tests/conftest.py#L22-L91",
-          "version": "repo-lines-v1:sha256:0704c33076479b6afe06082419c015d8bf3514a3bc2ace0823bd581a06170e07:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlY2VlNzE5YmJjOWFmNThhZTBjNWU0ZTkwN2ZkMTdlNTViN2NhYjYxNmY3NWMzNjYyMGNlOWIzMzJhYzQ1MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzZjM2NmI5YmQ5YThkMGYzNDBhMmJjMGJlMWUyMmVlYTIwNTY4ZGQ3OGE0NTI4MWI3MjFiMzBmMjJkMDg3ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZmRiYzcyZGNlODkyZGNiMjY1NjBmZDM4YmZjZDZjZjA5ZmNiOTVhMTRiYzg0NGFmYjNhMTMxYzFjMjU4NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3MWUyOTlmYzhmMWU2MzQ2YjQyNzJjYzk0YzVlYTZiMjRkMmRmNzRmMWFjODc0NTE0NmQwZDQwZDBhMWY0YWIifQ"
+          "resource": "repo://doclayout/fields.py",
+          "version": "repo-file-v1:sha256:048d10fdb1192b9906e80b48732b3afc67307425e6011003c74b14b84e3100ed"
+        },
+        {
+          "resource": "repo://tests/test_fields.py",
+          "version": "repo-file-v1:sha256:ad9dd1cf8928c958f230383404df0c21ac0b02857346ef633205cdca015517b5"
+        }
+      ]
+    },
+    {
+      "id": "claim_6093fddd802a45f38e9087c3e53ecbaf",
+      "statement": "HTTP requires a bearer token, supports path and upload conversion, restricts path input to a configured dedicated root, and serves generated API docs.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/credentials.py",
+          "version": "repo-file-v1:sha256:a22e4e2a9fd614dd9594fc22d03798b94f07a04eccf575c27e37e04c0c10ae21"
+        },
+        {
+          "resource": "repo://doclayout/scripts/server.py",
+          "version": "repo-file-v1:sha256:abe152a41d830201d9e32cfe09b26735649c223b67f40412e60ea1f911861902"
+        },
+        {
+          "resource": "repo://tests/test_entrypoints.py",
+          "version": "repo-file-v1:sha256:40019402ec44c93fc280abdf1ae920f7373e1cc1db5721beacf7fbd44a312b18"
+        }
+      ]
+    },
+    {
+      "id": "claim_b610bc8fb2ec4f3eb71011b4cce57750",
+      "statement": "Default tests block unexpected OpenAI requests and live integration tests require explicit --run-integration.",
+      "evidence": [
+        {
+          "resource": "repo://pytest.ini",
+          "version": "repo-file-v1:sha256:b7a3cfbdac31badf57f11c0415e089c05393579a9642ce4d637c7c03bba651ed"
+        },
+        {
+          "resource": "repo://tests/conftest.py",
+          "version": "repo-file-v1:sha256:2743ffcdcb6e51f381a470febecc8f8e67dff6d89dbff81fff3b6877fd5f13d0"
+        }
+      ]
+    },
+    {
+      "id": "claim_41b92cae69d042468005032c888c78e6",
+      "statement": "Extracted information is reachable through a sidebar button or completed-result action, and provides Summary, Source document and explicit retry actions.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/app_pages/convert.py#L177-L197",
+          "version": "repo-lines-v1:sha256:d9de7da6dbe4392bc7b33092c22fe815afc5f02f00c910ffdb2801c388396165:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhZjY1OTM1ZjNjZTEwNzAyYWIwOWFhYjc5OTI0NTVlMmMwZWFmYWI4OWYxYWY4NjliN2RmN2M5YjU4YzIxMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0YjlhODIxNjFlNDgxNTA1ZjZkMmViYjI5ZGI3NjlkZTMwOTgwYzQ2MTRkNGQ5ZGNkOWIwMGRmN2Y4MTYzZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2MDI5NzMzNmNjYzM0NGNlMTQ2OGVhMDIwNTQ0ZDBmYjAyYzkyNjM2Y2U4MjBiZTVhODk2MmM2MjQ5MGMxZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ZjRkMjU0YWE3MzQyYjQ3MmRkZjU5YjkzMmU2ODQ1YzMyZjI5YzgyODkyZWNmMWE3NGIyMmUyNDkyZmExMTMifQ"
+        },
+        {
+          "resource": "repo://doclayout/scripts/app_pages/review.py",
+          "version": "repo-file-v1:sha256:5a7a9815960c2545e825d337ff4727bd733d9367bbba885711fc7e27c99b79ed"
+        },
+        {
+          "resource": "repo://doclayout/scripts/streamlit_app.py",
+          "version": "repo-file-v1:sha256:47b59e24556ace0da95ad627563e90c2103c9f7321f6bf23eeee349adf15abdf"
+        }
+      ]
+    },
+    {
+      "id": "claim_528064958b0340ff9500464baf113965",
+      "statement": "launch.cmd restarts recognized DocLayout listeners on port 8471 and asks before stopping another application.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/scripts/clear_gui_port.ps1",
+          "version": "repo-file-v1:sha256:84e9712cba5af908d49d60d4b37c5a043e7524fb152dea6b8c3a0d18c3372386"
+        },
+        {
+          "resource": "repo://launch.cmd",
+          "version": "repo-file-v1:sha256:87013800f43bcbe62114a07e252e25a3c55ca17026ab7bfea065b8b06f2f5c28"
+        }
+      ]
+    },
+    {
+      "id": "claim_b850e1b4b0844e939c12541c6b366163",
+      "statement": "The checkout prepares a verified cached V3 ONNX model before conversion, auto-selects exercised CUDA or CPU, and records Sol fallback on layout failure while retaining whole-page Sol transcription.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L42-L61",
+          "version": "repo-lines-v1:sha256:f32690484934111d80df80938b8b6782fdaa48ec12ecd43afc36eef90b4cfa71:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YzQ2NjVhZTYzYTY1MTk5MDE2MjFlYzVkODA0NzZhYzAxODdhMGU2Y2I0MTdmNzYyOGY1YWM4OGRlMjZiNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDVhODUxNTUxMjJkODYxNWJlNTJkNTk0NmRhZmUzMDI1OTQ5MzMxMDBmZjY5YjA3NzNkMzc3NWE5ZWUyZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NjAzNmViYTY2MmI0MGUwNTBjNDI0YTJlZjIwNDRiNmQ1NTY0YzVlMmM0YzE3OTk1YmVlZTExYzFhZTA3MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5YWZlZWVlZTAzY2NiMDk1NjBmZGFiNzRmMDFiODI5M2NhNTI2ZTk2YTcyMGIyM2ZhOWNiOTM5N2I3ZTI3NGMifQ"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/settings.py#L34-L38",
+          "version": "repo-lines-v1:sha256:b1c91c29beaaacdfb23b3f657aa8222ad67d65be1c513482ad81003c1d4c388f:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTBmYjQxNzNhNDcyMDlhMzAyMGEzNmIzNmY5YWZlMTZiMjk2MTIzOWVmNmFhNzczNTEyM2ZkYmFiMTRlMDQ2MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2YzOGU5ZTUzZmY0OGQ2MmY1ZDIxYjAzNDkyZTA1OWE4MjQ2ZjM4ZjRiMjhlODc1NzFmMmE4MGQ1Mjg5YjFkZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzZlZGJkYzI1YWJhZDRhY2UzYmQ2NGI4NjE5MjlmMzZhOTBiZDNhZGI2YmRjNGJiODdkN2UyM2NjNTI1NDgxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmU2MGQzZTY4ZmVjYmQ2MGFhMjRlZmMwODUwODFkOGRlNDBiMzdhNTBhMmNmYzYwMzY0YTg2ZTA5YzA2OWYwNyJ9"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py#L340-L373",
+          "version": "repo-lines-v1:sha256:1f1488d156a9ba0b5f621610727b0776bb403294d91850e38b3c509cb2b0b928:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzk2ZmQ3ZGI1M2U3NzRkMjQ1YzU4ZTdiMmRmNjc5ODNjNzY3OWFjNmQ3YmNhODkxMTExNjdkZDViY2U1NDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlYjdjYmQwOGUzMmE4M2MyNDBhYjhmNDhlMWU4NGViZDQ5NDNkMzI1YzdhMmY4YzJjN2MyMWFjZDNkYjdjNmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzYTEzZDY5Y2E0NzRjZTg4YzcyMjU0ZWUwZTI4YTVjNTFiNjBkNGEzMTg5NmY3YjBiN2U2M2E3NTJlNGIxMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNDI3MzU4MjdjZmQ2YWI4ZmQzM2I2MmM2YTU4MDQ0NmVhNmMwNWZiMjQ2ZDlhM2ZhZmE3ZTIzNTI2NDMwZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b42774ca42ab456fa624e6abd8f1716d",
+      "statement": "Local pipeline v4 uses matched V3 mask-derived contours and order while retaining Sol content, contour-to-AABB fallback, and rectangular downstream field evidence.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/fields.py#L308-L352",
+          "version": "repo-lines-v1:sha256:723d51cc5c625a0a99d2222c16991835691a08cd288d1f3e056d46075416079b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE5ZTljMzI1MjgyMGM2NWE4MTY1MjBiOGRiNDkzMjI4MDg0OWVjOGM3ZDJlYjYyNzJhZmRmZWJlMDU5YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlNWVjODYzNzRjZGQwMDk5MDYzZWVmZjI2NmIxNTBjZTQ4YTQ4Y2VkODZhYTg4YmQ4ODcxZDEyZTQ3MTlkNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZmUzZDIxMmIyZmZhYjE5YTdjY2ZhOWM1MDM5NGIxOWUyYzA5YTk2ZDZiNTE3OTQ0MTc5MjJmYzI0ZjdjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZGI5NjBkM2U2ZWJmMjM4MzM2YmNkYTE1ZjZlN2RjZjZhMjQwMGI1ZjdiYmQ5YjE3M2RmMmIzMDQyNTk3MDIifQ"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-27T09:43:51.061Z"
+    "at": "2026-09-27T09:44:56.859Z"
   }
 }

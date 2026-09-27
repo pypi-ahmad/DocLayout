@@ -92,6 +92,7 @@ class BlockRelabelProcessor(BaseProcessor):
                     source="heuristics",
                     top_k=block.top_k,
                     metadata=block.metadata,
+                    html=getattr(block, "html", None),
                 )
                 page.replace_block(block, new_block)
                 logger.debug(f"Relabelled {block_id} to {relabel_block_type}")

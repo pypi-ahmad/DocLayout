@@ -20,7 +20,9 @@ class FootnoteProcessor(BaseProcessor):
             self.assign_superscripts(page, document)
 
     def push_footnotes_to_bottom(self, page: PageGroup, document: Document):
-        if page.layout is not None:
+        from doclayout.layout import has_layout_order
+
+        if has_layout_order(page, document):
             return
         footnote_blocks = page.contained_blocks(document, self.block_types)
 

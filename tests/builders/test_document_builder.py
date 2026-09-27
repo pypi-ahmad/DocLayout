@@ -1,5 +1,4 @@
 import hashlib
-import json
 import threading
 import time
 
@@ -7,18 +6,17 @@ import pytest
 from pydantic import ValidationError
 
 from doclayout.builders.document import DocumentBuilder
-from doclayout.schema.extraction import ExtractedPage, sanitize_html
+from doclayout.schema.extraction import PAGE_PROMPT, ExtractedPage, sanitize_html
 
 
 def test_pages_and_geometry(pdf_document, extraction_service):
     assert extraction_service.call_count == 2
-    # Static instructions are fingerprinted separately from per-page layout data.
+    # Fingerprint only the packaged instructions; page priors vary per image.
+    assert hashlib.sha256(PAGE_PROMPT.encode("utf-8")).hexdigest() == (
+        "c5314c92f8b77c94166efb54e91184ea09629c04d5501596b01b4fc0cad9d099"
+    )
     for call in extraction_service.call_args_list:
-        prompt, guide = call.args[0].split("\n\ngiven_layout=", 1)
-        assert hashlib.sha256(prompt.encode("utf-8")).hexdigest() == (
-            "8ce9cbd623c363a6f9fdb03bb3565cdf3d040d750678da47fafd5729489016a4"
-        )
-        assert json.loads(guide)["image_size"] == list(call.args[1].size)
+        assert call.args[0].startswith(PAGE_PROMPT.rstrip() + "\n\n")
     page = pdf_document.pages[0]
     assert page.text_extraction_method == "openai"
     assert len(page.structure) == 7

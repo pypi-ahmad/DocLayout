@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c321ec676ec4430be4bc676abd94be17598ae9c8723ba55b038bf1f73ad31359",
+  "claims": [
+    {
+      "id": "claim_49895f7af34b4dca9ce7bfa48a586c3c",
+      "statement": "Ordinary layout tests use a substituted layout engine and reject unexpected real OpenAI Responses calls; integration tests require an explicit flag.",
+      "evidence": [
+        {
+          "resource": "repo://tests/conftest.py#L13-L69",
+          "version": "repo-lines-v1:sha256:7636e246378ed43774d042fc60f0fdf3bc54c1a7acb9f2aabb13397fea52ad8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExZDU1ZTJlY2YxNTQ3YzViYWVlMjE3NWI1MmNhYmU3NWM4ZjQ1MWZjM2Q2NzhhOTcyMDJkM2I1OWZlZGZhNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiZDk5YWE2ZTc5Njk0ZTVkYWZhM2RmMDM5ZWMzNmJjMGZhODgwYjRiYzkyNDJiNjFiY2VmOTVkODhhODVlNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a71df8633887409eab1277fc337b509b",
+      "statement": "Contour regressions compare decoded mask vertices and raw mask evidence to a fixture independently captured from the named PaddleX reference, including asymmetric and out-of-page cases.",
+      "evidence": [
+        {
+          "resource": "repo://tests/data/layout_v3_contours.json#L1-L29",
+          "version": "repo-lines-v1:sha256:79193317ae78f66525ec7f6fcdf021cb58e0a2b0dc9c90be2b6282249c1d243f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://tests/test_layout_contours.py#L116-L135",
+          "version": "repo-lines-v1:sha256:f7181f7fb2407310dfcd2aaf118370e369fd27b9586a91f2f22d80cf9c7f8196:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YzM4NThmZDVkYmQ3NWZkNmNjOWNmMTc1ZmIxZWIzN2E3YjBmNTE2M2JjNzdjZDk1NGQ2YjU4YTc5MDlmNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmYWNmMzhhOGVmMzBmOGM1Nzk4YTRiZTRiZWMyMmE3MDM0Mjc3YjU0OGYxNThhZGQ5OTllNzk3YWY4NzdmMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjNjg2OTNjM2E0NzI5ZGZkZTlkZmFiOWI5Mzk3MWYxMjVkYWQyM2U3OGVjMzdhZDUzNGFlMmU3YWQ4OTliYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5YjZkMTU4YTlkM2Q4MjJiMGFhNzE1NWMyY2RjYjFiODllZThmMWUzYjM4NTgyYjJjNmFhNmU2OTg1NmE2MTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4259aca126784982aab5e96be16ecf0a",
+      "statement": "Offline reconciliation tests cover concave overlap, deterministic one-to-one matching, unmatched Sol HTML preservation, global matched order, processor source lineage, and visible contour annotations.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout.py#L930-L1080",
+          "version": "repo-lines-v1:sha256:b3c9cad2d8a49f130d0d585118d7b318d54865d6bb967d21d13636ef8603407e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NTdmZDQ2OTVmMzZlYWNhMGVhYjdkOTM0OWRjNWIyMjJlZTU5MWM2YmZjMjZmMjJhOTQ4NGE1NTI3NzkzNDZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjN2VjZGQxZjBkNmNhODQzZjlhNzI5NjAxZjg0MzVhNGFlODBmZjJjYzA5Y2YxZDk5N2Q2YzM1Y2FjZTQ4NzU5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YTgyZWJlOWVkNDA3YzNhNmJhNGIwMDM0MjkyYmFhNTJjMTFjZTVhZTI4NjEwNzQwMmRlNDc5MmVlZWNhY2ZjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMDc2NjRlZmNhN2M1MmIwNGQzMTNmM2JjOGExYmNhMzdkNGUzNjRkN2U0ODc5MDhkNjEwNjk4ODRiOGZmZTVkIn0"
+        },
+        {
+          "resource": "repo://tests/test_layout_contours.py#L233-L393",
+          "version": "repo-lines-v1:sha256:8dad185f2b8ef896d70acd3a5f0f17303e3a1971576499b2d2a2d7e4fdedd0fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1OGMzZjA1Yjg3MDQ0NmYyMDE1ZmNhZDg4YzM5YWY4NjA2MzlkY2ZkNmU4YzFjM2IyMmE2OTY3Y2ZhMjFiZWRmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYWUzNTY4YzcyYzZiNTFmM2ExYzExYWJhNGM2NGQ0ODgzODg1OTA0MjFiNGUxYjcxZDZjOWIxOGRlOWY1OWExIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjYzlkYjIzMzIxZDQ1YzJmYjAxNmVlMGQ2ZGRmYTJiNTExMDdiMGNjODExMzBkNmRjMzE2YWExM2U5Njg5YTUyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1YjU1ODRiYzBkNzk3YzY1YzE0YTRjZTMwYWY1OWJiMmNlYTM2MGM5YTZiNzc4MWRmNmRhZTdlOWU3YWY1NDFlIn0"
+        },
+        {
+          "resource": "repo://tests/test_layout_contours.py#L514-L612",
+          "version": "repo-lines-v1:sha256:638d67b0e96863374368cf245fee22ef3b9ae3feaf6c73b06eaf91898df84ba2:eyJzZWxlY3RlZExpbmVDb3VudCI6OTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4MWI2N2NiNzM1YTdkN2Y1MTVlYmYwOGY5ZGEzYmQzYWZjOTZkOTk4ZThmODg2NmU2ZGU4N2JmNDQ3Nzk4OWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiMjYzMjMyMjYwY2NkZDUwYWQzMTg5MGU2MTA2ZjJmMTFkYmEyNWFiNzY0ZGFkNGZlYjczMmRjNmJiYWMzNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5N2VlZGE4YWY4MGZjMmI1NzEzODI5MTA4ODA3ZjFhMzhjMjA0OGU2MDIzZGQ2MDZkOTRlN2RiNzIxMDgxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2MmI4MDZmMmY2ZDJhYjkxZGNlMWU0MWQzMjk2OGI3MzZkNWNkZjA5MmE5MmEwN2MzMWE3MjdjMDFkNzlmNjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8852eb3ca22d43ce8b02664447cb5746",
+      "statement": "Runtime and readiness tests distinguish CUDA-to-CPU retry from Sol fallback, verify cached artifacts and policy identity, and ensure processor defects and saved field retries do not become layout failures or reconversions.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/ui/batch.py#L186-L212",
+          "version": "repo-lines-v1:sha256:dd232d51d1852307ff4c72440bbaa70b2b0cf670feaff559137303a4ee1fbec5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZTdhOTc5MzY3NzU3MWUzMzNmOGIzYzdjMWVjOTBlNWZkYTFmMWY1YmNmZjg0NGE5YTlhNjFlYjBjYTllZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiOWE5MTMyY2YxNGUwNzgzNDE5ODAxOTQ5YTM2MWVhMmUxMWU4OWQxMzMyOWE0MzY2NDgxMjY2NWM0Y2Q1MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjZDdiZTY3ZmRmMDYxMmNkMmY1Y2I1NzQzNDZjZjFhMjkwMzZlZjU3NWVjOTQ1OTY3Mjg4ZWQ4YjUyNDk0NDMifQ"
+        },
+        {
+          "resource": "repo://tests/test_layout_readiness.py#L220-L337",
+          "version": "repo-lines-v1:sha256:680e4303118c61b9b6d91f686256e952eb8d07359f2fcb86bd638f5654466243:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjOTAxMDZlMDE5Njc3ZTNiOWMwMjgyYjQxZmU5MGM0ODQ1YjFiMjFmMmQ2NWU4NDgxMWZkZDM2Mjg4NWFkMTQ1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwZTJmNmMyZDQwNTE1NWYzMDA5ZmJjZmU5ZGUxNjhmYzI2MzUwNjg2YTg2MDNjNzU1NjY2OThjOTQwOGRjODg5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4Y2M0YTdkMWNjNzk2YWJhM2U0NjcyMzMyN2Y1MTdlOWY4MTE5ODJkMjUwZjA3MDI5ODZlNGI1NzY0YWQ5NTg5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://tests/test_layout_runtime.py#L295-L374",
+          "version": "repo-lines-v1:sha256:4916db6527d7234e0b60e4ed767ee12f552325b68aa29f633aa1bc9047df4d25:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1ZTQxNjhmYjllMWNmZjgyNGY3NTAxNjEyN2YyNTU4ZDA0NjRkMjBkMmE4ZGYxY2I3MTZiMTk0ZWU0NTdmYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjNjc1NDMwYTFlOTRjNGY5ZjI2MDk2ODk0MDI1OWVmMGEzODU1NGI0MGM2NzQ0MGMyNGE1MGNlMmI5YjYzMzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDU2ZGUxMmIzNTIzOGM5N2I2MzEzYTQwOTZmMjQ3NDNhNjVlNjcwM2YzYTQ3ODBmM2Y2ZGNlN2IzNzAyN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhNDAzN2ExMjkyZjg2MTVmZDM4ZTcyM2YwNTdjMzAxZWQ2ZjI2N2JjNmNhZDRiZmQxZTQwNTRlOTI1NzgwYmUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.6.0",
+    "at": "2026-09-27T09:44:56.859Z"
+  }
+}

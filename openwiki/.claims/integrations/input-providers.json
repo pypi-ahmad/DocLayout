@@ -1,52 +1,86 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b9a0f6077acacb8d625fc9c9ce271408f4f97ea54ca356e458f5bd8f01caa5f0",
+  "pageVersion": "sha256:c61a18761dbdad1f9f4c185160c3b61561e1216948ff3f26301fb741ae2c8c1e",
   "claims": [
     {
-      "id": "claim_ed0467109d984ec68de05807affaab6d",
-      "statement": "Provider selection validates input files and detects supported formats before using an extension fallback; converted document providers create a temporary PDF and clean it up.",
+      "id": "claim_565cf0eedfdb40ffa9ccde20731f0544",
+      "statement": "Provider selection checks file limits, recognized binary signatures, HTML content and then extensions with PDF as final fallback.",
       "evidence": [
         {
-          "resource": "repo://doclayout/providers/converted.py#L11-L40",
-          "version": "repo-lines-v1:sha256:af692f6f559e0d7ffcdccfda2d86022edd8b122b98a9c2030a10880f9a7a7bb5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMWU3NDk1Y2UyMzJlZDViYTlkZjRkM2JhZGIxZTRiZGZiOTM3MjkyNjhkY2ZkNzA2ZGEyYWY1MGY3YTQ0ZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlZWM1MGM5NjU0NDFlMGUxNWQ3ZjI3ZDc5M2QxZTg0NjhjY2M5MzczMWI5OGJiNDFhOWEwYzY2MDUxMDhjNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMzJjMjU4MThlYWM0NmRmMWJkY2U2YzVmNjg3YzkwZTQ0MmNlNzQ2MDkxODdlNGNjM2I1ZDg4ZmNkOWM0MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://doclayout/providers/registry.py#L43-L87",
-          "version": "repo-lines-v1:sha256:9fa7e057c8144b7c08962c2619fc90ceb9b1646761b33beeff45f8422c3d61b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGYyOWVlYzZhZGViYWI1NTgxZjNiODU3ZGY0Mzc4YjU5OWM0M2I3YzEyZmUzMGVjOTI3ZTljYjYzNWI2MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMTA4OWRlZDZmYTk1YTNlZWViOWYyZmFjNDFiMjA2YmI2YjJiNzQ2ZDM0YmEzNWZlYjY1MTM5MDc0ZWNlZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkOWRlOTYwYmNhNzFiNjRhNmFiODAxNTVkNjJlYTE2NmIzODRlOGUwYTViZTU2ZmZmMmM4ZDk4MTgwOGYxMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/providers/registry.py",
+          "version": "repo-file-v1:sha256:e3c74807715f33e9daf96555996ba4ea7ad8d2f3bcb4495f0466d77e83089f4e"
         }
       ]
     },
     {
-      "id": "claim_b598ca8fdaf3414382d11ac05ea108e2",
-      "statement": "PdfProvider validates zero-based page selection and renders RGB pages through a PDFium lock with render-pixel checks and top-left page geometry.",
+      "id": "claim_da8548c9457243b49f5e5876a0ad4926",
+      "statement": "PdfProvider validates zero-based ranges, uses a process-wide lock for PDFium, records rotation-aware page geometry and closes rendered resources; tests cover invalid ranges and rotated size.",
       "evidence": [
         {
-          "resource": "repo://doclayout/providers/pdf.py#L14-L96",
-          "version": "repo-lines-v1:sha256:dc722034ab53b6e4e21b9f3195fbced48e87278d68c454e6f72f11272bfefea3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJmOTJmNWMwNDFkN2FkNzcxNGUwMDM5ZGI5NzBjMmU4ZDViY2ZmZjFmN2RiMTIwY2YzNDkzODJmNWNlY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4YThiZGY4ZjM3ZjE1ZDExYzcyNTZiMWZhM2E3N2UyMzc3OWYxZmY0YmU2ZWRlMmE1ZWFiN2I0NjFiMmRlOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/providers/pdf.py",
+          "version": "repo-file-v1:sha256:bdfc5f24e242ce8057d150ee04966d922c77a4e0d746e515fbcafcde477a2a42"
         },
         {
-          "resource": "repo://tests/providers/test_pdf_provider.py#L6-L28",
-          "version": "repo-lines-v1:sha256:ce1c953eb5bf97526481081ab5498aa2d90041e4a1828f3897d15b0dd68f68fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZTc0YzhmZWU3ZGEzOGZjOTkwOTk4ZmZjN2QxOWZmNzFiNzA2NmI5ODJiNTJmMzBkYWYwMmJkZDI1MjM0MTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NTk3ZmU5ZDg3MzNjOWU5MGY4NTQwM2U2M2MyODMxNWNmNzAzZDg2MDk3ZWVhZTcyMzY0YzE2YThkNTFlY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tests/providers/test_pdf_provider.py",
+          "version": "repo-file-v1:sha256:6e6d6643fde94cec13d29de296ebf05f5e6cabe36b75c5b084614c66bc94bc28"
         }
       ]
     },
     {
-      "id": "claim_e4d78e8d064b41ed88b8280fe2b69029",
-      "statement": "ImageProvider validates pixels, exposes one page, and returns a scaled image copy for the builder's 192 DPI request.",
+      "id": "claim_b901d0bb78084a519250f7f443869bd6",
+      "statement": "ImageProvider models one page, checks page zero and pixel limits, upsizes above 96 DPI with Lanczos and explicitly closes its owned image.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L44-L70",
-          "version": "repo-lines-v1:sha256:c71047008db2f507de6f11e32d4068e762bf565584db390367d4f738567ce0eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1YTVjMGZlMjgxZjNjNDFmYjAxMDcyZmI5Yjk0Njg3MzU2ZDQyMzAzNjExNDRhNjhiYzQxMTM0NGM3ZWU2YTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDA5N2U0YWE1MDA2OGJhMTU3ZjlhMjczOWZhZDg2OTk1ZTFlMGNkY2NkYWRjNTg5N2MyMDM0Yzc0ZDNlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyYjdmYTZjZWE0YTE1OTk1OWUyOGQ0OTlkZDk0OTdlODkxNzllZjNlYmJjMDNiNTE2ZTFjYmVkMjZkNDhkZGEifQ"
+          "resource": "repo://doclayout/providers/image.py",
+          "version": "repo-file-v1:sha256:aa0807e2ef37deb890d2321498941511cd1c4855605fb897dcc316d2eea719d8"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b1e0d441adb48eab83afb55ae184ed2",
+      "statement": "Optional document providers normalize to temporary PDFs shared through ConvertedPdfProvider, which deletes them on close or initialization failure.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/providers/converted.py",
+          "version": "repo-file-v1:sha256:47379f422445032fcf27ddda0dbdb2428bc40e1f5058f78123690f02ba334cdd"
         },
         {
-          "resource": "repo://doclayout/providers/image.py#L13-L79",
-          "version": "repo-lines-v1:sha256:7529e140ba8bf2f0004b6f147de81ebc0534f8ef95026f9959b1136a1e83eef2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYWQ5OGM2MTUzMzg3NmIwZjRhMDYzOWZmYjU4YWNkMDVmODYxZWYyNmUxNWMxOGRlMDY1YmVlZDc4NGI4NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjQyNGVlMjA5ZWIzOThiZjI1ZTFiOTUyYTAyMjYxYTJiMjA0ZjA0N2VlZmRlYWI3ZTUzMDRlNzM2YjkzYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlNmM4MWJlZGViMzI0MzBlOGEyZWNmOWUyYzAzNzIzNWUyNmQwNjE0OTY1NzJiMDVjYTk3YzYzYWJmZDFmMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkNWE2YjUyYTkzMzY5NGE1NmE1YzVlNTJlYmYzYTdjZmM4YTQwYTA0NDM1YzMzMTA5Mjk2MDE0MmY2YjY3YTcifQ"
+          "resource": "repo://tests/providers/test_document_providers.py",
+          "version": "repo-file-v1:sha256:d7b956c74a0e36a8abef5d2de5a88e2933aef78de1e44314b67f4fbda5699904"
+        }
+      ]
+    },
+    {
+      "id": "claim_1b8dbef22dda4b1184e99d514684afca",
+      "statement": "DocumentBuilder renders images on its caller thread and schedules V3 analysis followed by whole-page Sol extraction in workers; layout failure omits the prior, and builder failure closes rendered images after workers finish.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py#L42-L159",
+          "version": "repo-lines-v1:sha256:00d3db191d3e9e6ad65e694c8dcf0f60406a19fc150019e517826b809ada871a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NGM0NjY1YWU2M2E2NTE5OTAxNjIxZWM1ZDgwNDc2YWMwMTg3YTBlNmNiNDE3Zjc2MjhmNWFjODhkZTI2YjU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1YjhlMDgwZGZiNWQxOGIxZGZkN2IwMGRiN2M2YjYzYTZiMmRlNzcyY2ZlNWJiMjYxMGJiODQzYmU2ODA2OWM4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTYwMzZlYmE2NjJiNDBlMDUwYzQyNGEyZWYyMDQ0YjZkNTU2NGM1ZTJjNGMxNzk5NWJlZWUxMWMxYWUwNzA4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b53b77bcf3a84e6697ec1ef69d490c02",
+      "statement": "Layout transforms rendered pixels independently on each axis into normalized request or provider coordinates with page origins; PDF size and rendering already account for rotation.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/layout_geometry.py",
+          "version": "repo-file-v1:sha256:644cc3b5205b6282a7abde416aa3d8d7ebc588647c2c6fad71cf071bdfb41963"
+        },
+        {
+          "resource": "repo://doclayout/providers/pdf.py#L49-L60",
+          "version": "repo-lines-v1:sha256:e7b2d521665569ac63f581b5543167a295744d8885f61dbd74200eb6e89534c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlNGMxM2FjZWY1ZmM1MjNjMTZkNGZhZjE4MjQwZTBkMWEyY2FjNDM2NGUzMmRkN2RmMWUyYTlhYTEyZTFhYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzZlMTIzODBmNGNkOTBjMjAyZmI1NmE4YjgyM2I4ZTFiMWI4MDEwMTYxOTY0YTFmODQ5Mjc4Y2UxZDViZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NWQ2ZDY3ODkwM2QxMTU5MTY3MzA5ZTdjZGJkMGEzNDYwMjljN2FkZmZjYjQwMmYzNDhmMzU3NmRmZTM5ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMzNhMTU0NjJhMGFiMWU3NTBlYmQyODM5YTI0NzIxNDBhMWM2Y2EwNjUxMjAwMDc4MTBmYWE1YTc4OGRhM2QifQ"
+        },
+        {
+          "resource": "repo://doclayout/ui/exports.py",
+          "version": "repo-file-v1:sha256:87c8d9072376df67ad0c1b3050350edfd1f290bc17948fa850f8667fb12f109f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-27T09:43:51.061Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

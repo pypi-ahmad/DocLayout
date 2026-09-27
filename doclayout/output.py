@@ -51,7 +51,32 @@ def json_to_html(block: JSONBlockOutput | BlockOutput):
     return str(BeautifulSoup(_splice_json_html(block), "html.parser"))
 
 
-def output_exists(output_dir: str, fname_base: str):
+def output_exists(output_dir: str, fname_base: str, *, fingerprint: str | None = None):
+    if fingerprint is not None:
+        root = Path(output_dir)
+        if not root.is_dir():
+            return False
+        stem = source_stem(fname_base + ".source")
+        names = re.compile(re.escape(stem) + r"(?:_\d{8}_\d{6}(?:_\d{6})?)?$")
+        for path in root.iterdir():
+            if path.suffix not in {".md", ".html", ".json"} or not names.fullmatch(
+                path.stem
+            ):
+                continue
+            try:
+                metadata = json.loads(
+                    path.with_name(path.stem + "_metadata.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                if (
+                    metadata.get("layout", {}).get("manifest", {}).get("fingerprint")
+                    == fingerprint
+                ):
+                    return True
+            except (OSError, ValueError, AttributeError):
+                continue
+        return False
     exts = ["md", "html", "json"]
     for ext in exts:
         if os.path.exists(os.path.join(output_dir, f"{fname_base}.{ext}")):

@@ -1,32 +1,28 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-"""API client and process-shared lazy local layout lifecycle."""
+"""API clients and a borrowed process-level lazy layout engine."""
 
-from doclayout.services.layout import (
-    LayoutConfigurationError,
-    LayoutPreparation,
-    LayoutService,
-)
 from doclayout.services.openai import OpenAIService
-from doclayout.settings import settings
-
-
-def create_layout_service() -> LayoutService:
-    device = settings.DOCLAYOUT_LAYOUT_DEVICE
-    if device not in ("auto", "cpu", "cuda"):
-        raise LayoutConfigurationError("Layout device must be auto, cpu, or cuda.")
-    return LayoutService(device, settings.DOCLAYOUT_LAYOUT_CACHE_DIR)
 
 
 def create_model_dict() -> dict:
-    layout = create_layout_service()
-    return {"extraction_service": OpenAIService(), "layout_service": layout}
+    """Create an owned Sol client and borrow the process-cached layout engine.
 
+    Returns:
+        dict: Conversion artifacts. The layout engine remains lazy; this call
+        does not download weights, prepare a provider, or run inference.
+    """
+    from doclayout.layout import get_layout_engine
 
-def prepare_layout_model(model_dict: dict) -> LayoutPreparation:
-    return model_dict["layout_service"].prepare()
+    return {"extraction_service": OpenAIService(), "layout_engine": get_layout_engine()}
 
 
 def shutdown_models(model_dict: dict) -> None:
+    """Close the owned Sol client without closing the shared layout engine.
+
+    Args:
+        model_dict: Artifacts returned by create_model_dict. The layout session
+            is released separately at process exit.
+    """
     service = model_dict.get("extraction_service")
     if service is not None:
         service.close()

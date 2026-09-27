@@ -2,12 +2,9 @@
 from pydantic import BaseModel
 
 from doclayout.renderers import BaseRenderer
-from doclayout.schema.geometry import LayoutGeometry
-from doclayout.schema.layout import visible_source_blocks
 
 
 class OCRJSONLineOutput(BaseModel):
-    layout_geometry: LayoutGeometry | None = None
     id: str
     block_type: str
     html: str
@@ -30,20 +27,22 @@ class OCRJSONOutput(BaseModel):
 
 
 class OCRJSONRenderer(BaseRenderer):
-    """Return aligned source blocks and rectangle-derived polygons, not character boxes."""
+    """Return final structure and geometry without inventing character boxes."""
 
     def __call__(self, document):
         pages = []
         for page in document.pages:
             blocks = []
-            for block in visible_source_blocks(page, self.block_config):
+            for block_id in page.structure:
+                block = page.get_block(block_id)
+                if block.removed:
+                    continue
                 blocks.append(
                     OCRJSONLineOutput(
                         id=str(block.id),
                         block_type=str(block.block_type),
                         html=getattr(block, "html", "") or "",
                         polygon=block.polygon.polygon,
-                        layout_geometry=block.layout_geometry,
                         bbox=block.polygon.bbox,
                     )
                 )

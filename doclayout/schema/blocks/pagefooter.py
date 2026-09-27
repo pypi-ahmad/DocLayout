@@ -9,15 +9,15 @@ class PageFooter(Block):
         "Text that appears at the bottom of a page, like a page number."
     )
     replace_output_newlines: bool = True
-    ignore_for_output: bool = True
+    ignore_for_output: bool = False
     html: str | None = None
 
     def assemble_html(self, document, child_blocks, parent_structure, block_config):
-        self.ignore_for_output = not (
-            block_config and block_config.get("keep_pagefooter_in_output")
-        )
+        from doclayout.layout import visible_block
 
-        if self.html and not self.ignore_for_output:
+        if not visible_block(self, block_config):
+            return ""
+        if self.html:
             return self.html
 
         return super().assemble_html(

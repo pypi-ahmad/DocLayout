@@ -3,9 +3,9 @@ import click
 
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
+from doclayout.layout import layout_summary
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import save_output
-from doclayout.services.layout import LayoutError, layout_error_message
 from doclayout.services.openai import OpenAIService
 from doclayout.usage import cost_message
 
@@ -16,10 +16,9 @@ from doclayout.usage import cost_message
 def convert_single_cli(fpath, **kwargs):
     parser = ConfigParser(kwargs)
     config = parser.generate_config_dict()
-    models = None
+    models = create_model_dict()
     converter = None
     try:
-        models = create_model_dict()
         converter = parser.get_converter_cls()(
             artifact_dict=models,
             config=config,
@@ -29,15 +28,15 @@ def convert_single_cli(fpath, **kwargs):
         rendered = converter(fpath)
         folder = parser.get_output_folder(fpath)
         save_output(rendered, folder, parser.get_base_filename(fpath))
+        summary = layout_summary(rendered.metadata)
+        if summary:
+            click.echo(summary)
         click.echo(f"Saved output to {folder}")
     except Exception as exc:
-        raise click.ClickException(
-            layout_error_message(exc) if isinstance(exc, LayoutError) else str(exc)
-        ) from exc
+        raise click.ClickException(str(exc)) from exc
     finally:
         if converter is not None and isinstance(
             converter.extraction_service, OpenAIService
         ):
             click.echo(cost_message(converter.extraction_service.usage))
-        if models is not None:
-            shutdown_models(models)
+        shutdown_models(models)

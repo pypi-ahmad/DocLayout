@@ -127,12 +127,7 @@ class BaseRenderer:
             "extraction": {
                 "method": "openai",
                 "model": "gpt-6-sol",
-                "geometry": "v3-matched; sol-estimated-unmatched"
-                if any(
-                    page.layout and page.layout.alignment.policy is not None
-                    for page in document.pages
-                )
-                else "model-estimated",
+                "geometry": "model-estimated",
             },
             "table_of_contents": document.table_of_contents,
             "page_stats": self.generate_page_stats(document, document_output),
@@ -140,20 +135,12 @@ class BaseRenderer:
         if document.debug_data_path is not None:
             metadata["debug_data_path"] = document.debug_data_path
 
-        metadata["layout"] = [
-            {
-                "page_id": page.page_id,
-                **page.layout.metadata(),
-                "groups": {
-                    str(block.id): [str(key) for key in block.structure]
-                    for block in page.children or []
-                    if block.structure
-                    and str(block.id) not in {s.id for s in page.layout.sources}
-                },
-            }
-            for page in document.pages
-            if page.layout is not None
-        ]
+        from doclayout.layout import layout_metadata
+
+        layout = layout_metadata(document, self.block_config)
+        if layout is not None:
+            metadata["layout"] = layout
+            metadata["extraction"]["geometry"] = "mixed-v3-sol-processor"
 
         return metadata
 

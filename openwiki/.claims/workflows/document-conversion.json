@@ -1,58 +1,130 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:812d89f11d38e685fb6e3e9210197eb372e52d59ad2896746d26cdb1815d9125",
+  "pageVersion": "sha256:f4c76dd04562eb9c80ce6432ce4710e9bced728da73d8ecb57e632f150bd53d6",
   "claims": [
     {
-      "id": "claim_ae976bb33b4c49ae92fe166871aebdfa",
-      "statement": "The builder renders selected full pages at 192 DPI serially, obtains V3 layout before issuing up to three concurrent whole-page Sol requests, and treats successful empty detections as success.",
+      "id": "claim_1d14c56f09ba41f39b7dfd2a9ba99c52",
+      "statement": "PdfConverter selects a provider, builds a Document, runs StructureBuilder then sequential processors, sanitizes their HTML, attaches usage and finally renders.",
       "evidence": [
         {
-          "resource": "repo://doclayout/builders/document.py#L44-L126",
-          "version": "repo-lines-v1:sha256:e4a1d4725a54ab987af8095edf4c5839e70e28eb8ce493e25ff78816f63af3a0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YzZjYTExZjFkYmM4ZTUzNmFjOTU3MzEzZDJiY2EwMTY3ZmQyMzg2NTIzOTJiYTNkMTU2ODcyOTNkNTRjZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNGM1NDNhZDI3YzMzODFhNTAzMjMxOTk2Y2Y2MjIyNjVkMWQzOTMzMzUxMGEyZGEzZjFjZDBjMTBhZTdmMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDA5N2U0YWE1MDA2OGJhMTU3ZjlhMjczOWZhZDg2OTk1ZTFlMGNkY2NkYWRjNTg5N2MyMDM0Yzc0ZDNlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjOGY5Mjg3YWJjNTQ4N2RiMDFmYTE1Y2MwMzEyMDg2N2E4ZDUyYTEzMWJiN2E1OGNmMmIxOTNiNzEyNGNlM2MifQ"
+          "resource": "repo://doclayout/converters/pdf.py",
+          "version": "repo-file-v1:sha256:eec4629726a9f4036945665d0115235b29e1e1209fd36f5e4bc9a65c27d930c0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d90e87445f6747249a848bfe2fa2bbc6",
+      "statement": "DocumentBuilder renders pages on its caller thread, schedules one request per selected page with concurrency 1–3, validates responses, rescales boxes and preserves provider order.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
-          "resource": "repo://tests/builders/test_document_builder.py#L13-L29",
-          "version": "repo-lines-v1:sha256:6aff7534d3ea66e76351ef5394747e329c1923cbcfaa91eb8820c6601589e2fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhYTk0NWUxYTAzNWFlZDAzMmY1ZDdkOTI3ZTNkNzE4MmM0YjVjNzEwNTVlNzcwOTUwNDcyNGQ0ZDYyMzE5MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYmQzZjA0NDU1ZGFiMGY5ODRlOTkxY2Q2ZDQ2NjM5NjNhMWI1NTZiMmFiMTEwNDU2MzhiNmQyYTQ5MmQ5YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlYWQ2MDdiN2JmZTgzOGE4NzM0ZmYzMjM3MWEwMzQyYmQxZGYzOWY4YzViYjVhY2YzYzk1YjlhOTQwZjJjMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxNTlkMzUwNjc5ZjE5N2JhN2JiYmJhNDMwOTgyYTA4ODkzOTM4ZDdiNWQ0MzgwOTdjZTc5ODA2ZjNiZWI2OTEifQ"
+          "resource": "repo://tests/builders/test_document_builder.py",
+          "version": "repo-file-v1:sha256:04c02e1a7c3f9161f23bc9e928dacc9ddcbb62b092134235e6f3e0dcd9925b6f"
         }
       ]
     },
     {
-      "id": "claim_9806804e62c64ba0be84a7ab67a10825",
-      "statement": "The bounded given_layout guide serializes all valid class, score, bbox, contour, provenance and order fields or fails above 512 regions or 64 KiB.",
+      "id": "claim_148f2b063875450a8e7f10d70b469e25",
+      "statement": "Invalid page extraction aborts document conversion, and focused tests verify one extraction per page and preservation of prior output on failure.",
       "evidence": [
         {
-          "resource": "repo://doclayout/schema/layout.py#L58-L115",
-          "version": "repo-lines-v1:sha256:d919b9f8fe7e286d302ffd068f9e99d6590c55cb6bc80dbc9aafb6efd112e928:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkZmQyOGY2ZWVlNzFlNTgyMzE3ZTI2NDBmYmI5ODBlNmE2YmNkZTQ3ODU1ZGRiMTM3YTllMTAwNjdmY2FmN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMzEzZjYwNzQ3N2IwZWQzNjQ3ZmU3MjVhMzUzMGI4NjM4ZmM1ZjBhMzQ1ZWM4M2UzOTVhNmU4NDY0ZDQ0MjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYjA3YzlkOTFmNjcxMGI4OWUzOTFkOGJhNjFjMzgzOGE3MTI4ZTcxOTM3NDI3YjQ5NDMzZDUyMWJlZThhMmEifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_105b73886e1945139db4811afab1ec5c",
-      "statement": "The builder attaches page-coordinate V3 contours only to matched blocks and stores source bindings plus region evidence; unmatched Sol blocks retain content.",
-      "evidence": [
-        {
-          "resource": "repo://doclayout/builders/alignment.py#L394-L420",
-          "version": "repo-lines-v1:sha256:552ec81dad9b0f51ff1e759b4f96f9ed837cb60ec6c7082c25f78a445c56dfbb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMjgyMjM2YzM0ODk5MzhlODgyN2VjNzFjNzg4M2Y3MmYyY2VlMWQyMjgxNjY3ZjAzYWE1YzI0MzhhNjg2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2YjQ4YWI0YjdjMjk4NzNmYTc4MTU2YzE1YzI4YTgwNzZkODg5ZmMwOWE4YTY0ODE3N2I0YzMwM2Q0YmM1ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjZDEzNDZhODI3NTg2YWViMWYwNWRjODcxMzc2NTgyMjIxYjM0YThlOTdjYTAzY2M4NjEwMzM1YzQ5N2I3NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNWJiZTA1N2E4NzBmYmFlNGU5ZDQ5NjQ1MjUzMmQ4ZTcyNWJkMDZlN2JhNGJjN2Q4YmEzN2QyMGEzZThiOWYifQ"
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
         },
         {
-          "resource": "repo://doclayout/builders/document.py#L128-L186",
-          "version": "repo-lines-v1:sha256:f3265f1180625724249e52ae948229ae66dbea4c447c75d6a0c8238569f78f34:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyMTk2YWQ1YWM5ZTRkNmI5OWNjNzdjMmE1ZjQ3ODg4YWI3MDUwMTY4MjNkMjk3ZWZmYzEzZTAwNzM2NTU3YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTZjYzI1ZWU5YWQ5MzAxYWE4MjIyZDViMWJmMDA4OGJiZTU0OGZiNWU5MzNmYjJmYjliMTFlMDkyNzY5YzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2NGI5MWE1NmE2NDY1NTNjOTM2NDc5ZWVhYjIzZTE0YzdhYTVhNDQ5YjgwMzE5MDhiYTYxZDYxN2U1MjAxMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwN2VjMmNjY2YzNmE2OTk5NWZjYmY5MjY5MjJlYjdmNjI1OTg2NGU1YzNlZDU4MThiNWVmMzliMGM4MjcyMGMifQ"
+          "resource": "repo://tests/converters/test_pdf_converter.py",
+          "version": "repo-file-v1:sha256:a53bfb1fd3d6816598cf512899237c3073a2c13066c6770ce9607cc6a6334a5a"
         }
       ]
     },
     {
-      "id": "claim_96009a6075bf48e6aa964614d270c3dc",
-      "statement": "PdfConverter checks layout after grouping and each processor, records permitted filtering, sanitizes final HTML, and renders the completed document.",
+      "id": "claim_e74538b06aa240fa80d8ebc41bdb278f",
+      "statement": "CLI export paths derive multiple formats from one converted document and validate output targets before writing.",
       "evidence": [
         {
-          "resource": "repo://doclayout/converters/pdf.py#L193-L249",
-          "version": "repo-lines-v1:sha256:59f494b6055e7a63349b219ebd91f33c9a1f1ddc866d1532055363f268fccd9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZTQxNTE1MGE4NDIzODVjZDYwOTIwZTc3NDIzYmM2NGM1ZThhNGVkYzZkYjQ4YWYzYTVkNTBmNWFiMjA3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0OTZmNmVlYjEwN2MzMDA4NWIzODc1NjMxMzU4YmYwZmY4NGQ0ZjZhN2UxOTY5ZDA4NjdjMmFlY2QyMzZhN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmMTA4OTlkZDI1YTBkYWEyNzg3NjBmMjA5MjBjNzY4ZGNkY2FiYmIyN2Y4ZGU5MmY4NjhhYjY4NWExM2UxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://doclayout/exports.py",
+          "version": "repo-file-v1:sha256:dc5ba1e32f4138141e11ac3d442b9ff72f7d2cc6a92b778b12ec3652b322b3dc"
+        },
+        {
+          "resource": "repo://doclayout/scripts/convert.py",
+          "version": "repo-file-v1:sha256:8bf0c57cfe29686807f904a93e5f97ecbf14b0730da866e9ff51689d695449fb"
+        },
+        {
+          "resource": "repo://tests/test_cli_exports.py",
+          "version": "repo-file-v1:sha256:cb59cd5d1f48103bcf027ce3cf5e3bf3df2c1cfed8cb62ac6f37c5f8b5eaf4e3"
+        }
+      ]
+    },
+    {
+      "id": "claim_498bf446b62b4fc0bcdea77c0dd8bdba",
+      "statement": "GUI batch preserves per-file failure receipts and sends saved raw Markdown into a separate downstream field workflow after successful conversion.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
+        }
+      ]
+    },
+    {
+      "id": "claim_d74c3c7929f84f7aa25f9a9fee024f0b",
+      "statement": "Conversion attempts V3 before whole-page Sol, records Sol fallback for layout failure, and preserves Sol content while applying accepted V3 contours or AABB fallback.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f354492ec8a4b16b3b4a678978d6d04",
+      "statement": "Qualified compatible-family contour/AABB IoU pairs at >=0.5 use deterministic greedy one-to-one assignment; margin, ties and containment are warnings, matched slots sort globally, and unmatched content/evidence survives.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
+        }
+      ]
+    },
+    {
+      "id": "claim_14eceb79f4bc476e8b9ead3893052e41",
+      "statement": "GUI identity includes pipeline v4 decode, guide, matching, order, source, reporting, execution and fallback policies; actual device availability does not invalidate saved fallback, and field retry reuses raw Markdown/chunks.",
+      "evidence": [
+        {
+          "resource": "repo://doclayout/builders/document.py",
+          "version": "repo-file-v1:sha256:f23da924c2903c26d04c6b7dceed1e98925103794d479583c314de10c973de38"
+        },
+        {
+          "resource": "repo://doclayout/layout.py",
+          "version": "repo-file-v1:sha256:acd3b50bdfe6aaa2c1ffebfa41c16dc02b43139f4829d86402a672ee489a5090"
+        },
+        {
+          "resource": "repo://doclayout/ui/batch.py",
+          "version": "repo-file-v1:sha256:0f4fa3407e9776c3a8ece48805d3f7751492709b057570ec39fcb39f51411bcd"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.6.0",
-    "at": "2026-09-27T09:43:51.061Z"
+    "at": "2026-09-27T09:39:18.635Z"
   }
 }

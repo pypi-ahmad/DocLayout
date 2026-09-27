@@ -1,51 +1,89 @@
 # Changelog
 
-This changelog records published releases and unreleased changes in this checkout.
+This changelog records published releases and unreleased checkout changes.
 GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
-### Documentation
+- Synchronized maintained guides and downstream geometry notes with local pipeline
+  v4. Preserved dated validation evidence, runtime prompts, and saved results.
 
-- Initialize the generated OpenWiki index from the current source and tests,
-  with source-linked claims and no scheduled CI refresh.
-- Correct the required-layout and opt-in Sol fallback guidance in the example,
-  benchmark, fixture, environment sample, and architecture/usage guides.
-- Refresh four interactive conversion diagrams to show contour output and
-  required-layout failure behavior.
+- Completed local mask-to-contour decoding for the unchanged official pinned
+  ONNX artifact. Retains raw masks, classes, boxes and model order keys; derived
+  contours follow the documented PaddleX reference and coordinate transforms.
+- Added contour-guided whole-page Sol input, deterministic one-to-one matching,
+  global matched ordering, source-footprint lineage, and contour annotations.
+  Sol keeps text/HTML ownership and unmatched content; runtime failure still
+  visibly falls back to Sol. Header/footer settings apply to matched V3 labels.
+- Pipeline `sol-layout-v3/v4` separates initial reconciliation, final visible
+  source geometry and overlay counts, with actual providers and fallback/rejection
+  reasons across existing status surfaces. Historical records remain unchanged;
+  saved field retries still use raw Markdown without conversion.
+- Extended existing offline regressions and bounded local evaluation. See the
+  [verification record](docs/layout-v3-plan.md#completion-verification-2026-09-27-local-unreleased)
+  for exact results and live limitations; these are not model-accuracy claims.
 
 ## 3.0.0 (2026-09-26)
 
-### Local layout with Sol fallback
+### Compatibility
 
-- Attempt PP-DocLayoutV3 for real GUI, CLI, API, PDF, and OCR conversion. Sol still
-  transcribes the whole page and writes HTML, guided by bounded layout JSON.
-- Use revision-pinned, hash-checked ONNX weights in an ignored cache and the
-  optional `layout` dependency extra (Python 3.11+). Download only absent files.
-  Auto mode supports CPU fallback; explicit CUDA never falls back to CPU. V3
-  preparation/inference failures use full-image Sol extraction, with visible
-  warnings and sanitized fallback diagnostics. There is no layout-off option.
-- Align validated Sol blocks before structure building. Preserve content in
-  ambiguous split/merge cases and protect matched V3 rectangles and reading order
-  through processing. Page correction is HTML-only; annotations draw rectangles,
-  not segmentation masks. Without a matching policy, retain Sol boxes/order and
-  use available V3 guidance only. Configured matching requires all five evaluated
-  thresholds; invalid policies remain errors.
-- Show GUI preparation, actual device, and fallback status using the existing
-  model cache. Export dedicated layout metadata with model/revision, timings,
-  original detections, matching diagnostics, and region/match counts.
-- Select `gui` and `layout` extras in the frozen Windows launcher while preserving
-  loopback binding. Relaunching now force-stops existing listeners on port 8471;
-  startup aborts if the port cannot be freed.
+- Python 3.11 or newer is required (previously 3.10 or newer). New conversions
+  attempt PP-DocLayoutV3 before the existing whole-page Sol request, so layout
+  dependencies are installed with the base package and first use may download
+  the pinned model. If V3 is unavailable, Sol conversion continues with explicit
+  fallback provenance; existing saved conversions are not relabeled.
+- Conversion geometry and reading order can differ from v2.1.1 when V3 regions
+  are accepted. Sol remains responsible for text and HTML. The field workflow
+  uses saved raw Markdown for field-only retries without reconverting pages.
 
-### Documentation
+### Changes
 
-- Synchronize installation, conversion, API, development, benchmark, and deployment
-  instructions with V3 guidance and Sol fallback. Distinguish standalone layout
-  errors from converter fallback and preserve dated validation results.
-- Update diagram sources and generated HTML for layout preparation, alignment,
-  protected processing, and fallback. Replace the README's historical flow image
-  with a current Mermaid overview.
+- Added explicit whole-page Sol fallback when V3 preparation or inference fails.
+  Missing/rejected V3 matches retain Sol blocks and boxes; GUI/logs and saved
+  per-page provenance report unavailable layout without invented device/order.
+  New fingerprints include the fallback policy; historical artifacts and saved
+  field-only retries remain unchanged.
+
+- Assigned PP-DocLayoutV3's single ScatterND operation to CPU within CUDA sessions,
+  with verified placement and fail-closed provider selection. Avoids the upstream
+  CUDA duplicate-index warning path without hiding warnings or changing weights;
+  new conversion identities record the execution policy.
+
+- Added local PP-DocLayoutV3 ONNX analysis before whole-page Sol
+  transcription across GUI, CLI, Python and HTTP conversion. Sol receives a
+  compact layout prior; validated content/HTML is retained through conservative
+  geometry/order matching, with unmatched detections kept as diagnostics.
+- Added process-cached preparation before new conversion: verified first-run
+  downloads, exercised CUDA detection with CPU fallback in `auto`, strict explicit
+  `cuda` failure, and clear GUI preparing/actual-device/error states. Saved-only
+  work avoids preparation; no layout toggle or launcher dependency change.
+- Added layout provenance, initial region/match counts and page timing in result
+  metadata, with rectangular annotations and separate raw masks. Pipeline-v2
+  identity separates new conversions from historical saves. Accuracy improvement,
+  polygon-accurate exports, speed and hardware fit are not established.
+
+- Added GUI authorization-field extraction from completed raw Markdown with
+  `gpt-6-sol` and medium reasoning, file-defined prompts/schema, source-quote
+  checks, and local JSON/SQLite storage.
+- Added multi-file uploads with three active file jobs, all-page batch processing,
+  and a persistent Extracted information page with readable summaries and two-way PDF block highlighting.
+- Added optional Luna/medium classification with compact strict JSON, enum reasons,
+  one evidence quote, and an inclusive 0.75 score threshold. It remains disabled
+  by default; category definitions and one extraction target are still required.
+- Added saved-artifact reuse, explicit field retries without reconversion, and
+  JSON-export retries without model calls. These downstream actions do not rerun
+  PDF-to-Markdown conversion; the separate V3 integration above changes new conversions.
+- Updated repository guides, generated documentation, and downstream docstrings.
+- Synchronized current documentation with V3/Sol fallback, engine-versus-conversion
+  failure behavior, cache reuse, and rectangular export limits. Historical live
+  observations remain dated; documentation checks do not establish accuracy gains.
+- Added icon-free sidebar navigation buttons with an active-page indicator.
+- Extraction prioritizes the main authorization form, uses requested service dates,
+  and avoids duplicate evidence warnings. Model and reasoning effort are included
+  in definition snapshots and cache fingerprints; historical runs remain unchanged.
+- The Windows launcher restarts an existing DocLayout listener on port 8471.
+  Other applications require confirmation before termination. Saved results remain;
+  browser sessions and in-progress work do not survive a restart.
 
 ## 2.1.1 (2026-09-24)
 

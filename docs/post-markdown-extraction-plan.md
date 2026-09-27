@@ -1,7 +1,43 @@
 # Plan: field extraction after Markdown generation
 
-Date: 2026-09-23
-Status: Future work only. Implementation and deployment are not authorized by this plan.
+Date: 2026-09-23. Implementation update: 2026-09-25.
+
+Conversion update, 2026-09-26: the separately authorized
+[V3/Sol pipeline](layout-v3-plan.md) applies to new conversions. It does not
+change this downstream workflow's saved-Markdown input or field-only retries.
+
+The September 27 local contour integration also preserves that boundary. New
+conversion metadata retains source contours and order, but field evidence remains
+rectangular block grounding. Historical saved records are not rewritten.
+
+## Current implementation contract
+
+Local implementation was explicitly authorized. The [implementation guide](field-extraction.md)
+describes the implemented local GUI workflow and runtime configuration:
+
+- Preserve PDF-to-Markdown internals and exports. Feed only completed raw Markdown
+  to Sol/medium, with all fields and distinct requests in one call per document.
+- Written Markdown instructions and JSON Schema live in the separate downstream
+  definitions directory. Keep diagnosis/service lists and stated code systems.
+- Classification is explicitly off by default, not activated by editing its file.
+  Future Luna/medium routing uses compact strict JSON with an enum reason and at
+  most one exact source quote. It requires a defined category with score >= 0.75
+  and exactly one extraction target.
+- Process all uploads, with three active file jobs. Multiple files use all pages;
+  a single file keeps page selection. Oversized Markdown goes to review unsplit.
+- One PDF may produce multiple records named originalfilename_001, _002, etc.
+  Retain the ten-column extraction table and JSON business payloads.
+- Persist source artifacts locally and provide a separate Extracted information page with
+  two-way block highlighting. Resolve geometry locally; flag ambiguous mappings.
+- Live tests were authorized only for the seven selected pages of four masked PDFs.
+
+## Historical research retained below
+
+The sections below preserve earlier research: Databricks proposals,
+recommendations to pass grounding metadata to the model, and notes from before
+implementation was authorized. They are historical, not runtime instructions.
+The contract above and implementation guide supersede conflicting recommendations.
+Databricks deployment and word-level coordinate inference are not implemented.
 
 ## Purpose and boundary
 
@@ -102,9 +138,17 @@ requirement for initial block-level grounding.
 
 ## Persistent extraction prompt
 
-Proposed filename: `extraction_prompt.md`. Its final location will be decided
-before implementation. Do not create its business content until the actual field
-requirements are supplied.
+Use two separate downstream definition files, loaded by the application:
+
+- `extraction.md`: field meanings, business extraction rules, evidence rules,
+  missing/conflicting values, and handling of “Same As Above”.
+- `extraction.schema.json`: authoritative field names, types, nested objects,
+  arrays, and permitted `null` values.
+
+Their directory remains to be decided. Neither file is created by this planning
+update. They must not replace the current PDF-to-Markdown prompts. Keep these
+definitions out of Python source and version both files together. Each
+`definition_version` must resolve to the exact prompt and schema snapshots.
 
 The prompt should specify:
 
@@ -121,8 +165,87 @@ must not be fabricated when the existing output does not retain page information
 
 Keep the prompt persistent across documents and version deliberate changes. Store
 its version or content hash with every extraction. Maintain a versioned output
-schema alongside it so validation and database columns have a stable contract.
-Whether that schema is embedded in the prompt or stored separately remains open.
+schema alongside it so validation has a stable contract. The schema is a separate
+JSON file. Business-field changes affect the versioned JSON payload, not the
+stable database columns.
+
+## Selected extraction field scope
+
+The user selected these groups after review of the specified BadgeCare and
+Amerigroup pages. Insurance fields and optional clinical/device sections are
+excluded. These are definition requirements, not generated runtime prompts.
+
+| Group | Selected fields |
+| --- | --- |
+| Request | `request_date`, `provider_return_fax`, `authorization_reference_number` when supplied |
+| Member | `first_name`, `last_name`, `date_of_birth`, `member_id`, `contact_phone`, `address`, `city`, `state`, `postal_code` |
+| Referring provider | `name`, `npi`, `provider_id`, `tax_id`, `specialty`, `participation_status`, `contact_name`, `phone`, `fax`, `address`, `city`, `state`, `postal_code` |
+| Servicing provider | Same provider fields, stored in a separate object |
+| Servicing facility | `name`, `npi`, `provider_id`, `tax_id`, `participation_status`, `contact_name`, `phone`, `fax`, `address`, `city`, `state`, `postal_code` |
+| Requested service dates | `service_start_date`, `service_end_date`, `scheduled_service_datetime` when separately stated |
+| Diagnoses | Repeated codes, stated code system, descriptions only when provided; explicitly support ICD-10 |
+| Procedures/services | Repeated codes, stated code system, modifiers, requested units/visits, frequency, duration, original request text; explicitly support CPT |
+| Service selections | `service_types[]`, `places_of_service[]`; multiple selected options allowed |
+| Priority | `expedited_requested`, `priority_evidence` |
+| Other information | `additional_information` |
+
+The subsequent discussion proposed explicit `icd10_codes[]` and `cpt_codes[]`.
+Keep HCPCS Level II distinct from CPT (for example, the sample's `B9002`). A
+separate `hcpcs_codes[]` was recommended. Final schema authoring should settle
+whether these are the canonical lists or projections of `diagnoses[]` and
+`requested_services[]`; do not maintain conflicting duplicate lists.
+
+Preserve identifiers/codes as strings, dates by their stated role, and quantities
+with the corresponding service. Keep requested dates separate from historical
+encounters. Missing values are `null`; obscured or conflicting evidence needs a
+review status. Resolve explicit “Same As Above” references with evidence for both
+the reference and the source. A blank urgency selection does not prove an
+explicit negative. Every accepted value must retain its source evidence.
+
+## Classification activation and routing
+
+- Missing or empty `classification.md`: bypass classification and send every
+  completed Markdown document to the extraction stage; record that classification
+  was bypassed, without inventing a category or score.
+- Valid category definitions present: classify with Sol/medium and assign a
+  category only at a score >= 0.75. Exactly 0.75 passes. Low scores, unknown types,
+  and ambiguity go to fallout with a reason.
+- With classification enabled, only one designated category reaches extraction;
+  other confidently classified categories retain their result and skip extraction.
+- Nonempty but invalid definitions are configuration errors, not permission to
+  silently bypass. Missing target selection also blocks configured routing.
+- Empty or invalid extraction instructions/schema mean extraction is not
+  configured, even if classification was bypassed. Do not guess fields or call the
+  extractor until both extraction files are valid.
+- Snapshot definitions for each processing run. Edits apply to the next run and
+  do not change the meaning of in-progress or historical results.
+
+## Stable local extraction-results table
+
+Hardcode the stable table structure in future application migrations. Load
+business-field definitions from the Markdown and JSON Schema files instead of
+duplicating them in application code. Store variable fields in JSON text.
+
+| Column | Purpose |
+| --- | --- |
+| `id` | Unique extraction result ID |
+| `document_id` | Reference to the source document |
+| `status` | Success, failed, or needs review |
+| `fields_json` | Selected business fields and code lists |
+| `evidence_json` | Quotes, page references, and block IDs linked to field paths |
+| `model` | Extraction model used |
+| `reasoning_effort` | Selected effort, currently `medium` |
+| `definition_version` | Exact extraction prompt and schema version |
+| `created_at` | Extraction timestamp |
+| `error_json` | Failure or validation details, when applicable |
+
+This is a 10-column extraction-results table, not the total column count of the
+database. No category column is required in this table. Document tracking,
+definition versions, and classification attempts are separate record groups.
+Additional extracted business fields require a definition version change rather
+than new SQL columns. Preserve the definition version even when classification
+is bypassed. Generate the downloadable JSON from the committed validated result;
+track and retry export failures without rerunning extraction.
 
 ## Model recommendation
 

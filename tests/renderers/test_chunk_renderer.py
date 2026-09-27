@@ -3,7 +3,7 @@ from doclayout.renderers.chunk import ChunkRenderer
 
 def test_chunk_renderer(pdf_document):
     output = ChunkRenderer()(pdf_document)
-    assert len(output.blocks) == 14
+    assert len(output.blocks) == 12  # Hidden page furniture is not visible structure.
     assert output.blocks[0].block_type == "SectionHeader"
     assert output.page_info[0]["bbox"]
     figures = [block for block in output.blocks if block.block_type == "Figure"]

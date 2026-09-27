@@ -5,26 +5,23 @@
 ## Environment
 
 Use PowerShell and uv from the repository root. The package declares Python
-`>=3.10,<4`; the V3 extra requires Python 3.11+. Use Python 3.13 for the
-layout-enabled Windows environment. Earlier dated checks used Python 3.14;
-neither set covers every supported Python version.
+`>=3.11,<4`; the recorded Windows checks used Python 3.14.
+The checks did not cover every supported Python version.
 
 ```powershell
-uv sync --locked --python 3.13 --group dev --extra full --extra layout
-uv run --no-sync playwright install chromium --only-shell
+uv sync --locked --group dev --extra full
+uv run playwright install chromium --only-shell
 ```
 
 The `dev` group supplies GUI, API, test, and development tools. The `full` extra
 adds Office/HTML/EPUB converters; see their [native library requirements](usage.md#installation).
-The `layout` extra supplies PaddleOCR/PaddleX, the Hub client, and ONNX Runtime.
-Offline tests inject fake layout engines and do not download weights.
 End-user installs can use the `gui` or `server` extras. Wheel and pip installs do
 not include the development group. Keep `pyproject.toml` and `uv.lock` together
 when changing dependencies, and avoid unrelated upgrades.
 
 Stop processes using this project's environment before an exact sync removes
 packages: Windows can lock loaded `.pyd` files. If an application must remain
-running, `uv sync --locked --group dev --extra full --extra layout --inexact` retains extra
+running, `uv sync --locked --group dev --extra full --inexact` retains extra
 packages. Test removed dependencies in a fresh environment because an inexact
 sync may leave packages that hide a missing dependency.
 
@@ -55,25 +52,60 @@ fixtures and mocked models for security-policy regressions. These tests are not
 an OS sandbox or adversarial security validation; no live deployment is tested.
 CLI export tests cover format selection, one extraction per page, GUI-equivalent
 HTML, ZIP contents, overwrite behavior, and input/output path protection.
-The browser test runs Streamlit with mocked extraction. It checks clipboard
-downloads and verifies that switching views does not repeat OCR.
-Layout tests cover artifact verification, device selection, runtime fallback,
-deterministic matching, split/merge retention, protected geometry/order, and
-GUI/CLI/API behavior. A fake engine may be injected for tests; there is no
-user-facing layout-off option.
+Browser tests run Streamlit with mocked extraction. They cover clipboard downloads,
+multi-file all-page processing, saved Extracted information, two-way block highlighting,
+summary navigation and missing-value toggling without repeated model calls.
+`tests/test_field_summary.py` covers readable labels, preserved values, partial records,
+request selection, and unsuccessful runs. Field tests cover the Sol/medium extraction contract,
+classification routing, quote grounding, SQLite exports, cache reuse, and retries.
+`tests/test_launcher.py` checks port cleanup using mocked listeners and processes;
+it does not stop a real application. Sidebar tests exercise both navigation buttons.
+
+Layout tests use injected engines and tensor fixtures, without downloading weights.
+They cover CUDA execution verification, CPU fallback, explicit CUDA failure,
+ScatterND placement, initialization races, matching/order, exports, and Sol fallback
+across entry points. Saved field-only retries must not prepare V3 or reconvert pages.
+The [layout integration record](layout-v3-plan.md) separates these offline checks
+from dated hardware observations; a passing fake-provider test is not a GPU test.
+
+`test_layout_contours.py` checks the reference-grounded mask fixture, coordinate
+frames, and malformed tensors. The prior/readiness suites cover concave overlap,
+one-to-one assignment, global matched order, lineage, and distinct fallback
+metadata. Compare preserved HTML separately from Markdown ordering: V3 order can
+intentionally change the sequence. Higher match counts do not establish accuracy.
 
 For a focused check while developing:
 
 ```powershell
 uv run --no-sync python -m pytest tests/config tests/services tests/test_chat_prompts.py
 uv run --no-sync python -m pytest tests/test_ui.py tests/test_ui_browser.py
-uv run --no-sync python -m pytest tests/services/test_layout.py tests/builders/test_alignment.py tests/test_layout_wiring.py tests/test_entrypoints.py
+uv run --no-sync python -m pytest tests/test_fields.py
+uv run --no-sync python -m pytest tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py tests/test_layout_contours.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's
 pre-commit configuration also fixes and formats files with its pinned Ruff
 version. Review those changes, especially around prompt literals. When reporting
 a focused type check, name the paths checked.
+
+## Documentation changes
+
+Synchronize claims against code before editing prose. Keep Google-style docstrings
+for downstream and application-support APIs, including argument types, return
+values, error outcomes, and persistence/model-call effects. Layout adapter
+docstrings may describe its public contracts, but documentation-only work must
+preserve executable conversion behavior and runtime prompt bytes. Leave
+model-response class docstrings unchanged because they affect request schemas.
+
+Keep code examples offline unless the guide explicitly labels them billable.
+Check links and anchors, run affected tests, and compare syntax trees without
+docstrings when changing inline documentation. Preserve dated benchmark results;
+new test runs belong in a separately dated verification note.
+
+Update OpenWiki pages through its managed lifecycle. Do not edit claim sidecars,
+generated indexes, provenance, or run state manually. Diagram JSON is the editable
+source for the standalone HTML. Validate and deliver it through Archify, then inspect
+desktop captures. Analysis graphs are snapshots; check their claims against source.
 
 ## Live evaluation
 
@@ -87,20 +119,6 @@ Live tests make billable requests and run only when explicitly selected:
 ```powershell
 uv run --no-sync python -m pytest tests/converters/test_olmocr_bench.py --run-integration
 ```
-
-Two synthetic layout checks are also explicitly opt-in:
-
-```powershell
-# Uses real V3 on CPU and sends a generated page to Sol; billable.
-uv run --no-sync python -m pytest tests/converters/test_layout_live.py::test_live_cpu_conversion --run-integration -s
-# Local V3 GPU check; no Sol request, but may download absent weights.
-uv run --no-sync python -m pytest tests/converters/test_layout_live.py::test_live_gpu_layout --run-integration -s
-```
-
-Check compatible GPU libraries before the GPU test. Inspect its actual provider
-and any skip/fallback reason rather than treating installed GPU packages as proof
-of CUDA execution. These synthetic tests do not calibrate matching thresholds or
-establish accuracy on user documents.
 
 See the [benchmark guide](../benchmarks/README.md) for harness options,
 [fixture provenance](../tests/data/olmocr_bench/README.md) for optional local data, and
@@ -123,8 +141,9 @@ or previously published release assets.
 uv build
 ```
 
-Inspect the generated wheel and source distribution for package code, all four
-Markdown prompt resources, `LICENSE`, and `NOTICE`. Local credentials, generated
+Inspect the generated wheel and source distribution for package code, the four
+top-level Markdown prompts, both field Markdown prompts, the field JSON schema,
+`LICENSE`, and `NOTICE`. Local credentials, generated
 outputs, indexes, and environments must not enter distribution artifacts.
 
 To smoke-test the installed wheel, create a separate environment outside the
@@ -133,7 +152,7 @@ repository so source imports cannot hide missing package files. Verify:
 
 - `doclayout` and `doclayout_single` help commands;
 - the GUI/API entry-point imports after installing the `gui` and `server` extras;
-- resource loading for all four prompts;
+- resource loading for all six Markdown prompts and the field JSON schema;
 - dependency consistency with `uv pip check --python <environment-python>`.
 
 See [package installation](usage.md#installing-the-application-package) for
@@ -177,16 +196,8 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Changelog | Changes and compatibility history |
 | Validation | Dated observations and verification limits |
 | Benchmark/example/fixture guides | Their specific workflows and provenance |
-| Diagram specifications and HTML | Visual explanations of verified current behavior |
 
 Link to the guide that covers a topic instead of copying its tables. Record
 changes awaiting a release under Unreleased in the changelog, and date historical
 measurements. Check links, anchors, and executable examples. Run live requests
 only as part of an explicit evaluation.
-The [OpenWiki index](../openwiki/quickstart.md) is a generated snapshot with
-source-linked claims. It is initialized from current source and tests through
-OpenWiki's page lifecycle; no scheduled CI refresh is configured. The existing
-[`knowledge/` OKF bundle](../knowledge/index.md) is a separate index and currently
-contains no concept pages. Neither index overrides source or tests.
-Keep runtime Markdown prompts out of prose-only documentation edits. Preserve
-historical validation results and future-work plans as such.

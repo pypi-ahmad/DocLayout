@@ -4,163 +4,242 @@
   "meta": {
     "title": "DocLayout data flow",
     "quality_profile": "showcase",
-    "viewBox": [
-      1080,
-      520
+    "legend": { "entries": { "dashed": { "label": "refinement" }, "security": { "label": "verification" } } },
+    "viewBox": [1080, 620],
+    "views": [
+      {
+        "id": "extraction-pipeline",
+        "label": "Extraction pipeline",
+        "focus": ["inputs", "provider", "sol_extract", "validator", "processors", "doc_model"],
+        "note": "Rendered pages get a V3 prior when available. Sol supplies content; rejected matches or failed layout retain Sol geometry."
+      },
+      {
+        "id": "rendering-exports",
+        "label": "Local exports",
+        "focus": ["doc_model", "renderers", "gui_export"],
+        "note": "Local rendering produces Markdown, JSON chunks, styled HTML, annotated images, and raster PDFs without model calls."
+      },
+      {
+        "id": "grounded-chat",
+        "label": "Grounded chat",
+        "focus": ["doc_model", "page_text", "luna_draft", "quote_verify"],
+        "note": "Luna generates answers with page quotes, independently verified against parsed page text before citation."
+      }
     ]
   },
   "stages": [
-    {
-      "label": "Input"
-    },
-    {
-      "label": "Page data"
-    },
-    {
-      "label": "Transcription"
-    },
-    {
-      "label": "Alignment"
-    },
-    {
-      "label": "Outputs"
-    }
+    { "label": "Ingest" },
+    { "label": "Extract" },
+    { "label": "Process" },
+    { "label": "Model" },
+    { "label": "Deliver & Verify" }
   ],
   "nodes": [
     {
-      "id": "source-file",
+      "id": "inputs",
       "type": "external",
-      "label": "Document",
-      "sublabel": "Selected pages",
+      "label": "Source Documents",
+      "sublabel": "PDF, Office, image",
       "stage": 0,
-      "row": 0
+      "row": 1,
+      "tag": "multi-format"
     },
     {
-      "id": "page-image",
+      "id": "provider",
       "type": "backend",
-      "label": "Page image",
-      "sublabel": "192 DPI render",
-      "stage": 1,
-      "row": 0
+      "label": "Render + V3",
+      "sublabel": "page image + prior",
+      "stage": 0,
+      "row": 2,
+      "tag": "192 DPI"
     },
     {
-      "id": "sol-response",
+      "id": "sol_extract",
       "type": "cloud",
       "label": "GPT-6 Sol",
-      "sublabel": "Transcribes HTML",
-      "stage": 2,
-      "row": 0
-    },
-    {
-      "id": "aligned-content",
-      "type": "security",
-      "label": "Aligned blocks",
-      "sublabel": "Validated Sol content",
-      "stage": 3,
-      "row": 0
-    },
-    {
-      "id": "result-document",
-      "type": "database",
-      "label": "Document",
-      "sublabel": "Protected source blocks",
-      "stage": 4,
-      "row": 0
-    },
-    {
-      "id": "v3-regions",
-      "type": "backend",
-      "label": "V3 regions",
-      "sublabel": "Pixel contours and order",
+      "sublabel": "page extraction",
       "stage": 1,
-      "row": 2
+      "row": 1,
+      "tag": "3 concurrent max"
     },
     {
-      "id": "layout-diagnostics",
-      "type": "database",
-      "label": "Diagnostics",
-      "sublabel": "Matches and fallback",
-      "stage": 3,
-      "row": 2
+      "id": "validator",
+      "type": "security",
+      "label": "Block Validator",
+      "sublabel": "sanitize + match V3",
+      "stage": 1,
+      "row": 2,
+      "tag": "Pydantic"
     },
     {
-      "id": "export-files",
+      "id": "processors",
       "type": "backend",
-      "label": "Local exports",
-      "sublabel": "Text, JSON, annotations",
+      "label": "Processors",
+      "sublabel": "document structure",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "sol_refine",
+      "type": "cloud",
+      "label": "Sol Refinement",
+      "sublabel": "optional cleanup",
+      "stage": 2,
+      "row": 2,
+      "tag": "fallback safe"
+    },
+    {
+      "id": "doc_model",
+      "type": "database",
+      "label": "Document Model",
+      "sublabel": "blocks & reading order",
+      "stage": 3,
+      "row": 1,
+      "tag": "in-memory"
+    },
+    {
+      "id": "page_text",
+      "type": "database",
+      "label": "Parsed Page Text",
+      "sublabel": "normalized quotes",
+      "stage": 3,
+      "row": 3,
+      "yOffset": -15
+    },
+    {
+      "id": "renderers",
+      "type": "backend",
+      "label": "Local Renderers",
+      "sublabel": "Markdown & chunks",
+      "stage": 4,
+      "row": 0
+    },
+    {
+      "id": "gui_export",
+      "type": "frontend",
+      "label": "GUI & File Exports",
+      "sublabel": "HTML, PDF & ZIP",
+      "stage": 4,
+      "row": 1
+    },
+    {
+      "id": "luna_draft",
+      "type": "cloud",
+      "label": "GPT-6 Luna",
+      "sublabel": "grounded draft",
       "stage": 4,
       "row": 2
+    },
+    {
+      "id": "quote_verify",
+      "type": "security",
+      "label": "Luna Verification",
+      "sublabel": "quote validation",
+      "stage": 4,
+      "row": 3,
+      "yOffset": -15,
+      "tag": "cited answers"
     }
   ],
   "flows": [
     {
-      "id": "source-file-to-page-image",
-      "from": "source-file",
-      "to": "page-image",
-      "label": "render"
+      "id": "doc-bytes",
+      "from": "inputs",
+      "to": "provider",
+      "label": "document bytes",
+      "classification": "raw files"
     },
     {
-      "id": "page-image-to-sol-response",
-      "from": "page-image",
-      "to": "sol-response",
-      "label": "full image"
+      "id": "rendered-pages",
+      "from": "provider",
+      "to": "sol_extract",
+      "label": "image + prior",
+      "classification": "image only if V3 fails",
+      "variant": "emphasis"
     },
     {
-      "id": "page-image-to-v3-regions",
-      "from": "page-image",
-      "to": "v3-regions",
-      "label": "analyze"
+      "id": "raw-blocks",
+      "from": "sol_extract",
+      "to": "validator",
+      "label": "ordered blocks",
+      "classification": "raw model output",
+      "variant": "emphasis",
+      "labelDy": 24
     },
     {
-      "id": "v3-regions-to-sol-response",
-      "from": "v3-regions",
-      "to": "sol-response",
-      "fromSide": "right",
-      "toSide": "bottom",
-      "via": [[530, 385]],
-      "label": "guide on success"
+      "id": "sanitized-blocks",
+      "from": "validator",
+      "to": "processors",
+      "label": "sanitized blocks",
+      "classification": "validated blocks",
+      "variant": "emphasis"
     },
     {
-      "id": "sol-response-to-aligned-content",
-      "from": "sol-response",
-      "to": "aligned-content",
-      "label": "HTML + boxes"
+      "id": "refine-req",
+      "from": "processors",
+      "to": "sol_refine",
+      "label": "refinement request",
+      "classification": "optional",
+      "variant": "dashed"
     },
     {
-      "id": "aligned-content-to-result-document",
-      "from": "aligned-content",
-      "to": "result-document",
-      "label": "build"
+      "id": "doc-tree",
+      "from": "processors",
+      "to": "doc_model",
+      "label": "document tree",
+      "classification": "document tree",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": -24
     },
     {
-      "id": "aligned-content-to-layout-diagnostics",
-      "from": "aligned-content",
-      "to": "layout-diagnostics",
-      "label": "record"
+      "id": "refined-tree",
+      "from": "sol_refine",
+      "to": "doc_model",
+      "label": "refined blocks",
+      "classification": "cleaned layout",
+      "variant": "dashed"
     },
     {
-      "id": "result-document-to-export-files",
-      "from": "result-document",
-      "to": "export-files",
-      "label": "render"
-    }
-  ],
-  "cards": [
-    {
-      "dot": "cyan",
-      "title": "Geometry and order",
-      "items": [
-        "V3 exposes bbox and contour; PolygonBox retains four-corner geometry.",
-        "An evaluated policy applies confident one-to-one matches before grouping."
-      ]
+      "id": "doc-model-out",
+      "from": "doc_model",
+      "to": "renderers",
+      "label": "in-memory document",
+      "classification": "document model",
+      "variant": "default"
     },
     {
-      "dot": "emerald",
-      "title": "Fallback and reuse",
-      "items": [
-        "Missing or incompatible regions retain Sol content and geometry.",
-        "V3 failure aborts by default; operator fallback omits the guide."
-      ]
+      "id": "rendered-output",
+      "from": "renderers",
+      "to": "gui_export",
+      "label": "rendered formats",
+      "classification": "exports",
+      "variant": "default"
+    },
+    {
+      "id": "extract-page-text",
+      "from": "doc_model",
+      "to": "page_text",
+      "label": "normalized text",
+      "classification": "page text",
+      "variant": "default"
+    },
+    {
+      "id": "chat-context",
+      "from": "page_text",
+      "to": "luna_draft",
+      "label": "page context",
+      "classification": "context",
+      "variant": "default"
+    },
+    {
+      "id": "draft-answer",
+      "from": "luna_draft",
+      "to": "quote_verify",
+      "label": "draft quotes",
+      "classification": "draft answer",
+      "variant": "security",
+      "labelAt": [960, 430]
     }
   ]
 }

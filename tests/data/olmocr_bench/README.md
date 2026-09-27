@@ -7,6 +7,10 @@ JSONL records are local-only and excluded from fresh clones and package builds.
 Existing local copies can remain here. `tests/converters/test_olmocr_bench.py`
 converts each page and checks its local rules.
 
+The test uses the current shared converter, including V3 analysis and Sol fallback
+in this checkout. Earlier reported scores predate that integration; rerunning a
+fixture is a new billable evaluation, not a validation of historical output.
+
 ## Local setup
 
 Obtain the benchmark data separately and keep it in an ignored folder or outside
@@ -24,12 +28,6 @@ uv run --no-sync pytest tests/converters/test_olmocr_bench.py --run-integration
 
 Missing data is skipped before creating an API client. Offline tests generate
 their own temporary documents and need no downloaded input files.
-Sync the [layout-enabled development environment](../../../docs/development.md#environment)
-first to evaluate V3 guidance. These tests use the shared converter. A V3
-runtime failure aborts by default; only an explicit operator setting
-(`DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`) permits whole-page Sol fallback.
-Inspect layout metadata before describing a run as V3-assisted. Synthetic CPU/GPU layout checks
-are separate from these three benchmark pages.
 
 ## Original three-page sample
 
@@ -45,6 +43,9 @@ types are supported. The `table`/`math` types need olmOCR-bench's own KaTeX +
 table-parsing checker, which is not reimplemented here.
 
 These pages check a small sample. They cannot establish a complete benchmark score.
+Their text rules do not measure contour alignment or geometric matching accuracy.
+The independent contour reference fixture is `tests/data/layout_v3_contours.json`;
+offline decoder checks are not a substitute for visually evaluated document pages.
 See the [dated validation report](../../../docs/gpt6-validation.md) for observed
 results and the header/footer limitation, and [live evaluation instructions](../../../docs/development.md#live-evaluation)
 for running the fixture tests. Default tests skip live inference.

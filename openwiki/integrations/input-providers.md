@@ -1,14 +1,13 @@
 ---
-type: Integration
-title: Input providers and page rendering
-description: How supported files become page images and page coordinate frames for the shared conversion path.
-tags: [providers, rendering, inputs]
-verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-27T09:43:51.061Z
+type: Integration guide
+title: Input providers and normalization
+description: File detection, page rendering, optional source normalization, resource limits, and cleanup.
+tags: [providers, pdf, images, normalization]
 sources:
   - id: openwiki-source-5dcb620e5737ce6818a4678d
     resource: repo://doclayout/builders/document.py
+  - id: openwiki-source-85776b268dd7f1ddad4fc925
+    resource: repo://doclayout/layout_geometry.py
   - id: openwiki-source-c0def149d0f62564f4806923
     resource: repo://doclayout/providers/converted.py
   - id: openwiki-source-de7b9fa19ea13aa3e3f3869f
@@ -17,15 +16,38 @@ sources:
     resource: repo://doclayout/providers/pdf.py
   - id: openwiki-source-4c3a42078ee20de7168b9f84
     resource: repo://doclayout/providers/registry.py
+  - id: openwiki-source-ac5d0f22367daa23e677df71
+    resource: repo://doclayout/ui/exports.py
+  - id: openwiki-source-6188cdfc089804761aa67459
+    resource: repo://tests/providers/test_document_providers.py
   - id: openwiki-source-aa58b2614cdad072afd30d5c
     resource: repo://tests/providers/test_pdf_provider.py
-generated: { by: "codex", at: "2026-09-27T09:43:51.061Z" }
+generated: { by: "codex", at: "2026-09-27T09:39:18.635Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-27T09:39:18.635Z
 ---
 
-# Input providers and page rendering
+# Input providers and normalization
 
-`PdfConverter` selects a provider after `check_file` has applied input limits. The registry detects image, PDF, EPUB, DOCX, XLSX, and PPTX content, then tries HTML parsing and finally the filename extension. Converted-document providers create a temporary PDF and use the same PDF rendering path. Their context manager removes the temporary file after conversion or on failure. These document formats require their optional conversion libraries. See [configuration and testing](../operations/configuration-and-testing.md).
+Providers give `DocumentBuilder` page images, page geometry, and references while keeping file-format handling outside the builder. `provider_from_filepath()` checks file limits, then binary signatures for images, PDF, EPUB, DOCX, XLSX, and PPTX. It attempts HTML parsing and finally checks the extension, with `PdfProvider` as the last fallback. Detection is not proof that an arbitrary malformed file can be converted.
 
-`PdfProvider` validates a zero-based page selection, removes duplicate page numbers while retaining order, and rejects empty, out-of-range, or over-limit selections. It renders selected pages with PDFium under `PDFIUM_LOCK`, checks render pixel limits, and returns RGB images. Its page rectangle starts at the rendered top-left corner, including for rotated pages. The 192 DPI request comes from `DocumentBuilder`; the provider converts it to PDFium's scale. Tests check ordinary rendering and rotated page dimensions.
+`PdfProvider` validates zero-based page ranges, records page sizes after rotation, and renders through PDFium under a process-wide reentrant lock. The rendering path checks pixel limits and closes document, page, and bitmap resources. It does not read embedded PDF text for the Sol extraction path; selected pages become images. Tests check invalid ranges and that a rotated page's reported geometry matches its rendered image.
 
-`ImageProvider` exposes one page. It validates source pixels and accepts only `[0]` as an explicit page range. When the builder requests 192 DPI, it treats the source as 96 DPI and returns a resized copy, subject to render pixel limits. Both image and PDF providers return a page bounding box for mapping Sol and V3 geometry. The same returned full-page image goes to layout inference and to Sol extraction. See [document conversion](../workflows/document-conversion.md).
+`ImageProvider` represents one native image as one page. Above 96 DPI, it returns a Lanczos-upscaled copy; at lower DPI it returns a native-size copy. It validates page zero and closes its source image on `close()`.
+
+Optional document formats normalize to temporary PDFs before using the PDF provider. The `full` extra supplies their conversion libraries. `ConvertedPdfProvider` removes its temporary PDF on explicit close, context-manager exit, or failed initialization; its destructor is a fallback. The provider test verifies that the normalized formats delegate rendering to the PDF provider.
+
+Provider rendering stays on the calling thread within `DocumentBuilder`. Each worker analyzes the rendered image with V3, then sends that same whole-page image to Sol; layout failure removes the prior, not the Sol request. Conversion may use multiple page requests concurrently, but PDFium access remains serialized. The page owns the rendered image on success. On failure, the builder waits for workers before closing all images it rendered.
+
+## Related pages
+
+Geometry conversion uses the rendered page's top-left frame. For an image of
+width `W` and height `H`, request coordinates are `1000*x/W`, `1000*y/H`.
+Provider coordinates add the page origin and scale each axis independently.
+PDF rotation is already reflected in rendering and page size; no second rotation
+is applied. Source contours remain in provider coordinates until annotation
+maps them back to image pixels.
+
+- [Document conversion](../workflows/document-conversion.md)
+- [Configuration and testing](../operations/configuration-and-testing.md)

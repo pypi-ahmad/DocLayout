@@ -3,15 +3,13 @@ import html
 from typing import Dict, List
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from doclayout.renderers.json import JSONBlockOutput, JSONRenderer
 from doclayout.schema.document import Document
-from doclayout.schema.geometry import LayoutGeometry
 
 
 class FlatBlockOutput(BaseModel):
-    layout_geometries: dict[str, LayoutGeometry] = Field(default_factory=dict)
     id: str
     block_type: str
     html: str
@@ -66,27 +64,17 @@ def assemble_html_with_images(block: JSONBlockOutput, image_blocks: set[str]) ->
     return html.unescape(str(soup))
 
 
-def collect_layout_geometries(block: JSONBlockOutput) -> dict[str, LayoutGeometry]:
-    geometries = (
-        {block.id: block.layout_geometry} if block.layout_geometry is not None else {}
-    )
-    for child in block.children or []:
-        geometries.update(collect_layout_geometries(child))
-    return geometries
-
-
 def json_to_chunks(
     block: JSONBlockOutput, image_blocks: set[str], page_id: int = 0
 ) -> FlatBlockOutput | List[FlatBlockOutput]:
     if block.block_type == "Page":
         children = block.children
-        page_id = int(block.id.split("/")[-1])
+        page_id = int(block.id.split("/")[2])
         return [
             json_to_chunks(child, image_blocks, page_id=page_id) for child in children
         ]
     else:
         return FlatBlockOutput(
-            layout_geometries=collect_layout_geometries(block),
             id=block.id,
             block_type=block.block_type,
             html=assemble_html_with_images(block, image_blocks),

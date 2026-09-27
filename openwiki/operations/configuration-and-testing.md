@@ -1,37 +1,80 @@
 ---
-type: Operations
-title: Configuration and verification
-description: Runtime extras, operator settings, credentials, and the difference between offline tests and live inference.
-tags: [configuration, testing, runtime]
-verified:
-  - by: openwiki/0.6.0
-    at: 2026-09-27T09:43:51.061Z
+type: Operations guide
+title: Configuration and testing
+description: Application settings, field switches, uv checks, and the limits of offline and live evidence.
+tags: [configuration, testing, uv, operations]
 sources:
   - id: openwiki-source-f8eb525c17b05d929e5c2c00
     resource: repo://doclayout/credentials.py
-  - id: openwiki-source-dd442b9660f0eaeb4d42fde8
-    resource: repo://doclayout/scripts/server.py
-  - id: openwiki-source-3a15c4c875a9f676af798b18
-    resource: repo://doclayout/services/layout.py
+  - id: openwiki-source-3fc18d2b3bd86c90ce3a3ddd
+    resource: repo://doclayout/field_store.py
+  - id: openwiki-source-15837773bd4113ac5b1f7ae1
+    resource: repo://doclayout/fields.py
+  - id: openwiki-source-6c373104051421f3f3c546ea
+    resource: repo://doclayout/layout.py
+  - id: openwiki-source-60a85b3abffa8ceadae5f4cd
+    resource: repo://doclayout/scripts/clear_gui_port.ps1
   - id: openwiki-source-a288c4d4a875a1308ca48472
     resource: repo://doclayout/settings.py
+  - id: openwiki-source-4ed424df535efedbec384488
+    resource: repo://doclayout/ui/batch.py
+  - id: openwiki-source-e7faa3ddaca50993ae19c88a
+    resource: repo://launch.cmd
   - id: openwiki-source-05ccef8d4cf1698187f20464
     resource: repo://pyproject.toml
+  - id: openwiki-source-e44eab9a26f9187df819fc2a
+    resource: repo://pytest.ini
   - id: openwiki-source-f0a6e7dc03522b2682f88655
     resource: repo://tests/conftest.py
-  - id: openwiki-source-72a55afa95ba2771e1594261
-    resource: repo://tests/converters/test_layout_live.py
-  - id: openwiki-source-abd31605405249fba84ec342
-    resource: repo://tests/test_entrypoints.py
-generated: { by: "codex", at: "2026-09-27T09:43:51.061Z" }
+  - id: openwiki-source-97c2d91c6ec415fd43007ed6
+    resource: repo://tests/test_fields.py
+  - id: openwiki-source-747ce984286d9a8fb9342632
+    resource: repo://tests/test_launcher.py
+  - id: openwiki-source-5012927e69660b3b63fa1941
+    resource: repo://tests/test_layout_contours.py
+  - id: openwiki-source-302aace0465b65581c3853df
+    resource: repo://tests/test_layout_prior.py
+  - id: openwiki-source-e21a991204779b8d3c0240c6
+    resource: repo://tests/test_layout_readiness.py
+  - id: openwiki-source-b1623b7b40e27202adf3b061
+    resource: repo://tests/test_layout_runtime.py
+generated: { by: "codex", at: "2026-09-27T09:44:56.859Z" }
+verified:
+  - by: openwiki/0.6.0
+    at: 2026-09-27T09:44:56.859Z
 ---
 
-# Configuration and verification
+# Configuration and testing
 
-The package declares Python `>=3.10,<4`, but local V3 execution requires Python 3.11 or later. The `layout` extra pins Hugging Face Hub, PaddleOCR, PaddleX, ONNX Runtime GPU, and Shapely for that runtime. Other extras supply GUI, server, and document-format dependencies. On Windows, use the uv lockfile with the chosen extras. The layout service caches the official pinned ONNX files outside Git, verifies size and SHA-256 before use, and warms a selected provider. See [layout guidance](../integrations/layout-guidance-and-alignment.md).
+The project declares Python `>=3.11,<4` and uses `uv.lock` for reproducible dependency resolution. The base package contains PDF/image conversion, V3 runtime dependencies, and the CLI; optional `full`, `gui`, and `server` extras add document-format libraries, Streamlit, and FastAPI. Windows AMD64 selects `onnxruntime-gpu==1.30.0`, which also supplies CPU execution; other platforms select `onnxruntime==1.30.0`. There is no layout extra. The development group supplies test and quality tools. The declared Python range does not claim every version has been exercised.
 
-`Settings` reads operator layout policy, device, fallback, and cache settings from the process environment or `local.env`. `DOCLAYOUT_LAYOUT_DEVICE` defaults to `auto`; `cpu` never probes CUDA and explicit `cuda` does not fall back. `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK` defaults to false. `DOCLAYOUT_ALIGNMENT_POLICY` has no value by default: a supplied policy must contain all five validated parameters. HTTP request fields cannot override these operator settings. Separate credential loading reads `OPENAI_API_KEY` and optional `OPENAI_BASE_URL` from the process or launch-folder `.env`. The server also needs a separate API bearer token; filepath requests need a dedicated configured input root. See [interfaces](../interfaces/cli-gui-api.md).
+`settings.py` holds output paths, rendering choices, and operator limits, including maximum source size, page count, image pixels, and archive resources. It can read `local.env`. API credentials are resolved separately from process variables or a launch-folder `.env`; process variables take precedence per key. The HTTP token must be at least 32 non-whitespace ASCII characters. Path-based API input requires an existing dedicated `DOCLAYOUT_INPUT_ROOT`.
 
-Offline pytest fixtures replace the layout engine, set synthetic alignment thresholds, and block unexpected OpenAI calls. Those thresholds are test inputs, not calibrated production defaults. Integration tests are skipped unless `--run-integration` is explicitly passed. The synthetic CPU live test makes a billable Sol request; the GPU layout test does not call Sol. A listed CUDA provider alone is not proof of executed GPU kernels, and synthetic outputs do not establish layout or extraction accuracy on representative documents. The optional olmOCR fixture pages and rules must be supplied separately for that evaluation.
+The field workflow reads `DOCLAYOUT_CLASSIFICATION_ENABLED` directly from the process environment. It defaults to `false`; editing category text alone does not enable classification. `DOCLAYOUT_FIELD_MAX_INPUT_BYTES` defaults to 900000 and must be an integer from 1 through 900000. These process-only switches do not inherit the credential `.env` resolver or Pydantic `local.env` loading.
 
-Run the documented focused checks with `uv run --no-sync` after syncing the locked environment. Keep real API requests and model downloads in explicitly selected live checks, and record actual provider, fallback reason, sample coverage, and failures alongside results.
+V3 uses the official `PaddlePaddle/PP-DocLayoutV3_onnx` artifact through direct ONNX Runtime, not the separately available Transformers interface. First preparation resolves two pinned files, verifies SHA-256 and labels, and exercises the session. The default Hub cache is `cache/pp-doclayoutv3` under the checkout; `DOCLAYOUT_LAYOUT_CACHE_DIR` overrides it. `DOCLAYOUT_LAYOUT_MODEL_DIR` selects an exact artifact directory and `DOCLAYOUT_LAYOUT_OFFLINE=true` prohibits downloads. Invalid supplied files are rejected, not silently overwritten.
+
+`DOCLAYOUT_LAYOUT_DEVICE=auto` attempts CUDA, verifies actual execution, and falls back to an exercised CPU session. Explicit `cuda` never substitutes a CPU session; its failure reaches conversion-level Sol fallback instead. The pinned CUDA policy places the single ScatterND node on CPU and verifies its assignment before execution. One locked, process-cached engine serves batch-size-one inference. Ordinary preparation/inference errors produce recorded Sol fallback; they do not prove the model ran on CPU. See the [layout record](../../docs/layout-v3-plan.md) for artifact hashes and output-contract evidence.
+
+Layout tests inject fake engines and sessions to cover download-once behavior, races, device selection, fallback, parsing, matching, and export provenance without downloading weights. `tests/test_layout_contours.py` also checks a reference-grounded mask fixture and coordinate transforms. Regression cases cover split/merge warnings, global matched order, processor lineage, visible contour overlays, and mixed successful/fallback pages. These tests do not validate a real GPU, memory fit, speed, or accuracy improvement.
+
+Default auto mode keeps a working CPU fallback sticky and latches preparation
+failures until explicit retry. It does not reprobe each page. An exercised CUDA
+session includes CPU execution, including the verified ScatterND assignment.
+Valid empty detections, invalid contours, unmatched regions, and runtime failure
+have distinct metadata. A contour failure alone retains a valid V3 AABB.
+
+From the repository root, synchronize dependencies with `uv sync --locked --group dev --extra full`. Run the offline suite with `uv run --no-sync python -m pytest` and a focused field check with `uv run --no-sync python -m pytest tests/test_fields.py`. For a browser test, install Playwright's Chromium shell first. `tests/conftest.py` blocks real Responses API calls by default and skips `integration` tests unless `--run-integration` is given. The latter is billable.
+
+Offline tests check page and provider geometry, schema and sanitization, CLI/API behavior, GUI navigation, routing thresholds, grounding, SQLite persistence, cache reuse, and retries. They establish local contracts with generated fixtures and mocks. They do not measure current endpoint access, classification accuracy, field accuracy, or latency on real documents. The separate conversion benchmark uses a local dataset and billable Sol requests; it does not measure downstream fields, classification, or chat.
+
+`launch.cmd` starts the GUI on `127.0.0.1:8471` with file watching disabled. Its PowerShell helper stops a recognized DocLayout listener automatically, asks before stopping another application, rechecks process identity and port ownership, and aborts if cleanup fails. Restarting loses in-progress work and browser state but preserves saved artifacts. Launcher tests mock processes and sockets; they do not terminate real listeners. Use the [verification record](../../docs/documentation-sync.md) for dated check results and known failures.
+
+The GUI retains sources, derived conversion artifacts, JSON, and SQLite below `OUTPUT_DIR/field_extraction`. It has no automatic expiry or application-level encryption; operators should account for that when setting the output directory.
+
+## Related pages
+
+- [Layout regression evidence](../testing/layout-regressions.md)
+- [Quickstart](../quickstart.md)
+- [OpenAI processing](../integrations/openai-processing.md)
+- [Field extraction](../workflows/field-extraction.md)

@@ -2,208 +2,238 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "DocLayout system architecture",
+    "title": "DocLayout architecture",
     "quality_profile": "showcase",
     "viewBox": [
-      1230,
-      790
+      1160,
+      700
+    ],
+    "views": [
+      {
+        "id": "conversion",
+        "label": "Conversion and exports",
+        "focus": [
+          "intake",
+          "conversion",
+          "markdown",
+          "exports"
+        ],
+        "note": "CLI, GUI, library and HTTP share V3 analysis, whole-page Sol and explicit Sol fallback."
+      },
+      {
+        "id": "fields",
+        "label": "GUI field workflow",
+        "focus": [
+          "markdown",
+          "fields",
+          "grounding",
+          "storage",
+          "review"
+        ],
+        "note": "Sol extracts raw Markdown; optional Luna classification, local grounding, and SQLite support saved review."
+      },
+      {
+        "id": "chat",
+        "label": "Document chat",
+        "focus": [
+          "conversion",
+          "chat"
+        ],
+        "note": "Parsed page text supports quote-checked Luna answers and independent verification."
+      }
     ]
   },
   "components": [
     {
-      "id": "interfaces",
+      "id": "intake",
       "type": "frontend",
-      "label": "Conversion entry points",
-      "sublabel": "GUI, CLI, API, Python",
+      "label": "Document intake",
+      "sublabel": "CLI / GUI / HTTP",
       "pos": [
         60,
-        100
+        90
       ],
       "size": [
-        210,
-        78
+        160,
+        70
       ]
     },
     {
-      "id": "page-render",
+      "id": "conversion",
       "type": "backend",
-      "label": "Page providers",
-      "sublabel": "Whole image at 192 DPI",
+      "label": "Conversion core",
+      "sublabel": "V3 prior + whole-page Sol",
       "pos": [
-        360,
-        100
+        340,
+        90
       ],
       "size": [
-        210,
-        78
+        160,
+        70
       ]
     },
     {
-      "id": "local-layout",
+      "id": "markdown",
       "type": "backend",
-      "label": "PP-DocLayoutV3",
-      "sublabel": "Locked ORT session",
+      "label": "Raw Markdown",
+      "sublabel": "Completed conversion",
       "pos": [
-        660,
-        100
+        620,
+        90
       ],
       "size": [
-        210,
-        78
+        160,
+        70
       ]
     },
     {
-      "id": "sol-extraction",
+      "id": "exports",
+      "type": "frontend",
+      "label": "Conversion exports",
+      "sublabel": "MD / HTML / JSON / ZIP",
+      "pos": [
+        900,
+        90
+      ],
+      "size": [
+        180,
+        70
+      ]
+    },
+    {
+      "id": "fields",
       "type": "cloud",
-      "label": "GPT-6 Sol",
-      "sublabel": "Full-image transcription",
+      "label": "Sol field extraction",
+      "sublabel": "Medium reasoning",
+      "tag": "Luna classifier off",
       "pos": [
-        960,
-        100
+        620,
+        330
       ],
       "size": [
-        210,
-        78
+        160,
+        80
       ]
     },
     {
-      "id": "block-alignment",
+      "id": "grounding",
       "type": "security",
-      "label": "Validate and align",
-      "sublabel": "Keep unmatched Sol blocks",
+      "label": "Local evidence",
+      "sublabel": "Quotes + block geometry",
       "pos": [
-        960,
-        350
+        900,
+        330
       ],
       "size": [
-        210,
-        78
+        180,
+        80
       ]
     },
     {
-      "id": "protected-processing",
-      "type": "backend",
-      "label": "Document processing",
-      "sublabel": "Geometry/order invariants",
-      "pos": [
-        660,
-        350
-      ],
-      "size": [
-        210,
-        78
-      ]
-    },
-    {
-      "id": "shared-document",
+      "id": "storage",
       "type": "database",
-      "label": "Document",
-      "sublabel": "Blocks, images, diagnostics",
+      "label": "Local persistence",
+      "sublabel": "SQLite + JSON + sources",
       "pos": [
-        360,
-        350
+        900,
+        570
       ],
       "size": [
-        210,
-        78
+        180,
+        70
       ]
     },
     {
-      "id": "local-exports",
-      "type": "backend",
-      "label": "Local exports",
-      "sublabel": "Renderers and annotations",
+      "id": "review",
+      "type": "frontend",
+      "label": "Extracted information",
+      "sublabel": "Saved fields + PDF regions",
       "pos": [
-        60,
-        350
+        620,
+        570
       ],
       "size": [
-        210,
-        78
+        180,
+        70
       ]
     },
     {
-      "id": "document-chat",
+      "id": "chat",
       "type": "cloud",
-      "label": "GPT-6 Luna",
-      "sublabel": "Parsed-text chat checks",
+      "label": "Luna document chat",
+      "sublabel": "Draft + verification",
       "pos": [
-        360,
-        600
+        340,
+        570
       ],
       "size": [
-        210,
-        78
+        180,
+        70
       ]
     }
   ],
   "connections": [
     {
-      "id": "interfaces-to-page-render",
-      "from": "interfaces",
-      "to": "page-render",
-      "label": "input"
+      "from": "intake",
+      "to": "conversion"
     },
     {
-      "id": "page-render-to-local-layout",
-      "from": "page-render",
-      "to": "local-layout",
-      "label": "image"
+      "from": "conversion",
+      "to": "markdown"
     },
     {
-      "id": "local-layout-to-sol-extraction",
-      "from": "local-layout",
-      "to": "sol-extraction",
-      "label": "guide*"
+      "from": "markdown",
+      "to": "exports"
     },
     {
-      "id": "sol-extraction-to-block-alignment",
-      "from": "sol-extraction",
-      "to": "block-alignment",
-      "label": "HTML, types, boxes",
+      "from": "markdown",
+      "to": "fields",
+      "label": "GUI only",
       "labelDy": 24
     },
     {
-      "id": "block-alignment-to-protected-processing",
-      "from": "block-alignment",
-      "to": "protected-processing",
-      "label": "blocks"
+      "from": "fields",
+      "to": "grounding"
     },
     {
-      "id": "protected-processing-to-shared-document",
-      "from": "protected-processing",
-      "to": "shared-document",
-      "label": "tree"
+      "from": "grounding",
+      "to": "storage"
     },
     {
-      "id": "shared-document-to-local-exports",
-      "from": "shared-document",
-      "to": "local-exports",
-      "label": "render"
+      "from": "storage",
+      "to": "review"
     },
     {
-      "id": "shared-document-to-document-chat",
-      "from": "shared-document",
-      "to": "document-chat",
-      "label": "page text",
-      "labelDy": 24
+      "from": "conversion",
+      "to": "chat",
+      "label": "Parsed page text",
+      "fromSide": "bottom",
+      "toSide": "top"
     }
   ],
   "cards": [
     {
-      "dot": "cyan",
-      "title": "Layout guidance",
+      "dot": "emerald",
+      "title": "Conversion",
       "items": [
-        "* V3 success guides whole-page Sol; failure aborts unless operator fallback is enabled.",
-        "V3 uses pinned ONNX weights; no policy means Sol geometry/order."
+        "192-DPI pages pass through V3; Sol supplies text and HTML.",
+        "Missed/rejected regions keep Sol boxes; failed V3 uses Sol fallback."
       ]
     },
     {
-      "dot": "emerald",
-      "title": "Content and outputs",
+      "dot": "cyan",
+      "title": "Fields and routing",
       "items": [
-        "Matches retain Sol HTML/types; misses and mismatches retain Sol boxes.",
-        "Exports add no model calls. Luna chat makes separate API requests."
+        "Three GUI file jobs run at once; batch uploads use all pages.",
+        "Enabled classification requires score >= 0.75 and verified evidence."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Persistence and review",
+      "items": [
+        "Field retries reuse raw Markdown; export retries make no model calls.",
+        "Saved originals and records remain local; chat stays in session memory."
       ]
     }
   ]

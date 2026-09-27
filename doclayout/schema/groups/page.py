@@ -9,7 +9,6 @@ from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, BlockId
 from doclayout.schema.blocks.base import BlockMetadata
 from doclayout.schema.groups.base import Group
-from doclayout.schema.layout import PageLayout
 from doclayout.schema.polygon import PolygonBox
 
 
@@ -22,7 +21,6 @@ class PageGroup(Group):
     block_description: str = "A single page in the document."
     refs: List[Reference] | None = None
     ocr_errors_detected: bool = False
-    layout: PageLayout | None = None
 
     def incr_block_id(self):
         if self.block_id is None:
@@ -128,6 +126,10 @@ class PageGroup(Group):
         return template
 
     def replace_block(self, block: Block, new_block: Block):
+        if block.layout is not None and new_block.layout is None:
+            new_block.layout = block.layout.model_copy(deep=True)
+            new_block.layout.status = "processor"
+            new_block.layout.geometry_source = "source_footprints"
         # Handles incrementing the id
         self.add_full_block(new_block)
 

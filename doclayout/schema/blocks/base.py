@@ -7,7 +7,7 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict, PrivateAttr, field_validator
 
 from doclayout.schema import BlockTypes
-from doclayout.schema.geometry import LayoutGeometry
+from doclayout.schema.layout import BlockLayout
 from doclayout.schema.polygon import PolygonBox
 
 if TYPE_CHECKING:
@@ -33,7 +33,6 @@ class BlockMetadata(BaseModel):
 
 
 class BlockOutput(BaseModel):
-    layout_geometry: LayoutGeometry | None = None
     html: str
     polygon: PolygonBox
     id: BlockId
@@ -84,7 +83,6 @@ class BlockId(BaseModel):
 
 
 class Block(BaseModel):
-    layout_geometry: LayoutGeometry | None = None
     polygon: PolygonBox
     block_description: str
     block_type: Optional[BlockTypes] = None
@@ -104,6 +102,7 @@ class Block(BaseModel):
         None  # Model's token estimate for OCRing this block, from layout
     )
     metadata: BlockMetadata | None = None
+    layout: BlockLayout | None = None
     lowres_image: Image.Image | None = None
     highres_image: Image.Image | None = None
     removed: bool = False  # Has block been replaced by new block?
@@ -312,11 +311,23 @@ class Block(BaseModel):
         child_content = []
         if section_hierarchy is None:
             section_hierarchy = {}
+        from doclayout.layout import visible_block
+
+        if not visible_block(self, block_config):
+            return BlockOutput(
+                html="",
+                polygon=self.polygon,
+                id=self.id,
+                children=[],
+                section_hierarchy=section_hierarchy,
+            )
         section_hierarchy = self.assign_section_hierarchy(section_hierarchy)
 
         if self.structure is not None and len(self.structure) > 0:
             for block_id in self.structure:
                 block = document.get_block(block_id)
+                if not visible_block(block, block_config):
+                    continue
                 rendered = block.render(
                     document, self.structure, section_hierarchy, block_config
                 )
@@ -326,7 +337,6 @@ class Block(BaseModel):
                 child_content.append(rendered)
 
         return BlockOutput(
-            layout_geometry=self.layout_geometry,
             html=self.assemble_html(
                 document, child_content, parent_structure, block_config
             ),

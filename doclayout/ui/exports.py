@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 from PIL import ImageDraw
 
 from doclayout.filenames import export_filename
+from doclayout.schema.polygon import PolygonBox
 
 STYLE = """
 body {background:white;color:black;font-family:Georgia,'Times New Roman',serif;
@@ -26,6 +27,19 @@ p {margin:.6em 0} img {max-width:100%;height:auto} pre {overflow:auto;background
 
 
 def image_bytes(image, format="PNG"):
+    """Encode an image as RGB bytes.
+
+    Args:
+        image (PIL.Image.Image): Image to encode without modifying the original.
+        format (str): Pillow output format, normally PNG or JPEG.
+
+    Returns:
+        bytes: Encoded image.
+
+    Raises:
+        OSError: Pillow cannot encode the requested image.
+        KeyError: The requested format has no registered encoder.
+    """
     buffer = io.BytesIO()
     image.convert("RGB").save(buffer, format=format)
     return buffer.getvalue()
@@ -38,6 +52,19 @@ def markdown_preview(markdown: str, images: dict) -> str:
 
 
 def markdown_html(markdown: str, images: dict) -> str:
+    """Render sanitized standalone HTML using only known extracted images.
+
+    Args:
+        markdown (str): Converted document text.
+        images (dict): Source image names mapped to Pillow images.
+
+    Returns:
+        str: Styled HTML with embedded images and supported LaTeX conversion.
+        Unknown image sources are removed; remote resources are not fetched.
+
+    Raises:
+        OSError: An extracted image cannot be encoded.
+    """
     body = markdown2.markdown(
         markdown, extras=["tables", "fenced-code-blocks", "strike", "task_list"]
     )
@@ -182,38 +209,120 @@ def markdown_html(markdown: str, images: dict) -> str:
 
 
 def annotations(document, config=None):
-    from doclayout.schema.geometry import convert_bbox, convert_points, image_frame
-    from doclayout.schema.layout import visible_source_blocks
+    """Draw authoritative source footprints and encode a raster annotated PDF.
+
+    Args:
+        document (Document): Converted pages with high-resolution images.
+        config (dict | None): The same visibility settings used for text rendering.
+
+    Returns:
+        dict: One-based page images, PDF bytes, and drawn/skipped box counts.
+        Invalid boxes are skipped; source images remain unchanged. Layout-aware
+        overlays follow visible final structure and retain source footprints
+        for same-page and cross-page merges. Raw masks remain local evidence.
+
+    Raises:
+        OSError: Image or PDF encoding fails.
+    """
+    from doclayout.layout import visible_block, visible_sources
+    from doclayout.layout_geometry import transform_points
 
     pages, skipped, drawn = {}, 0, 0
+    geometry_fallbacks = []
+    page_counts = {}
+    overlays = {}
+    if getattr(document, "layout", None) is not None:
+        ordinal = 0
+        for source_page in document.pages:
+            for bid in source_page.structure or []:
+                block = document.get_block(bid)
+                if not visible_block(block, config):
+                    continue
+                ordinal += 1
+                label = f"{ordinal} {block.id}"
+                sources = visible_sources(block, document, config)
+                if sources:
+                    for source in sources:
+                        valid_contours = False
+                        if source.contours:
+                            from shapely.geometry import Polygon
+
+                            valid_contours = all(
+                                len(part) >= 3
+                                and all(
+                                    len(point) == 2
+                                    and all(math.isfinite(v) for v in point)
+                                    for point in part
+                                )
+                                and Polygon(part).is_valid
+                                and Polygon(part).area > 0
+                                for part in source.contours
+                            )
+                        if source.contours and not valid_contours:
+                            geometry_fallbacks.append(
+                                {
+                                    "block_id": source.block_id,
+                                    "reason": "export_contour_invalid",
+                                    "fallback": source.geometry_source.replace(
+                                        "contour", "bbox"
+                                    ),
+                                }
+                            )
+                        parts = (
+                            source.contours
+                            if valid_contours
+                            else [PolygonBox.from_bbox(source.bbox).polygon]
+                        )
+                        for part in parts:
+                            overlays.setdefault(source.page_id, []).append(
+                                (part, label, valid_contours)
+                            )
+                else:
+                    if block.structure and not getattr(block, "html", None):
+                        continue
+                    overlays.setdefault(source_page.page_id, []).append(
+                        (block.polygon.polygon, label, False)
+                    )
     for page in document.pages:
+        counts = {"contours": 0, "rectangles": 0, "skipped": 0}
+        page_counts[page.page_id] = counts
         image = page.get_image(highres=True).convert("RGB").copy()
         draw = ImageDraw.Draw(image)
-        for block in visible_source_blocks(page, config):
+        if getattr(document, "layout", None) is not None:
+            boxes = overlays.get(page.page_id, [])
+        else:
+            boxes = [
+                (b.polygon.polygon, b.block_type.name, False)
+                for b in page.children or []
+                if not b.removed and not b.structure
+            ]
+        for polygon, label, is_contour in boxes:
             try:
-                source, target = tuple(page.polygon.bbox), image_frame(image.size)
-                x0, y0, x1, y1 = convert_bbox(block.polygon.bbox, source, target)
+                points = transform_points(
+                    polygon, page.polygon.bbox, [0, 0, image.width, image.height]
+                )
+                x0, y0 = min(p[0] for p in points), min(p[1] for p in points)
+                x1, y1 = max(p[0] for p in points), max(p[1] for p in points)
                 if not (
-                    all(math.isfinite(v) for v in (x0, y0, x1, y1))
+                    all(math.isfinite(v) for point in points for v in point)
                     and 0 <= x0 < x1 <= image.width
                     and 0 <= y0 < y1 <= image.height
                 ):
                     raise ValueError("invalid box")
-                geometry = getattr(block, "layout_geometry", None)
-                if (
-                    geometry is not None
-                    and geometry.geometry_source == "native_contour"
-                ):
-                    points = convert_points(geometry.contour, source, target)
-                    draw.line([*points, points[0]], fill=(220, 30, 30), width=3)
+                if is_contour:
+                    draw.line(
+                        [tuple(p) for p in [*points, points[0]]],
+                        fill=(220, 30, 30),
+                        width=3,
+                    )
                 else:
                     draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
-                draw.text(
-                    (x0, max(0, y0 - 14)), str(block.block_type), fill=(220, 30, 30)
-                )
+                draw.text((x0, max(0, y0 - 14)), label, fill=(220, 30, 30))
                 drawn += 1
+                counts["contours" if is_contour else "rectangles"] += 1
             except (ValueError, TypeError, ZeroDivisionError):
                 skipped += 1
+                counts["skipped"] += 1
         pages[page.page_id + 1] = image
     buffer = io.BytesIO()
     if pages:
@@ -224,10 +333,26 @@ def annotations(document, config=None):
         "pdf": buffer.getvalue(),
         "drawn": drawn,
         "skipped": skipped,
+        "geometry_fallbacks": geometry_fallbacks,
+        "page_counts": page_counts,
     }
 
 
 def output_zip(result):
+    """Package existing conversion outputs without rerunning conversion.
+
+    Args:
+        result (dict): Rendered text, metadata, images, and annotation payloads;
+            optional export_base controls shared filenames.
+
+    Returns:
+        bytes: ZIP containing conversion exports and annotated page images.
+
+    Raises:
+        ValueError: An image filename is unsafe or collides with reserved output.
+        KeyError: A required export payload is missing.
+        OSError: Image encoding fails.
+    """
     buffer = io.BytesIO()
     with ZipFile(buffer, "w", ZIP_DEFLATED) as archive:
         for name, data in {

@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # Files
 
-- [DocLayout quickstart](quickstart.md) - A task-based map of the current conversion system and its source-grounded wiki pages.
+- [Quickstart](quickstart.md) - Set up this checkout, convert a file, open the GUI, authenticate HTTP requests, and find deeper guides.
 
 # Directories
 
@@ -14,4 +14,5 @@ okf_version: "0.2"
 - [interfaces](interfaces/)
 - [operations](operations/)
 - [outputs](outputs/)
+- [testing](testing/)
 - [workflows](workflows/)

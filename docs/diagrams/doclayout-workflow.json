@@ -5,84 +5,268 @@
     "title": "DocLayout conversion workflow",
     "quality_profile": "showcase",
     "viewBox": [
-      820,
-      470
+      1200,
+      720
+    ],
+    "views": [
+      {
+        "id": "conversion-path",
+        "label": "Document conversion",
+        "focus": [
+          "user_input",
+          "page_prep",
+          "sol_infer",
+          "val_gate",
+          "doc_builder",
+          "renderers",
+          "file_export"
+        ],
+        "note": "Prepare V3 once; render at 192 DPI, analyze the page, then send the whole image to Sol. Layout failure keeps Sol content and geometry."
+      },
+      {
+        "id": "validation-and-failure",
+        "label": "Validation and failure",
+        "focus": [
+          "sol_infer",
+          "val_gate",
+          "val_retry"
+        ],
+        "note": "Invalid page output aborts the document; no automatic schema repair is implemented."
+      },
+      {
+        "id": "grounded-chat",
+        "label": "Grounded chat",
+        "focus": [
+          "doc_builder",
+          "luna_chat"
+        ],
+        "note": "Document tree feeds independent Luna chat with citation quote checks."
+      }
     ]
   },
   "lanes": [
     {
-      "id": "page-pass",
-      "label": "Conversion"
+      "id": "client",
+      "label": "User & Surfaces"
     },
     {
-      "id": "document-pass",
-      "label": "Document and exports"
+      "id": "pipeline",
+      "label": "Document Engine"
+    },
+    {
+      "id": "inference",
+      "label": "Model Services"
+    },
+    {
+      "id": "exception",
+      "label": "Document failure",
+      "variant": "exception"
+    },
+    {
+      "id": "delivery",
+      "label": "Export & Rendering"
+    }
+  ],
+  "phases": [
+    {
+      "id": "intake",
+      "label": "Intake & Preparation",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "extraction",
+      "label": "Vision & Validation",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "delivery_phase",
+      "label": "Assembly & Output",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "groups": [
+    {
+      "id": "inference_group",
+      "label": "V3 + Sol",
+      "lane": "inference",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "delivery_group",
+      "label": "Local outputs",
+      "lane": "delivery",
+      "fromCol": 4,
+      "toCol": 5
     }
   ],
   "mainPath": [
-    "render-page",
-    "attempt-layout",
-    "transcribe-page",
-    "finish-document"
+    "user_input",
+    "page_prep",
+    "sol_infer",
+    "val_gate",
+    "doc_builder",
+    "renderers",
+    "file_export"
   ],
   "nodes": [
     {
-      "id": "render-page",
-      "lane": "page-pass",
+      "id": "user_input",
+      "lane": "client",
       "col": 0,
-      "type": "backend",
-      "label": "Render page",
-      "sublabel": "192 DPI image"
+      "type": "external",
+      "label": "Doc Input",
+      "sublabel": "PDF / office"
     },
     {
-      "id": "attempt-layout",
-      "lane": "page-pass",
+      "id": "page_prep",
+      "lane": "pipeline",
+      "col": 1,
+      "type": "backend",
+      "label": "Render + V3",
+      "sublabel": "192 DPI + prior",
+      "tag": "limit <= 3"
+    },
+    {
+      "id": "sol_infer",
+      "lane": "inference",
       "col": 2,
-      "type": "backend",
-      "label": "Run V3",
-      "sublabel": "Local contours + order"
-    },
-    {
-      "id": "transcribe-page",
-      "lane": "page-pass",
-      "col": 4,
       "type": "cloud",
       "label": "GPT-6 Sol",
-      "sublabel": "Image + guide*"
+      "sublabel": "whole-page JSON",
+      "tag": "structured"
     },
     {
-      "id": "finish-document",
-      "lane": "document-pass",
-      "col": 4,
+      "id": "val_gate",
+      "lane": "inference",
+      "col": 3,
       "type": "security",
-      "label": "Validate → export",
-      "width": 150,
-      "sublabel": "Align, process, render"
+      "label": "Match blocks",
+      "sublabel": "contour IoU",
+      "tag": "bounds check"
+    },
+    {
+      "id": "val_retry",
+      "lane": "exception",
+      "col": 3,
+      "type": "security",
+      "label": "Failed",
+      "sublabel": "No schema repair"
+    },
+    {
+      "id": "doc_builder",
+      "lane": "pipeline",
+      "col": 4,
+      "type": "backend",
+      "label": "Doc Builder",
+      "sublabel": "block hierarchy"
+    },
+    {
+      "id": "renderers",
+      "lane": "delivery",
+      "col": 4,
+      "type": "backend",
+      "label": "Renderers",
+      "sublabel": "MD, JSON, chunks"
+    },
+    {
+      "id": "file_export",
+      "lane": "delivery",
+      "col": 5,
+      "type": "frontend",
+      "label": "Exports",
+      "sublabel": "HTML, PDF, ZIP"
+    },
+    {
+      "id": "luna_chat",
+      "lane": "client",
+      "col": 5,
+      "type": "cloud",
+      "label": "Luna Chat",
+      "sublabel": "grounded quotes",
+      "tag": "verified"
     }
   ],
   "edges": [
     {
-      "from": "render-page",
-      "to": "attempt-layout"
+      "id": "input-to-prep",
+      "from": "user_input",
+      "to": "page_prep",
+      "variant": "emphasis"
     },
     {
-      "from": "attempt-layout",
-      "to": "transcribe-page",
-      "label": "guide on success"
+      "id": "prep-to-sol",
+      "from": "page_prep",
+      "to": "sol_infer",
+      "variant": "emphasis"
     },
     {
-      "from": "transcribe-page",
-      "to": "finish-document",
-      "label": "response"
+      "id": "sol-to-val",
+      "from": "sol_infer",
+      "to": "val_gate",
+      "variant": "emphasis"
+    },
+    {
+      "id": "val-to-builder",
+      "from": "val_gate",
+      "to": "doc_builder",
+      "variant": "emphasis"
+    },
+    {
+      "id": "val-to-retry",
+      "from": "val_gate",
+      "to": "val_retry",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "id": "builder-to-renderers",
+      "from": "doc_builder",
+      "to": "renderers",
+      "variant": "emphasis"
+    },
+    {
+      "id": "renderers-to-export",
+      "from": "renderers",
+      "to": "file_export",
+      "variant": "emphasis"
+    },
+    {
+      "id": "builder-to-luna",
+      "from": "doc_builder",
+      "to": "luna_chat",
+      "role": "branch",
+      "variant": "security"
     }
   ],
   "cards": [
     {
       "dot": "emerald",
-      "title": "Failure and validation",
+      "title": "Ingestion & Rasterization",
       "items": [
-        "V3 failure aborts by default; operator fallback sends the image without a guide.",
-        "No policy, misses, and mismatches retain Sol boxes; invalid configuration and invariants still fail."
+        "PDFium 192 DPI; V3 supplies layout regions",
+        "At most three page requests run at once"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Validation & Assembly",
+      "items": [
+        "Sol failure stops conversion; V3 failure uses Sol boxes",
+        "Matched V3 contours persist; Sol keeps text and HTML"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Local output and chat",
+      "items": [
+        "Markdown, hierarchical JSON, and styled HTML render locally",
+        "Independent Luna chat performs grounded citations with quote checks"
       ]
     }
   ]

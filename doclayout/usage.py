@@ -10,10 +10,20 @@ MODEL_RATES = {
 
 
 def token_count(value):
+    """Return an int count when nonnegative; otherwise return None, including bools."""
     return value if type(value) is int and value >= 0 else None
 
 
 def response_usage(usage, model):
+    """Normalize reported Responses API usage without estimating missing counts.
+
+    Args:
+        usage (dict | object | None): SDK usage object or mapping.
+        model (str): Request model identifier used for pricing.
+
+    Returns:
+        dict: Model, known flag, and input/output/cache token counts.
+    """
     def field(obj, name, default=None):
         return (
             obj.get(name, default)
@@ -39,7 +49,15 @@ def response_usage(usage, model):
 
 
 def cost_summary(entries):
-    """Price reported requests; unknown calls make the subtotal incomplete."""
+    """Price reported usage at the configured rates, retaining incomplete status.
+
+    Args:
+        entries (list[dict]): Normalized request-usage records.
+
+    Returns:
+        dict: USD estimate, usable token totals, request count, and completeness.
+        Missing/inconsistent usage or unknown models count as unknown requests.
+    """
     cost = Decimal(0)
     totals = dict(
         input_tokens=0, output_tokens=0, cached_tokens=0, cache_write_tokens=0
@@ -78,6 +96,11 @@ def cost_summary(entries):
 
 
 def cost_message(entries):
+    """Return a str USD estimate with a partial-usage warning when needed.
+
+    Args:
+        entries (list[dict]): Normalized request-usage records.
+    """
     summary = cost_summary(entries)
     suffix = (
         f" (partial; {summary['unknown_requests']} request(s) without usable usage)"

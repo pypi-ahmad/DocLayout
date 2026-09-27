@@ -2,11 +2,36 @@
   "schema_version": 1,
   "diagram_type": "lifecycle",
   "meta": {
-    "title": "DocLayout processing lifecycle",
+    "title": "DocLayout conversion lifecycle",
     "quality_profile": "showcase",
     "viewBox": [
-      1080,
-      570
+      980,
+      566
+    ],
+    "views": [
+      {
+        "id": "conversion",
+        "label": "Conversion phases",
+        "focus": [
+          "queued",
+          "rasterizing",
+          "extracting",
+          "validating",
+          "ready"
+        ],
+        "note": "Prepare V3 before new conversion. Failed layout uses whole-page Sol; saved field retries skip both stages."
+      },
+      {
+        "id": "failures",
+        "label": "Document failures",
+        "focus": [
+          "extracting",
+          "request_failed",
+          "validating",
+          "schema_failed"
+        ],
+        "note": "Sol request or schema failures stop this document. V3 failure records Sol fallback and continues."
+      }
     ]
   },
   "lanes": [
@@ -15,94 +40,90 @@
       "label": "Conversion phases"
     },
     {
-      "id": "fallback",
-      "label": "V3 failure path"
+      "id": "terminal",
+      "label": "Document failures"
     }
   ],
   "states": [
     {
-      "id": "accepted-input",
+      "id": "queued",
       "type": "start",
-      "label": "Accepted",
-      "sublabel": "Validate options",
+      "label": "Queued",
+      "sublabel": "prepare V3 once",
       "lane": "main",
-      "col": 0
+      "col": 0,
+      "step": "01",
+      "tag": "entry"
     },
     {
-      "id": "layout-attempt",
+      "id": "rasterizing",
       "type": "active",
-      "label": "Prepare/render",
-      "sublabel": "Try V3 locally",
+      "label": "Rasterizing",
+      "sublabel": "PDFium 192 DPI",
       "lane": "main",
-      "col": 1
+      "col": 1,
+      "step": "02",
+      "tag": "local"
     },
     {
-      "id": "sol-active",
+      "id": "extracting",
       "type": "active",
-      "label": "Transcribe",
-      "sublabel": "Sol full image",
+      "label": "Extracting",
+      "sublabel": "V3 then Sol",
       "lane": "main",
-      "col": 2
+      "col": 2,
+      "step": "03",
+      "tag": "Sol if V3 fails"
     },
     {
-      "id": "protected-tree",
-      "type": "active",
-      "label": "Align/process",
-      "sublabel": "Retain Sol content",
+      "id": "validating",
+      "type": "decision",
+      "label": "Validating",
+      "sublabel": "Pydantic schema",
       "lane": "main",
-      "col": 3
+      "col": 3,
+      "step": "04",
+      "tag": "check"
     },
     {
-      "id": "complete-output",
+      "id": "ready",
       "type": "success",
-      "label": "Complete",
-      "sublabel": "Local exports",
+      "label": "Ready",
+      "sublabel": "matched + processed",
       "lane": "main",
-      "col": 4
+      "col": 4,
+      "step": "05",
+      "tag": "done"
     },
     {
-      "id": "layout-unavailable",
+      "id": "request_failed",
       "type": "failure",
-      "label": "V3 unavailable",
-      "sublabel": "Opt-in fallback",
-      "lane": "fallback",
-      "col": 0
+      "label": "Sol failed",
+      "sublabel": "Refusal / API failure",
+      "lane": "terminal",
+      "col": 0,
+      "yOffset": -75
     },
     {
-      "id": "conversion-failed",
+      "id": "schema_failed",
       "type": "failure",
-      "label": "Conversion failed",
-      "sublabel": "No final result",
-      "lane": "fallback",
-      "col": 2
+      "label": "Invalid output",
+      "sublabel": "Schema / page checks",
+      "lane": "terminal",
+      "col": 1,
+      "yOffset": -75
     }
   ],
   "transitions": [
     {
-      "from": "layout-attempt",
-      "to": "layout-unavailable",
-      "label": "runtime error"
+      "from": "extracting",
+      "to": "request_failed",
+      "variant": "security"
     },
     {
-      "from": "layout-unavailable",
-      "to": "sol-active",
-      "label": "operator opt-in"
-    },
-    {
-      "from": "protected-tree",
-      "to": "conversion-failed",
-      "label": "invariant",
-      "labelDy": 24
-    }
-  ],
-  "cards": [
-    {
-      "dot": "rose",
-      "title": "Failure handling",
-      "items": [
-        "V3 runtime errors abort by default; operator fallback keeps Sol boxes. Other errors are fatal.",
-        "Auto may use CPU after CUDA failure; explicit CUDA does not fall back."
-      ]
+      "from": "validating",
+      "to": "schema_failed",
+      "variant": "security"
     }
   ]
 }

@@ -1,5 +1,4 @@
 # Files
 
-- [Input providers and page rendering](input-providers.md) - How supported files become page images and page coordinate frames for the shared conversion path.
-- [Local layout guidance and alignment](layout-guidance-and-alignment.md) - The pinned V3 ONNX runtime, native contour decode, bounded guide, current matching rules, and failure behavior.
-- [Sol extraction and optional processing](openai-processing.md) - Whole-page structured Sol extraction, HTML validation, optional correction, and separate document chat.
+- [Input providers and normalization](input-providers.md) - File detection, page rendering, optional source normalization, resource limits, and cleanup.
+- [OpenAI processing](openai-processing.md) - Sol visual extraction, optional refinement, Luna document chat, and Markdown-only field requests.

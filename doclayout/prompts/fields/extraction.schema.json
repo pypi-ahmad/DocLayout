@@ -1,0 +1,695 @@
+{
+  "type": "object",
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "object",
+            "properties": {
+              "request": {
+                "type": "object",
+                "properties": {
+                  "request_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Requested service date or date range, as written. Never today's date, fax date, or initiation date. Null when no requested service date is supplied."
+                  },
+                  "provider_return_fax": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "provider return fax as explicitly stated for this role; null when unavailable."
+                  },
+                  "authorization_reference_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "authorization reference number as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "request_date",
+                  "provider_return_fax",
+                  "authorization_reference_number"
+                ],
+                "additionalProperties": false
+              },
+              "member": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "first name as explicitly stated for this role; null when unavailable."
+                  },
+                  "last_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "last name as explicitly stated for this role; null when unavailable."
+                  },
+                  "date_of_birth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "date of birth as explicitly stated for this role; null when unavailable."
+                  },
+                  "member_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "member id as explicitly stated for this role; null when unavailable."
+                  },
+                  "contact_phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "contact phone as explicitly stated for this role; null when unavailable."
+                  },
+                  "address": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "address as explicitly stated for this role; null when unavailable."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "city as explicitly stated for this role; null when unavailable."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "state as explicitly stated for this role; null when unavailable."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "postal code as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "date_of_birth",
+                  "member_id",
+                  "contact_phone",
+                  "address",
+                  "city",
+                  "state",
+                  "postal_code"
+                ],
+                "additionalProperties": false
+              },
+              "referring_provider": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "name as explicitly stated for this role; null when unavailable."
+                  },
+                  "npi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "npi as explicitly stated for this role; null when unavailable."
+                  },
+                  "provider_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "provider id as explicitly stated for this role; null when unavailable."
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "tax id as explicitly stated for this role; null when unavailable."
+                  },
+                  "specialty": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "specialty as explicitly stated for this role; null when unavailable."
+                  },
+                  "participation_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "participation status as explicitly stated for this role; null when unavailable."
+                  },
+                  "contact_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "contact name as explicitly stated for this role; null when unavailable."
+                  },
+                  "phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "phone as explicitly stated for this role; null when unavailable."
+                  },
+                  "fax": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "fax as explicitly stated for this role; null when unavailable."
+                  },
+                  "address": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "address as explicitly stated for this role; null when unavailable."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "city as explicitly stated for this role; null when unavailable."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "state as explicitly stated for this role; null when unavailable."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "postal code as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "name",
+                  "npi",
+                  "provider_id",
+                  "tax_id",
+                  "specialty",
+                  "participation_status",
+                  "contact_name",
+                  "phone",
+                  "fax",
+                  "address",
+                  "city",
+                  "state",
+                  "postal_code"
+                ],
+                "additionalProperties": false
+              },
+              "servicing_provider": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "name as explicitly stated for this role; null when unavailable."
+                  },
+                  "npi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "npi as explicitly stated for this role; null when unavailable."
+                  },
+                  "provider_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "provider id as explicitly stated for this role; null when unavailable."
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "tax id as explicitly stated for this role; null when unavailable."
+                  },
+                  "specialty": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "specialty as explicitly stated for this role; null when unavailable."
+                  },
+                  "participation_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "participation status as explicitly stated for this role; null when unavailable."
+                  },
+                  "contact_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "contact name as explicitly stated for this role; null when unavailable."
+                  },
+                  "phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "phone as explicitly stated for this role; null when unavailable."
+                  },
+                  "fax": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "fax as explicitly stated for this role; null when unavailable."
+                  },
+                  "address": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "address as explicitly stated for this role; null when unavailable."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "city as explicitly stated for this role; null when unavailable."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "state as explicitly stated for this role; null when unavailable."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "postal code as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "name",
+                  "npi",
+                  "provider_id",
+                  "tax_id",
+                  "specialty",
+                  "participation_status",
+                  "contact_name",
+                  "phone",
+                  "fax",
+                  "address",
+                  "city",
+                  "state",
+                  "postal_code"
+                ],
+                "additionalProperties": false
+              },
+              "servicing_facility": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "name as explicitly stated for this role; null when unavailable."
+                  },
+                  "npi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "npi as explicitly stated for this role; null when unavailable."
+                  },
+                  "provider_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "provider id as explicitly stated for this role; null when unavailable."
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "tax id as explicitly stated for this role; null when unavailable."
+                  },
+                  "participation_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "participation status as explicitly stated for this role; null when unavailable."
+                  },
+                  "contact_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "contact name as explicitly stated for this role; null when unavailable."
+                  },
+                  "phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "phone as explicitly stated for this role; null when unavailable."
+                  },
+                  "fax": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "fax as explicitly stated for this role; null when unavailable."
+                  },
+                  "address": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "address as explicitly stated for this role; null when unavailable."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "city as explicitly stated for this role; null when unavailable."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "state as explicitly stated for this role; null when unavailable."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "postal code as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "name",
+                  "npi",
+                  "provider_id",
+                  "tax_id",
+                  "participation_status",
+                  "contact_name",
+                  "phone",
+                  "fax",
+                  "address",
+                  "city",
+                  "state",
+                  "postal_code"
+                ],
+                "additionalProperties": false
+              },
+              "requested_service_dates": {
+                "type": "object",
+                "properties": {
+                  "service_start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "service start date as explicitly stated for this role; null when unavailable."
+                  },
+                  "service_end_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "service end date as explicitly stated for this role; null when unavailable."
+                  },
+                  "scheduled_service_datetime": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "scheduled service datetime as explicitly stated for this role; null when unavailable."
+                  }
+                },
+                "required": [
+                  "service_start_date",
+                  "service_end_date",
+                  "scheduled_service_datetime"
+                ],
+                "additionalProperties": false
+              },
+              "diagnoses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "code as explicitly stated for this role; null when unavailable."
+                    },
+                    "code_system": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "code system as explicitly stated for this role; null when unavailable."
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "description as explicitly stated for this role; null when unavailable."
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "code_system",
+                    "description"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "requested_services": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "code as explicitly stated for this role; null when unavailable."
+                    },
+                    "code_system": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "code system as explicitly stated for this role; null when unavailable."
+                    },
+                    "modifiers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "requested_units_or_visits": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "requested units or visits as explicitly stated for this role; null when unavailable."
+                    },
+                    "frequency": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "frequency as explicitly stated for this role; null when unavailable."
+                    },
+                    "duration": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "duration as explicitly stated for this role; null when unavailable."
+                    },
+                    "original_request_text": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "original request text as explicitly stated for this role; null when unavailable."
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "code_system",
+                    "modifiers",
+                    "requested_units_or_visits",
+                    "frequency",
+                    "duration",
+                    "original_request_text"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "service_types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "places_of_service": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "expedited_requested": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Explicit expedited request, explicit routine/negative selection, or unknown."
+              },
+              "priority_evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Original supporting priority text."
+              },
+              "additional_information": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Request-specific notes in the original wording."
+              }
+            },
+            "required": [
+              "request",
+              "member",
+              "referring_provider",
+              "servicing_provider",
+              "servicing_facility",
+              "requested_service_dates",
+              "diagnoses",
+              "requested_services",
+              "service_types",
+              "places_of_service",
+              "expedited_requested",
+              "priority_evidence",
+              "additional_information"
+            ],
+            "additionalProperties": false
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field_path": {
+                  "type": "string"
+                },
+                "quote": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field_path",
+                "quote"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field_path": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field_path",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "fields",
+          "evidence",
+          "issues"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "document_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "records",
+    "document_issues"
+  ],
+  "additionalProperties": false
+}

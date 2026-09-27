@@ -11,9 +11,9 @@ from tqdm import tqdm
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
 from doclayout.filenames import export_basename, export_filename
+from doclayout.layout import layout_metadata, layout_summary, pipeline_manifest
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import output_exists, save_output
-from doclayout.services.layout import LayoutError, layout_error_message
 from doclayout.services.openai import OpenAIService
 from doclayout.usage import cost_message
 
@@ -50,11 +50,12 @@ def convert_file(fpath, destination, options, formats):
         document = converter.build_document(fpath)
         outputs = document_exports(document, config, formats, basename)
         save_document_exports(outputs, destination, fpath)
+        summary = layout_summary({"layout": layout_metadata(document, config)})
+        if summary:
+            click.echo(summary)
         click.echo(f"Saved {len(outputs)} file(s) to {destination}")
     except Exception as exc:
-        raise click.ClickException(
-            layout_error_message(exc) if isinstance(exc, LayoutError) else str(exc)
-        ) from exc
+        raise click.ClickException(str(exc)) from exc
     finally:
         if converter is not None and isinstance(
             converter.extraction_service, OpenAIService
@@ -73,7 +74,9 @@ def process_single_pdf(args):
         config = parser.generate_config_dict()
         folder = parser.get_output_folder(fpath)
         name = parser.get_base_filename(fpath)
-        if options.get("skip_existing") and output_exists(folder, name):
+        if options.get("skip_existing") and output_exists(
+            folder, name, fingerprint=pipeline_manifest(config)["fingerprint"]
+        ):
             return 0, True
         models = create_model_dict()
         converter = parser.get_converter_cls()(
@@ -84,12 +87,12 @@ def process_single_pdf(args):
         )
         rendered = converter(fpath)
         save_output(rendered, folder, name)
+        summary = layout_summary(rendered.metadata)
+        if summary:
+            click.echo(summary)
         return converter.page_count, True
     except Exception as exc:
-        message = (
-            layout_error_message(exc) if isinstance(exc, LayoutError) else str(exc)
-        )
-        click.echo(f"Failed {fpath}: {message}", err=True)
+        click.echo(f"Failed {fpath}: {exc}", err=True)
         return 0, False
     finally:
         if converter is not None and isinstance(
@@ -146,7 +149,7 @@ def process_single_pdf(args):
     "--annotated-pdf",
     "export_annotated_pdf",
     is_flag=True,
-    help="Write a raster PDF with estimated region boxes.",
+    help="Write a raster PDF with source contours and fallback rectangles.",
 )
 @click.option(
     "--annotated-images",
