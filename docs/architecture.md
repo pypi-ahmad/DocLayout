@@ -20,7 +20,7 @@ specification. Its compact labels omit some input formats and combine response
 validation with contour matching; the prose below has the complete contour and
 diagnostics contracts.
 
-The workflow leaves excess whitespace on the right. In the lifecycle viewer,
+The workflow has excess whitespace on the right. In the lifecycle viewer,
 the Export control is partly clipped at 1440 px despite passing automated
 containment checks. The diagram remains readable.
 

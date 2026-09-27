@@ -5,9 +5,9 @@
 [Architecture](architecture.md) · [Python API](python-api.md) ·
 [Configuration](configuration.md)
 
-Use this page for environment setup and verification commands. If you are new
-to the project, start with [onboarding](onboarding.md). The [tutorial](tutorial.md)
-walks through a change, and the [runbook](../CONTRIBUTING.md) covers review.
+This page covers environment setup and verification commands. New contributors
+can start with [onboarding](onboarding.md), practice a change in the
+[tutorial](tutorial.md), and use the [runbook](../CONTRIBUTING.md) for review.
 
 The [Python documentation audit](python-documentation-audit.md) records the
 scope and limits of the current docstring pass.
@@ -20,6 +20,7 @@ scope and limits of the current docstring pass.
 | ONNX decode, matching, fallback | `doclayout/layout.py`, `layout_geometry.py` | `tests/test_layout*.py` |
 | Whole-page request and block assembly | `doclayout/builders/document.py`, `services/openai.py` | `tests/test_layout_prior.py` |
 | Structure and content processing | `doclayout/builders/structure.py`, `processors/` | `tests/processors/` |
+| Markdown, HTML, JSON, and chunk output | `doclayout/renderers/` | `tests/renderers/` |
 | CLI and saved exports | `doclayout/scripts/convert.py`, `exports.py` | `tests/test_cli_exports.py` |
 | GUI exports and state | `doclayout/ui/` | `tests/test_ui.py`, `tests/test_ui_browser.py` |
 | Saved field extraction | `doclayout/fields.py`, `field_store.py` | `tests/test_fields.py` |
@@ -127,6 +128,11 @@ Keep code examples offline unless the guide explicitly labels them billable.
 Check links and anchors, run affected tests, and compare syntax trees without
 docstrings when changing inline documentation. Preserve dated benchmark results;
 new test runs belong in a separately dated verification note.
+
+For renderer docstrings, describe the visible output and any image or metadata
+side effects. Leave Pydantic output-model class docstrings alone unless a schema
+change is intended; class descriptions can appear in generated JSON schemas.
+Run `tests/renderers/` after changes to HTML or Markdown conversion.
 
 Update OpenWiki pages through its managed lifecycle. Do not edit claim sidecars,
 generated indexes, provenance, or run state manually. Diagram JSON is the editable

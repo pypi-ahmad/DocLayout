@@ -236,7 +236,7 @@ token usage and costs. See [rates and limitations](docs/configuration.md#cost-es
 Extraction and chat can incur API charges. Model-estimated boxes are not
 confidence scores. Small text, complex tables, equations, and header/footer
 classification need review. Document chat verification can also miss mistakes.
-There is no claim of perfect accuracy or a general benchmark ranking.
+The project does not report a general benchmark ranking or claim perfect accuracy.
 
 The browser keeps conversion results in session memory. Download them before closing the
 session. CLI conversion writes files. The GUI and file command generate HTML

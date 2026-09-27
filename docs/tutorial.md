@@ -12,7 +12,7 @@ while following the exercises.
 
 ## 1. Establish a clean baseline
 
-Follow [onboarding](onboarding.md#first-15-minutes) to sync the project and run
+Follow [onboarding](onboarding.md#first-local-checks) to sync the project and run
 the focused field and contour tests. Record the current branch and any
 pre-existing edits before touching files. Read one test failure in full before
 changing implementation so you can distinguish a source regression from a
@@ -120,7 +120,30 @@ Find the successful page's V3 geometry, the failed page's Sol geometry, and
 the metadata that distinguishes them. Confirm the failed page still sends its
 whole image to Sol and that processor defects are not labeled layout fallback.
 
-## 7. Optional, billable end-to-end validation
+## 7. Offline capstone: explain a mixed layout result
+
+Use the regression from step 6 as a two-page case study. Without changing the
+test, trace the provider image through `DocumentBuilder`, layout matching, and
+`ChunkRenderer`. Write down where each page's final box came from and which
+request received a layout prior.
+
+Check your trace against the test's assertions:
+
+- The first page is `matched` and has a final bbox of `[20, 30, 190, 40]`.
+  The second is `sol_only` with `[20, 30, 186, 40]`; its runtime status is
+  `sol_fallback`.
+- Both pages retain the sanitized HTML `<p>Keep text</p>`. Markdown contains
+  the text twice because the fixture has one block on each page, not because
+  matching duplicated a block.
+- Chunk and structured JSON agree on the fallback page's bbox. Chunk metadata
+  identifies its geometry source as `sol`, and annotations draw two blocks.
+
+If you can locate each assertion in the test and the code path that produces
+it, you have a reproducible explanation of this fallback. For a different
+document, repeat the trace with its actual outputs instead of carrying over
+these fixture coordinates.
+
+## 8. Optional, billable end-to-end validation
 
 Only run this stage when you have approved source material, configured API
 access, and a task that calls for live validation. The CLI command below can

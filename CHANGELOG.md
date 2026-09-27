@@ -12,6 +12,8 @@ GitHub hosts release assets; PyPI publication is deferred.
   export, and CLI interfaces without changing runtime behavior.
 - Record the earlier local five-diagram Archify validation while retaining the
   later source-checked diagram artifacts already on `main`.
+- Document renderer helpers and export methods, add an offline mixed-layout
+  tutorial capstone, and update the measured docstring coverage audit.
 
 ## 3.1.0 (2026-09-27)
 

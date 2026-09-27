@@ -57,6 +57,9 @@ return shapes; check the source and fixtures for the current behavior.
 
 - Add a regression test at the owning boundary. Check the visible output as
   well as internal state when a change affects exports or the GUI.
+- For renderer changes, run `tests/renderers/` and check HTML, Markdown, JSON,
+  and chunk behavior where the changed path affects them. Documentation-only
+  renderer edits must leave executable syntax and output schemas unchanged.
 - Preserve whole-page Sol extraction, its HTML and semantic ownership, and
   unmatched content when changing layout reconciliation. A V3-only region is
   evidence, not new text.

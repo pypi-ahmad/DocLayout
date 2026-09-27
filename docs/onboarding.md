@@ -6,7 +6,7 @@
 Start with the source map and offline exercises below. They need no API key,
 model download, or sample PDF.
 
-## First 15 minutes
+## First local checks
 
 Use PowerShell in the checkout. DocLayout requires Python `>=3.11,<4`; uv
 resolves and syncs the environment from `pyproject.toml` and `uv.lock`.
@@ -32,7 +32,8 @@ environment issue, not evidence that extraction works or fails. See
 | Local layout | [`layout.py`](../doclayout/layout.py), [`layout_geometry.py`](../doclayout/layout_geometry.py) | Pinned ONNX inference, masks, contours, order, and fallback evidence |
 | Whole-page reading | [`services/openai.py`](../doclayout/services/openai.py), [`schema/extraction.py`](../doclayout/schema/extraction.py) | Sol request, HTML/text, and response validation |
 | Assembly | [`builders/document.py`](../doclayout/builders/document.py), [`layout.py`](../doclayout/layout.py) | Source blocks, one-to-one layout reconciliation, lineage |
-| Output | [`renderers/`](../doclayout/renderers), [`ui/exports.py`](../doclayout/ui/exports.py) | Markdown, JSON, chunks, HTML, annotations, ZIP |
+| Rendering | [`renderers/`](../doclayout/renderers) | HTML assembly, Markdown conversion, JSON trees, and flat chunks |
+| Download assembly | [`ui/exports.py`](../doclayout/ui/exports.py) | Annotated images/PDFs and ZIP downloads |
 | Downstream fields | [`fields.py`](../doclayout/fields.py), [`field_store.py`](../doclayout/field_store.py), [`ui/batch.py`](../doclayout/ui/batch.py) | Raw-Markdown extraction, grounding, saved runs and retries |
 
 The GUI lives under [`ui/`](../doclayout/ui) and starts at
@@ -65,7 +66,7 @@ and otherwise uses CPU; a provider listing is not GPU proof. The current code
 records Sol fallback if layout cannot run. Test results with fixtures do not
 measure real extraction accuracy.
 
-For the next hands-on exercise, continue to the [zero-to-mastery tutorial](tutorial.md).
+The [zero-to-mastery tutorial](tutorial.md) continues with hands-on exercises.
 
 ## Make a first contribution
 
