@@ -4,19 +4,21 @@
 
 ## Data flow
 
-The local unreleased pipeline attempts PP-DocLayoutV3 on each rendered page,
+The local unreleased pipeline (`sol-layout-v3/v4`) attempts PP-DocLayoutV3 on each rendered page,
 then sends the same whole image to Sol with a compact `given_layout` prior.
-Validated Sol blocks are matched conservatively to V3 geometry and order before
+Validated Sol blocks are assigned one-to-one to qualifying V3 geometry before
 existing processors run. If V3 fails, Sol receives the image without the prior.
 See the [layout integration record](layout-v3-plan.md) for source locations,
 the exact matching rules, and dated runtime evidence.
 
 ### Interactive architecture and workflow diagrams
 
-These standalone HTML diagrams show the architecture and workflows:
+The conversion workflow was refreshed for contour matching on September 27.
+The other standalone HTML diagrams retain their September 26 high-level views;
+use the prose below for the complete local contour and diagnostics contracts.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): Current V3 prior, whole-page Sol request, block matching, and export path.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. The existing composition still leaves excess right-side whitespace.
 - [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and audit scoring.
 - [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
@@ -46,17 +48,20 @@ this gate. Importing modules or creating API clients does not load weights.
 
 Sol returns ordered blocks with type, HTML, and estimated bounds normalized
 to 0 to 1000. Pydantic validation rejects invalid geometry and inconsistent blank
-pages. The app sanitizes HTML and reconciles confident, unambiguous V3 matches
-into page-space boxes and partial order, retaining Sol-only text and geometry
+pages. The app sanitizes HTML and reconciles qualified V3 matches
+into page-space contours/AABBs and relative order, retaining Sol-only text and geometry
 otherwise. Unmatched V3 regions are metadata only, never duplicate text. Structure
 processors then prepare the document for rendering. Optional refinement uses the
 same Sol service. If refinement fails, the app keeps the extracted content and
 records errors. A page extraction failure aborts the document.
 
 Reconciliation preserves every validated Sol block's HTML and semantic type.
-Accepted one-to-one matches use V3 rectangles. Rejected matches, including ties
-and split/merge ambiguity, retain Sol geometry with `sol_only` provenance.
-V3 can reorder only contiguous matched runs; Sol-only blocks anchor their positions.
+Accepted matches use concave contour IoU, or V3 AABB IoU with an explicit contour
+fallback reason. Compatible text-family disagreements preserve Sol semantics.
+Candidates sort by IoU, V3 confidence, raw row, and Sol ordinal; greedy reservation
+uses each endpoint once. Ties and split/merge overlaps are warnings, not vetoes.
+All matched slots are globally reordered by model key and deterministic tie-breakers;
+Sol-only relative order stays intact. Unmatched placement remains fallback behavior.
 The matcher cannot recognize every incorrect detection, and its thresholds are
 not calibrated accuracy guarantees. Later processors can group, merge, relabel,
 or hide blocks, including headers/footers; final metadata and renderers use that
@@ -66,7 +71,7 @@ processed structure rather than the initial detection list.
 
 The GUI builds one document, then renders Markdown, hierarchical JSON, and flat
 chunks from it. Local code generates styled HTML from the resulting Markdown,
-draws estimated boxes on copies of source images, creates a raster PDF, and
+draws authoritative source contours/rectangles on copies of source images, creates a raster PDF, and
 assembles the ZIP. These operations do not call a model.
 
 The file command builds one document and uses the same Markdown-to-HTML,
@@ -120,12 +125,20 @@ layout preparation/inference errors and continue with Sol. Direct low-level engi
 callers still receive `LayoutModelUnavailable`. Sol errors and invalid structured
 responses are not caught by the layout fallback boundary.
 
-V3 returns rectangles, masks, class IDs/scores and model order keys. It does not
-transcribe text or supply raw polygon vertices. The four-point document geometry
-and annotations remain rectangular; masks and original detections remain in the
-audit. Existing final block metadata reflects later processor grouping/order.
-The result caption summarizes stored initial region/match counts and summed page
-analysis time, including queue wait. It is not document wall-clock time.
+Raw ONNX returns rectangles, page-grid masks, class IDs/scores and model order keys.
+The official PaddleX-derived decoder crops/resizes masks, selects the largest
+external component and simplifies its contour; original compressed masks remain
+in the audit. It does not transcribe text. General contours are separate from the
+four-corner `PolygonBox` contract. Pixel coordinates map proportionally into provider
+page bounds including their origin; PDF rotation is already reflected in rendering.
+Processors retain original source footprints, including cross-page merges; they
+do not invent one contour for an assembly. Annotations follow visible final structure
+and existing furniture settings. Rectangular JSON/chunk envelopes remain compatible.
+Initial matching counts, final visible source footprints, and drawn polygon parts
+are separate diagnostics. GUI/CLI summaries and API/saved metadata expose device,
+providers, fallback stages and rejection reasons. Elapsed analysis includes queue
+wait and any in-call preparation/fallback, not pure kernel latency or document
+wall-clock time; separate readiness warm-up is excluded.
 The model's order key is retained; `observed_rank` is explicitly a derived sort.
 
 Chat uses a separate Luna client and token usage record. The draft schema contains

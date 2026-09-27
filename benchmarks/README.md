@@ -9,6 +9,11 @@ olmOCR-bench dataset. New conversions in this checkout attempt V3 first, with So
 fallback when layout is unavailable. Each worker process owns its own layout
 engine. The results cover only the documents evaluated.
 
+The local pipeline uses matched V3 contours and order. This harness's text rules
+do not evaluate contour alignment, false region associations, or source-footprint
+export fidelity. Review those separately using the saved layout metadata and
+annotated exports described in the [layout record](../docs/layout-v3-plan.md).
+
 This benchmark measures conversion only. It does not measure Luna classification,
 authorization-field accuracy, or PDF evidence mapping. The separate
 [field validation notes](../docs/field-extraction.md#verification) report the bounded

@@ -120,7 +120,7 @@ every selected page still uses Sol extraction. There is no local OCR fallback.
 
 ## Local layout inference
 
-The local unreleased pipeline runs pinned PP-DocLayoutV3 before each whole-page
+The local pipeline (`sol-layout-v3/v4`, unreleased) runs pinned PP-DocLayoutV3 before each whole-page
 Sol request, which includes a compact `given_layout` prior. It uses the official
 `PaddlePaddle/PP-DocLayoutV3_onnx` artifact with direct ONNX Runtime. The Windows
 AMD64 base dependency is `onnxruntime-gpu==1.30.0`, including CPU execution; there
@@ -179,18 +179,30 @@ provider evidence, matching policy, cache identity and unverified quality claims
 V3 supplies rectangles, binary masks, scores, 25 class labels and observed order
 keys, not transcription, HTML or raw polygon vertices. `observed_rank` is a
 derived stable sort of model order keys, not a separate prediction. Sol transcribes the
-whole image. Matching preserves Sol content; exports use rectangular geometry,
-with masks retained separately. Neither detector scores nor order keys are
-calibrated accuracy guarantees. Result summaries use stored region/match counts
-and summed per-page analysis milliseconds, including queue waiting. This is not
-wall-clock document time; separately prepared warm-up time is not included.
+whole image. The decoder derives simplified contours using the official PaddleX
+algorithm while retaining original compressed masks. Matched exports use source
+contours, with V3 AABBs on contour failure and Sol rectangles for unmatched content.
+Legacy JSON/chunk bounding envelopes remain rectangular. Neither detector scores
+nor order keys are calibrated accuracy guarantees. Initial matching counts and
+final visible geometry usage are reported separately. Per-page analysis time
+includes queue waiting and in-call preparation/fallback; it is not pure inference
+or wall-clock document time. Separately prepared warm-up time is not included.
 
 Sol blocks with no accepted V3 match retain their own validated geometry and
-position as `sol_only`. Ambiguous ties and split/merge overlaps are rejected;
+relative order as `sol_only`. Qualified pairs use deterministic one-to-one greedy
+assignment; ties and split/merge overlaps are recorded without vetoing matches.
+Matched slots follow V3 order across intervening Sol-only blocks;
 unmatched V3 regions remain diagnostics and never generate Markdown. Matching
 thresholds are provisional, and an incorrect detection can still pass them.
-See the [matching policy](layout-v3-plan.md#4-deterministic-matching)
+See the [current matching policy](layout-v3-plan.md#matching-and-order-policy)
 for the exact rules and limitations.
+
+Pipeline v4 fingerprints decode, guide, matching, order, source geometry and
+reporting policies. Actual provider availability is recorded separately; recovery
+does not invalidate saved fallback results. Old records without contours or new
+diagnostics remain readable; missing diagnostics mean not recorded, not zero.
+The guide includes normalized contour components and AABBs, never masks/RLE.
+It has no silent region/payload truncation and no new configuration switch.
 
 ## Extraction and rendering
 

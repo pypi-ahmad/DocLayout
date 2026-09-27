@@ -28,6 +28,8 @@ It requests no GPU. This checkout attempts V3 with CPU ONNX Runtime before Sol;
 the first uncached container conversion can download the pinned weights. The
 example declares no persistent model-cache volume, so a fresh container can need
 another download. Layout failure continues through Sol with fallback metadata.
+Successful API responses retain layout evidence, including decoded contours and
+matching diagnostics; this example does not generate annotated image/PDF downloads.
 Use the [layout settings](../docs/configuration.md#local-layout-inference) for a
 writable cache or pre-populated model directory. This deployment has not been
 tested live, including its Linux layout runtime.

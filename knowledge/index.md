@@ -15,7 +15,9 @@ the authority for implemented behavior.
 
 For new conversion behavior, use the [architecture guide](../docs/architecture.md)
 and [V3 integration record](../docs/layout-v3-plan.md). The latter distinguishes
-the current Sol-fallback policy from earlier fail-closed phase records.
+the current contour decoding, matching, source lineage, and Sol-fallback policy
+from earlier rectangle-only and fail-closed phase records. Field evidence review
+still uses rectangular block grounding; conversion annotations can use contours.
 
 The [documentation verification record](../docs/documentation-sync.md) separates
 offline checks, dated live observations, and generated-artifact validation.

@@ -1,6 +1,6 @@
 # DocLayout project memory
 
-Updated: 2026-09-26. Source: explicit user decisions in this repository's conversation.
+Updated: 2026-09-27. Source: explicit user decisions in this repository's conversation.
 
 ## Downstream scope and later conversion authorization
 
@@ -18,8 +18,10 @@ The user subsequently authorized the separate PP-DocLayoutV3 integration for new
 conversions and then explicitly requested Sol fallback when V3 misses, mismatches,
 or fails to run. The implemented policy attempts V3 before whole-page Sol;
 unaccepted matches retain Sol content/geometry, and runtime failures continue
-without a layout prior with explicit fallback provenance. Conservative matching
-cannot detect every visually wrong match. This later authorization does not change
+without a layout prior with explicit fallback provenance. Qualified pairs use
+deterministic one-to-one assignment; split/merge warnings do not veto the best
+qualified pair. The provisional overlap thresholds cannot detect every visually
+wrong match. This later authorization does not change
 the downstream raw-Markdown contract or authorize publication/deployment.
 
 The active backend is the pinned official ONNX artifact, not Transformers.
@@ -29,6 +31,20 @@ on CPU. Explicit CUDA forbids a replacement CPU session, while conversion still
 uses Sol if the engine fails. Saved fallback conversions remain reusable; recovery
 of V3 does not automatically reconvert them. See the
 [layout integration record](layout-v3-plan.md) for contracts and evidence.
+
+The locked artifact is `PaddlePaddle/PP-DocLayoutV3_onnx`; neither the Paddle
+repository nor the safetensors repository replaces it. Pipeline
+`sol-layout-v3/v4` retains raw masks and derives contours with the referenced
+PaddleX algorithm. Matched blocks use V3 source geometry and global relative
+order while retaining Sol HTML and semantic types. Unmatched Sol content survives;
+unmatched V3 regions remain evidence without invented text. Contour failure uses
+a valid V3 rectangle before falling back to Sol geometry.
+
+Processors retain source footprints, including cross-page assemblies. Annotations
+follow the final visible structure and existing header/footer settings. Field
+evidence remains block-level rectangular grounding, not word-level or contour
+grounding. Initial matching counts and final visible geometry counts are separate.
+No crop-based Sol pipeline, extra reading model, or layout toggle is authorized.
 
 ## Downstream decisions
 

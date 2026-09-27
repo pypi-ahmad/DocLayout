@@ -1,5 +1,79 @@
 # Documentation sync verification
 
+## September 27, 2026: pipeline v4 code-to-doc sync
+
+This pass updates documentation for the local unreleased contour integration.
+It does not publish a release or change conversion behavior. Source and tests
+remain authoritative; the dated records below describe their own earlier passes.
+
+### Coverage and preservation
+
+Reviewed the README, architecture, configuration, usage, development, field guide,
+project decisions, integration/research records, benchmark/example/fixture guides,
+knowledge index, changelog, and project instructions. Corrected stale geometry,
+matching, order, diagnostics, and downstream-grounding descriptions. Added current
+implementation notes to historical research without rewriting its dated results.
+Accurate instructions, legal attribution, `.env.example`, and runtime prompts
+were preserved. The remaining high-level diagram specifications did not require
+contour-specific changes; their September 26 scope and known visual limits remain
+documented. No generated HTML was patched by hand.
+
+OpenWiki reconciled all ten factual pages through its managed page/Claims flow;
+both next-page and finish returned complete. The wiki now describes contour/AABB
+fallbacks, deterministic one-to-one assignment, global matched ordering, retained
+source footprints, and initial-versus-final diagnostics. Generated indexes and
+provenance remain OpenWiki-owned.
+
+The requested writing skills kept this pass source-first and task-oriented.
+Humanizer simplified revised prose while preserving identifiers and technical
+limits. Code-documenter guided the API/example review; no inline docstrings or
+response models changed. This is document coverage, not a claim of complete
+repository-wide public-symbol docstring coverage.
+
+SHA-256 comparison found all 142 package Python, Markdown, and JSON files
+byte-identical to the start of this pass, including the six runtime prompts and
+field schema. Existing implementation edits were preserved. No model download,
+live API call, deployment, commit, publication, or application restart ran.
+
+### Checks in this pass
+
+| Check | Result |
+| --- | --- |
+| `uv run --no-sync python -m pytest -q tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py tests/test_layout_contours.py tests/test_fields.py` | 208 passed in 15.13 seconds |
+| `uv run --no-sync python -m ruff check doclayout tests benchmarks examples convert.py convert_single.py doclayout_app.py doclayout_server.py --select F,E9` | Passed |
+| Local Markdown validation | 38 non-prompt Markdown files; final pass checked 273 local links with no broken targets; the initial pass also checked all 55 then-present heading targets |
+| Python documentation example | One block parsed successfully; no document conversion or API request executed |
+| CLI examples | `doclayout --help`, `doclayout_single --help`, and `python benchmarks/inference.py --help` passed through `uv run --no-sync` |
+| Knowledge bundle | OKF v0.2 validation passed without errors or warnings |
+| Lockfile and whitespace | `uv lock --check` and `git diff --check` passed |
+
+External URLs, release availability, the Modal deployment, and live model quality
+were not revalidated. Historical full-suite/build/type results remain dated in the
+[integration record](layout-v3-plan.md#completion-verification-2026-09-27-local-unreleased),
+not presented as checks rerun by this documentation pass.
+
+### Workflow diagram receipt
+
+Archify regenerated the workflow after replacing its rectangle-only matching
+label and card. One shortened-label correction resolved the readability diagnostic.
+Final validation and delivery passed all nine showcase checks with zero errors
+and warnings. Containment passed at 1440×900, 1600×1000, 1920×1080, and 2048×1320.
+Light and dark captures at the smallest and largest sizes were inspected.
+
+Visual review remains failed because of the existing excess right-side whitespace.
+This content sync did not redesign that composition. The artifact is current in
+content, but the automated pass is not a visual-polish claim.
+
+```text
+diagram_type: workflow
+output: D:/HCSC/DocLayout/docs/diagrams/doclayout-workflow.html
+specification_sha256: 19a9c68866653c6c082d716a85fbd00d9f9568486c06a7c17f3562d729d8672c
+artifact_sha256: 66287105d0cbaffbca523c8154a6196a968d2372ddeec34dfbab312c92c75639
+validation: 9/9 showcase, 0 errors, 0 warnings
+visual_review: failed (existing excess right-side whitespace)
+correction_rounds: 1
+```
+
 ## September 26, 2026 — Archify diagram refresh
 
 The five interactive diagrams were delivered from their JSON specifications.

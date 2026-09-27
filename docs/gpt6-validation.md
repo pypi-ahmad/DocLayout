@@ -9,6 +9,12 @@ current V3/Sol fallback pipeline. See the [layout integration record](layout-v3-
 for its bounded runtime observations and the [documentation verification record](documentation-sync.md)
 for later offline checks. Neither record establishes a general accuracy improvement.
 
+The September 27 layout evaluation reused five saved processed-page outputs as
+surrogate Sol inputs. It did not recover the original Sol responses or complete a
+fresh end-to-end Sol call. See the linked integration record for contour alignment
+limitations, mixed-provider execution, fault-injection results, and unavailable
+fixtures. Those observations do not replace the historical measurements below.
+
 ## Checks for changes now on main (2026-09-23)
 
 - With `DOCLAYOUT_BENCH_DIR` pointing to an empty local directory, the offline

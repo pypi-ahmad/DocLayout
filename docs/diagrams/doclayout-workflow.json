@@ -147,7 +147,7 @@
       "col": 3,
       "type": "security",
       "label": "Match blocks",
-      "sublabel": "Sol + V3 boxes",
+      "sublabel": "contour IoU",
       "tag": "bounds check"
     },
     {
@@ -258,7 +258,7 @@
       "title": "Validation & Assembly",
       "items": [
         "Sol failure stops conversion; V3 failure uses Sol boxes",
-        "Matched V3 selects bounds; Sol supplies text and HTML"
+        "Matched V3 contours persist; Sol keeps text and HTML"
       ]
     },
     {

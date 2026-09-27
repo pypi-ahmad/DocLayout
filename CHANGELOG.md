@@ -5,8 +5,38 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
-These changes are present in the working checkout; this entry does not establish
-that they have been committed, pushed, or included in a release.
+- Synchronized maintained guides and downstream geometry notes with local pipeline
+  v4. Preserved dated validation evidence, runtime prompts, and saved results.
+
+- Completed local mask-to-contour decoding for the unchanged official pinned
+  ONNX artifact. Retains raw masks, classes, boxes and model order keys; derived
+  contours follow the documented PaddleX reference and coordinate transforms.
+- Added contour-guided whole-page Sol input, deterministic one-to-one matching,
+  global matched ordering, source-footprint lineage, and contour annotations.
+  Sol keeps text/HTML ownership and unmatched content; runtime failure still
+  visibly falls back to Sol. Header/footer settings apply to matched V3 labels.
+- Pipeline `sol-layout-v3/v4` separates initial reconciliation, final visible
+  source geometry and overlay counts, with actual providers and fallback/rejection
+  reasons across existing status surfaces. Historical records remain unchanged;
+  saved field retries still use raw Markdown without conversion.
+- Extended existing offline regressions and bounded local evaluation. See the
+  [verification record](docs/layout-v3-plan.md#completion-verification-2026-09-27-local-unreleased)
+  for exact results and live limitations; these are not model-accuracy claims.
+
+## 3.0.0 (2026-09-26)
+
+### Compatibility
+
+- Python 3.11 or newer is required (previously 3.10 or newer). New conversions
+  attempt PP-DocLayoutV3 before the existing whole-page Sol request, so layout
+  dependencies are installed with the base package and first use may download
+  the pinned model. If V3 is unavailable, Sol conversion continues with explicit
+  fallback provenance; existing saved conversions are not relabeled.
+- Conversion geometry and reading order can differ from v2.1.1 when V3 regions
+  are accepted. Sol remains responsible for text and HTML. The field workflow
+  uses saved raw Markdown for field-only retries without reconverting pages.
+
+### Changes
 
 - Added explicit whole-page Sol fallback when V3 preparation or inference fails.
   Missing/rejected V3 matches retain Sol blocks and boxes; GUI/logs and saved

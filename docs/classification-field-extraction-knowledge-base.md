@@ -5,6 +5,8 @@ Researched: 2026-09-25. Historical research with a current implementation note.
 For the later upstream conversion changes, see the [V3 integration record](layout-v3-plan.md).
 V3/Sol fallback provenance accompanies new saved conversions; downstream requests
 still use raw Markdown, and field-only retries never rerun layout or conversion.
+The local contour integration changes conversion geometry and annotations, not
+the field model's input. Field review continues to use rectangular block evidence.
 
 ## Implemented decisions take precedence
 

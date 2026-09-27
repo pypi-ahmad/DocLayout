@@ -9,8 +9,9 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 ## Features
 
 - PP-DocLayoutV3 attempts local layout detection before GPT-6 Sol reads each
-  whole page. Sol supplies text and HTML; accepted V3 matches supply rectangular
-  geometry and partial reading order. Missing or rejected matches keep Sol blocks.
+  whole page. Sol supplies text and HTML; accepted V3 matches supply mask-derived
+  contours (or V3 rectangles when contours are unusable) and relative reading order.
+  Unmatched content keeps Sol geometry; V3-only regions remain diagnostic evidence.
   If V3 cannot run, conversion continues with Sol and records the fallback.
 - Markdown has a native rendered view and an exact raw view. The separate HTML
   preview uses a white page, serif typography, embedded crops, and MathML.
@@ -29,9 +30,10 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 ## How DocLayout works
 
-See the generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
-[system architecture](docs/diagrams/doclayout-architecture.html) for the current
-conversion path, layout fallback, and downstream consumers.
+The generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
+[system architecture](docs/diagrams/doclayout-architecture.html) are historical
+snapshots. The [layout integration record](docs/layout-v3-plan.md) describes the
+local unreleased contour integration, pipeline v4 diagnostics, and validation limits.
 In the GUI, authorization-field
 extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
 The CLI and HTTP API remain conversion-only. See the [architecture guide](docs/architecture.md)
@@ -40,11 +42,10 @@ for the complete workflow, including optional classification.
 ## Installation
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). Git is also
-needed for GitHub-source installs. This local unreleased checkout declares Python `>=3.11,<4`;
+needed for GitHub-source installs. DocLayout v3.0.0 requires Python `>=3.11,<4`;
 Windows checks use Python 3.14. PyPI publication is deferred. The Git commands
-below install the current `main` branch. The release wheel installs `v2.1.1`;
-[Unreleased](CHANGELOG.md#unreleased) describes this working checkout, including
-changes that may not yet be on `main`.
+below install the current `main` branch. The release wheel installs `v3.0.0`;
+see its [release notes](CHANGELOG.md#300-2026-09-26).
 Dependencies still need a reachable package index or a populated local cache.
 Before running conversion, [configure API access](#configure-api-access).
 
@@ -101,16 +102,16 @@ uv pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git
 python -m pip install "doclayout[gui] @ git+https://github.com/pypi-ahmad/DocLayout.git@main"
 ```
 
-The `v2.1.1` release wheel avoids the Git requirement. Either installer can use
+The `v3.0.0` release wheel avoids the Git requirement. Either installer can use
 this URL:
 
 ```powershell
-uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v2.1.1/doclayout-2.1.1-py3-none-any.whl"
+uv pip install "https://github.com/pypi-ahmad/DocLayout/releases/download/v3.0.0/doclayout-3.0.0-py3-none-any.whl"
 ```
 
 The wheel command above installs the base CLI. To add extras to a downloaded
 wheel, use its local path, for example
-`uv pip install ".\doclayout-2.1.1-py3-none-any.whl[gui]"`.
+`uv pip install ".\doclayout-3.0.0-py3-none-any.whl[gui]"`.
 
 | Installation | Includes |
 | --- | --- |
@@ -120,7 +121,7 @@ wheel, use its local path, for example
 | `[full]` | Office/HTML/EPUB document-format converters |
 | `[gui,server,full]` | All of the above |
 
-The local unreleased V3 integration downloads a pinned layout model on first
+The V3 integration downloads a pinned layout model on first
 conversion and supports CPU execution with exercised CUDA auto-detection. Sol
 still handles whole-page text conversion. See [layout setup](docs/configuration.md#local-layout-inference)
 and the [implementation and evidence record](docs/layout-v3-plan.md).
@@ -215,7 +216,7 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 - [Data flow](docs/diagrams/doclayout-dataflow.html)
 - [Lifecycle](docs/diagrams/doclayout-lifecycle.html)
 - [Sequence](docs/diagrams/doclayout-sequence.html)
-- [Workflow](docs/diagrams/doclayout-workflow.html) — current V3 prior, whole-page Sol request, block matching, and export path.
+- [Workflow](docs/diagrams/doclayout-workflow.html): refreshed for contour matching and preserved Sol content; see the [delivery record](docs/documentation-sync.md) for visual limitations.
 
 ## Accuracy, privacy, and cost
 

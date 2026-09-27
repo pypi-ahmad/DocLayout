@@ -68,13 +68,19 @@ across entry points. Saved field-only retries must not prepare V3 or reconvert p
 The [layout integration record](layout-v3-plan.md) separates these offline checks
 from dated hardware observations; a passing fake-provider test is not a GPU test.
 
+`test_layout_contours.py` checks the reference-grounded mask fixture, coordinate
+frames, and malformed tensors. The prior/readiness suites cover concave overlap,
+one-to-one assignment, global matched order, lineage, and distinct fallback
+metadata. Compare preserved HTML separately from Markdown ordering: V3 order can
+intentionally change the sequence. Higher match counts do not establish accuracy.
+
 For a focused check while developing:
 
 ```powershell
 uv run --no-sync python -m pytest tests/config tests/services tests/test_chat_prompts.py
 uv run --no-sync python -m pytest tests/test_ui.py tests/test_ui_browser.py
 uv run --no-sync python -m pytest tests/test_fields.py
-uv run --no-sync python -m pytest tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py
+uv run --no-sync python -m pytest tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py tests/test_layout_contours.py
 ```
 
 Use the Ruff correctness checks above as the baseline. The repository's

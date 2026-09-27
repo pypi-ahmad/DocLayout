@@ -6,6 +6,10 @@ Conversion update, 2026-09-26: the separately authorized
 [V3/Sol pipeline](layout-v3-plan.md) applies to new conversions. It does not
 change this downstream workflow's saved-Markdown input or field-only retries.
 
+The September 27 local contour integration also preserves that boundary. New
+conversion metadata retains source contours and order, but field evidence remains
+rectangular block grounding. Historical saved records are not rewritten.
+
 ## Current implementation contract
 
 Local implementation was explicitly authorized. The [implementation guide](field-extraction.md)

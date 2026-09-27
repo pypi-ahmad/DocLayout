@@ -129,6 +129,13 @@ layout. Field retries consume the saved raw Markdown and chunks without preparin
 V3, rendering pages, or changing historical geometry. A saved fallback conversion
 is not automatically replaced when the local engine becomes available.
 
+Matched conversion blocks now retain V3 contours and source lineage. Field review
+still highlights rectangular block evidence; it does not infer field contours from
+the masks. A processor assembly can have several source footprints, and ambiguous
+cross-page evidence remains a review issue. Conversion overlays and field-evidence
+highlights serve different purposes. See [source geometry](architecture.md) for
+the conversion path and [layout diagnostics](usage.md) for saved provenance.
+
 | Status | Meaning |
 | --- | --- |
 | `success` | At least one record; no recorded grounding or document issues |
@@ -140,7 +147,8 @@ is not automatically replaced when the local engine becomes available.
 `success` means the application checks passed; it does not mean the values were
 clinically verified.
 Document identity includes original bytes, filename, conversion options, and the
-conversion pipeline fingerprint (including layout execution/fallback policies).
+conversion pipeline fingerprint (including decode, guide, matching, order,
+source geometry, reporting, execution, and fallback policies).
 A matching saved document and definition reuses its run, including review or failed
 outcomes. Use explicit retry to request a new field run. A definition change uses
 the saved Markdown, not another conversion. A failed conversion has no completed

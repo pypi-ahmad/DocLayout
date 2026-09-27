@@ -1,6 +1,16 @@
 # PP-DocLayoutV3 integration
 
-Status: implemented locally, unreleased, 2026-09-26. This records the approved
+Current local implementation: pipeline **v4**, with
+[completion verification](#completion-verification-2026-09-27-local-unreleased).
+The contour integration is described in
+[Full decode and consumer integration](#full-decode-and-consumer-integration-2026-09-27-local-unreleased).
+The release baseline and dated phase records below are historical. The v3 section
+supersedes their rectangle-only guidance, exact-type matching, split/merge veto,
+contiguous-run ordering, and processor/export geometry policies. It does not
+supersede the Sol fallback or runtime protections.
+
+Historical baseline status: released in v3.0.0, 2026-09-26. The local v4 work above
+is unreleased. The following baseline sections record the approved
 design and its bounded verification, not a claim of improved extraction accuracy.
 Source and tests take precedence over earlier proposals, including the Grok
 hypotheses. Pipeline v2 adds a layout prior to the packaged page prompt;
@@ -651,3 +661,433 @@ A working-tree hash comparison found only the intended 15 files changed and no
 removals. Dependencies, model weights, Sol prompts/response schema, field definitions,
 launcher and generated diagrams/wiki were unchanged. The running app was not
 restarted; restart it when in-progress work is complete to reload process state.
+
+## Full decode and consumer integration (2026-09-27, local unreleased)
+
+Implemented locally, without commits, publication, deployment, or restarting the
+running application. Source and tests remain authoritative over historical Grok
+analysis. This section records behavior, not an extraction-accuracy claim.
+
+### Locked product rules
+
+- Keep `PaddlePaddle/PP-DocLayoutV3_onnx`, revision
+  `46bbdf188bb0a772c08aed74882ce7e51a8f1ea6`, and both hashes in section 2.
+  Do not substitute the Paddle or safetensors repositories.
+- Submit the same whole-page image to Sol/medium through the existing service,
+  credentials, concurrency limits, and `ExtractedPage` response schema. Sol owns
+  wording, HTML, semantic block types, and geometry/order for unmatched content.
+- V3 owns usable matched source geometry, its separate layout class, and relative
+  reading order. Preserve every Sol-only block. V3-only regions are diagnostic
+  evidence, never invented HTML or duplicate extraction blocks.
+- Default GPU detection retains CPU fallback. A V3 preparation/inference failure
+  uses the ordinary whole-page Sol request without guide JSON. Successful pages
+  do not become failures because another page falls back; valid empty detections
+  remain successful. No fail-closed conversion mode, new reading model, cropped
+  Sol pipeline, or GUI layout toggle was introduced.
+- Classification, field definitions, model choices, score gates, saved field-only
+  retries, and storage contracts are unchanged.
+
+### Verified raw decode, not PaddleX public JSON
+
+The raw batch-one ABI remains float32 `[N,7]` detection rows, int32 `[1]` count,
+and int32 `[N,200,200]` binary masks. Row *i*, mask *i*, and the seventh column's
+raw order key stay associated before and after the score filter. Count must
+equal N. N=300 was observed, not imposed as a validator requirement. All tensor
+rows are validated, including those subsequently filtered out. Invalid contracts
+raise `LayoutContractError`, a typed layout-unavailable error. No new zero-based
+or one-based requirement is imposed on raw order keys.
+
+The reference is PaddleX revision
+[`ffb64904d23708863ff5b8da312a5cbd52a7f462`](https://github.com/PaddlePaddle/PaddleX/blob/ffb64904d23708863ff5b8da312a5cbd52a7f462/paddlex/inference/models/layout_analysis/processors.py),
+specifically `extract_polygon_points_by_masks`, `mask2polygon`,
+`extract_custom_vertices`, and the `poly` branch of `_normalize_layout_polygon`.
+The adapted algorithm is isolated in `doclayout/layout_geometry.py`, with
+PaddlePaddle attribution in its header and NOTICE. No PaddleX runtime dependency
+or `layout_shape_mode` configuration was added.
+
+Preprocessing still uses RGB, OpenCV bicubic 800×800 resize, `/255`, and NCHW;
+`im_shape=[[800,800]]`, `scale_factor=[[800/H,800/W]]`. Output AABBs are already
+rendered-page pixels: they must not be inverse-resized again.
+
+For contour extraction:
+
+1. Round a copy of the raw AABB as the reference does. Retain the original
+   floating AABB and its separately page-clipped version.
+2. Map the rounded raw box into the page mask grid using `200/W` and `200/H`.
+   Round grid endpoints, clip the grid slice to `[0,200]`, and crop the mask.
+   The retained 200×200 mask is **not** region-local.
+3. Resize that crop with nearest-neighbor interpolation to the rounded **raw**
+   box width/height, even for a boundary-crossing box. Extract the largest
+   external component (`RETR_EXTERNAL`, `CHAIN_APPROX_SIMPLE`), simplify with
+   `approxPolyDP` epsilon `0.004 * perimeter`, then apply the reference custom
+   concavity/sharp-corner rules. Its `max_box_w=max(x_max-y_min)` expression is
+   preserved, including that unusual coordinate subtraction, across the retained
+   score-filtered rows. No additional NMS or class/containment filtering is run.
+4. Offset vertices by the rounded raw box origin. Preserve the reference contour,
+   including out-of-page vertices with an issue. The reference keeps one component
+   and omits holes; the original zero-first, row-major mask RLE retains that lost
+   evidence. This is a simplified contour, not a lossless mask boundary.
+
+`contour_status` distinguishes `not_decoded` (legacy), `valid`, `bbox_fallback`,
+and `unusable`. Empty crops/masks, too few vertices, invalid polygons, and native
+contour failures receive explicit reasons. A usable V3 AABB remains eligible when
+its contour fails. A defensive allocation guard rejects contour resize requests
+above four rendered-page pixel counts, and coordinates outside OpenCV's int32
+range, retaining the AABB/mask with the specific reason. This is a memory guard,
+not an evaluated accuracy threshold or a guide-size cap.
+
+PaddleX public postprocessing additionally filters/merges detections and
+sorts/updates order indices. Its public JSON IDs/order are not raw ONNX columns.
+This adapter deliberately preserves original class IDs, scores, rows, masks,
+order keys, and independently named `observed_rank` instead.
+
+### Coordinate and guide contracts
+
+`PolygonBox` still requires four corners. `LayoutRegion.contour_px` holds raw
+reference vertices in rendered-image pixels. Matching/guide/export consumers
+derive page-clipped polygons using Shapely; a concave intersection may produce
+several components, and every component is retained. No convex hull, independent
+vertex clamping, or silent `make_valid` repair substitutes another shape.
+
+For pixel `(x,y)` and provider bounds `(px0,py0,px1,py1)`:
+
+- Request coordinates: `(1000*x/W, 1000*y/H)`.
+- Provider coordinates: `(px0+x*(px1-px0)/W, py0+y*(py1-py0)/H)`.
+- Annotation pixels use the inverse provider mapping with the actual output
+  image size. Nonzero and negative page origins are covered by tests.
+
+`given_layout` version **2** contains page-local `id=r<raw row>`, row, class ID,
+label, score, normalized AABB, contour components, geometry source/fallback,
+raw `order_key`, `derived_rank`, and the existing semantic hint. Geometry is
+rounded to three decimals **only in the request**. Degenerate rounded rings use
+an explicitly identified request AABB fallback. Masks/RLE never enter the prompt.
+
+The extraction instructions ask Sol to read the entire page, use V3 as the layout
+guide, preserve outside-guide content, return its existing text/HTML and rectangle
+schema, and avoid duplicate or empty detection-coverage blocks. They explicitly
+describe application-side geometry assignment. The system prompt is unchanged.
+
+There is no 512-region limit, 64-KiB limit, or silent truncation. Per-page runtime
+metadata records actual compact JSON UTF-8 `guide_bytes` and `guide_vertex_count`.
+A regression sends all 600 constructed regions and exceeds 64 KiB. During the
+native synthetic-page probe, 57 retained regions and 265 vertices produced an
+18,446-byte guide. These are payload measurements, not token counts or a context
+budget guarantee; representative worst-case guides still need evaluation.
+
+### Matching and order policy
+
+Use polygon IoU between effective V3 contours and Sol's rectangle-as-polygon.
+Unusable contours use V3 AABB IoU, with `match_metric`, `geometry_source`, and a
+specific reason. Sol does not return native contours.
+
+Family guards replace exact semantic-type equality:
+
+| V3 labels | Sol matching family |
+| --- | --- |
+| abstract, aside_text, content, doc_title, figure_title, footer, footnote, header, paragraph_title, reference_content, text, vertical_text | Text, SectionHeader, PageHeader, PageFooter, Caption, Footnote, Bibliography, ListGroup, TableOfContents, Code |
+| table | Table, Form |
+| display_formula | Equation |
+| chart, footer_image, header_image, image, seal | Picture, Figure, Diagram |
+| algorithm, formula_number, inline_formula, number, reference, vision_footnote | Evidence only; no automatic semantic mapping |
+
+Text-versus-table/image/formula pairings remain incompatible. Unsupported Sol
+types, including ChemicalBlock, retain Sol geometry. A compatible class
+disagreement is recorded; it never relabels a block or rewrites its HTML.
+
+Detection score `>0.5` and candidate IoU `>=0.5` remain active **provisional**
+defaults. Candidate pairs sort by descending IoU, descending V3 confidence,
+ascending raw region row, then ascending Sol ordinal. Greedy reservation accepts
+each Sol block and each V3 region at most once. It may choose a remaining qualified
+pair after a better candidate was reserved; this is not global optimization.
+
+Containment `>=0.8` diagnoses split/merge overlaps. Qualified competing scores
+within margin `0.10` produce ambiguity warnings, and `1e-6` identifies near ties.
+These no longer veto qualified assignments. A merged Sol block can contain text
+outside its assigned region; that limitation is recorded without splitting text,
+inventing leftover boxes, averaging geometry, or fabricating V3-only text.
+Sol-only reasons distinguish empty output, unusable geometry, incompatible class,
+low overlap, reserved candidates, preparation failure, and inference failure.
+
+Matched slots in the original Sol sequence are replaced by the globally sorted
+matched sequence `(raw order key, raw region row, Sol ordinal)`. Sol-only relative
+order stays intact; their placement is fallback behavior. Equal/near-equal model
+keys retain an uncertainty issue even though the implementation chooses a stable
+order. Reordering `structure` does not renumber original block IDs.
+
+### Processors, visibility and authoritative exports
+
+Original source records now carry provider-page contour components/AABBs,
+geometry ownership (`v3_contour`, `v3_bbox`, `sol`, or legacy), class, order key,
+rank, matching evidence and issues. They retain their original block/page/region
+identity through replacement, line/list/table operations and generated cells.
+Derived records use `source_footprints`; inherited table evidence is not claimed
+as a newly detected cell contour. Saved records lacking new fields remain readable.
+
+Structure groups and destructive merges copy source evidence before losing
+ancestry. Finalization gathers it again after processors. Groups may have several
+source footprints, including multiple pages; no single authoritative group contour
+is invented. Legacy JSON/chunk `bbox` and four-point `polygon` remain rectangular
+bounds. Full source geometry is available in their layout metadata. Field grounding
+continues using its existing rectangle interface and multi-page ambiguity guard;
+it was not migrated to contour-level or field-level localization.
+
+Header/footnote processors and optional page correction do not override pages
+with matched V3 source order. Their non-order processing and fallback-page behavior
+remain. Finalization sorts matched group slots by the earliest matched source on
+the host page. An indivisible assembly whose source keys interleave other blocks
+gets `assembled_source_order_interleaves`; the application does not divide its
+HTML to force a total order. An unassembled matched block's attempted geometry
+overwrite is rejected with `processor_geometry_change_ignored`.
+
+A shared non-mutating visibility check applies explicit removal/suppression and
+then matched V3 furniture labels through the existing header/footer settings.
+Matched ordinary body content is not hidden merely because Sol called it a header
+or a marginalia heuristic considers its position suspicious. Sol-only content
+retains the existing fallback semantics. Rendering with different visibility
+settings does not latch a previous render's header/footer flags.
+
+Annotated images and the raster annotated PDF now draw the same visible source
+footprints: contours when usable, V3 rectangles on contour fallback, and Sol
+rectangles otherwise. Both same-page and cross-page assemblies draw all their
+source footprints on the appropriate pages, with final block IDs/ordinals. Hidden
+or removed historical blocks do not become duplicate overlays. V3-only detections
+remain separately identifiable in layout audit metadata, not in the extracted-block
+overlay. Export failures still propagate as export failures.
+
+### Runtime, compatibility and verification limits
+
+The process-shared serialized batch-one engine, cached hash checks, offline mode,
+exercised CUDA detection/CPU retry, sticky CPU fallback, latched failures and
+verified ScatterND CPU placement are retained. Explicit `cuda` forbids a replacement
+CPU session; conversion can still use Sol when that engine fails. A CUDA-priority
+session remains mixed CUDA/CPU execution, not entirely GPU execution. No per-page
+provider reprobe was added.
+
+Pipeline `sol-layout-v3/v3` fingerprints guide v2, decoder, matching, order and
+source/visibility policies, compatibility families, changed page prompt, Shapely
+version and the existing runtime/artifact contracts. The response-schema and system
+prompt contracts remain unchanged. New conversions get new identities; historical
+records are neither relabeled nor overwritten.
+
+Independent fixed fixtures were produced from the cited PaddleX functions, not
+DocLayout calculations, and cover non-square pages, concavity, disconnected masks
+and boundary-crossing raw boxes. Offline tests also exercise malformed tensors,
+mask round-trips, contour fallbacks, payload accounting/no caps, class disagreements,
+one-to-one assignment, ties, global order, actual list/table/replacement lineage,
+visibility, drawing, unchanged Sol requests, and mixed successful/empty/failed pages.
+
+A native offline probe on Windows, Python 3.14.6, Shapely 2.1.2 and the existing
+ONNX Runtime 1.30.0 prepared the default auto engine with cached hash-verified
+weights. The selected CUDA-priority session passed its executed-kernel and ScatterND
+CPU checks. A synthetic two-column page produced 300 candidates and 57 retained
+valid contours. All 57 matched the independently executed reference exactly. ORT's
+existing four-Memcpy-node performance warning remains visible.
+
+No private document or billable Sol/Luna request was used for this phase. Remaining
+evaluation: representative document contour quality, matching thresholds after
+switching to contour IoU, split/merge correctness, furniture labels, reading order,
+guide size/token cost and influence on Sol wording/HTML, and latency/memory. Synthetic
+execution and passing unit tests do not establish model accuracy. There is no new
+claim that contours identify individual business-field values.
+
+Verification results for this local implementation:
+
+- `uv run python -m pytest -q`: **429 passed, 1 skipped** (optional benchmark
+  data absent), including the headless browser export/field workflow. The browser
+  fixture's concurrent Windows call-log writes were serialized with a lock; the
+  test now also proves both pages and second-page text are exported. Production
+  request concurrency was not changed.
+- After the final synthetic-cell lineage refinement, the contour, processor,
+  builder and renderer suites passed again: **74 passed**. Generated cells retain
+  source table evidence, without inheriting a purported cell match score/order.
+- Scoped Ruff and formatting checks passed for the new geometry module, core
+  layout/schema/builder/export paths and changed regression tests. A broader
+  changed-file comparison found **zero new Ruff diagnostics** and 77 unchanged
+  legacy diagnostics in the older processor/schema files; no broad lint cleanup
+  or rule suppression was introduced.
+- Targeted `ty check` passed for layout, geometry, schema and document builder.
+  `uv lock --check` and `git diff --check` passed.
+- The additional environment-wide `uv pip check` reports an empty orphaned
+  `.venv/Lib/site-packages/psutil-7.2.2.dist-info` directory predating this work.
+  `psutil` is not in the project lock; the directory was left untouched. This
+  environment warning is separate from the passing model probe and tests.
+
+Existing unrelated working-tree changes were preserved. Restart an existing app
+instance when its work is complete to load the new code and process-cached engine;
+no running instance was restarted by this implementation.
+
+## Completion verification (2026-09-27, local unreleased)
+
+This completion pass keeps the official artifact revision/hashes, complete decode,
+guide v2, provisional thresholds, whole-page Sol/medium request, and response schema.
+It adds diagnostics and regression coverage; it does not claim calibrated model
+accuracy. No commit, publication, deployment, launcher change or application restart
+was performed. Existing unrelated work and historical saved conversions remain.
+
+### Recorded diagnostics and compatibility
+
+Pipeline `sol-layout-v3/v4` adds `reporting_policy=initial-final-geometry-diagnostics/v1`
+to the existing fingerprinted decode, guide, matching, order, source, runtime and
+fallback policies. Different policy fingerprints create different conversion IDs.
+Actual GPU/model availability is not part of that identity; recovery alone never
+invalidates a saved fallback conversion. Field-only retries continue to use saved
+raw Markdown and metadata, without conversion or model preparation.
+
+- `layout.page_runtime` still reports **initial reconciliation**: retained/eligible
+  regions (`prior_region_count` is the existing eligible count), matched, Sol-only
+  and V3-only counts. New optional `geometry_counts`, `sol_only_reasons` and
+  `unmatched_v3_reasons` summarize actual ownership and association outcomes.
+- `execution_providers` records the exercised CPU or mixed CUDA/CPU path.
+  `cpu_fallback_stage=startup|inference` is latched with successful CPU fallback;
+  startup includes initialization/health checks. It is distinct from
+  `failure_stage=preparation|inference`, which describes **Sol fallback** after
+  unavailable V3. No extra provider inspection occurs per page.
+- `layout.final_counts` reports `final_visible_structure`: visible top-level
+  blocks, processor-derived blocks, and unique visible source footprints by owner.
+  A cross-page footprint counts on its source page. A multipart contour is one
+  footprint, not several matches; assemblies can have multiple footprints.
+- Generated annotation receipts count actual contour parts, rectangles and skips
+  per zero-based source page. They are saved with GUI/selected annotated exports,
+  separately from reconciliation and final source-footprint counts. API render-only
+  responses do not pretend annotations were generated.
+- Existing GUI captions and CLI output share a metadata-only summary. API and saved
+  exports carry the structured diagnostics. Legacy missing values mean **not
+  recorded**, not zero, unavailable hardware, or newly inferred provenance.
+- Zero raw/retained detections, all candidates filtered, unusable geometry,
+  incompatible classes, insufficient overlap, reserved associations and runtime
+  failure have distinct evidence/reasons. Sol-only does not imply a detector miss.
+  Split/merge and tie warnings still do not veto qualified one-to-one assignments.
+
+Elapsed page analysis includes lock/queue waiting, decoding and any preparation or
+fallback inside that call. Separate readiness preparation is excluded. Summing
+page timings is neither document wall-clock time nor pure inference latency.
+
+### Bounded native evaluation
+
+Evidence is local and ignored under `conversion_results/layout-v3-verification/`:
+source hashes, CPU/auto analyses with masks/contours, guide payloads, frozen
+processed-export inputs, comparison receipts, PNG/PDF overlays and review sheets.
+No private source content is copied into this tracked record.
+
+One authorized whole-page Sol request was attempted using the existing credential
+resolver and service. It failed with `GPT-6 Sol request failed: APIConnectionError`;
+no further inference requests were made. An unauthenticated `/models` connectivity
+check reached HTTP 401, which does not establish that a full image request works.
+No endpoint/model/credential substitution was made. Classification, field extraction
+and optional refinement were not called.
+
+Existing saved artifacts contain **processed exports, not raw Sol responses**.
+The local comparison therefore uses their visible blocks as explicitly labeled
+replay inputs. It cannot recover already-hidden furniture or original segmentation.
+The historical v2 reconciliation functions were isolated from Git HEAD and compared
+with current reconciliation on identical frozen inputs and identical V3 detections;
+the historical policy was not installed into production. This is not a controlled
+comparison of old versus new Sol guides.
+
+| Authorized input | Page, one-based | Retained / valid contours | Replayed visible blocks | v2 / current matches | Guide UTF-8 bytes |
+| --- | --- | --- | --- | --- | --- |
+| Amerigroup | 1 | 11 / 11 | 7 | 6 / 6 | 3,795 |
+| Amerigroup | 2 | 6 / 6 | 6 | 3 / 3 | 2,044 |
+| RealSolutions 1 | 2 | 18 / 18 | 16 | 4 / 9 | 6,187 |
+| RealSolutions 1 | 3 | 25 / 25 | 18 | 12 / 12 | 8,542 |
+| RealSolutions 2 | 1 | 13 / 13 | 16 | 4 / 6 | 4,740 |
+
+Both explicit CPU and auto CUDA-priority sessions executed the hash-verified
+artifact. Auto passed executed-CUDA and ScatterND-on-CPU checks. CPU retained
+the same per-page counts, but retained evidence was **not bit-identical** across
+providers; equal counts are not numerical or accuracy equivalence. The existing
+four-Memcpy-node ORT performance warning remains visible.
+
+Controlled CUDA-startup failure exercised a real CPU session. A second analysis
+reused CPU; session creation attempts were exactly CUDA then CPU. Separately,
+controlled failure of both provider constructors produced visible preparation-stage
+Sol fallback on two replayed pages, with no guide and no per-page preparation
+reprobe. These are labeled fault-injection checks, not observed hardware outages.
+
+Qualitative review of all five input/overlay pairs found:
+
+- All 63 replay input blocks survived reconciliation unchanged in HTML/type. Final
+  exports drew 36 contour footprints and 27 Sol rectangles, with zero skips.
+  The 37 unassigned V3 regions remained diagnostic evidence. This verifies replay
+  preservation, not recovery of content absent from historical exports.
+- Seven newly accepted pairs arose from Form/table compatibility and split/merge
+  policy changes. No obvious cross-region swap was seen in the reviewed overlays,
+  but no independently annotated association truth set exists. Higher match counts
+  are not evidence of higher accuracy.
+- Contours generally follow major text/table regions without an obvious global
+  coordinate offset. Jagged table boundaries on the RealSolutions forms cross or
+  under-cover content near lower rows. Valid geometry is not exact content coverage;
+  original mask evidence remains available. Thresholds were not tuned on these pages.
+- v2/current relative ordering was identical on these replay inputs. Global ordering
+  across unmatched blocks and ties is exercised by offline regressions, not shown
+  to improve reading order on this sample.
+- Furniture-on/off replay exports were identical because the saved inputs had
+  already omitted hidden furniture. Offline tests verify the actual visibility
+  settings and V3-label ownership; fresh document completeness remains unverified.
+- Real replay did not trigger new cross-page processor assemblies. Existing actual
+  list/table/replacement and cross-page lineage regressions cover those paths.
+
+BadgeCare pages 1–2 remain unavailable in scoped saved originals. These mostly flat,
+occasionally skewed forms do not establish performance on warped/curved pages.
+Fresh whole-page Sol guide behavior, model accuracy, threshold calibration,
+worst-case payload costs, and performance/memory benchmarking remain open.
+
+### Verification commands and results
+
+The complete offline suite passed **443 tests, 1 skipped** (optional benchmark).
+New regressions cover multirow mask/class/order association, actual 90°/270°
+non-square PDF rendering and PDF overlays, detailed counters/reasons, every policy's
+cache identity, and propagated processor defects. Existing API concurrency,
+saved fallback reuse, field-only retry, visibility and lineage tests remain active.
+
+```powershell
+uv run --no-sync python -m pytest -q
+uv run --no-sync python -m ruff check doclayout tests benchmarks examples convert.py convert_single.py doclayout_app.py doclayout_server.py --select F,E9
+uv run --no-sync python -m ruff check doclayout/layout.py doclayout/layout_geometry.py doclayout/schema/layout.py doclayout/builders/document.py doclayout/ui/batch.py doclayout/ui/exports.py doclayout/exports.py doclayout/scripts/convert_single.py tests/test_layout_contours.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py
+uv run --no-sync python -m ruff format --check doclayout/layout.py doclayout/layout_geometry.py doclayout/schema/layout.py doclayout/builders/document.py doclayout/ui/batch.py doclayout/ui/exports.py doclayout/exports.py doclayout/scripts/convert.py doclayout/scripts/convert_single.py tests/test_layout_contours.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py
+uv run --no-sync python -m ty check doclayout/layout.py doclayout/layout_geometry.py doclayout/schema/layout.py doclayout/builders/document.py doclayout/ui/batch.py doclayout/exports.py doclayout/scripts/convert.py doclayout/scripts/convert_single.py
+uv lock --check
+git diff --check
+```
+
+Full-rule Ruff on `scripts/convert.py` still reports its existing broad-exception
+boundary; the correctness gate passes. Including `ui/exports.py` in type checks
+still reports its pre-existing optional `soup.body.decode_contents` access. Neither
+finding was suppressed or used to justify unrelated cleanup.
+
+The focused five-layout-suite plus CLI-export command also passed **192 tests**:
+
+```powershell
+uv run --no-sync python -m pytest tests/test_layout.py tests/test_layout_runtime.py tests/test_layout_prior.py tests/test_layout_readiness.py tests/test_layout_contours.py tests/test_cli_exports.py -q
+```
+
+The current source distribution and wheel were built into the ignored verification
+directory with `uv build --out-dir conversion_results/layout-v3-verification/dist`.
+Fresh base, GUI and server environments installed that wheel with constraints
+exported from the existing frozen lock. All three passed `uv pip check` and isolated
+runtime imports, including contour dependencies and pipeline-v4 packaged resources.
+These are installation smoke checks, not deployment or another GPU accuracy test.
+
+Files changed in this completion pass: the layout adapter/schema and document
+builder; shared/UI exports and batch summary; file/folder and single CLI reporting;
+the existing contour, runtime, prior and readiness tests; README, CHANGELOG,
+architecture, configuration, usage, development and this integration record.
+Earlier decode/processor changes and unrelated pre-existing changes were preserved.
+Private evaluation receipts and built artifacts remain ignored local files.
+
+Exact completion-pass paths (not the entire pre-existing working-tree diff):
+
+- Runtime/reporting: `doclayout/layout.py`, `doclayout/schema/layout.py`,
+  `doclayout/builders/document.py`, `doclayout/ui/batch.py`,
+  `doclayout/ui/exports.py`, `doclayout/exports.py`,
+  `doclayout/scripts/convert.py`, `doclayout/scripts/convert_single.py`.
+- Existing regressions: `tests/test_layout_contours.py`,
+  `tests/test_layout_runtime.py`, `tests/test_layout_prior.py`,
+  `tests/test_layout_readiness.py`.
+- Documentation: `README.md`, `CHANGELOG.md`, `docs/architecture.md`,
+  `docs/configuration.md`, `docs/usage.md`, `docs/development.md`,
+  `docs/layout-v3-plan.md`.
+
+The final full-suite rerun passed **443 passed, 1 skipped in 61.04 seconds**.
+Relative file links in all seven edited Markdown files and the new completion
+anchor were checked locally. No live GPU test was added to ordinary CI.

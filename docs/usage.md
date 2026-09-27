@@ -9,19 +9,17 @@ manual cloning, pip, uv pip, and release wheels. The base package includes the
 CLI/library and all file exports. Add `gui` for Streamlit, `server` for the HTTP
 API, or `full` for Office/HTML/EPUB converters. Extras can be combined.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v2.1.1`. [Unreleased](../CHANGELOG.md#unreleased) describes this
-working checkout and does not establish what has been pushed to `main`.
+wheel installs `v3.0.0`; see the [release notes](../CHANGELOG.md#300-2026-09-26).
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
 
 WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
-providers can download a font on first use. The local unreleased V3 pipeline
+providers can download a font on first use. The V3 pipeline
 attempts to load pinned layout model weights, downloaded during first preparation
 unless already present. V3 can run on CPU; if layout remains unavailable, conversion
-uses Sol with explicit fallback provenance. The published
-v2.1.1 release predates this local integration; no V3 release is implied here.
+uses Sol with explicit fallback provenance.
 
 ### Installing the application package
 
@@ -32,7 +30,7 @@ Python environment:
 uv pip install ".[gui]"
 python -m pip install ".[gui]"
 uv build --wheel
-uv pip install ".\dist\doclayout-2.1.1-py3-none-any.whl[gui]"
+uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui]"
 ```
 
 See [build checks](development.md#build-and-package-checks) for verification.
@@ -87,7 +85,7 @@ information. The active page is highlighted. Switching pages does not call a mod
 | Input preview | View a source page; converted office documents use their prepared PDF |
 | Markdown | Sanitized theme-aware preview or raw Markdown; copy raw/formatted content or download `.md` |
 | HTML | Styled white-page preview generated from the exact Markdown; copy or download HTML |
-| Annotated | Estimated region boxes over page images; download individual PNGs or a raster PDF |
+| Annotated | Matched source contours and fallback rectangles; download individual PNGs or a raster PDF |
 | JSON | Hierarchical document output with metadata |
 | Chunks | Flattened blocks with page and geometry information |
 | Chat | Ask questions against parsed page text; accepted answers include original page numbers |
@@ -101,7 +99,7 @@ Clipboard operations require browser support and permission on localhost/HTTPS.
 The ZIP contains Markdown, HTML, document JSON, chunks, metadata, extracted crops,
 and annotated PDF/PNGs. All use the [output filename convention](#output-filenames).
 It excludes the uploaded source and chat. Annotations are raster copies with
-estimated boxes. They contain no searchable PDF text layer.
+estimated source contours/rectangles. They contain no searchable PDF text layer.
 
 Switching tabs and downloading files reuse the result without new OCR calls.
 Changing the upload, page range, refinement, or header/footer setting clears
@@ -110,16 +108,22 @@ options, and definitions reuse saved runs. In Extracted information, **More acti
 Extract again** requests new extraction from saved Markdown. **Download data (JSON)**
 exports the saved record without changing it. Debug shows conversion metadata and raw output.
 
-The result caption shows stored V3 regions, initial matches and summed page-analysis
-milliseconds where available. Timing includes queue wait, not just model kernels,
-and is not elapsed document time. Preparation is separate from these per-page
-measurements. Annotations show rectangular final block bounds, not exact contours
-or character locations. V3 masks and observed ordering are evidence, not a promise
-of better Markdown accuracy.
+The result caption shows stored device/providers, fallback stages, retained and
+eligible regions, initial matched/Sol-only/V3-only counts and reasons, and final
+visible source geometry usage. Missing historical diagnostics say not recorded.
+Summed page-analysis time includes queue wait and any in-call preparation/fallback,
+not just model kernels; separately performed readiness preparation is excluded.
+Annotations draw simplified V3 contours, V3 rectangles when contours are unusable,
+and Sol rectangles for unmatched content, respecting visibility and source lineage.
+They are not character locations or lossless mask boundaries. V3-only detections
+remain separate metadata, not duplicate extracted blocks. These capabilities do
+not promise better Markdown accuracy.
 
 There is no layout switch. Failed V3 preparation or inference uses whole-page Sol
 instead, with “Sol fallback · V3 unavailable” and saved per-page provenance.
-Missing, incompatible or ambiguous V3 matches keep Sol content, boxes and order.
+Unassigned or incompatible V3 associations keep Sol content and geometry. A
+qualified split/merge or tied match can still be assigned, with a warning; Sol
+text is never divided between regions without reliable offsets.
 Sol/API/validation failures still fail conversion. Saved results, including fallback
 results, are reused without silently reconverting after V3 recovers. Field-only
 retries still use saved Markdown. Previewing or changing tabs does not retry
@@ -334,6 +338,9 @@ see [security limits](configuration.md#security-and-resource-limits).
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
 | Sol fallback / V3 unavailable | Conversion uses Sol content and boxes. Check runtime dependencies, pinned files and cache access for future conversions. Offline mode requires complete files; saved fallback results are not automatically reconverted |
 | CPU shown despite a GPU | `auto` requires successful CUDA execution and kernel verification, otherwise it uses working CPU. Explicit `cuda` rejects a failed CUDA engine without substituting CPU; conversion then uses Sol fallback |
+| Sol-only blocks on a successful V3 page | Inspect matching reasons in layout metadata. Filtering, incompatible classes, low overlap, or an already reserved region can prevent a match; this is not always a detector miss |
+| Contour falls back to a rectangle | A valid V3 AABB remains usable when contour decoding or export validation fails. Inspect the recorded contour reason; do not treat this alone as engine failure |
+| Match count differs from overlay count | Initial counts describe reconciliation. Final counts describe visible source footprints; overlays count drawn polygon parts after processing and visibility settings |
 | Office/HTML/EPUB conversion fails | Install the `full` extra and WeasyPrint's native libraries |
 | GUI/API command lacks a module | Reinstall with the `gui` or `server` extra; base installation is CLI/library and exports |
 | Port 8471 remains occupied | The launcher retries after stopping its listener; if access is denied or the owner changes, close the owning application and retry |
