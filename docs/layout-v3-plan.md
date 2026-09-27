@@ -1,6 +1,6 @@
 # PP-DocLayoutV3 integration
 
-Current local implementation: pipeline **v4**, with
+Released in v3.1.0: pipeline **v4**, with
 [completion verification](#completion-verification-2026-09-27-local-unreleased).
 The contour integration is described in
 [Full decode and consumer integration](#full-decode-and-consumer-integration-2026-09-27-local-unreleased).
@@ -9,8 +9,9 @@ supersedes their rectangle-only guidance, exact-type matching, split/merge veto,
 contiguous-run ordering, and processor/export geometry policies. It does not
 supersede the Sol fallback or runtime protections.
 
-Historical baseline status: released in v3.0.0, 2026-09-26. The local v4 work above
-is unreleased. The following baseline sections record the approved
+Historical baseline status: released in v3.0.0, 2026-09-26. The v4 work above
+was released in v3.1.0; its dated section titles retain their original local-work labels.
+The following baseline sections record the approved
 design and its bounded verification, not a claim of improved extraction accuracy.
 Source and tests take precedence over earlier proposals, including the Grok
 hypotheses. Pipeline v2 adds a layout prior to the packaged page prompt;

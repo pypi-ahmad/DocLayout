@@ -4,7 +4,7 @@
 
 ## Data flow
 
-The local unreleased pipeline (`sol-layout-v3/v4`) attempts PP-DocLayoutV3 on each rendered page,
+The v3.1.0 pipeline (`sol-layout-v3/v4`) attempts PP-DocLayoutV3 on each rendered page,
 then sends the same whole image to Sol with a compact `given_layout` prior.
 Validated Sol blocks are assigned one-to-one to qualifying V3 geometry before
 existing processors run. If V3 fails, Sol receives the image without the prior.
