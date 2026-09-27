@@ -42,6 +42,15 @@ class HTMLRenderer(BaseRenderer):
     ] = False
 
     def extract_image(self, document, image_id):
+        """Crop an image block without converting it to base64.
+
+        Args:
+            document (Document): Source document containing the block.
+            image_id (BlockId): Block to crop.
+
+        Returns:
+            PIL.Image.Image: Crop at the configured image resolution.
+        """
         image_block = document.get_block(image_id)
         cropped = image_block.get_image(
             document, highres=self.image_extraction_mode == "highres"
@@ -127,6 +136,16 @@ class HTMLRenderer(BaseRenderer):
         return CONTENT_REF_RE.sub(repl, document_output.html)
 
     def extract_html(self, document, document_output, level=0):
+        """Splice child HTML and collect crops for an HTML export.
+
+        Args:
+            document (Document): Source for image crops.
+            document_output (BlockOutput): Rendered document or block tree.
+            level (int): Zero adds the complete HTML document wrapper.
+
+        Returns:
+            tuple[str, dict]: HTML and image crops keyed by export filename.
+        """
         images = {}
         output = self.splice_content_refs(document, document_output, images)
         if level == 0:
@@ -150,6 +169,14 @@ class HTMLRenderer(BaseRenderer):
         return output, images
 
     def __call__(self, document) -> HTMLOutput:
+        """Render a document as formatted HTML, images, and metadata.
+
+        Args:
+            document (Document): Processed document to export.
+
+        Returns:
+            HTMLOutput: HTML document, image crops, and metadata.
+        """
         document_output = document.render(self.block_config)
         full_html, images = self.extract_html(document, document_output)
         soup = BeautifulSoup(full_html, "html.parser")

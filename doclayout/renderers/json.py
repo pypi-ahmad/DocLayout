@@ -28,6 +28,14 @@ class JSONOutput(BaseModel):
 
 
 def reformat_section_hierarchy(section_hierarchy):
+    """Stringify hierarchy labels while retaining their level keys.
+
+    Args:
+        section_hierarchy (dict): Mapping of heading levels to labels.
+
+    Returns:
+        dict: The same levels with string labels.
+    """
     new_section_hierarchy = {}
     for key, value in section_hierarchy.items():
         new_section_hierarchy[key] = str(value)
@@ -47,17 +55,17 @@ class JSONRenderer(BaseRenderer):
     ] = (BlockTypes.Page,)
 
     def extract_json(self, document: Document, block_output: BlockOutput):
-        """Convert one rendered block subtree to serializable JSON blocks.
+        """Convert a rendered block tree to JSON-shaped output.
 
         Leaf blocks receive resolved HTML and images; group blocks retain
-        children. The polygon and bbox come from the final rendered structure.
+        children. Geometry comes from the final rendered structure.
 
         Args:
-            document: Source document used to resolve images and child HTML.
-            block_output: Rendered block subtree.
+            document (Document): Source for image crops and block lookup.
+            block_output (BlockOutput): Rendered block and its children.
 
         Returns:
-            JSONBlockOutput for the supplied subtree.
+            JSONBlockOutput: Block identity, geometry, HTML, and descendants.
         """
         cls = get_block_class(block_output.id.block_type)
         if cls.__base__ == Block:
@@ -92,7 +100,14 @@ class JSONRenderer(BaseRenderer):
             )
 
     def __call__(self, document: Document) -> JSONOutput:
-        """Render all pages and return a JSONOutput with shared metadata."""
+        """Render pages as JSON blocks with shared document metadata.
+
+        Args:
+            document (Document): Processed document to export.
+
+        Returns:
+            JSONOutput: Page block trees and document metadata.
+        """
         document_output = document.render(self.block_config)
         json_output = []
         for page_output in document_output.children:

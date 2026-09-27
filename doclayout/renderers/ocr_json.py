@@ -30,6 +30,14 @@ class OCRJSONRenderer(BaseRenderer):
     """Return final structure and geometry without inventing character boxes."""
 
     def __call__(self, document):
+        """Export visible final blocks without inferred character positions.
+
+        Args:
+            document (Document): Processed document to inspect.
+
+        Returns:
+            OCRJSONOutput: Page and block geometry with document metadata.
+        """
         pages = []
         for page in document.pages:
             blocks = []

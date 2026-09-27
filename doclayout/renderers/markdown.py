@@ -18,16 +18,40 @@ logger = get_logger()
 
 
 def escape_dollars(text):
+    """Escape dollar signs in text that will be placed in Markdown.
+
+    Args:
+        text (str): Text to escape.
+
+    Returns:
+        str: Text with literal dollar signs escaped.
+    """
     return text.replace("$", r"\$")
 
 
 def cleanup_text(full_text):
+    """Collapse excess blank lines and trim a Markdown document.
+
+    Args:
+        full_text (str): Converted Markdown text.
+
+    Returns:
+        str: Normalized text without surrounding whitespace.
+    """
     full_text = re.sub(r"\n{3,}", "\n\n", full_text)
     full_text = re.sub(r"(\n\s){3,}", "\n\n", full_text)
     return full_text.strip()
 
 
 def get_formatted_table_text(element):
+    """Preserve a cell's inline HTML, line breaks, and math for Markdown.
+
+    Args:
+        element (bs4.Tag): Table cell to flatten.
+
+    Returns:
+        str: Cell content with dollar signs escaped outside math tags.
+    """
     text = []
     for content in element.contents:
         if content is None:
@@ -57,6 +81,8 @@ def get_formatted_table_text(element):
 
 
 class Markdownify(MarkdownConverter):
+    """Convert rendered HTML with DocLayout's pagination and math rules."""
+
     def __init__(
         self,
         paginate_output,
@@ -66,6 +92,16 @@ class Markdownify(MarkdownConverter):
         html_tables_in_markdown,
         **kwargs,
     ):
+        """Configure page markers, math delimiters, and table output.
+
+        Args:
+            paginate_output (bool): Insert a marker before each page.
+            page_separator (str): Text following a page marker.
+            inline_math_delimiters (tuple[str, str]): Inline math wrappers.
+            block_math_delimiters (tuple[str, str]): Block math wrappers.
+            html_tables_in_markdown (bool): Keep source HTML tables intact.
+            **kwargs: Options forwarded to ``MarkdownConverter``.
+        """
         super().__init__(**kwargs)
         self.paginate_output = paginate_output
         self.page_separator = page_separator
@@ -74,6 +110,16 @@ class Markdownify(MarkdownConverter):
         self.html_tables_in_markdown = html_tables_in_markdown
 
     def convert_div(self, el, text, parent_tags):
+        """Insert a page marker before paginated page divs.
+
+        Args:
+            el (bs4.Tag): Source div.
+            text (str): Converted child content.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: Child content with an optional page marker.
+        """
         is_page = el.has_attr("class") and el["class"][0] == "page"
         if self.paginate_output and is_page:
             page_id = el["data-page-id"]
@@ -85,6 +131,16 @@ class Markdownify(MarkdownConverter):
             return text
 
     def convert_p(self, el, text, parent_tags):
+        """Handle paragraph breaks and continuation across page boundaries.
+
+        Args:
+            el (bs4.Tag): Source paragraph and continuation flags.
+            text (str): Converted paragraph content.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: Paragraph text with continuation or normal spacing.
+        """
         hyphens = r"-—¬"
         has_continuation = el.has_attr("class") and "has-continuation" in el["class"]
         if has_continuation:
@@ -100,6 +156,16 @@ class Markdownify(MarkdownConverter):
         return f"{text}\n\n" if text else ""  # default convert_p behavior
 
     def convert_chem(self, el, text, parent_tags):
+        """Fence a chemical representation so Markdown retains it.
+
+        Args:
+            el (bs4.Tag): Source chemical element.
+            text (str): Converted representation.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: A ``chem`` code fence, or empty text for blank content.
+        """
         # Chemical structures (from ChemicalBlock or inline) - fence the
         # model's representation so it survives markdown conversion
         content = text.strip()
@@ -108,6 +174,16 @@ class Markdownify(MarkdownConverter):
         return f"\n```chem\n{content}\n```\n"
 
     def convert_math(self, el, text, parent_tags):
+        """Wrap math content in the configured inline or block delimiters.
+
+        Args:
+            el (bs4.Tag): Math element with an optional display mode.
+            text (str): Converted math content.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: Delimited math with spacing for its display mode.
+        """
         block = el.has_attr("display") and el["display"] == "block"
         if block:
             return (
@@ -127,6 +203,19 @@ class Markdownify(MarkdownConverter):
             )
 
     def convert_table(self, el, text, parent_tags):
+        """Render a bounded HTML table as Markdown or retain its HTML.
+
+        Args:
+            el (bs4.Tag): Source table to validate and convert.
+            text (str): Converted child content; not used for the table grid.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: HTML table or expanded Markdown grid.
+
+        Raises:
+            DocumentLimitError: Row, column, span, or cell-work limit exceeded.
+        """
         total_rows, total_cols = check_table(el)
         if self.html_tables_in_markdown:
             return "\n\n" + str(el) + "\n\n"
@@ -213,24 +302,62 @@ class Markdownify(MarkdownConverter):
         return "\n\n" + table_md + "\n\n"
 
     def convert_a(self, el, text, parent_tags):
+        """Escape link text before markdownify formats an anchor.
+
+        Args:
+            el (bs4.Tag): Source anchor.
+            text (str): Converted link text.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: Markdown link text and target from the base converter.
+        """
         text = self.escape(text)
         # Escape brackets and parentheses in text
         text = re.sub(r"([\[\]()])", r"\\\1", text)
         return super().convert_a(el, text, parent_tags)
 
     def convert_span(self, el, text, parent_tags):
+        """Retain an HTML span only when it carries an ID.
+
+        Args:
+            el (bs4.Tag): Source span.
+            text (str): Converted child content.
+            parent_tags (set[str]): Parent tag context from markdownify.
+
+        Returns:
+            str: The identified span or its plain child content.
+        """
         if el.get("id"):
             return f'<span id="{el["id"]}">{text}</span>'
         else:
             return text
 
     def escape(self, text, parent_tags=None):
+        """Apply markdownify escaping and the configured dollar escaping.
+
+        Args:
+            text (str): Text to escape.
+            parent_tags (set[str] | None): Parent context for base escaping.
+
+        Returns:
+            str: Escaped Markdown text.
+        """
         text = super().escape(text, parent_tags)
         if self.options["escape_dollars"]:
             text = text.replace("$", r"\$")
         return text
 
     def process_text(self, el, parent_tags=None):
+        """Normalize text whitespace outside preformatted and code elements.
+
+        Args:
+            el (bs4.NavigableString): Text node being converted.
+            parent_tags (set[str] | None): Parent context from markdownify.
+
+        Returns:
+            str: Text with context-appropriate whitespace and escaping.
+        """
         text = six.text_type(el) or ""
 
         # normalize whitespace if we're not inside a preformatted element
@@ -259,7 +386,7 @@ class MarkdownOutput(BaseModel):
 
 
 class MarkdownRenderer(HTMLRenderer):
-    """Convert rendered HTML to Markdown while retaining images and metadata."""
+    """Convert rendered HTML to Markdown with image crops and metadata."""
 
     page_separator: Annotated[
         str, "The separator to use between pages.", "Default is '-' * 48."
@@ -276,6 +403,7 @@ class MarkdownRenderer(HTMLRenderer):
 
     @property
     def md_cls(self):
+        """Create a configured HTML-to-Markdown converter for this render."""
         return Markdownify(
             self.paginate_output,
             self.page_separator,
@@ -293,7 +421,14 @@ class MarkdownRenderer(HTMLRenderer):
         )
 
     def __call__(self, document: Document) -> MarkdownOutput:
-        """Render a processed document into Markdown, images, and metadata."""
+        """Render final document structure as Markdown.
+
+        Args:
+            document (Document): Processed document to export.
+
+        Returns:
+            MarkdownOutput: Markdown text, image crops, and metadata.
+        """
         document_output = document.render(self.block_config)
         full_html, images = self.extract_html(document, document_output)
         markdown = self.md_cls.convert(full_html)

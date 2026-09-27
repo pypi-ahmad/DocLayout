@@ -19,13 +19,10 @@ CONTENT_REF_RE = re.compile(r"<content-ref src='([^']*)'></content-ref>")
 
 
 class BaseRenderer:
-    """Shared rendering controls for images, page furniture, and metadata.
+    """Share image extraction, HTML assembly, and metadata across renderers.
 
-    Args:
-        config: Optional mapping or Pydantic configuration applied to the
-            renderer. Header/footer flags also control final layout visibility.
+    Header/footer flags also control final layout visibility.
     """
-
     image_blocks: Annotated[
         Tuple[BlockTypes, ...], "The block types to consider as images."
     ] = (BlockTypes.Picture, BlockTypes.Figure, BlockTypes.Diagram)
@@ -45,6 +42,12 @@ class BaseRenderer:
     )
 
     def __init__(self, config: Optional[BaseModel | dict] = None):
+        """Apply renderer settings and pass visibility flags to block rendering.
+
+        Args:
+            config (BaseModel | dict | None): Renderer settings accepted by
+                ``assign_config``.
+        """
         assign_config(self, config)
 
         self.block_config = {
@@ -54,19 +57,24 @@ class BaseRenderer:
         }
 
     def __call__(self, document):
+        """Render a document in the concrete subclass's output format.
+
+        Raises:
+            NotImplementedError: The subclass did not provide a renderer.
+        """
         # Children are in reading order
         raise NotImplementedError
 
     def extract_image(self, document: Document, image_id, to_base64=False):
-        """Crop one image block, optionally encoding it for an HTML export.
+        """Crop a block image at the configured resolution.
 
         Args:
-            document: Source document containing the image block.
-            image_id: Block ID to crop.
-            to_base64: Return an encoded string instead of a PIL image.
+            document (Document): Document containing the image block.
+            image_id (BlockId): ID of the block to crop.
+            to_base64 (bool): Encode the crop with the configured image format.
 
         Returns:
-            Cropped PIL image or base64 string in the configured output format.
+            PIL.Image.Image | str: The crop or its base64-encoded bytes.
         """
         image_block = document.get_block(image_id)
         cropped = image_block.get_image(
@@ -87,6 +95,15 @@ class BaseRenderer:
 
     @staticmethod
     def merge_consecutive_math(html, tag="math"):
+        """Join adjacent math tags split by a trailing hyphen.
+
+        Args:
+            html (str): HTML fragment to normalize.
+            tag (str): Math tag name to merge.
+
+        Returns:
+            str: HTML with matching adjacent tags joined.
+        """
         if not html:
             return html
         pattern = rf"-</{tag}>(\s*)<{tag}>"
@@ -98,6 +115,15 @@ class BaseRenderer:
 
     @staticmethod
     def merge_consecutive_tags(html, tag):
+        """Join adjacent matching tags while retaining one whitespace gap.
+
+        Args:
+            html (str): HTML fragment to normalize.
+            tag (str): Tag name to merge.
+
+        Returns:
+            str: HTML with consecutive matching tags joined.
+        """
         if not html:
             return html
 
@@ -119,6 +145,16 @@ class BaseRenderer:
         return html
 
     def generate_page_stats(self, document: Document, document_output):
+        """Summarize block counts and metadata for each source page.
+
+        Args:
+            document (Document): Rendered source document.
+            document_output (BlockOutput): Render tree; retained for the shared
+                metadata interface and not read by this method.
+
+        Returns:
+            list[dict]: Page IDs, extraction methods, block counts, and metadata.
+        """
         page_stats = []
         for page in document.pages:
             block_counts = Counter(
@@ -136,14 +172,15 @@ class BaseRenderer:
         return page_stats
 
     def generate_document_metadata(self, document: Document, document_output):
-        """Return usage, page statistics, and final layout provenance.
+        """Build usage, page, and optional V3 layout metadata for an export.
 
         Args:
-            document: Processed source document.
-            document_output: Rendered block tree used for page statistics.
+            document (Document): Source document with usage and page data.
+            document_output (BlockOutput | None): Render tree passed through to
+                page statistics; callers may supply None.
 
         Returns:
-            Metadata dictionary shared by document renderers.
+            dict: Export metadata, including layout provenance when available.
         """
         from doclayout.usage import cost_summary
 
@@ -204,6 +241,15 @@ class BaseRenderer:
         return html, images
 
     def extract_block_html(self, document: Document, block_output: BlockOutput):
+        """Resolve child HTML once and collect embedded image crops.
+
+        Args:
+            document (Document): Source of image blocks.
+            block_output (BlockOutput): Top-level block render tree.
+
+        Returns:
+            tuple[str, dict]: Normalized HTML and images keyed by block ID.
+        """
         html, images = self._splice_block_html(document, block_output)
         # Normalize once per top-level block (attribute quoting, tag closing) to
         # match the historical output. The splice above already inlined the

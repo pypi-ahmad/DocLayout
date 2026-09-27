@@ -27,7 +27,15 @@ class ChunkOutput(BaseModel):
 
 
 def collect_images(block: JSONBlockOutput) -> dict[str, str]:
-    """Collect images attached to a JSON block and its descendants."""
+    """Gather image references from a JSON block and its descendants.
+
+    Args:
+        block (JSONBlockOutput): Root of the block tree to inspect.
+
+    Returns:
+        dict[str, str]: Image references. When the root already has an image
+        mapping, descendant entries are merged into that mapping in place.
+    """
     if not getattr(block, "children", None):
         return block.images or {}
     else:
@@ -38,7 +46,15 @@ def collect_images(block: JSONBlockOutput) -> dict[str, str]:
 
 
 def assemble_html_with_images(block: JSONBlockOutput, image_blocks: set[str]) -> str:
-    """Resolve child references and image placeholders in a JSON block."""
+    """Inline child HTML and add references for image-type leaves.
+
+    Args:
+        block (JSONBlockOutput): Block tree whose placeholders are resolved.
+        image_blocks (set[str]): Block type names rendered with image tags.
+
+    Returns:
+        str: HTML for the block, including child content where referenced.
+    """
     # Operates only on the top-level/group block tree: leaf-type blocks are
     # already flattened into a single html string by extract_block_html (they
     # carry no children here), so this hits the no-parse branch for them and
@@ -69,15 +85,20 @@ def assemble_html_with_images(block: JSONBlockOutput, image_blocks: set[str]) ->
 def json_to_chunks(
     block: JSONBlockOutput, image_blocks: set[str], page_id: int = 0
 ) -> FlatBlockOutput | List[FlatBlockOutput]:
-    """Flatten a page or block to chunk records without changing its HTML.
+    """Flatten a page node or convert one block into a chunk record.
 
     Args:
-        block: JSON-rendered page or block.
-        image_blocks: Block-type names rendered with image placeholders.
-        page_id: Parent page ID when ``block`` is not itself a page.
+        block (JSONBlockOutput): Page or top-level block to convert.
+        image_blocks (set[str]): Block type names rendered with image tags.
+        page_id (int): Current page ID for non-page blocks.
 
     Returns:
-        A list for a page, or one FlatBlockOutput for another block.
+        FlatBlockOutput | list[FlatBlockOutput]: One block, or the page's
+        converted children.
+
+    Raises:
+        ValueError: A page ID is not numeric.
+        IndexError: A page block ID has no page component.
     """
     if block.block_type == "Page":
         children = block.children
@@ -99,10 +120,17 @@ def json_to_chunks(
 
 
 class ChunkRenderer(JSONRenderer):
-    """Render top-level page children as flat blocks with page bounds."""
+    """Export visible top-level blocks with page geometry and metadata."""
 
     def __call__(self, document: Document) -> ChunkOutput:
-        """Return flattened chunks, page geometry, and shared metadata."""
+        """Flatten rendered pages into one chunk per visible top-level block.
+
+        Args:
+            document (Document): Processed document in final reading order.
+
+        Returns:
+            ChunkOutput: Blocks, page bounds, and document metadata.
+        """
         document_output = document.render(self.block_config)
         json_output = []
         for page_output in document_output.children:
