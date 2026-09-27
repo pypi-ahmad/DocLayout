@@ -1,7 +1,7 @@
 # DocLayout validation
 
-This report separates live extraction observations from offline application
-checks. See [development](development.md) for verification commands,
+Live extraction observations and offline application checks appear separately
+below. See [development](development.md) for verification commands,
 [usage](usage.md) for workflows, and [architecture](architecture.md) for the pipeline.
 
 The measurements below are dated historical results. They do not evaluate the

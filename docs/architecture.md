@@ -14,14 +14,15 @@ the exact matching rules, and dated runtime evidence.
 ### Interactive architecture and workflow diagrams
 
 The September 27 sequence, data-flow, and lifecycle diagrams were regenerated
-from their Archify specifications with source-checked wording. The architecture
-map remains a high-level view. The conversion workflow was regenerated from
-its prior passing specification; its compact labels omit some input formats and
-combine response validation with contour matching. Use the prose below for
-the complete contour and diagnostics contracts.
-The workflow has excess right-side whitespace. In the lifecycle viewer, the
-Export control remains partly clipped at 1440 px despite passing automated
-containment checks; the generated diagram itself remains readable.
+from Archify specifications with source-checked wording. The architecture map
+stays high-level. The conversion workflow was regenerated from its prior passing
+specification. Its compact labels omit some input formats and combine response
+validation with contour matching; the prose below has the complete contour and
+diagnostics contracts.
+
+The workflow leaves excess whitespace on the right. In the lifecycle viewer,
+the Export control is partly clipped at 1440 px despite passing automated
+containment checks. The diagram remains readable.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
 - [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. Its existing composition still leaves excess right-side whitespace.
@@ -38,9 +39,9 @@ extraction can reuse them.
 
 The document builder renders each selected page at 192 DPI by default. PDFium
 renders pages one at a time. A process-shared, batch-one V3 engine analyzes each
-image, then the page worker sends that same whole image and the layout prior for Sol extraction
-(without a prior when V3 fails);
-the shared Sol service permits at most three concurrent requests per process.
+image. The page worker then sends the whole image and layout prior to Sol, or
+the image alone if V3 fails. The shared Sol service permits at most three
+concurrent requests per process.
 Every selected page goes through image extraction, including pages with embedded
 PDF text.
 

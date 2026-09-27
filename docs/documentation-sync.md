@@ -24,11 +24,10 @@ fallbacks, deterministic one-to-one assignment, global matched ordering, retaine
 source footprints, and initial-versus-final diagnostics. Generated indexes and
 provenance remain OpenWiki-owned.
 
-The requested writing skills kept this pass source-first and task-oriented.
-Humanizer simplified revised prose while preserving identifiers and technical
-limits. Code-documenter guided the API/example review; no inline docstrings or
-response models changed. This is document coverage, not a claim of complete
-repository-wide public-symbol docstring coverage.
+The writing pass stayed close to source and task scope. Humanizer revised prose
+while preserving identifiers and technical limits, and code-documenter guided
+the API/example review. No inline docstrings or response models changed. This
+records document coverage, not repository-wide public-symbol docstring coverage.
 
 SHA-256 comparison found all 142 package Python, Markdown, and JSON files
 byte-identical to the start of this pass, including the six runtime prompts and
