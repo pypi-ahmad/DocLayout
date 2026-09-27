@@ -1,6 +1,6 @@
 [project]
 name = "doclayout"
-version = "3.0.0"
+version = "3.1.0"
 description = "From scans and images to structured Markdown."
 readme = "README.md"
 license = "Apache-2.0"

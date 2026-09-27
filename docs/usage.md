@@ -13,7 +13,7 @@ Sol boxes/order are retained and V3 supplies guidance only.
 Only `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true` permits Sol-only fallback on V3 failure.
 Extras can be combined; the layout runtime requires Python 3.11+.
 The Git commands in the README install the current `main` branch. The release
-wheel installs `v3.0.0`; later changes on `main` are recorded under
+wheel installs `v3.1.0`; later changes on `main` are recorded under
 [Unreleased](../CHANGELOG.md#unreleased).
 An ordinary package install does not include the development group; see
 [development setup](development.md#environment) when working on the source.
@@ -34,7 +34,7 @@ Python environment:
 uv pip install ".[gui,layout]"
 python -m pip install ".[gui,layout]"
 uv build --wheel
-uv pip install ".\dist\doclayout-3.0.0-py3-none-any.whl[gui,layout]"
+uv pip install ".\dist\doclayout-3.1.0-py3-none-any.whl[gui,layout]"
 ```
 
 See [build checks](development.md#build-and-package-checks) for verification.

@@ -5,6 +5,27 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+## 3.1.0 (2026-09-27)
+
+### Layout and conversion
+
+- Keep the pinned `PaddlePaddle/PP-DocLayoutV3_onnx` artifact and PaddleOCR/PaddleX
+  runtime. Request the installed decoder's `poly` output and retain each region's
+  class ID, label, score, bbox, contour, reading order, and native-contour or
+  documented rectangle-fallback provenance.
+- Carry contours through bounded Sol layout guides, matched document geometry,
+  JSON and chunk metadata, and annotations. Sol still reads the whole page and
+  owns transcription and HTML; unmatched Sol content keeps its original box.
+  The current matcher uses V3 bounding boxes and still needs an operator-supplied
+  five-parameter policy for V3 geometry/order replacement.
+- Require V3 execution for conversion by default. Operators can opt into
+  whole-page Sol fallback after supported runtime failures with
+  `DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK=true`. Invalid configuration, oversized
+  guides, and protected-layout violations remain errors.
+- Declare Shapely directly in the Python 3.11+ `layout` extra for contour
+  validation. The base package still advertises Python 3.10+, but required V3
+  extraction needs Python 3.11+ and the `layout` extra.
+
 ### Documentation
 
 - Initialize the generated OpenWiki index from the current source and tests,
