@@ -77,6 +77,8 @@ def test_cli_preparation_failure_preserves_outputs(
         )
     result = CliRunner().invoke(command, args)
     assert result.exit_code == 0, result.output
+    assert "Sol fallback stage=preparation" in result.output
+    assert "Sol-only=" in result.output and "not pure inference" in result.output
     assert previous.read_text("utf-8") == "Historical output"
     assert len(list(destination.rglob("*.md"))) > 1
     assert extraction_service.called
@@ -109,6 +111,12 @@ def test_http_preparation_failure_returns_sol_output(
             )
         assert response.status_code == 200, response.text
         assert "sol_fallback" in response.text
+        audit = response.json()["metadata"]["layout"]
+        assert audit["final_counts"]
+        assert all(
+            p["sol_only_reasons"].get("layout_preparation_failed")
+            for p in audit["page_runtime"].values()
+        )
         assert not server.app_data["busy"]
     assert extraction_service.called
 
@@ -215,10 +223,11 @@ def test_saved_layout_summary_uses_metadata_only():
         "0": {"retained_region_count": 3, "matched_count": 2, "elapsed_ms": 12.5},
         "1": {"retained_region_count": 4, "matched_count": 3, "elapsed_ms": 17.5},
     }
-    assert (
-        batch.layout_summary({"layout": {"page_runtime": pages}})
-        == "V3: 7 regions · 5 initial matches · 30 ms summed page analysis (includes queue wait)"
+    summary = batch.layout_summary({"layout": {"page_runtime": pages}})
+    assert summary.startswith(
+        "V3: 7 regions · 5 initial matches · 30 ms summed page analysis"
     )
+    assert "not pure inference" in summary and "not recorded" in summary
     pages["1"]["status"] = "sol_fallback"
     assert batch.layout_summary({"layout": {"page_runtime": pages}}).endswith(
         "Sol fallback: 1 page(s)"
@@ -294,3 +303,35 @@ def test_gui_preparation_failure_and_retry(
     count = prepare.call_count
     app.number_input(key="preview_page").set_value(2).run()
     assert prepare.call_count == count
+
+
+def test_processor_defect_is_not_layout_fallback(temp_doc, model_dict):
+    converter = PdfConverter(model_dict)
+    defect = Mock(side_effect=ValueError("processor defect"))
+    converter.processor_list = [defect]
+    with pytest.raises(ValueError, match="processor defect"):
+        converter.build_document(temp_doc.name)
+    document = defect.call_args.args[0]
+    assert all(p.status == "available" for p in document.layout.page_runtime.values())
+
+
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "DECODE_POLICY",
+        "MATCH_POLICY",
+        "ORDER_POLICY",
+        "SOURCE_POLICY",
+        "REPORTING_POLICY",
+        "PRIOR_VERSION",
+        "EXECUTION_POLICY",
+        "FALLBACK_POLICY",
+    ],
+)
+def test_each_policy_changes_identity_without_runtime_probe(monkeypatch, policy):
+    baseline = batch.conversion_id("same.pdf", b"same", {})
+    monkeypatch.setattr(
+        layout, "get_layout_engine", Mock(side_effect=AssertionError("probe"))
+    )
+    monkeypatch.setattr(layout, policy, "different-policy")
+    assert batch.conversion_id("same.pdf", b"same", {}) != baseline

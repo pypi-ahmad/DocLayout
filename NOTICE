@@ -15,3 +15,9 @@ documentation. DocLayout does not imply endorsement by the original authors.
 The optional local olmOCR-bench test pages and rules are attributed separately in
 tests/data/olmocr_bench/README.md. Third-party dependencies retain their own
 licenses.
+
+The mask contour algorithm in doclayout/layout_geometry.py is adapted from
+PaddlePaddle/PaddleX, copyright (c) 2024 PaddlePaddle Authors, under Apache 2.0.
+Reference revision: ffb64904d23708863ff5b8da312a5cbd52a7f462.
+DocLayout isolates poly decoding and adds validation, explicit fallback reasons,
+bounded resize allocation, coordinate transforms and consumer-side clipping.

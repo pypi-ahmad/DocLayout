@@ -59,6 +59,7 @@ def test_browser_exports_and_no_repeat_ocr(tmp_path, temp_doc, page_result):
     script.write_text(
         f"""import runpy
 from pathlib import Path
+from threading import Lock
 import doclayout.scripts.common
 import doclayout.ui.batch
 import doclayout.layout
@@ -94,9 +95,12 @@ class OfflineLayout:
 layout_engine = OfflineLayout()
 doclayout.layout.get_layout_engine = lambda: layout_engine
 doclayout.ui.batch.get_layout_engine = doclayout.layout.get_layout_engine
+call_log_lock = Lock()
 def extract(prompt, image, block, schema, **kwargs):
-    with Path({str(calls)!r}).open("a") as stream:
-        stream.write("call\\n")
+    # Page callbacks are concurrent; Windows file append is not an atomic counter.
+    with call_log_lock:
+        with Path({str(calls)!r}).open("a") as stream:
+            stream.write("call\\n")
     block.update_metadata(llm_request_count=1, llm_tokens_used=123)
     result = {page_result!r}
     if block.page_id == 1:
@@ -219,9 +223,15 @@ runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="_
                     io.BytesIO(Path(download.value.path()).read_bytes())
                 ) as archive:
                     assert archive.read(markdown_name).decode() == raw
-                    assert json.loads(archive.read(markdown_name[:-3] + ".json"))[
-                        "children"
-                    ]
+                    assert (
+                        len(
+                            json.loads(archive.read(markdown_name[:-3] + ".json"))[
+                                "children"
+                            ]
+                        )
+                        == 2
+                    )
+                    assert "Second page supporting text." in raw
                 assert calls.read_text().splitlines() == ["call", "call"]
                 page.get_by_role(
                     "button", name=re.compile("View extracted information$")

@@ -137,7 +137,7 @@ class BaseRenderer:
 
         from doclayout.layout import layout_metadata
 
-        layout = layout_metadata(document)
+        layout = layout_metadata(document, self.block_config)
         if layout is not None:
             metadata["layout"] = layout
             metadata["extraction"]["geometry"] = "mixed-v3-sol-processor"

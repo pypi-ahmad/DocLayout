@@ -208,79 +208,121 @@ def markdown_html(markdown: str, images: dict) -> str:
     )
 
 
-def annotations(document):
-    """Draw rectangular block overlays and encode a raster annotated PDF.
+def annotations(document, config=None):
+    """Draw authoritative source footprints and encode a raster annotated PDF.
 
     Args:
         document (Document): Converted pages with high-resolution images.
+        config (dict | None): The same visibility settings used for text rendering.
 
     Returns:
         dict: One-based page images, PDF bytes, and drawn/skipped box counts.
         Invalid boxes are skipped; source images remain unchanged. Layout-aware
         overlays follow visible final structure and retain source footprints
-        for cross-page merges. Raw V3 masks are not drawn as contour polygons.
+        for same-page and cross-page merges. Raw masks remain local evidence.
 
     Raises:
         OSError: Image or PDF encoding fails.
     """
+    from doclayout.layout import visible_block, visible_sources
+    from doclayout.layout_geometry import transform_points
+
     pages, skipped, drawn = {}, 0, 0
+    geometry_fallbacks = []
+    page_counts = {}
     overlays = {}
     if getattr(document, "layout", None) is not None:
         ordinal = 0
         for source_page in document.pages:
             for bid in source_page.structure or []:
                 block = document.get_block(bid)
-                if block.removed or block.ignore_for_output:
+                if not visible_block(block, config):
                     continue
                 ordinal += 1
                 label = f"{ordinal} {block.id}"
-                sources = block.layout.sources if block.layout is not None else []
-                if len({s.page_id for s in sources}) > 1:
+                sources = visible_sources(block, document, config)
+                if sources:
                     for source in sources:
-                        overlays.setdefault(source.page_id, []).append(
-                            (PolygonBox.from_bbox(source.bbox), label)
+                        valid_contours = False
+                        if source.contours:
+                            from shapely.geometry import Polygon
+
+                            valid_contours = all(
+                                len(part) >= 3
+                                and all(
+                                    len(point) == 2
+                                    and all(math.isfinite(v) for v in point)
+                                    for point in part
+                                )
+                                and Polygon(part).is_valid
+                                and Polygon(part).area > 0
+                                for part in source.contours
+                            )
+                        if source.contours and not valid_contours:
+                            geometry_fallbacks.append(
+                                {
+                                    "block_id": source.block_id,
+                                    "reason": "export_contour_invalid",
+                                    "fallback": source.geometry_source.replace(
+                                        "contour", "bbox"
+                                    ),
+                                }
+                            )
+                        parts = (
+                            source.contours
+                            if valid_contours
+                            else [PolygonBox.from_bbox(source.bbox).polygon]
                         )
+                        for part in parts:
+                            overlays.setdefault(source.page_id, []).append(
+                                (part, label, valid_contours)
+                            )
                 else:
+                    if block.structure and not getattr(block, "html", None):
+                        continue
                     overlays.setdefault(source_page.page_id, []).append(
-                        (block.polygon, label)
+                        (block.polygon.polygon, label, False)
                     )
     for page in document.pages:
+        counts = {"contours": 0, "rectangles": 0, "skipped": 0}
+        page_counts[page.page_id] = counts
         image = page.get_image(highres=True).convert("RGB").copy()
         draw = ImageDraw.Draw(image)
         if getattr(document, "layout", None) is not None:
             boxes = overlays.get(page.page_id, [])
         else:
             boxes = [
-                (b.polygon, b.block_type.name)
+                (b.polygon.polygon, b.block_type.name, False)
                 for b in page.children or []
                 if not b.removed and not b.structure
             ]
-        for polygon, label in boxes:
+        for polygon, label, is_contour in boxes:
             try:
-                if getattr(document, "layout", None) is not None:
-                    origin_x, origin_y = page.polygon.bbox[:2]
-                    coords = polygon.bbox
-                    x0, x1 = (
-                        (coords[i] - origin_x) * image.width / page.polygon.width
-                        for i in (0, 2)
-                    )
-                    y0, y1 = (
-                        (coords[i] - origin_y) * image.height / page.polygon.height
-                        for i in (1, 3)
-                    )
-                else:
-                    x0, y0, x1, y1 = polygon.rescale(page.polygon.size, image.size).bbox
+                points = transform_points(
+                    polygon, page.polygon.bbox, [0, 0, image.width, image.height]
+                )
+                x0, y0 = min(p[0] for p in points), min(p[1] for p in points)
+                x1, y1 = max(p[0] for p in points), max(p[1] for p in points)
                 if not (
-                    all(math.isfinite(v) for v in (x0, y0, x1, y1))
+                    all(math.isfinite(v) for point in points for v in point)
                     and 0 <= x0 < x1 <= image.width
                     and 0 <= y0 < y1 <= image.height
                 ):
                     raise ValueError("invalid box")
-                draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
+                if is_contour:
+                    draw.line(
+                        [tuple(p) for p in [*points, points[0]]],
+                        fill=(220, 30, 30),
+                        width=3,
+                    )
+                else:
+                    draw.rectangle((x0, y0, x1, y1), outline=(220, 30, 30), width=3)
                 draw.text((x0, max(0, y0 - 14)), label, fill=(220, 30, 30))
                 drawn += 1
+                counts["contours" if is_contour else "rectangles"] += 1
             except (ValueError, TypeError, ZeroDivisionError):
                 skipped += 1
+                counts["skipped"] += 1
         pages[page.page_id + 1] = image
     buffer = io.BytesIO()
     if pages:
@@ -291,6 +333,8 @@ def annotations(document):
         "pdf": buffer.getvalue(),
         "drawn": drawn,
         "skipped": skipped,
+        "geometry_fallbacks": geometry_fallbacks,
+        "page_counts": page_counts,
     }
 
 

@@ -311,11 +311,23 @@ class Block(BaseModel):
         child_content = []
         if section_hierarchy is None:
             section_hierarchy = {}
+        from doclayout.layout import visible_block
+
+        if not visible_block(self, block_config):
+            return BlockOutput(
+                html="",
+                polygon=self.polygon,
+                id=self.id,
+                children=[],
+                section_hierarchy=section_hierarchy,
+            )
         section_hierarchy = self.assign_section_hierarchy(section_hierarchy)
 
         if self.structure is not None and len(self.structure) > 0:
             for block_id in self.structure:
                 block = document.get_block(block_id)
+                if not visible_block(block, block_config):
+                    continue
                 rendered = block.render(
                     document, self.structure, section_hierarchy, block_config
                 )

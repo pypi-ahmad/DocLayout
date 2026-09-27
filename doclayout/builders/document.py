@@ -2,6 +2,7 @@
 """Render serially, then extract at most three pages concurrently."""
 
 import logging
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from time import perf_counter
 from typing import Annotated, cast
@@ -113,7 +114,10 @@ class DocumentBuilder(BaseBuilder):
                         matched = sum(p.status == "matched" for p in provenance)
                         if analysis.status == "sol_fallback":
                             for record in provenance:
-                                record.issues.append("layout_unavailable")
+                                record.issues = [
+                                    "layout_unavailable",
+                                    f"layout_{analysis.failure_stage}_failed",
+                                ]
                         audit.page_runtime[page.page_id] = PageLayoutRuntime(
                             model_id=analysis.model_id,
                             model_revision=analysis.model_revision,
@@ -129,6 +133,27 @@ class DocumentBuilder(BaseBuilder):
                             matched_count=matched,
                             sol_only_count=len(provenance) - matched,
                             unmatched_v3_count=len(regions.regions) - matched,
+                            guide_bytes=analysis.guide_bytes,
+                            guide_vertex_count=analysis.guide_vertex_count,
+                            execution_providers=analysis.execution_providers,
+                            cpu_fallback_stage=analysis.cpu_fallback_stage,
+                            geometry_counts=dict(
+                                Counter(p.geometry_source for p in provenance)
+                            ),
+                            sol_only_reasons=dict(
+                                Counter(
+                                    p.issues[-1]
+                                    for p in provenance
+                                    if p.status == "sol_only"
+                                )
+                            ),
+                            unmatched_v3_reasons=dict(
+                                Counter(
+                                    r.issues[-1]
+                                    for r in regions.regions
+                                    if "unmatched_v3" in r.issues
+                                )
+                            ),
                         )
                         for ordinal, item in enumerate(result.blocks):
                             block = page.add_block(
@@ -144,6 +169,16 @@ class DocumentBuilder(BaseBuilder):
                                     page_id=regions.page_id,
                                     bbox=block.polygon.bbox.copy(),
                                     region_row=block.layout.region_row,
+                                    geometry_source=block.layout.geometry_source,
+                                    contours=block.layout.contours,
+                                    layout_class_id=block.layout.layout_class_id,
+                                    layout_label=block.layout.layout_label,
+                                    order_key=block.layout.order_key,
+                                    observed_rank=block.layout.observed_rank,
+                                    sol_ordinal=ordinal,
+                                    match_metric=block.layout.match_metric,
+                                    match_score=block.layout.iou,
+                                    issues=block.layout.issues.copy(),
                                 )
                             ]
                             page.add_structure(block)

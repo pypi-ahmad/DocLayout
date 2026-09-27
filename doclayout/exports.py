@@ -55,7 +55,7 @@ def document_exports(document, config, formats, basename=None):
     formats = set(formats)
     needed = ALL_FORMATS if "zip" in formats else formats
     markdown = MarkdownRenderer(config)(document)
-    result = {
+    result: dict = {
         "markdown": markdown.markdown,
         "images": markdown.images,
         "metadata": markdown.metadata,
@@ -69,7 +69,13 @@ def document_exports(document, config, formats, basename=None):
     if "chunks" in needed:
         result["chunks"] = ChunkRenderer(config)(document).model_dump_json(indent=2)
     if {"annotated_pdf", "annotated_images"} & needed:
-        result["annotations"] = annotations(document)
+        result["annotations"] = annotations(document, config)
+        if result["metadata"].get("layout") is not None:
+            result["metadata"]["layout"]["annotations"] = {
+                k: v
+                for k, v in result["annotations"].items()
+                if k not in {"pdf", "pages"}
+            }
 
     outputs = {}
     for kind in formats & {"markdown", "html", "json", "chunks"}:

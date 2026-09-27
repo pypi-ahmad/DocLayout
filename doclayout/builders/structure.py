@@ -3,6 +3,7 @@ import re
 from typing import Annotated
 
 from doclayout.builders import BaseBuilder
+from doclayout.layout import merge_lineage
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import ListItem, Text
 from doclayout.schema.document import Document
@@ -90,13 +91,14 @@ class StructureBuilder(BaseBuilder):
                 )
                 list_item = page.add_block(ListItem, polygon)
                 list_item.structure = [line.id for line in item_lines]
+                merge_lineage(list_item, [block, *item_lines])
                 item_ids.append(list_item.id)
             block.structure = item_ids
 
     def group_caption_blocks(self, page: PageGroup):
         gap_threshold_px = self.gap_threshold * page.polygon.height
         static_page_structure = page.structure.copy()
-        remove_ids = list()
+        remove_ids = []
 
         for i, block_id in enumerate(static_page_structure):
             block = page.get_block(block_id)
@@ -142,6 +144,7 @@ class StructureBuilder(BaseBuilder):
                 new_polygon = block.polygon.merge(selected_polygons)
                 group_block = page.add_block(new_block_cls, new_polygon)
                 group_block.structure = block_structure
+                merge_lineage(group_block, [page.get_block(bid) for bid in block_structure])
 
                 # Update the structure of the page to reflect the new block
                 page.update_structure_item(block_id, group_block.id)
@@ -151,7 +154,7 @@ class StructureBuilder(BaseBuilder):
     def group_lists(self, page: PageGroup):
         gap_threshold_px = self.list_gap_threshold * page.polygon.height
         static_page_structure = page.structure.copy()
-        remove_ids = list()
+        remove_ids = []
         for i, block_id in enumerate(static_page_structure):
             block = page.get_block(block_id)
             if block.block_type not in [BlockTypes.ListItem]:
@@ -181,6 +184,7 @@ class StructureBuilder(BaseBuilder):
                 new_polygon = block.polygon.merge(selected_polygons)
                 group_block = page.add_block(ListGroup, new_polygon)
                 group_block.structure = block_structure
+                merge_lineage(group_block, [page.get_block(bid) for bid in block_structure])
 
                 # Update the structure of the page to reflect the new block
                 page.update_structure_item(block_id, group_block.id)

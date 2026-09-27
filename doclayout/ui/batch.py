@@ -20,6 +20,9 @@ from doclayout.layout import (
     pipeline_manifest,
     prepare_for_conversion,
 )
+from doclayout.layout import (
+    layout_summary as _layout_summary,
+)
 from doclayout.services.openai import ExtractionError
 from doclayout.ui.documents import Upload, prepare_upload, run_document
 from doclayout.ui.exports import annotations, markdown_html, output_zip
@@ -52,34 +55,28 @@ def layout_readiness(engine):
 
 
 def layout_summary(metadata):
-    """Summarize saved page evidence without inference or provider inspection."""
-    pages = metadata.get("layout", {}).get("page_runtime", {}).values()
-    if not pages:
-        return None
-    regions = sum(p["retained_region_count"] for p in pages)
-    matches = sum(p["matched_count"] for p in pages)
-    elapsed = sum(p["elapsed_ms"] for p in pages)
-    fallback = sum(p.get("status") == "sol_fallback" for p in pages)
-    return (
-        f"V3: {regions} regions · {matches} initial matches · "
-        f"{elapsed:,.0f} ms summed page analysis (includes queue wait)"
-        + (f" · Sol fallback: {fallback} page(s)" if fallback else "")
-    )
+    """Keep the existing UI import path for shared, metadata-only diagnostics."""
+    return _layout_summary(metadata)
 
 
-def finish_exports(result, filename):
+def finish_exports(result, filename, config=None):
     """Add named HTML, annotations, and ZIP to a conversion result in place.
 
     Args:
         result (dict): Completed converter output with document and images.
         filename (str): Original upload name used for the export basename.
+        config (dict | None): Effective header/footer visibility options.
 
     Returns:
         None: Local rendering mutates result without another model call.
     """
     name_result(result, export_basename(filename))
     result["html"] = markdown_html(result["markdown"], result["images"])
-    result["annotations"] = annotations(result["document"])
+    result["annotations"] = annotations(result["document"], config)
+    if result["metadata"].get("layout") is not None:
+        result["metadata"]["layout"]["annotations"] = {
+            k: v for k, v in result["annotations"].items() if k not in {"pdf", "pages"}
+        }
     result["zip"] = output_zip(result)
 
 
@@ -261,7 +258,7 @@ def process_file(
                 raw_markdown = result[
                     "markdown"
                 ]  # Snapshot before existing export image renaming.
-                finish_exports(result, filename)
+                finish_exports(result, filename, options)
                 save_conversion(
                     store, document_id, filename, data, upload, result, raw_markdown
                 )

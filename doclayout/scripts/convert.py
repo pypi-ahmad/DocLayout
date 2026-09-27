@@ -11,7 +11,7 @@ from tqdm import tqdm
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
 from doclayout.filenames import export_basename, export_filename
-from doclayout.layout import pipeline_manifest
+from doclayout.layout import layout_metadata, layout_summary, pipeline_manifest
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import output_exists, save_output
 from doclayout.services.openai import OpenAIService
@@ -50,6 +50,9 @@ def convert_file(fpath, destination, options, formats):
         document = converter.build_document(fpath)
         outputs = document_exports(document, config, formats, basename)
         save_document_exports(outputs, destination, fpath)
+        summary = layout_summary({"layout": layout_metadata(document, config)})
+        if summary:
+            click.echo(summary)
         click.echo(f"Saved {len(outputs)} file(s) to {destination}")
     except Exception as exc:
         raise click.ClickException(str(exc)) from exc
@@ -84,6 +87,9 @@ def process_single_pdf(args):
         )
         rendered = converter(fpath)
         save_output(rendered, folder, name)
+        summary = layout_summary(rendered.metadata)
+        if summary:
+            click.echo(summary)
         return converter.page_count, True
     except Exception as exc:
         click.echo(f"Failed {fpath}: {exc}", err=True)
@@ -143,7 +149,7 @@ def process_single_pdf(args):
     "--annotated-pdf",
     "export_annotated_pdf",
     is_flag=True,
-    help="Write a raster PDF with estimated region boxes.",
+    help="Write a raster PDF with source contours and fallback rectangles.",
 )
 @click.option(
     "--annotated-images",

@@ -189,6 +189,11 @@ User Prompt
             response["blocks"] = json.loads(response["blocks"])
 
     def handle_reorder(self, blocks: list, page1: PageGroup):
+        # PageGroup resolves its own descendants; never override matched V3 order.
+        from doclayout.layout import has_layout_order
+
+        if has_layout_order(page1, page1):
+            return
         original = {str(block_id): block_id for block_id in page1.structure}
         requested = [block["id"] for block in blocks]
         if len(requested) != len(original) or set(requested) != set(original):

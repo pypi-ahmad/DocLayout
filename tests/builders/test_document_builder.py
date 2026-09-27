@@ -13,7 +13,7 @@ def test_pages_and_geometry(pdf_document, extraction_service):
     assert extraction_service.call_count == 2
     # Fingerprint only the packaged instructions; page priors vary per image.
     assert hashlib.sha256(PAGE_PROMPT.encode("utf-8")).hexdigest() == (
-        "57d05c2a4b72fac16d380fe4da5b7bd23e547520156ca648fafbfef203efaefc"
+        "c5314c92f8b77c94166efb54e91184ea09629c04d5501596b01b4fc0cad9d099"
     )
     for call in extraction_service.call_args_list:
         assert call.args[0].startswith(PAGE_PROMPT.rstrip() + "\n\n")

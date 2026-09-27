@@ -317,6 +317,8 @@ def test_auto_fallback_is_exercised_and_latched(
         result = engine.analyze(Image.new("RGB", (200, 100)))
         assert result.actual_device == engine.actual_device == "cpu"
         assert result.warnings and "CPU fallback" in engine.status
+        assert result.execution_providers == ["CPUExecutionProvider"]
+        assert result.cpu_fallback_stage == "startup"
     assert cpu.calls == 2 and factory.call_count == 2
 
 
@@ -337,8 +339,15 @@ def test_failed_cuda_session_released_before_cpu_creation(
 
     monkeypatch.setattr(engine, "_new_session", create)
     image = Image.new("RGB", (200, 100))
-    assert engine.analyze(image).actual_device == "cuda"
-    assert engine.analyze(image).actual_device == "cpu"
+    first = engine.analyze(image)
+    assert first.actual_device == "cuda" and first.cpu_fallback_stage is None
+    assert first.execution_providers == [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider",
+    ]
+    second = engine.analyze(image)
+    assert second.actual_device == "cpu" and second.cpu_fallback_stage == "inference"
+    assert engine.analyze(image).cpu_fallback_stage == "inference"
 
 
 @pytest.mark.parametrize("device", ["cpu", "auto"])

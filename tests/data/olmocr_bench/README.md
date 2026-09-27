@@ -43,6 +43,9 @@ types are supported. The `table`/`math` types need olmOCR-bench's own KaTeX +
 table-parsing checker, which is not reimplemented here.
 
 These pages check a small sample. They cannot establish a complete benchmark score.
+Their text rules do not measure contour alignment or geometric matching accuracy.
+The independent contour reference fixture is `tests/data/layout_v3_contours.json`;
+offline decoder checks are not a substitute for visually evaluated document pages.
 See the [dated validation report](../../../docs/gpt6-validation.md) for observed
 results and the header/footer limitation, and [live evaluation instructions](../../../docs/development.md#live-evaluation)
 for running the fixture tests. Default tests skip live inference.

@@ -123,11 +123,11 @@ def test_prior_scaling_mapping_and_deterministic_payload():
     ]
     regions.append(region([0, 0, 0, 10], row=25, eligible=False))
     result = analysis(regions)
-    before = result.model_dump()
+    before = result.model_dump(exclude={"guide_bytes", "guide_vertex_count"})
     prompt = layout.extraction_prompt(PAGE_PROMPT, result)
     payload = prior(prompt)
     assert payload["coordinate_space"] == "full_page_normalized_0_1000"
-    assert payload["geometry_type"] == "rectangle" and payload["version"] == 1
+    assert payload["geometry_type"] == "contour_or_aabb" and payload["version"] == 2
     assert [r["row"] for r in payload["regions"]] == list(range(24, -1, -1))
     for item in payload["regions"]:
         assert item["bbox"] == [100, 100, 900, 900]
@@ -136,7 +136,10 @@ def test_prior_scaling_mapping_and_deterministic_payload():
         assert item["score"] == 0.9
         assert "mask_rle" not in item and "observed_rank" not in item
     assert layout.extraction_prompt(PAGE_PROMPT, result) == prompt
-    assert result.model_dump() == before  # Never normalize the evidence in place.
+    assert result.model_dump(exclude={"guide_bytes", "guide_vertex_count"}) == before
+    assert result.guide_bytes == len(
+        prompt.removeprefix(PAGE_PROMPT.rstrip() + "\n\n").encode()
+    )
 
 
 def test_actual_responses_payload_preserves_whole_image_and_contract(
@@ -264,7 +267,10 @@ def test_sol_html_semantics_and_unmatched_evidence(build_page):
         90,
         100,
     ]
-    assert document.layout.pages[0].regions[-1].issues == ["unmatched_v3"]
+    assert document.layout.pages[0].regions[-1].issues == [
+        "unmatched_v3",
+        "no_compatible_sol_class",
+    ]
     runtime = document.layout.page_runtime[3]
     assert (
         runtime.matched_count,
@@ -315,11 +321,16 @@ def test_processor_order_and_header_footer_visibility(build_page, keep):
     chunks = ChunkRenderer(config)(document)
     assert ("Header visible" in markdown.markdown) is keep
     assert ("Footer visible" in markdown.markdown) is keep
-    assert chunks.blocks[0].block_type == "PageHeader"
-    assert chunks.blocks[-1].block_type == "Footnote"
-    assert chunks.metadata["layout"]["final_order"][3] == [b.id for b in chunks.blocks]
-    assert bool(chunks.blocks[0].html) is keep
-    overlays = annotations(document)
+    assert chunks.blocks[0].block_type == "Footnote"
+    assert [b.block_type for b in chunks.blocks] == (
+        ["Footnote", "Text", "PageHeader", "PageFooter"]
+        if keep
+        else ["Footnote", "Text"]
+    )
+    assert chunks.metadata["layout"]["final_order"][3] == [
+        str(b.id) for b in document.pages[0].children
+    ]
+    overlays = annotations(document, config)
     assert overlays["drawn"] == (4 if keep else 2)
     for image in overlays["pages"].values():
         image.close()
@@ -327,11 +338,11 @@ def test_processor_order_and_header_footer_visibility(build_page, keep):
 
 def test_pipeline_versions_and_prior_protocol_are_distinct(monkeypatch):
     current = layout.pipeline_manifest()
-    assert current["pipeline"] == "sol-layout-v3/v2"
+    assert current["pipeline"] == "sol-layout-v3/v4"
     monkeypatch.setattr(layout, "PIPELINE", "sol-layout-v3/v1")
     assert current["fingerprint"] != layout.pipeline_manifest()["fingerprint"]
-    monkeypatch.setattr(layout, "PIPELINE", "sol-layout-v3/v2")
-    monkeypatch.setattr(layout, "PRIOR_VERSION", 2)
+    monkeypatch.setattr(layout, "PIPELINE", "sol-layout-v3/v3")
+    monkeypatch.setattr(layout, "PRIOR_VERSION", 3)
     assert current["fingerprint"] != layout.pipeline_manifest()["fingerprint"]
 
 
@@ -359,7 +370,7 @@ def test_grouped_geometry_is_final_and_retains_original_regions(
     assert group.block_type == "TableGroup"
     assert group.bbox == structured.children[0].children[0].bbox == [30, 40, 190, 92]
     record = chunks.metadata["layout"]["blocks"][group.id]
-    assert record["geometry_source"] == "processor"
+    assert record["geometry_source"] == "source_footprints"
     assert len(record["sources"]) == 2
     assert document.layout.page_runtime[3].matched_count == 2
     assert document.layout.page_runtime[3].counts_stage == "initial_reconciliation"
@@ -370,22 +381,23 @@ def test_grouped_geometry_is_final_and_retains_original_regions(
         ImageDraw.ImageDraw, "rectangle", lambda self, xy, **kw: drawn.append(list(xy))
     )
     overlays = annotations(document)
-    assert drawn == [[20, 20, 180, 72]] and overlays["drawn"] == 1
+    assert drawn == [[20, 20, 180, 60], [20, 62, 180, 72]] and overlays["drawn"] == 2
     for image in overlays["pages"].values():
         image.close()
 
 
-def test_equal_overlap_candidates_are_not_forced_or_rendered_twice(build_page):
+def test_equal_overlap_candidates_are_deterministic_without_duplicate_text(build_page):
     document, _, _ = build_page(
         [region([0, 10, 80, 30]), region([40, 10, 120, 30], row=1)],
         [block([100, 100, 500, 300], "<p>Keep once</p>")],
     )
     item = document.pages[0].children[0]
-    assert item.layout.status == "sol_only"
-    assert item.layout.issues == ["ambiguous_match"]
-    assert item.polygon.bbox == [30, 30, 110, 50]
+    assert item.layout.status == "matched" and item.layout.region_row == 0
+    assert "ambiguous_match" in item.layout.issues
+    assert "matching_score_tie" in item.layout.issues
+    assert item.polygon.bbox == [10, 30, 90, 50]
     assert MarkdownRenderer()(document).markdown.count("Keep once") == 1
-    assert document.layout.page_runtime[3].unmatched_v3_count == 2
+    assert document.layout.page_runtime[3].unmatched_v3_count == 1
 
 
 def test_prior_requests_share_three_page_api_cap(monkeypatch):

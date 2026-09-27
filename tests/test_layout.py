@@ -119,7 +119,7 @@ def test_geometry_clips_but_preserves_raw_box():
     ]
 
 
-def test_reconciliation_preserves_text_type_and_reorders_only_matched_runs():
+def test_reconciliation_preserves_text_type_and_reorders_all_matched_slots():
     response = sol(
         [100, 100, 900, 300],
         [100, 400, 900, 600],
@@ -133,7 +133,7 @@ def test_reconciliation_preserves_text_type_and_reorders_only_matched_runs():
         detection((10, 80, 90, 95), row=2, order=0),
     )
     boxes, records, order = layout.reconcile(response, regions, [0, 0, 200, 200])
-    assert order == [1, 0, 2, 3]
+    assert order == [3, 1, 2, 0]
     assert records[2].status == "sol_only"
     assert boxes[0] == [20, 20, 180, 60]
     assert response.model_dump() == before
@@ -149,16 +149,17 @@ def test_reconciliation_preserves_text_type_and_reorders_only_matched_runs():
 def test_duplicate_and_split_regions_do_not_duplicate_sol(regions):
     response = sol([100, 100, 900, 300])
     _, records, order = layout.reconcile(response, page(*regions), [0, 0, 100, 100])
-    assert len(records) == 1 and records[0].status == "sol_only" and order == [0]
-    assert all("unmatched_v3" in r.issues for r in regions)
+    assert len(records) == 1 and records[0].status == "matched" and order == [0]
+    assert "split_merge_overlap" in records[0].issues
+    assert sum("unmatched_v3" in r.issues for r in regions) == 1
 
 
 def test_one_region_cannot_merge_two_sol_blocks():
     response = sol([100, 100, 500, 300], [500, 100, 900, 300])
     _, records, _ = layout.reconcile(response, page(detection()), [0, 0, 100, 100])
-    assert all(
-        r.status == "sol_only" and "split_merge_overlap" in r.issues for r in records
-    )
+    assert [r.status for r in records] == ["matched", "sol_only"]
+    assert all("split_merge_overlap" in r.issues for r in records)
+    assert "qualified_region_reserved" in records[1].issues
 
 
 def test_iou_boundary_is_not_intersection_percentage():
@@ -176,7 +177,7 @@ def test_iou_boundary_is_not_intersection_percentage():
 
 def test_unsupported_classes_and_order_ties_are_preserved():
     assert len(layout.LABELS) == len(layout.MAPPING) == 25
-    assert not layout.compatible("Form", 21)
+    assert layout.compatible("Form", 21)
     assert not layout.compatible("Code", 1)
     assert layout.compatible("Diagram", 3)
     response = sol([100, 100, 900, 300], [100, 400, 900, 600])
@@ -447,7 +448,12 @@ def test_merge_lineage_retains_original_match():
             region_row=7,
             sol_ordinal=2,
             sources=[
-                SourceRegion(block_id="/page/0/Table/0", page_id=0, bbox=[0, 0, 10, 10])
+                SourceRegion(
+                    block_id="/page/0/Table/0",
+                    page_id=0,
+                    bbox=[0, 0, 10, 10],
+                    region_row=7,
+                )
             ],
         )
     )
@@ -460,7 +466,8 @@ def test_merge_lineage_retains_original_match():
         )
     )
     layout.merge_lineage(first, [second])
-    assert first.layout.status == "processor" and first.layout.region_row == 7
+    assert first.layout.status == "processor" and first.layout.region_row is None
+    assert first.layout.sources[0].region_row == 7
     assert len(first.layout.sources) == 2 and first.layout.sol_ordinal == 2
 
 
@@ -475,7 +482,7 @@ def test_chunk_page_ids_and_annotations_follow_structure(pdf_document):
     assert chunks.blocks[0].id == str(first.structure[0])
     overlays = annotations(pdf_document)
     assert overlays["drawn"] == sum(
-        not pdf_document.get_block(b).ignore_for_output
+        layout.visible_block(pdf_document.get_block(b))
         for p in pdf_document.pages
         for b in p.structure
     )

@@ -94,6 +94,9 @@ class ListProcessor(BaseProcessor):
 
                     if stack:
                         current_parent = stack[-1]
+                        from doclayout.layout import merge_lineage
+
+                        merge_lineage(current_parent, [list_item_block])
                         current_parent.add_structure(list_item_block)
                         current_parent.polygon = current_parent.polygon.merge([list_item_block.polygon])
 

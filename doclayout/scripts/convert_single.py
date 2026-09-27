@@ -3,6 +3,7 @@ import click
 
 from doclayout.config.parser import ConfigParser
 from doclayout.config.printer import CustomClickPrinter
+from doclayout.layout import layout_summary
 from doclayout.models import create_model_dict, shutdown_models
 from doclayout.output import save_output
 from doclayout.services.openai import OpenAIService
@@ -27,6 +28,9 @@ def convert_single_cli(fpath, **kwargs):
         rendered = converter(fpath)
         folder = parser.get_output_folder(fpath)
         save_output(rendered, folder, parser.get_base_filename(fpath))
+        summary = layout_summary(rendered.metadata)
+        if summary:
+            click.echo(summary)
         click.echo(f"Saved output to {folder}")
     except Exception as exc:
         raise click.ClickException(str(exc)) from exc

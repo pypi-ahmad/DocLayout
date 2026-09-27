@@ -1,4 +1,4 @@
-"""Pinned PP-DocLayoutV3 inference and conservative Sol reconciliation."""
+"""Pinned PP-DocLayoutV3 decoding and source-preserving Sol reconciliation."""
 
 import atexit
 import hashlib
@@ -20,8 +20,13 @@ from doclayout.schema.layout import (
 )
 from doclayout.settings import settings
 
-PIPELINE = "sol-layout-v3/v2"
-PRIOR_VERSION = 1
+PIPELINE = "sol-layout-v3/v4"
+REPORTING_POLICY = "initial-final-geometry-diagnostics/v1"
+PRIOR_VERSION = 2
+DECODE_POLICY = "paddlex-ffb64904-poly/v1"
+MATCH_POLICY = "contour-family-greedy/v1"
+ORDER_POLICY = "global-matched-slots/v1"
+SOURCE_POLICY = "source-footprints-visibility/v1"
 EXECUTION_POLICY = "onnx-cuda-scatternd-cpu/v1"
 FALLBACK_POLICY = "sol-on-layout-failure/v1"
 REPO = "PaddlePaddle/PP-DocLayoutV3_onnx"
@@ -84,6 +89,26 @@ MAPPING = (
     "Text",
     None,
 )
+TEXT_TYPES = frozenset(
+    {
+        "Text",
+        "SectionHeader",
+        "PageHeader",
+        "PageFooter",
+        "Caption",
+        "Footnote",
+        "Bibliography",
+        "ListGroup",
+        "TableOfContents",
+        "Code",
+    }
+)
+FAMILIES = {
+    "text": sorted(TEXT_TYPES),
+    "visual": ["Diagram", "Figure", "Picture"],
+    "table": ["Form", "Table"],
+    "formula": ["Equation"],
+}
 # Provisional matching policy, not calibrated accuracy/confidence guarantees.
 SCORE = 0.5
 IOU = 0.5
@@ -95,6 +120,10 @@ OUTPUTS = ["fetch_name_0", "fetch_name_1", "fetch_name_2"]
 
 class LayoutModelUnavailable(RuntimeError):
     """The layout engine could not run; conversion records explicit Sol fallback."""
+
+
+class LayoutContractError(LayoutModelUnavailable):
+    """The pinned raw tensor or image-frame contract was violated."""
 
 
 # Existing conversion boundaries continue to catch the same exception type.
@@ -179,12 +208,12 @@ def _dependency(name):
 
 def check_runtime_dependencies():
     """Check all required imports before attempting any model download."""
-    for name in ("onnxruntime", "cv2", "huggingface_hub", "yaml"):
+    for name in ("onnxruntime", "cv2", "huggingface_hub", "yaml", "shapely"):
         _dependency(name)
 
 
 def extraction_prompt(prompt: str, analysis: LayoutAnalysis) -> str:
-    """Append rectangular layout hints without changing the response schema.
+    """Append a complete versioned guide and measure its UTF-8 payload.
 
     Args:
         prompt: Packaged whole-page transcription instructions.
@@ -194,36 +223,72 @@ def extraction_prompt(prompt: str, analysis: LayoutAnalysis) -> str:
         str: Instructions followed by compact, versioned layout data. Raw masks
         stay local; normalized coordinates are only a request representation.
     """
+    from doclayout.layout_geometry import (
+        polygon_parts,
+        region_geometry,
+        transform_points,
+    )
+
     width, height = analysis.image_size
-    regions = [
-        {
-            "row": region.row,
-            "class_id": region.class_id,
-            "label": region.label,
-            "score": region.score,
-            "bbox": [
-                value * 1000 / (width if index % 2 == 0 else height)
-                for index, value in enumerate(region.bbox_px)
-            ],
-            "order_key": region.order_key,
-            "block_type_hint": MAPPING[region.class_id],
-        }
-        for region in sorted(analysis.regions, key=lambda r: (r.order_key, r.row))
-        if region.eligible
-    ]
+    frame = [0, 0, width, height]
+    regions = []
+    vertex_count = 0
+    for region in sorted(analysis.regions, key=lambda r: (r.order_key, r.row)):
+        if not region.eligible:
+            continue
+        geometry, source, reason = region_geometry(region, analysis.image_size)
+        contours = (
+            [
+                [
+                    [round(x, 3), round(y, 3)]
+                    for x, y in transform_points(part, frame, [0, 0, 1000, 1000])
+                ]
+                for part in polygon_parts(geometry)
+            ]
+            if source == "v3_contour"
+            else []
+        )
+        # Request rounding must not manufacture a valid-looking collapsed ring.
+        if contours:
+            from shapely.geometry import Polygon
+
+            if any(
+                not Polygon(part).is_valid or Polygon(part).area <= 0
+                for part in contours
+            ):
+                contours, source, reason = [], "v3_bbox", "guide_rounding_invalid"
+        vertex_count += sum(len(part) for part in contours)
+        regions.append(
+            {
+                "id": f"r{region.row}",
+                "row": region.row,
+                "class_id": region.class_id,
+                "label": region.label,
+                "score": region.score,
+                "bbox": [
+                    round(value * 1000 / (width if index % 2 == 0 else height), 3)
+                    for index, value in enumerate(region.bbox_px)
+                ],
+                "order_key": region.order_key,
+                "derived_rank": region.observed_rank,
+                "block_type_hint": MAPPING[region.class_id],
+                "contours": contours,
+                "geometry_source": source,
+                "geometry_fallback": reason,
+            }
+        )
     prior = {
         "given_layout": {
             "version": PRIOR_VERSION,
             "coordinate_space": "full_page_normalized_0_1000",
-            "geometry_type": "rectangle",
+            "geometry_type": "contour_or_aabb",
             "regions": regions,
         }
     }
-    return (
-        prompt.rstrip()
-        + "\n\n"
-        + json.dumps(prior, separators=(",", ":"), allow_nan=False)
-    )
+    payload = json.dumps(prior, separators=(",", ":"), allow_nan=False)
+    analysis.guide_bytes = len(payload.encode("utf-8"))
+    analysis.guide_vertex_count = vertex_count
+    return prompt.rstrip() + "\n\n" + payload
 
 
 def pipeline_manifest(config=None):
@@ -242,7 +307,13 @@ def pipeline_manifest(config=None):
         return hashlib.sha256(value.encode()).hexdigest()
 
     packages = {}
-    for name in ("onnxruntime-gpu", "onnxruntime", "numpy", "opencv-python-headless"):
+    for name in (
+        "onnxruntime-gpu",
+        "onnxruntime",
+        "numpy",
+        "opencv-python-headless",
+        "shapely",
+    ):
         try:
             packages[name] = version(name)
         except PackageNotFoundError:
@@ -252,13 +323,19 @@ def pipeline_manifest(config=None):
         "execution_policy": EXECUTION_POLICY,
         "fallback_policy": FALLBACK_POLICY,
         "given_layout_version": PRIOR_VERSION,
+        "decode_policy": DECODE_POLICY,
+        "matching_policy": MATCH_POLICY,
+        "order_policy": ORDER_POLICY,
+        "source_policy": SOURCE_POLICY,
+        "reporting_policy": REPORTING_POLICY,
         "artifact": {"repo": REPO, "revision": REVISION, "sha256": HASHES},
         "mapping": dict(enumerate(MAPPING)),
+        "compatibility_families": FAMILIES,
         "thresholds": {
             "score_gt": SCORE,
             "iou_ge": IOU,
-            "margin_ge": MARGIN,
-            "containment_ge": CONTAINMENT,
+            "ambiguity_margin_lt": MARGIN,
+            "split_merge_containment_ge": CONTAINMENT,
             "tie_tolerance": EPSILON,
         },
         "packages": packages,
@@ -407,11 +484,15 @@ def decode_outputs(outputs, image_size, page_id, provider):
 
 
 def _decode_regions(outputs, image_size):
+    import cv2
+
+    from doclayout.layout_geometry import mask_contour, region_geometry
+
     if not isinstance(outputs, (list, tuple)) or len(outputs) != len(OUTPUTS):
-        raise LayoutModelUnavailable("Layout output tensor contract changed.")
+        raise LayoutContractError("Layout output tensor contract changed.")
     boxes, counts, masks = outputs
     if not all(isinstance(value, np.ndarray) for value in outputs):
-        raise LayoutModelUnavailable("Layout output tensor contract changed.")
+        raise LayoutContractError("Layout output tensor contract changed.")
     if (
         boxes.ndim != 2
         or boxes.shape[1] != 7
@@ -429,8 +510,14 @@ def _decode_regions(outputs, image_size):
         or np.any(boxes[:, 0] < 0)
         or np.any(boxes[:, 0] >= len(LABELS))
     ):
-        raise LayoutUnavailableError("Layout output tensor contract changed.")
+        raise LayoutContractError("Layout output tensor contract changed.")
+    if len(image_size) != 2 or any(type(v) is not int or v <= 0 for v in image_size):
+        raise LayoutContractError("Layout image coordinate frame is invalid.")
     width, height = image_size
+    retained = boxes[boxes[:, 1] > SCORE].copy()
+    retained[:, 2:6] = np.round(retained[:, 2:6])
+    # Preserve the official expression, including its x_max - y_min quirk.
+    max_box_w = float(np.max(retained[:, 4] - retained[:, 3])) if len(retained) else 0
     regions = []
     filtered = 0
     for row, box in enumerate(boxes):
@@ -459,6 +546,31 @@ def _decode_regions(outputs, image_size):
                 issues=[] if valid else ["degenerate_geometry"],
             )
         )
+        region = regions[-1]
+        if not valid:
+            region.contour_status = "unusable"
+            continue
+        try:
+            region.contour_px, reason = mask_contour(
+                masks[row], region.raw_bbox_px, image_size, max_box_w
+            )
+        except (cv2.error, OverflowError, FloatingPointError, MemoryError) as exc:
+            # A contour-only native/allocation failure cannot discard its AABB.
+            reason = f"contour_decode_{type(exc).__name__}"
+        region.contour_status = "valid" if reason is None else "bbox_fallback"
+        if reason is None:
+            assert region.contour_px is not None
+            _, source, reason = region_geometry(region, image_size)
+            if source == "v3_contour":
+                region.geometry_kind = "contour_with_mask"
+            else:
+                region.contour_status = "bbox_fallback"
+            if any(
+                x < 0 or x > width or y < 0 or y > height for x, y in region.contour_px
+            ):
+                region.issues.append("contour_outside_page_vertices")
+        if reason:
+            region.issues.append(reason)
     for rank, region in enumerate(sorted(regions, key=lambda r: (r.order_key, r.row))):
         region.observed_rank = rank
     return regions, len(boxes), filtered
@@ -494,6 +606,7 @@ class LayoutEngine:
         self._provider = ""
         self._error = None
         self._warnings = []
+        self._cpu_fallback_stage = None
         self._status = "Not loaded"
 
     @property
@@ -538,6 +651,7 @@ class LayoutEngine:
             if self._error:
                 self._error = None
                 self._warnings = []
+                self._cpu_fallback_stage = None
                 self._provider = ""
                 self._status = "Not loaded"
 
@@ -715,6 +829,7 @@ class LayoutEngine:
                         self._warnings.append(
                             f"CUDA runtime fallback: {type(exc).__name__}"
                         )
+                        self._cpu_fallback_stage = "inference"
                         self._session = None
                     # Leave the exception handler before allocating a replacement:
                     # the traceback can otherwise retain the failed native session.
@@ -735,11 +850,18 @@ class LayoutEngine:
                             self._warnings.append(
                                 f"CUDA unavailable: {type(exc).__name__}"
                             )
+                            self._cpu_fallback_stage = "startup"
                     if result is None:
                         result = self._exercise(
                             inputs, image.size, "CPUExecutionProvider"
                         )
                 result.warnings = list(self._warnings)
+                result.execution_providers = (
+                    ["CUDAExecutionProvider", "CPUExecutionProvider"]
+                    if self._provider == "CUDAExecutionProvider"
+                    else ["CPUExecutionProvider"]
+                )
+                result.cpu_fallback_stage = self._cpu_fallback_stage
                 self._status = f"Ready: {self._provider}" + (
                     " (CPU fallback)" if self._warnings else ""
                 )
@@ -775,8 +897,9 @@ def get_layout_engine():
 def compatible(kind, class_id):
     """Check matching compatibility without relabeling Sol's semantic type."""
     target = MAPPING[class_id]
-    visual = {"Picture", "Figure", "Diagram"}
-    return target == kind or (target in visual and kind in visual)
+    if target is None:
+        return False
+    return any(target in family and kind in family for family in FAMILIES.values())
 
 
 def overlap(a, b):
@@ -795,13 +918,12 @@ def overlap(a, b):
 
 def page_box(box, image_size, bounds):
     """Transform image pixels into the provider's top-left page frame."""
-    width, height = image_size
-    x0, y0, x1, y1 = bounds
+    from doclayout.layout_geometry import transform_points
+
     return [
-        x0 + box[0] * (x1 - x0) / width,
-        y0 + box[1] * (y1 - y0) / height,
-        x0 + box[2] * (x1 - x0) / width,
-        y0 + box[3] * (y1 - y0) / height,
+        v
+        for point in transform_points([box[:2], box[2:]], [0, 0, *image_size], bounds)
+        for v in point
     ]
 
 
@@ -816,10 +938,15 @@ def reconcile(extracted_page, regions, page_bounds):
 
     Returns:
         tuple[list, list, list]: Page-space rectangles, block provenance, and Sol
-        indices in partial reading order. Rejected matches keep Sol boxes and
-        anchor order; only contiguous matched runs can follow V3 order keys.
-        Ambiguous overlap components remain unsplit and unmerged.
+        indices in merged reading order. Every accepted endpoint is reserved
+        once. Ambiguity is recorded, never used to veto a qualified best pair.
     """
+    from doclayout.layout_geometry import (
+        polygon_parts,
+        region_geometry,
+        transform_points,
+    )
+
     width, height = regions.image_size
     sol = [
         [
@@ -832,87 +959,160 @@ def reconcile(extracted_page, regions, page_bounds):
     ]
     matrix = np.zeros((len(sol), len(regions.regions)))
     strong = np.zeros_like(matrix, dtype=bool)
+    geometries = {
+        j: region_geometry(region, regions.image_size)
+        for j, region in enumerate(regions.regions)
+        if region.eligible
+    }
+    if geometries:
+        from shapely.geometry import box as rectangle
+
     for i, block in enumerate(extracted_page.blocks):
+        if not geometries:
+            continue
+        sol_polygon = rectangle(*sol[i])
         for j, region in enumerate(regions.regions):
             if region.eligible and compatible(block.block_type, region.class_id):
-                matrix[i, j], containment = overlap(sol[i], region.bbox_px)
-                strong[i, j] = containment >= CONTAINMENT
-    split_rows = set(np.flatnonzero(strong.sum(axis=1) > 1))
-    split_cols = set(np.flatnonzero(strong.sum(axis=0) > 1))
-    # Propagate ambiguity through the entire strong-overlap component.
-    while True:
-        rows = split_rows | {
-            i for i in range(len(sol)) if any(strong[i, j] for j in split_cols)
-        }
-        cols = split_cols | {
-            j for j in range(len(regions.regions)) if any(strong[i, j] for i in rows)
-        }
-        if rows == split_rows and cols == split_cols:
-            break
-        split_rows, split_cols = rows, cols
+                geometry = geometries[j][0]
+                intersection = sol_polygon.intersection(geometry).area
+                union = sol_polygon.area + geometry.area - intersection
+                matrix[i, j] = intersection / union if union else 0
+                smaller = min(sol_polygon.area, geometry.area)
+                strong[i, j] = bool(smaller and intersection / smaller >= CONTAINMENT)
+    candidates = sorted(
+        [(i, j) for i, j in zip(*np.where(matrix >= IOU))],
+        key=lambda pair: (
+            -matrix[pair],
+            -regions.regions[pair[1]].score,
+            regions.regions[pair[1]].row,
+            pair[0],
+        ),
+    )
+    assigned, reserved = {}, set()
+    for i, j in candidates:
+        if i not in assigned and j not in reserved:
+            assigned[i] = j
+            reserved.add(j)
     records, boxes, matched = [], [], {}
     for i, original in enumerate(sol):
         record = BlockLayout(
             status="sol_only",
+            geometry_source="sol",
             sol_ordinal=i,
             sol_bbox=extracted_page.blocks[i].bbox.copy(),
         )
         box = page_box(original, regions.image_size, page_bounds)
-        if i in split_rows:
+        if strong[i].sum() > 1 or any(
+            strong[:, j].sum() > 1 for j in np.flatnonzero(strong[i])
+        ):
             record.issues.append("split_merge_overlap")
-        elif matrix.shape[1] and matrix[i].max() >= IOU:
-            j = int(matrix[i].argmax())
-            row_scores = sorted(matrix[i], reverse=True)
-            col_scores = sorted(matrix[:, j], reverse=True)
-            row_margin = row_scores[0] - (row_scores[1] if len(row_scores) > 1 else 0)
-            col_margin = col_scores[0] - (col_scores[1] if len(col_scores) > 1 else 0)
-            if (
-                j not in split_cols
-                and int(np.argmax(matrix[:, j])) == i
-                and row_margin > EPSILON
-                and col_margin > EPSILON
-                and row_margin + EPSILON >= MARGIN
-                and col_margin + EPSILON >= MARGIN
+        if i in assigned:
+            j = assigned[i]
+            region = regions.regions[j]
+            geometry, source, reason = geometries[j]
+            record.status, record.region_row, record.iou = (
+                "matched",
+                region.row,
+                float(matrix[i, j]),
+            )
+            record.geometry_source = source
+            record.match_metric = (
+                "contour_iou" if source == "v3_contour" else "aabb_iou"
+            )
+            record.layout_class_id, record.layout_label = region.class_id, region.label
+            record.order_key, record.observed_rank = (
+                region.order_key,
+                region.observed_rank,
+            )
+            record.contours = (
+                [
+                    transform_points(part, [0, 0, width, height], page_bounds)
+                    for part in polygon_parts(geometry)
+                ]
+                if source == "v3_contour"
+                else []
+            )
+            if reason:
+                record.issues.append(reason)
+            if MAPPING[region.class_id] != extracted_page.blocks[i].block_type:
+                record.issues.append("compatible_class_disagreement")
+            alternatives = [
+                float(matrix[i, k]) for k in range(matrix.shape[1]) if k != j
+            ]
+            alternatives += [
+                float(matrix[k, j]) for k in range(matrix.shape[0]) if k != i
+            ]
+            if any(
+                score >= IOU and abs(record.iou - score) <= EPSILON
+                for score in alternatives
             ):
-                region = regions.regions[j]
-                record.status, record.region_row, record.iou = (
-                    "matched",
-                    region.row,
-                    float(matrix[i, j]),
-                )
-                box = page_box(region.bbox_px, regions.image_size, page_bounds)
-                matched[i] = region
-            else:
+                record.issues.append("matching_score_tie")
+            if any(
+                score >= IOU and record.iou - score < MARGIN + EPSILON
+                for score in alternatives
+            ):
                 record.issues.append("ambiguous_match")
+            if strong[i].sum() > 1:
+                record.issues.append(
+                    "merged_sol_content_may_extend_beyond_assigned_region"
+                )
+            box = page_box(region.bbox_px, regions.image_size, page_bounds)
+            matched[i] = region
+        else:
+            if not regions.regions:
+                reason = (
+                    "all_candidates_filtered"
+                    if regions.candidate_count and regions.filtered_count
+                    else "empty_detection_result"
+                )
+            elif not geometries:
+                reason = "no_usable_v3_geometry"
+            elif not any(
+                compatible(
+                    extracted_page.blocks[i].block_type, regions.regions[j].class_id
+                )
+                for j in geometries
+            ):
+                reason = "no_compatible_v3_class"
+            elif any(matrix[i] >= IOU):
+                reason = "qualified_region_reserved"
+            else:
+                reason = "overlap_below_threshold"
+            record.issues.append(reason)
         record.initial_bbox = box.copy()
         records.append(record)
         boxes.append(box)
     order = list(range(len(sol)))
-    start = 0
-    while start < len(order):
-        if start not in matched:
-            start += 1
-            continue
-        end = start + 1
-        while end in matched:
-            end += 1
-        run = order[start:end]
-        for i in run:
-            if any(
-                i != j and abs(matched[i].order_key - matched[j].order_key) <= EPSILON
-                for j in run
-            ):
-                records[i].issues.append("ambiguous_order")
-        # Preserve the run when near-equal keys would make a sort unstable.
-        if not any("ambiguous_order" in records[i].issues for i in run):
-            order[start:end] = sorted(run, key=lambda i: (matched[i].order_key, i))
-        start = end
+    for i, matched_region in matched.items():
+        if any(
+            i != j and abs(matched_region.order_key - other.order_key) <= EPSILON
+            for j, other in matched.items()
+        ):
+            records[i].issues.append("ambiguous_order")
+    sorted_matches = sorted(
+        matched, key=lambda i: (matched[i].order_key, matched[i].row, i)
+    )
+    for position, index in zip(sorted(matched), sorted_matches):
+        order[position] = index
     if extracted_page.blank and regions.regions:
         regions.warnings.append("Sol blank page disagrees with detected regions")
     used = {r.region_row for r in records if r.status == "matched"}
-    for region in regions.regions:
+    for j, region in enumerate(regions.regions):
         if region.row not in used:
             region.issues.append("unmatched_v3")
+            if not region.eligible:
+                reason = "unusable_v3_geometry"
+            elif not extracted_page.blocks:
+                reason = "no_sol_blocks"
+            elif not any(
+                compatible(b.block_type, region.class_id) for b in extracted_page.blocks
+            ):
+                reason = "no_compatible_sol_class"
+            elif any(matrix[:, j] >= IOU):
+                reason = "qualified_sol_block_reserved"
+            else:
+                reason = "overlap_below_threshold"
+            region.issues.append(reason)
     return boxes, records, order
 
 
@@ -922,7 +1122,7 @@ def merge_lineage(target, sources):
     for block in [target, *sources]:
         if block.layout is not None:
             for source in block.layout.sources:
-                evidence[source.block_id] = source
+                evidence[source.block_id] = source.model_copy(deep=True)
     if evidence:
         provenance = (
             target.layout.model_copy(deep=True)
@@ -930,12 +1130,86 @@ def merge_lineage(target, sources):
             else BlockLayout(status="processor")
         )
         provenance.status = "processor"
+        provenance.geometry_source = "source_footprints"
+        provenance.contours = []
+        provenance.region_row = None
+        provenance.order_key = None
+        provenance.observed_rank = None
+        provenance.layout_class_id = None
+        provenance.layout_label = None
+        provenance.iou = None
+        provenance.match_metric = None
         provenance.sources = list(evidence.values())
         target.layout = provenance
 
 
+def has_layout_order(page, document):
+    """Whether a page has any matched source, including grouped sources."""
+
+    def matched(block):
+        return bool(
+            block.layout
+            and (
+                block.layout.order_key is not None
+                or any(
+                    s.order_key is not None and s.page_id == page.page_id
+                    for s in block.layout.sources
+                )
+            )
+        ) or any(matched(document.get_block(bid)) for bid in block.structure or [])
+
+    return any(matched(document.get_block(bid)) for bid in page.structure or [])
+
+
+def furniture_role(block):
+    """Prefer matched furniture labels; otherwise retain Sol's semantic role."""
+    record = block.layout
+    labels = [s.layout_label for s in record.sources] if record else []
+    if record and record.layout_label is not None:
+        labels.append(record.layout_label)
+    if any(label is not None for label in labels):
+        if all(label in {"header", "header_image"} for label in labels):
+            return "header"
+        if all(label in {"footer", "footer_image"} for label in labels):
+            return "footer"
+        return None
+    return {"PageHeader": "header", "PageFooter": "footer"}.get(str(block.block_type))
+
+
+def visible_block(block, config=None):
+    """Resolve removal, explicit suppression and furniture without mutation."""
+    if block.removed or block.ignore_for_output:
+        return False
+    role = furniture_role(block)
+    return role is None or bool((config or {}).get(f"keep_page{role}_in_output", False))
+
+
+def visible_sources(block, document, config=None):
+    """Walk rendered content, not historical children or invented group bounds."""
+    if not visible_block(block, config):
+        return []
+    if block.structure and not getattr(block, "html", None):
+        sources = [
+            s
+            for bid in block.structure
+            for s in visible_sources(document.get_block(bid), document, config)
+        ]
+        if (
+            not sources
+            and block.layout
+            and any(
+                visible_block(document.get_block(bid), config)
+                for bid in block.structure
+            )
+        ):
+            sources = block.layout.sources
+    else:
+        sources = block.layout.sources if block.layout else []
+    return list({s.block_id: s for s in sources}.values())
+
+
 def finalize_layout(document):
-    """Populate derived group lineage after processors without changing geometry."""
+    """Retain source footprints and enforce matched order after assembly."""
     if document.layout is None:
         return
 
@@ -948,20 +1222,102 @@ def finalize_layout(document):
             visit(child, seen)
         if children and any(child.layout for child in children):
             merge_lineage(block, children)
+        if (
+            block.layout
+            and block.layout.status == "matched"
+            and block.layout.initial_bbox is not None
+            and block.polygon.bbox != block.layout.initial_bbox
+        ):
+            from doclayout.schema.polygon import PolygonBox
+
+            block.layout.issues.append("processor_geometry_change_ignored")
+            block.polygon = PolygonBox.from_bbox(block.layout.initial_bbox)
+        elif (
+            block.layout
+            and block.layout.status == "sol_only"
+            and block.layout.initial_bbox is not None
+            and block.polygon.bbox != block.layout.initial_bbox
+        ):
+            merge_lineage(block, [])
+            block.layout.issues.append("processor_derived_bounds")
 
     for page in document.pages:
         for bid in page.structure or []:
             visit(document.get_block(bid), set())
+        ranked = {}
+        for position, bid in enumerate(page.structure or []):
+            block = document.get_block(bid)
+            if block.removed or block.ignore_for_output:
+                continue
+            sources = (
+                [
+                    s
+                    for s in block.layout.sources
+                    if s.page_id == page.page_id and s.order_key is not None
+                ]
+                if block.layout
+                else []
+            )
+            if sources:
+                ranked[position] = min(
+                    (s.order_key, s.region_row, s.sol_ordinal or 0) for s in sources
+                )
+        positions = sorted(ranked)
+        ordered = [
+            page.structure[i] for i in sorted(ranked, key=lambda i: (*ranked[i], i))
+        ]
+        for position, bid in zip(positions, ordered):
+            page.structure[position] = bid
+        # Assemblies cannot be split to interleave their source text reliably.
+        for bid in ordered:
+            block = document.get_block(bid)
+            keys = [
+                s.order_key
+                for s in block.layout.sources
+                if s.page_id == page.page_id and s.order_key is not None
+            ]
+            if any(min(keys) < key[0] < max(keys) for key in ranked.values()):
+                block.layout.issues.append("assembled_source_order_interleaves")
+            block.layout.issues = list(dict.fromkeys(block.layout.issues))
 
 
-def layout_metadata(document):
+def layout_metadata(document, config=None):
     """Describe final geometry and order separately from original detections."""
     if document.layout is None:
         return None
     blocks = {}
     orders = {}
+    final_counts: dict[int, dict] = {
+        page.page_id: {
+            "counts_stage": "final_visible_structure",
+            "visible_blocks": 0,
+            "processor_derived_blocks": 0,
+            "geometry_counts": {},
+        }
+        for page in document.pages
+    }
+    seen_sources = set()
     for page in document.pages:
         orders[page.page_id] = [str(bid) for bid in page.structure or []]
+        for bid in page.structure or []:
+            block = document.get_block(bid)
+            if not visible_block(block, config):
+                continue
+            sources = visible_sources(block, document, config)
+            if not sources and block.structure and not getattr(block, "html", None):
+                continue
+            final_counts[page.page_id]["visible_blocks"] += 1
+            if block.layout and block.layout.status == "processor":
+                final_counts[page.page_id]["processor_derived_blocks"] += 1
+            for source in sources:
+                identity = (source.page_id, source.block_id)
+                if identity in seen_sources or source.page_id not in final_counts:
+                    continue
+                seen_sources.add(identity)
+                counts = final_counts[source.page_id]["geometry_counts"]
+                counts[source.geometry_source] = (
+                    counts.get(source.geometry_source, 0) + 1
+                )
         for block in page.children or []:
             if block.layout is None:
                 continue
@@ -971,16 +1327,80 @@ def layout_metadata(document):
                 final_type=str(block.block_type),
                 removed=block.removed,
                 ignored=block.ignore_for_output,
+                visible=visible_block(block, config),
+                furniture_role=furniture_role(block),
                 final_structure=[str(bid) for bid in block.structure or []],
             )
-            item["geometry_source"] = (
-                "processor"
-                if block.layout.status == "processor"
-                or block.layout.initial_bbox != block.polygon.bbox
-                else "v3_bbox"
-                if block.layout.status == "matched"
-                else "sol"
-            )
+            item["geometry_source"] = block.layout.geometry_source
             item["multi_page"] = len({s.page_id for s in block.layout.sources}) > 1
             blocks[str(block.id)] = item
-    return {**document.layout.model_dump(), "blocks": blocks, "final_order": orders}
+    return {
+        **document.layout.model_dump(),
+        "blocks": blocks,
+        "final_order": orders,
+        "final_counts": final_counts,
+    }
+
+
+def layout_summary(metadata):
+    """Format recorded diagnostics for GUI and CLI without runtime inspection.
+
+    Missing historical observations stay unknown. Initial counts describe Sol
+    blocks; final geometry counts describe unique visible source footprints,
+    attributed to their source pages, not processor envelopes or polygon parts.
+    """
+    audit = metadata.get("layout") or {}
+    pages = audit.get("page_runtime", {})
+    if not pages:
+        return None
+
+    def counts(value):
+        if value is None:
+            return "not recorded"
+        return (
+            ", ".join(f"{key}={number}" for key, number in sorted(value.items()))
+            or "none"
+        )
+
+    values = list(pages.values())
+    elapsed = sum(p["elapsed_ms"] for p in values)
+    lines = [
+        (
+            f"V3: {sum(p['retained_region_count'] for p in values)} regions · "
+            f"{sum(p['matched_count'] for p in values)} initial matches · "
+            f"{elapsed:,.0f} ms summed page analysis (includes preparation/queue wait; not pure inference)"
+        )
+    ]
+    for page_id, page in sorted(pages.items(), key=lambda item: int(item[0])):
+        providers = page.get("execution_providers")
+        execution = (
+            "+".join(providers)
+            if providers is not None
+            else "provider set not recorded"
+        )
+        device = page.get("actual_device", "not recorded") or "unavailable"
+        final = audit.get("final_counts", {}).get(page_id)
+        if final is None:
+            final = audit.get("final_counts", {}).get(str(page_id))
+        lines.append(
+            f"Page {int(page_id) + 1}: {device} · {page.get('provider', 'not recorded')} "
+            f"({execution}) · Sol fallback stage={page.get('failure_stage', 'not recorded') or 'none'} · "
+            f"CPU fallback stage={page.get('cpu_fallback_stage') or 'none recorded'} · "
+            f"initial eligible={page.get('prior_region_count', 'not recorded')}, "
+            f"matched={page['matched_count']}, Sol-only={page.get('sol_only_count', 'not recorded')}, "
+            f"V3-only={page.get('unmatched_v3_count', 'not recorded')} · "
+            f"initial geometry: {counts(page.get('geometry_counts'))} · "
+            f"Sol-only reasons: {counts(page.get('sol_only_reasons'))} · "
+            f"V3-only reasons: {counts(page.get('unmatched_v3_reasons'))} · "
+            f"final visible blocks={final['visible_blocks'] if final else 'not recorded'}, "
+            f"source footprints: {counts(final['geometry_counts'] if final else None)}"
+        )
+    fallback = sum(p.get("status") == "sol_fallback" for p in values)
+    if fallback:
+        lines.append(f"Sol fallback: {fallback} page(s)")
+    if audit.get("annotations"):
+        overlay = audit["annotations"]
+        lines.append(
+            f"Annotations: {overlay['drawn']} parts drawn, {overlay['skipped']} skipped"
+        )
+    return "\n\n".join(lines)

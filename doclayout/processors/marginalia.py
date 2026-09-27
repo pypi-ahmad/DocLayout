@@ -84,6 +84,11 @@ class MarginaliaProcessor(BaseProcessor):
             body_bottom = max(yfrac(b)[1] for b in body)
 
             for block in text_blocks:
+                if block.layout and (
+                    block.layout.region_row is not None
+                    or any(s.region_row is not None for s in block.layout.sources)
+                ):
+                    continue  # Matched V3 labels own furniture; absence alone hides nothing.
                 if block.block_type not in _ELIGIBLE:
                     continue
                 y0, y1 = yfrac(block)
