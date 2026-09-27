@@ -30,9 +30,9 @@ about the extracted text. You can also use the CLI, Python library, or local HTT
 
 ## How DocLayout works
 
-The generated [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
-[system architecture](docs/diagrams/doclayout-architecture.html) are historical
-snapshots. The [layout integration record](docs/layout-v3-plan.md) describes the
+The [data-flow diagram](docs/diagrams/doclayout-dataflow.html) and
+[system architecture](docs/diagrams/doclayout-architecture.html) have current
+Archify outputs. The [layout integration record](docs/layout-v3-plan.md) describes the
 v3.1.0 contour integration, pipeline v4 diagnostics, and validation limits.
 In the GUI, authorization-field
 extraction starts after conversion and saves its results in [Extracted information](docs/field-extraction.md).
@@ -204,6 +204,10 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, troubleshooting |
 | [Configuration](docs/configuration.md) | Settings, defaults, limits, environment, precedence |
 | [Development](docs/development.md) | Setup, tests, builds, extension and prompt-change practices |
+| [Onboarding](docs/onboarding.md) | A first-day, offline route through the source and tests |
+| [Tutorial](docs/tutorial.md) | Progressive exercises from CLI entry points to layout and saved outputs |
+| [Contributing](CONTRIBUTING.md) | Local change, verification, and review runbook |
+| [Python documentation audit](docs/python-documentation-audit.md) | Focused docstring pass and remaining coverage gaps |
 | [Changelog](CHANGELOG.md) | Current changes and compatibility history |
 | [Architecture](docs/architecture.md) | Extraction pipeline, model calls, renderers, prompts, session state |
 | [Validation](docs/gpt6-validation.md) | Dated live observations, offline checks, known limitations |
@@ -216,7 +220,7 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 - [Data flow](docs/diagrams/doclayout-dataflow.html)
 - [Lifecycle](docs/diagrams/doclayout-lifecycle.html)
 - [Sequence](docs/diagrams/doclayout-sequence.html)
-- [Workflow](docs/diagrams/doclayout-workflow.html): refreshed for contour matching and preserved Sol content; see the [delivery record](docs/documentation-sync.md) for visual limitations.
+- [Workflow](docs/diagrams/doclayout-workflow.html): whole-page Sol, V3 matching, and fallback; see the [delivery record](docs/documentation-sync.md) for its remaining layout limitation.
 
 ## Accuracy, privacy, and cost
 

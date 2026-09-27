@@ -1,5 +1,35 @@
 # Documentation sync verification
 
+## September 27, 2026: five-diagram Archify refresh
+
+The editable JSON specifications and delivered HTML now reflect the current
+whole-page Sol, V3 contour/AABB matching, local exports, saved field, and chat
+paths. This was a local documentation change; it made no model calls and did
+not alter conversion code. Existing sections below remain dated records of
+earlier output and visual checks.
+
+Each final specification passed all nine Archify showcase artifact checks with
+zero composition errors and zero warnings. `deliver` produced the HTML from a
+frozen specification snapshot. `visual-check` captured both themes and found
+no scrolling at 1440×900, 1600×1000, 1920×1080, or 2048×1320. Receipt hashes
+were compared with the current HTML files after delivery.
+
+| Diagram | Specification SHA-256 | HTML SHA-256 | Visual review | Correction rounds |
+| --- | --- | --- | --- | ---: |
+| Architecture | `561276b8eb0c0c2ad0dddcfc2eb61110a2e0c0c830770c26feedceb33aed77b2` | `f3d6521268e7b9e28369f248c4eb8bf7d740fa5f23d1206c71d5acdec0159ef5` | Passed | 1 |
+| Workflow | `4992705250d03025b40e2284868077e88a534bc4684c86244ed7cccc3bd4e47a` | `ae6cb9cddaa4065c6872d185bb19660095662612184ebc31ce33c4af93d61acc` | Failed: unused right-side space | 2 |
+| Sequence | `a88d8742d573d4403c6d8369f56f1602fe09d1d5ba23a269a09abdde3f248878` | `5b4a21fb899a657352017b6a5c880a61010726f65b8d9d83535d50373ce60fe6` | Passed | 1 |
+| Data flow | `c46e4dea762e11cb3d52d00717b745913907c6b4eb8ea04cde81280ac4f18f0a` | `ccb63cea898a42cf69ddb01771703abd3546128ceb366d54e4266a61371edd6c` | Passed | 0 |
+| Lifecycle | `63899d3b9c954a289742d692dae845e525403aae9d2fa0fd8b71fce85f6eb0fd` | `d7b348b32428ae3856ef15dbaa02bbb8c49ef05950b2e0b899e4f64092bdfb51` | Passed | 0 |
+
+The workflow remains legible and contained, but its nodes occupy only the
+left portion of the panel. Removing its explicit viewBox and reducing its
+width both produced desktop overflow, so the last contained artifact was
+restored. This is an unresolved composition issue, not a showcase-validation
+or containment pass failure. The visual-check JSON and screenshot sidecars
+record the automated measurements and inspected images; their automated
+`visualReview: pending` field is not a claim of human review.
+
 ## September 27, 2026: pipeline v4 code-to-doc sync
 
 This pass updates documentation for the local unreleased contour integration.

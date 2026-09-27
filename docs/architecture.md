@@ -13,14 +13,17 @@ the exact matching rules, and dated runtime evidence.
 
 ### Interactive architecture and workflow diagrams
 
-The conversion workflow was refreshed for contour matching on September 27.
-The other standalone HTML diagrams retain their September 26 high-level views;
-use the prose below for the complete local contour and diagnostics contracts.
+All five standalone HTML diagrams were regenerated from their JSON specifications
+on September 27. They are high-level maps; use the prose below and the
+[layout integration record](layout-v3-plan.md) for the complete decode,
+matching, and diagnostics contracts. All five fit the checked desktop viewports.
+The workflow still leaves substantial unused space to the right of its nodes;
+see the [delivery record](documentation-sync.md) for visual-review details.
 
 - [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports. The existing composition still leaves excess right-side whitespace.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour/AABB matching, and exports.
 - [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and audit scoring.
-- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
+- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; processed blocks feed local exports, while parsed page text supports chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
 
 
