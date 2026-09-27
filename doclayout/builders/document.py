@@ -11,6 +11,13 @@ from doclayout.builders.alignment import align_blocks
 from doclayout.schema import BlockTypes
 from doclayout.schema.document import Document
 from doclayout.schema.extraction import PAGE_PROMPT, ExtractedPage
+from doclayout.schema.geometry import (
+    GUIDE_FRAME,
+    LayoutGeometry,
+    convert_bbox,
+    convert_points,
+    image_frame,
+)
 from doclayout.schema.groups.page import PageGroup
 from doclayout.schema.layout import (
     PageLayout,
@@ -29,6 +36,7 @@ from doclayout.services.layout import (
     LayoutResult,
     layout_fallback_message,
 )
+from doclayout.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +82,8 @@ class DocumentBuilder(BaseBuilder):
                                 "Layout inference failed."
                             )
                         if layout_error is not None:
+                            if not settings.DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK:
+                                raise layout_error
                             logger.warning("%s", layout_fallback_message(layout_error))
                             layout = LayoutResult(
                                 model_id=MODEL_ID,
@@ -128,12 +138,34 @@ class DocumentBuilder(BaseBuilder):
                         ):
                             block = page.add_block(
                                 get_block_class(BlockTypes[item.block_type]),
-                                PolygonBox.from_bbox(item.bbox).rescale(
-                                    (1000, 1000), page.polygon.size
+                                PolygonBox.from_bbox(
+                                    list(
+                                        convert_bbox(
+                                            item.bbox,
+                                            GUIDE_FRAME,
+                                            tuple(page.polygon.bbox),
+                                        )
+                                    )
                                 ),
                             )
                             setattr(block, "html", item.html)  # noqa: B010 - heterogeneous registry classes
                             block.text_extraction_method = "openai"
+                            match = aligned.sol[source_index]
+                            if match.status == "matched":
+                                region = next(
+                                    r
+                                    for r in layout.regions
+                                    if r.order_index == match.region_order
+                                )
+                                block.layout_geometry = LayoutGeometry(
+                                    convert_points(
+                                        region.contour,
+                                        image_frame(layout.image_size),
+                                        tuple(page.polygon.bbox),
+                                    ),
+                                    region.geometry_source,
+                                    region.order_index,
+                                )
                             page.add_structure(block)
                             assert block.block_id is not None
                             sources.append(
@@ -145,6 +177,7 @@ class DocumentBuilder(BaseBuilder):
                                         (point[0], point[1])
                                         for point in block.polygon.polygon
                                     ),
+                                    block.layout_geometry,
                                 )
                             )
                         page.layout = PageLayout(

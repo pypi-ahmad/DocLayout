@@ -74,6 +74,7 @@ def layout_service():
 @pytest.fixture(autouse=True)
 def offline_layout(request, monkeypatch, layout_service):
     if "integration" not in request.keywords:
+        monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", False)
         monkeypatch.setattr(
             settings,
             "DOCLAYOUT_ALIGNMENT_POLICY",

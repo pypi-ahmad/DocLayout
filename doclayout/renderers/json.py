@@ -7,10 +7,12 @@ from doclayout.renderers import BaseRenderer
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks import Block, BlockOutput
 from doclayout.schema.document import Document
+from doclayout.schema.geometry import LayoutGeometry
 from doclayout.schema.registry import get_block_class
 
 
 class JSONBlockOutput(BaseModel):
+    layout_geometry: LayoutGeometry | None = None
     id: str
     block_type: str
     html: str
@@ -53,6 +55,7 @@ class JSONRenderer(BaseRenderer):
         if cls.__base__ == Block:
             html, images = self.extract_block_html(document, block_output)
             return JSONBlockOutput(
+                layout_geometry=block_output.layout_geometry,
                 html=html,
                 polygon=block_output.polygon.polygon,
                 bbox=block_output.polygon.bbox,
@@ -70,6 +73,7 @@ class JSONRenderer(BaseRenderer):
                 children.append(child_output)
 
             return JSONBlockOutput(
+                layout_geometry=block_output.layout_geometry,
                 html=block_output.html,
                 polygon=block_output.polygon.polygon,
                 bbox=block_output.polygon.bbox,

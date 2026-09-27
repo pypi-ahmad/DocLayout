@@ -116,8 +116,14 @@ def test_api_upload_rejects_removed_config(api, temp_doc):
 
 
 @pytest.mark.parametrize("upload", [False, True])
-def test_api_layout_failure_uses_sol_safely(api, temp_doc, model_dict, upload):
+@pytest.mark.parametrize("allow_fallback", [False, True])
+def test_api_layout_failure_uses_sol_safely(
+    api, temp_doc, model_dict, upload, allow_fallback, monkeypatch
+):
     from doclayout.services.layout import LayoutInferenceError
+    from doclayout.settings import settings
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", allow_fallback)
 
     model_dict["layout_service"].predict.side_effect = LayoutInferenceError(
         "private path and payload"
@@ -130,6 +136,11 @@ def test_api_layout_failure_uses_sol_safely(api, temp_doc, model_dict, upload):
             )
     else:
         response = api.post("/doclayout", json={"filepath": temp_doc.name})
+    if not allow_fallback:
+        assert response.status_code == 503
+        assert "private" not in response.text
+        model_dict["extraction_service"].assert_not_called()
+        return
     assert response.status_code == 200
     assert "LayoutInferenceError" in response.text
     assert "sol_fallback" in response.text

@@ -7,6 +7,7 @@ from PIL import Image
 from pydantic import BaseModel, ConfigDict, PrivateAttr, field_validator
 
 from doclayout.schema import BlockTypes
+from doclayout.schema.geometry import LayoutGeometry
 from doclayout.schema.polygon import PolygonBox
 
 if TYPE_CHECKING:
@@ -32,6 +33,7 @@ class BlockMetadata(BaseModel):
 
 
 class BlockOutput(BaseModel):
+    layout_geometry: LayoutGeometry | None = None
     html: str
     polygon: PolygonBox
     id: BlockId
@@ -82,6 +84,7 @@ class BlockId(BaseModel):
 
 
 class Block(BaseModel):
+    layout_geometry: LayoutGeometry | None = None
     polygon: PolygonBox
     block_description: str
     block_type: Optional[BlockTypes] = None
@@ -323,6 +326,7 @@ class Block(BaseModel):
                 child_content.append(rendered)
 
         return BlockOutput(
+            layout_geometry=self.layout_geometry,
             html=self.assemble_html(
                 document, child_content, parent_structure, block_config
             ),

@@ -22,6 +22,12 @@ from doclayout.renderers.json import JSONRenderer
 from doclayout.renderers.markdown import MarkdownRenderer
 from doclayout.renderers.ocr_json import OCRJSONRenderer
 from doclayout.schema.extraction import ExtractedPage
+from doclayout.schema.geometry import (
+    GUIDE_FRAME,
+    convert_points,
+    image_frame,
+    rectangle_contour,
+)
 from doclayout.schema.layout import (
     alignment_policy,
     check_layout,
@@ -53,6 +59,166 @@ def block(text, box, kind="Text"):
     return {"block_type": kind, "html": text, "bbox": box}
 
 
+def test_default_layout_failure_stops_before_sol(columns, temp_doc):
+    columns["layout_service"].predict.side_effect = LayoutInferenceError("unavailable")
+    with pytest.raises(LayoutInferenceError):
+        PdfConverter(columns, config={"page_range": [0]}).build_document(temp_doc.name)
+    columns["extraction_service"].assert_not_called()
+
+
+def contour_columns(columns):
+    """Many-point nonrectangular contours on the existing matched columns."""
+    import math
+
+    predict = columns["layout_service"].predict.side_effect
+
+    def curved(image):
+        result = predict(image)
+        regions = []
+        for region in result.regions:
+            x0, y0, x1, y1 = region.bbox
+            points = tuple(
+                (
+                    (x0 + x1) / 2 + (x1 - x0) / 2 * math.cos(i * math.tau / 97),
+                    (y0 + y1) / 2 + (y1 - y0) / 2 * math.sin(i * math.tau / 97),
+                )
+                for i in range(97)
+            )
+            regions.append(
+                replace(region, contour=points, geometry_source="native_contour")
+            )
+        return replace(result, regions=tuple(regions))
+
+    columns["layout_service"].predict.side_effect = curved
+
+
+def test_contours_survive_guide_alignment_and_all_serialization(columns, temp_doc):
+    contour_columns(columns)
+    doc = PdfConverter(columns, config={"page_range": [0]}).build_document(
+        temp_doc.name
+    )
+    page = doc.pages[0]
+    check_layout(doc)
+    guide = json.loads(
+        columns["extraction_service"].call_args.args[0].split("given_layout=", 1)[1]
+    )
+    assert all(len(region["contour"]) == 97 for region in guide["regions"])
+    leaves = source_blocks(page)
+    for leaf in leaves:
+        assert len(leaf.layout_geometry.contour) == 97
+        assert leaf.layout_geometry.geometry_source == "native_contour"
+        region = next(
+            r
+            for r in page.layout.alignment.layout.regions
+            if r.order_index == leaf.layout_geometry.region_order
+        )
+        expected = convert_points(
+            region.contour,
+            image_frame(page.highres_image.size),
+            tuple(page.polygon.bbox),
+        )
+        assert leaf.layout_geometry.contour == expected
+    for renderer in (JSONRenderer, OCRJSONRenderer, ChunkRenderer):
+        data = json.loads(renderer()(doc).model_dump_json())
+        encoded = json.dumps(data)
+        assert "native_contour" in encoded and "masks" not in encoded
+        assert (
+            len(data["metadata"]["layout"][0]["model"]["regions"][0]["contour"]) == 97
+        )
+    records = JSONRenderer()(doc).children[0].children
+    assert [r.layout_geometry for r in records] == [b.layout_geometry for b in leaves]
+    assert all(
+        len(chunk.layout_geometries) == 1 for chunk in ChunkRenderer()(doc).blocks
+    )
+    assert annotations(doc)["drawn"] == 2
+
+
+@pytest.mark.parametrize(
+    "mutation", ["contour", "provenance", "link", "binding", "region"]
+)
+@pytest.mark.parametrize("filtered", [False, True])
+def test_authoritative_contour_mutations_are_detected(
+    columns, temp_doc, mutation, filtered
+):
+    contour_columns(columns)
+    doc = PdfConverter(columns, config={"page_range": [0]}).build_document(
+        temp_doc.name
+    )
+    page = doc.pages[0]
+    leaf = source_blocks(page)[0]
+    if filtered:
+        page.structure.remove(leaf.id)
+        check_layout(doc, filter_reason="explicit test filtering")
+    geometry = leaf.layout_geometry
+    if mutation == "contour":
+        leaf.layout_geometry = replace(geometry, contour=geometry.contour[1:])
+    elif mutation == "provenance":
+        leaf.layout_geometry = replace(geometry, geometry_source="rectangle_fallback")
+    elif mutation == "link":
+        leaf.layout_geometry = replace(geometry, region_order=999)
+    elif mutation == "binding":
+        page.layout.sources = tuple(
+            replace(s, layout_geometry=None) for s in page.layout.sources
+        )
+    else:
+        layout = page.layout.alignment.layout
+        page.layout.alignment = replace(
+            page.layout.alignment, layout=replace(layout, regions=())
+        )
+    with pytest.raises(LayoutInvariantError):
+        check_layout(doc)
+
+
+def test_contour_bytes_count_towards_complete_guide_limit():
+    import math
+
+    result = engine([(22, "text", 0.9, (0, 0, 1000, 1000), 1)]).predict(
+        Image.new("RGB", (1000, 1000))
+    )
+    contour = tuple(
+        (
+            500 + 400 * math.cos(i * math.tau / 5000),
+            500 + 400 * math.sin(i * math.tau / 5000),
+        )
+        for i in range(5000)
+    )
+    result = replace(
+        result,
+        regions=(
+            replace(
+                result.regions[0], contour=contour, geometry_source="native_contour"
+            ),
+        ),
+    )
+    with pytest.raises(LayoutPromptLimitError):
+        given_layout(result, result.image_size)
+
+
+@pytest.mark.parametrize("target", ["sol_only", "v3_only"])
+def test_unmatched_geometry_remains_protected(columns, temp_doc, monkeypatch, target):
+    from doclayout.schema.geometry import LayoutGeometry
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_ALIGNMENT_POLICY", None)
+    doc = PdfConverter(columns, config={"page_range": [0]}).build_document(
+        temp_doc.name
+    )
+    page = doc.pages[0]
+    if target == "sol_only":
+        leaf = source_blocks(page)[0]
+        assert leaf.layout_geometry is None
+        leaf.layout_geometry = LayoutGeometry(
+            rectangle_contour(leaf.polygon.bbox), "rectangle_fallback", 1
+        )
+    else:
+        evidence = page.layout.alignment.layout
+        region = replace(evidence.regions[0], contour=((float("nan"), 0),))
+        page.layout.alignment = replace(
+            page.layout.alignment, layout=replace(evidence, regions=(region,))
+        )
+    with pytest.raises(LayoutInvariantError):
+        check_layout(doc)
+
+
 def engine(regions):
     """Fixtures use normalized rectangles; the injected engine returns page pixels."""
 
@@ -77,6 +243,10 @@ def engine(regions):
                         )
                     ),
                     order,
+                    convert_points(
+                        rectangle_contour(box), GUIDE_FRAME, image_frame(image.size)
+                    ),
+                    "rectangle_fallback",
                 )
                 for class_id, label, score, box, order in regions
             ),
@@ -260,7 +430,8 @@ def test_real_sdk_payload_keeps_full_image_and_schema(
     ],
 )
 @pytest.mark.parametrize("converter_cls", [PdfConverter, OCRConverter])
-def test_failed_layout_uses_sol(error, columns, temp_doc, converter_cls):
+def test_failed_layout_uses_sol(error, columns, temp_doc, converter_cls, monkeypatch):
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", True)
     columns["layout_service"].predict.side_effect = error("private provider payload")
     doc = converter_cls(columns, config={"page_range": [0]}).build_document(
         temp_doc.name
@@ -361,6 +532,7 @@ def test_absent_policy_keeps_sol_geometry_order_and_v3_guide(
 
 
 def test_absent_policy_uses_sol_when_v3_fails(model_dict, temp_doc, monkeypatch):
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", True)
     monkeypatch.setattr(settings, "DOCLAYOUT_ALIGNMENT_POLICY", None)
     model_dict["layout_service"].predict.side_effect = LayoutInferenceError(
         "unavailable"
@@ -374,7 +546,8 @@ def test_absent_policy_uses_sol_when_v3_fails(model_dict, temp_doc, monkeypatch)
     assert model_dict["extraction_service"].called
 
 
-def test_page_failure_does_not_disable_later_v3(doc_provider, page_result):
+def test_page_failure_does_not_disable_later_v3(doc_provider, page_result, monkeypatch):
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", True)
     healthy = engine([])
     calls = 0
 
@@ -546,6 +719,12 @@ def test_group_boxes_and_table_filter_are_explicit(model_dict, temp_doc):
     assert annotations(doc)["drawn"] == 3
     meta = ChunkRenderer()(doc).metadata["layout"][0]
     assert len(meta["groups"]) == 1
+    chunks = ChunkRenderer()(doc).blocks
+    assert len(chunks[0].layout_geometries) == 2
+    assert group.layout_geometry is None
+    assert set(chunks[0].layout_geometries) == {
+        str(leaf.id) for leaf in source_blocks(page)[:2]
+    }
     check_layout(doc)
     table = TableConverter(model_dict, config={"page_range": [0]}).build_document(
         temp_doc.name
@@ -615,6 +794,8 @@ def test_all_cli_paths_use_sol_on_layout_failure(
     from click.testing import CliRunner
 
     from doclayout.scripts import convert, convert_single
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", True)
 
     monkeypatch.setattr(convert, "create_model_dict", lambda: model_dict)
     monkeypatch.setattr(convert_single, "create_model_dict", lambda: model_dict)

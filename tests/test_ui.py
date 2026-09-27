@@ -112,12 +112,16 @@ def test_annotation_scaling_and_invalid_boxes():
     assert source.getpixel((20, 20)) == (255, 255, 255)
 
 
+@pytest.mark.parametrize("allow_fallback", [False, True])
 def test_gui_layout_failure_has_warning_and_sol_result(
-    temp_doc, model_dict, monkeypatch
+    temp_doc, model_dict, monkeypatch, allow_fallback
 ):
     from streamlit.testing.v1 import AppTest
 
     from doclayout.services.layout import LayoutInferenceError
+    from doclayout.settings import settings
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", allow_fallback)
 
     monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
     monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)
@@ -132,6 +136,11 @@ def test_gui_layout_failure_has_warning_and_sol_result(
     ).run()
     next(b for b in app.button if b.label == "Run DocLayout").click().run()
     assert not app.exception
+    if not allow_fallback:
+        assert any("Layout conversion failed" in error.value for error in app.error)
+        assert "result" not in app.session_state
+        model_dict["extraction_service"].assert_not_called()
+        return
     assert not app.error
     assert any("V3 unavailable" in warning.value for warning in app.warning)
     assert all("private" not in warning.value for warning in app.warning)
@@ -147,6 +156,8 @@ def test_gui_preparation_failure_falls_back_but_invalid_policy_stops(
 
     from doclayout.services.layout import LayoutArtifactError
     from doclayout.settings import settings
+
+    monkeypatch.setattr(settings, "DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK", True)
 
     monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
     monkeypatch.setattr("doclayout.scripts.common.parse_args", dict)

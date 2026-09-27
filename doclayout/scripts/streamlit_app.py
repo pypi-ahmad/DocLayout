@@ -123,6 +123,9 @@ if st.sidebar.button("Run DocLayout", type="primary", disabled=not valid):
             try:
                 ready = prepare_layout_model(models)
             except LAYOUT_RUNTIME_ERRORS as exc:
+                if not settings.DOCLAYOUT_LAYOUT_ALLOW_SOL_FALLBACK:
+                    layout_status.update(label="PP-DocLayoutV3 failed", state="error")
+                    raise
                 layout_status.update(
                     label="V3 unavailable · Sol fallback", state="error"
                 )

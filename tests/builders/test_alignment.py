@@ -55,7 +55,17 @@ def sol(box=BOX, kind="Text", html="<p>Unique words</p>") -> ExtractedBlock:
 
 
 def region(box=BOX, order=1, class_id=22, label="text", score=0.9) -> LayoutRegion:
-    return LayoutRegion(class_id, label, score, tuple(box), order)
+    from doclayout.schema.geometry import rectangle_contour
+
+    return LayoutRegion(
+        class_id,
+        label,
+        score,
+        tuple(box),
+        order,
+        rectangle_contour(box),
+        "rectangle_fallback",
+    )
 
 
 def layout(*regions: LayoutRegion, size=(1000, 1000)) -> LayoutResult:
