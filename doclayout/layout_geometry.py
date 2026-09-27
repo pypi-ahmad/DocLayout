@@ -12,7 +12,15 @@ import numpy as np
 
 
 def custom_vertices(polygon, max_allowed_dist):
-    """Apply the reference's concavity and sharp-corner heuristics unchanged."""
+    """Apply the reference's concavity and sharp-corner heuristics unchanged.
+
+    Args:
+        polygon (Sequence[Sequence[float]]): Ordered contour vertices in one frame.
+        max_allowed_dist (float): Reference spacing limit for retained vertices.
+
+    Returns:
+        numpy.ndarray: Simplified vertices in the input coordinate frame.
+    """
     poly = np.array(polygon)
     n = len(poly)
     max_allowed_dist *= 0.3
@@ -95,6 +103,16 @@ def mask_contour(mask, raw_box, image_size, max_box_w):
     The reference rounds the box before cropping, clips only the grid slice,
     resizes to the *raw* box, then offsets by its raw origin. Its surprising
     max_box_w expression (x_max - y_min) is deliberately supplied unchanged.
+
+    Args:
+        mask (numpy.ndarray): Binary page-grid segmentation mask.
+        raw_box (Sequence[float]): Detection box in page-image pixels.
+        image_size (tuple[int, int]): Rendered page width and height.
+        max_box_w (float): Reference contour spacing input for this page.
+
+    Returns:
+        tuple[list[list[float]] | None, str | None]: Pixel contour and no error,
+        or no contour and an explicit degenerate/malformed fallback reason.
     """
     import cv2
 
@@ -139,7 +157,18 @@ def mask_contour(mask, raw_box, image_size, max_box_w):
 
 
 def mask_from_rle(counts, size=(200, 200)):
-    """Decode zero-first row-major evidence without accepting malformed runs."""
+    """Decode zero-first row-major evidence without accepting malformed runs.
+
+    Args:
+        counts (Sequence[int]): Alternating zero/one run lengths, starting at zero.
+        size (tuple[int, int]): Mask height and width.
+
+    Returns:
+        numpy.ndarray: Binary mask in row-major order.
+
+    Raises:
+        ValueError: Dimensions or run lengths do not describe exactly one mask.
+    """
     if (
         len(size) != 2
         or any(type(v) is not int or v <= 0 for v in size)
@@ -152,7 +181,23 @@ def mask_from_rle(counts, size=(200, 200)):
 
 
 def transform_points(points, source_bounds, target_bounds):
-    """Map top-left coordinates between frames, including nonzero origins."""
+    """Map top-left coordinates between frames, including nonzero origins.
+
+    Args:
+        points (Sequence[Sequence[float]]): Source-frame ``[x, y]`` pairs.
+        source_bounds (Sequence[float]): Source ``[left, top, right, bottom]``.
+        target_bounds (Sequence[float]): Target bounds in the same order.
+
+    Returns:
+        list[list[float]]: Mapped points; non-square frames scale independently.
+
+    Raises:
+        ValueError: Either coordinate frame has no positive area.
+
+    Example:
+        ``transform_points([[100, 50]], (0, 0, 200, 100), (0, 0, 1000, 1000))``
+        returns ``[[500.0, 500.0]]``.
+    """
     sx0, sy0, sx1, sy1 = source_bounds
     tx0, ty0, tx1, ty1 = target_bounds
     if sx1 <= sx0 or sy1 <= sy0 or tx1 <= tx0 or ty1 <= ty0:
@@ -167,7 +212,14 @@ def transform_points(points, source_bounds, target_bounds):
 
 
 def polygon_parts(geometry):
-    """Retain every polygon component; omit closing duplicate vertices."""
+    """Retain every polygon component; omit closing duplicate vertices.
+
+    Args:
+        geometry (shapely.geometry.base.BaseGeometry): Polygon or collection.
+
+    Returns:
+        list[list[list[float]]]: Exterior vertex lists of polygon parts.
+    """
     if geometry.is_empty:
         return []
     if geometry.geom_type == "Polygon":
@@ -178,7 +230,16 @@ def polygon_parts(geometry):
 
 
 def region_geometry(region, image_size):
-    """Return page-clipped contour or V3 AABB, with explicit fallback provenance."""
+    """Resolve a V3 region to a page-clipped contour or its AABB fallback.
+
+    Args:
+        region (LayoutRegion): Region with contour, bounds, and decode status.
+        image_size (tuple[int, int]): Rendered page width and height in pixels.
+
+    Returns:
+        tuple[BaseGeometry, str, str | None]: Geometry, ``v3_contour`` or
+        ``v3_bbox`` provenance, and an optional contour-fallback reason.
+    """
     from shapely.errors import GEOSException
     from shapely.geometry import Polygon, box
 
