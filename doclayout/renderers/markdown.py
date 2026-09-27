@@ -259,6 +259,8 @@ class MarkdownOutput(BaseModel):
 
 
 class MarkdownRenderer(HTMLRenderer):
+    """Convert rendered HTML to Markdown while retaining images and metadata."""
+
     page_separator: Annotated[
         str, "The separator to use between pages.", "Default is '-' * 48."
     ] = "-" * 48
@@ -291,6 +293,7 @@ class MarkdownRenderer(HTMLRenderer):
         )
 
     def __call__(self, document: Document) -> MarkdownOutput:
+        """Render a processed document into Markdown, images, and metadata."""
         document_output = document.render(self.block_config)
         full_html, images = self.extract_html(document, document_output)
         markdown = self.md_cls.convert(full_html)

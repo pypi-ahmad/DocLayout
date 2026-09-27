@@ -204,6 +204,7 @@ zero-based. Extra refinement is optional; OCR always runs through Sol.
 | [Usage](docs/usage.md) | Installation, GUI, CLI, Python, API, troubleshooting |
 | [Configuration](docs/configuration.md) | Settings, defaults, limits, environment, precedence |
 | [Development](docs/development.md) | Setup, tests, builds, extension and prompt-change practices |
+| [Python API reference](docs/python-api.md) | Conversion, layout, renderers, and saved-field entry points |
 | [Onboarding](docs/onboarding.md) | First offline checks and a source-code map |
 | [Tutorial](docs/tutorial.md) | Hands-on path from coordinates and tests to a bounded live check |
 | [Contributor runbook](CONTRIBUTING.md) | Change workflow, review checklist, and failure handling |

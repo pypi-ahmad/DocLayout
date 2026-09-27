@@ -35,9 +35,7 @@ def reformat_section_hierarchy(section_hierarchy):
 
 
 class JSONRenderer(BaseRenderer):
-    """
-    A renderer for JSON output.
-    """
+    """Render the processed block tree and metadata as structured JSON."""
 
     image_blocks: Annotated[
         Tuple[BlockTypes],
@@ -49,6 +47,18 @@ class JSONRenderer(BaseRenderer):
     ] = (BlockTypes.Page,)
 
     def extract_json(self, document: Document, block_output: BlockOutput):
+        """Convert one rendered block subtree to serializable JSON blocks.
+
+        Leaf blocks receive resolved HTML and images; group blocks retain
+        children. The polygon and bbox come from the final rendered structure.
+
+        Args:
+            document: Source document used to resolve images and child HTML.
+            block_output: Rendered block subtree.
+
+        Returns:
+            JSONBlockOutput for the supplied subtree.
+        """
         cls = get_block_class(block_output.id.block_type)
         if cls.__base__ == Block:
             html, images = self.extract_block_html(document, block_output)
@@ -82,6 +92,7 @@ class JSONRenderer(BaseRenderer):
             )
 
     def __call__(self, document: Document) -> JSONOutput:
+        """Render all pages and return a JSONOutput with shared metadata."""
         document_output = document.render(self.block_config)
         json_output = []
         for page_output in document_output.children:

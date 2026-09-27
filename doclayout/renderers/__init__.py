@@ -19,6 +19,13 @@ CONTENT_REF_RE = re.compile(r"<content-ref src='([^']*)'></content-ref>")
 
 
 class BaseRenderer:
+    """Shared rendering controls for images, page furniture, and metadata.
+
+    Args:
+        config: Optional mapping or Pydantic configuration applied to the
+            renderer. Header/footer flags also control final layout visibility.
+    """
+
     image_blocks: Annotated[
         Tuple[BlockTypes, ...], "The block types to consider as images."
     ] = (BlockTypes.Picture, BlockTypes.Figure, BlockTypes.Diagram)
@@ -51,6 +58,16 @@ class BaseRenderer:
         raise NotImplementedError
 
     def extract_image(self, document: Document, image_id, to_base64=False):
+        """Crop one image block, optionally encoding it for an HTML export.
+
+        Args:
+            document: Source document containing the image block.
+            image_id: Block ID to crop.
+            to_base64: Return an encoded string instead of a PIL image.
+
+        Returns:
+            Cropped PIL image or base64 string in the configured output format.
+        """
         image_block = document.get_block(image_id)
         cropped = image_block.get_image(
             document, highres=self.image_extraction_mode == "highres"
@@ -119,6 +136,15 @@ class BaseRenderer:
         return page_stats
 
     def generate_document_metadata(self, document: Document, document_output):
+        """Return usage, page statistics, and final layout provenance.
+
+        Args:
+            document: Processed source document.
+            document_output: Rendered block tree used for page statistics.
+
+        Returns:
+            Metadata dictionary shared by document renderers.
+        """
         from doclayout.usage import cost_summary
 
         metadata = {

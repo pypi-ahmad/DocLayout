@@ -1,7 +1,7 @@
 # Developer onboarding
 
 [Back to README](../README.md) · [Contributor runbook](../CONTRIBUTING.md) ·
-[Development reference](development.md)
+[Development reference](development.md) · [Python API](python-api.md)
 
 Start with the source map and offline exercises below. They need no API key,
 model download, or sample PDF.

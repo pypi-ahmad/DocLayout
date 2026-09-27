@@ -27,6 +27,7 @@ class ChunkOutput(BaseModel):
 
 
 def collect_images(block: JSONBlockOutput) -> dict[str, str]:
+    """Collect images attached to a JSON block and its descendants."""
     if not getattr(block, "children", None):
         return block.images or {}
     else:
@@ -37,6 +38,7 @@ def collect_images(block: JSONBlockOutput) -> dict[str, str]:
 
 
 def assemble_html_with_images(block: JSONBlockOutput, image_blocks: set[str]) -> str:
+    """Resolve child references and image placeholders in a JSON block."""
     # Operates only on the top-level/group block tree: leaf-type blocks are
     # already flattened into a single html string by extract_block_html (they
     # carry no children here), so this hits the no-parse branch for them and
@@ -67,6 +69,16 @@ def assemble_html_with_images(block: JSONBlockOutput, image_blocks: set[str]) ->
 def json_to_chunks(
     block: JSONBlockOutput, image_blocks: set[str], page_id: int = 0
 ) -> FlatBlockOutput | List[FlatBlockOutput]:
+    """Flatten a page or block to chunk records without changing its HTML.
+
+    Args:
+        block: JSON-rendered page or block.
+        image_blocks: Block-type names rendered with image placeholders.
+        page_id: Parent page ID when ``block`` is not itself a page.
+
+    Returns:
+        A list for a page, or one FlatBlockOutput for another block.
+    """
     if block.block_type == "Page":
         children = block.children
         page_id = int(block.id.split("/")[2])
@@ -87,7 +99,10 @@ def json_to_chunks(
 
 
 class ChunkRenderer(JSONRenderer):
+    """Render top-level page children as flat blocks with page bounds."""
+
     def __call__(self, document: Document) -> ChunkOutput:
+        """Return flattened chunks, page geometry, and shared metadata."""
         document_output = document.render(self.block_config)
         json_output = []
         for page_output in document_output.children:

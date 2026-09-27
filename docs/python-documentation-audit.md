@@ -1,9 +1,9 @@
 # Python documentation audit
 
-Audit date: 2026-09-27. Scope: the checked-out `doclayout/` Python package.
-This is a documentation audit, not a behavioral, security, or model-accuracy
-audit. The accompanying edit adds docstrings only to core public interfaces;
-it does not change runtime prompts, response schemas, or executable logic.
+Audit date: 2026-09-27. Scope: docstrings in the checked-out `doclayout/`
+Python package. Behavior, security, and model accuracy are outside this audit.
+The accompanying edit documents core public interfaces without changing
+runtime prompts, response schemas, or executable logic.
 
 ## Method and result
 
@@ -20,20 +20,26 @@ working tree before reconciling a newer remote branch:
 | Selected core-interface symbols with docstrings | 77 / 113 | 113 / 113 |
 
 After that reconciliation, the same inventory found 556 public symbols, 192
-with docstrings, and 364 without. The earlier table remains a dated comparison,
-not a claim that the merged checkout still has 557 counted symbols.
+with docstrings, and 364 without. Recounting the current checkout before this
+renderer-focused pass found 557 public symbols in 135 Python modules, 192 with
+docstrings. This pass moves the count to 201 documented and 356 undocumented
+out of 557. The earlier table is historical; inventory counts can change as
+source is reconciled. Neither count measures documentation quality.
 
-The focused set covers layout and geometry, page/document builders, the PDF
-converter, PDF/image providers, Sol service, file/GUI exports, output and
-filename helpers, security/configuration helpers, CLI entry points, and saved
-field extraction/store modules. It is a fixed audit slice, not a claim that
-all public APIs are now documented.
+The original focused set covers layout and geometry, page/document builders,
+the PDF converter, PDF/image providers, Sol service, file/GUI exports, output
+and filename helpers, security/configuration helpers, CLI entry points, and
+saved field extraction/store modules. Other public APIs remain undocumented.
 
-The package-wide count is deliberately mechanical. It includes simple
-accessors and Pydantic response-model classes, so 365 is not a prioritized
-to-do list. Model-response class docstrings are excluded from this edit:
+This pass documents nine more renderer interfaces. The
+[Python API reference](python-api.md) maps conversion, layout, renderer, and
+saved-field entry points. Internal methods may change.
+
+The package-wide inventory includes simple accessors and Pydantic
+response-model classes. Prioritize the remaining 356 by actual public use.
+Model-response class docstrings are excluded from this edit:
 their text would enter generated model request schemas. The largest remaining
-gaps are in schema/block models, renderers, and structure processors. A future
+gaps are in schema/block models and structure processors. A future
 pass should group them by actual public use and check schema stability before
 adding documentation.
 

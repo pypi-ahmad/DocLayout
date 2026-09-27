@@ -2,7 +2,8 @@
 
 [Back to README](../README.md) · [Onboarding](onboarding.md) ·
 [Contributor runbook](../CONTRIBUTING.md) · [Tutorial](tutorial.md) ·
-[Architecture](architecture.md) · [Configuration](configuration.md)
+[Architecture](architecture.md) · [Python API](python-api.md) ·
+[Configuration](configuration.md)
 
 Use this page for environment setup and verification commands. If you are new
 to the project, start with [onboarding](onboarding.md). The [tutorial](tutorial.md)
@@ -218,6 +219,7 @@ merging interfaces are retired; see [compatibility changes](../CHANGELOG.md#210-
 | Configuration | Defaults, limits, input mechanisms, precedence, supported controls |
 | Architecture | Data flow, responsibilities, state, prompt locations |
 | Development | Setup, checks, builds, extension and change practices |
+| Python API | Contributor-facing entry points, return shapes, and ownership boundaries |
 | Onboarding | First offline setup, source ownership and safe live-run boundary |
 | Tutorial | Hands-on exercises from geometry to evidence and validation |
 | Contributor runbook | Change workflow, review and failure handling |
