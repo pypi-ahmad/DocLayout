@@ -16,10 +16,9 @@ An ordinary package install does not include the development group; see
 WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 [Windows installation instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#windows).
 Installing Python dependencies alone may not provide those libraries. Document
-providers can download a font on first use. The V3 pipeline
-attempts to load pinned layout model weights, downloaded during first preparation
-unless already present. V3 can run on CPU; if layout remains unavailable, conversion
-uses Sol with explicit fallback provenance.
+providers can download a font on first use. At first preparation, V3 downloads
+its pinned weights unless they are already present. V3 can run on CPU. If layout
+remains unavailable, conversion uses Sol with explicit fallback provenance.
 
 ### Installing the application package
 

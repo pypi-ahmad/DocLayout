@@ -24,7 +24,7 @@ and local HTTP API provide other ways to convert documents.
 - Extract authorization fields from raw Markdown with Sol/medium, storing JSON
   and SQLite records. Classification is explicitly off by default. A separate
   persistent Extracted information page presents grouped summaries and service
-  tables, with a separate source view linking fields and PDF regions in both directions.
+  tables. Its source view links fields to PDF regions in both directions.
   See the [field extraction guide](docs/field-extraction.md).
 
 ## How DocLayout works
@@ -87,7 +87,7 @@ uv run doclayout input.pdf output --all
 The launcher opens http://localhost:8471 and stops an existing DocLayout listener
 on that port before starting. For another application, it asks for confirmation.
 Restarting resets the browser session but preserves saved results.
-It disables file watching; restart it after edits.
+The launcher disables file watching, so restart the app after edits.
 `doclayout_gui` also binds loopback and leaves existing listeners alone.
 The API requires a separate bearer token; see [security limits](docs/configuration.md#security-and-resource-limits).
 
@@ -120,9 +120,10 @@ wheel, use its local path, for example
 | `[full]` | Office/HTML/EPUB document-format converters |
 | `[gui,server,full]` | All of the above |
 
-The V3 integration downloads a pinned layout model on first
-conversion and supports CPU execution with exercised CUDA auto-detection. Sol
-still handles whole-page text conversion. See [layout setup](docs/configuration.md#local-layout-inference)
+At first preparation, DocLayout checks for the pinned V3 model and downloads it
+if missing. Auto mode tests CUDA execution when available and uses CPU if it
+fails. Sol still reads the whole page. See
+[layout setup](docs/configuration.md#local-layout-inference)
 and the [implementation and evidence record](docs/layout-v3-plan.md).
 Office/HTML/EPUB conversion
 also requires native WeasyPrint libraries; see [format prerequisites](docs/usage.md#installation).

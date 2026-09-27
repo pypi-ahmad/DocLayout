@@ -23,9 +23,9 @@ scope and limits of the current docstring pass.
 | GUI exports and state | `doclayout/ui/` | `tests/test_ui.py`, `tests/test_ui_browser.py` |
 | Saved field extraction | `doclayout/fields.py`, `field_store.py` | `tests/test_fields.py` |
 
-Treat the table as a route into the code, not a complete dependency map.
-Follow imports and test fixtures before editing. Conversion and saved-field
-workflows have different persistence and model-call boundaries.
+Use the table to find a starting point, then follow imports and test fixtures
+before editing. Conversion and saved-field workflows have different persistence
+and model-call boundaries.
 
 ## Environment
 

@@ -49,8 +49,8 @@ The [development guide](../docs/development.md#offline-checks) lists offline
 tests and the [live evaluation](../docs/development.md#live-evaluation) section
 has the explicit, billable fixture-test command.
 
-The original three-page sample covers selected reading-order, small-text, and
-header/footer rules. These cover only part of the benchmark. Preserve the
+The original three-page sample checks reading order, small text, and
+header/footer handling. It covers only part of the benchmark. Preserve the
 [fixture attribution](../tests/data/olmocr_bench/README.md) when redistributing them.
 See the [architecture guide](../docs/architecture.md) for the extraction path and
 the [configuration guide](../docs/configuration.md) for application settings.

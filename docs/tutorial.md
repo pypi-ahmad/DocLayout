@@ -12,8 +12,8 @@ does not establish model accuracy.
 Follow [onboarding](onboarding.md#first-15-minutes) to sync the project and run
 the focused field and contour tests. Record the current branch and any
 pre-existing edits before touching files. Read one test failure in full before
-changing implementation. The goal is to distinguish a source regression from
-a missing dependency or optional native library.
+changing implementation so you can distinguish a source regression from a
+missing dependency or optional native library.
 
 ## 2. Learn the coordinate frames
 
