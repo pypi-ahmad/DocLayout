@@ -2,6 +2,27 @@
 
 [Back to README](../README.md) · [Architecture](architecture.md) · [Configuration](configuration.md)
 
+New contributors can start with [onboarding](onboarding.md), then work through
+the [offline tutorial](tutorial.md). Use the [contributor runbook](../CONTRIBUTING.md)
+for the local change checklist. The [Python documentation audit](python-documentation-audit.md)
+records the scope and limits of the current docstring pass.
+
+## Source ownership
+
+| Change | Primary source | First regression suite |
+| --- | --- | --- |
+| Page rendering and bounds | `doclayout/providers/` | `tests/providers/` |
+| ONNX decode, matching, fallback | `doclayout/layout.py`, `layout_geometry.py` | `tests/test_layout*.py` |
+| Whole-page request and block assembly | `doclayout/builders/document.py`, `services/openai.py` | `tests/test_layout_prior.py` |
+| Structure and content processing | `doclayout/builders/structure.py`, `processors/` | `tests/processors/` |
+| CLI and saved exports | `doclayout/scripts/convert.py`, `exports.py` | `tests/test_cli_exports.py` |
+| GUI exports and state | `doclayout/ui/` | `tests/test_ui.py`, `tests/test_ui_browser.py` |
+| Saved field extraction | `doclayout/fields.py`, `field_store.py` | `tests/test_fields.py` |
+
+Treat the table as a route into the code, not a complete dependency map.
+Follow imports and test fixtures before editing. Conversion and saved-field
+workflows have different persistence and model-call boundaries.
+
 ## Environment
 
 Use PowerShell and uv from the repository root. The package declares Python
