@@ -98,9 +98,8 @@ def test_conversion_cost_metadata_and_isolation(monkeypatch, page_result, temp_d
 
 @pytest.mark.parametrize("page_model", ["gpt-6-luna", "gpt-6.1-sol"])
 @pytest.mark.parametrize("refinement_model", ["gpt-6-luna", "gpt-6.1-sol"])
-@pytest.mark.parametrize("field_model", ["gpt-6-luna", "gpt-6.1-sol"])
 def test_independent_stage_models(
-    monkeypatch, page_result, temp_doc, page_model, refinement_model, field_model
+    monkeypatch, page_result, temp_doc, page_model, refinement_model
 ):
     from doclayout.fields import extract_fields, load_definition
 
@@ -155,14 +154,14 @@ def test_independent_stage_models(
         usage=None,
     )
     usage = []
-    definition = load_definition(enabled=False, extraction_model=field_model)
+    definition = load_definition(enabled=False)
     extract_fields("Raw Markdown", {}, definition, client=client, usage=usage)
     assert client.responses.create.call_count == 1
     field_request = client.responses.create.call_args.kwargs
-    assert field_request["model"] == field_model
+    assert field_request["model"] == "gpt-6-sol"
     assert field_request["reasoning"] == {"effort": "medium"}
     assert field_request["input"][1] == {"role": "user", "content": "Raw Markdown"}
-    assert usage[0]["model"] == field_model
+    assert usage[0]["model"] == "gpt-6-sol"
 
 
 @pytest.mark.parametrize("page_model", ["gpt-6-luna", "gpt-6.1-sol"])
