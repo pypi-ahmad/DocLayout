@@ -74,8 +74,9 @@ successful model download alone.
 The GUI batch workflow snapshots raw Markdown before export naming changes.
 [`extract_fields`](../doclayout/fields.py) uses that Markdown for an optional
 classification request, one logical field request, and one optional quote-only
-retry when `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`. The switch defaults to
-false. Local quote checks and block mapping follow.
+retry when the quote-retry switch is on. The workbench checkbox **Retry evidence
+quotes** and `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` turn that switch on. It
+defaults to false. Local quote checks and block mapping follow.
 [`FieldStore`](../doclayout/field_store.py) saves manifests,
 runs, and record JSON. A field-only retry reads the saved Markdown and chunks;
 it does not invoke page conversion.

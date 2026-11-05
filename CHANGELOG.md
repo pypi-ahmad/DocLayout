@@ -12,6 +12,9 @@ GitHub hosts release assets; PyPI publication is deferred.
   model and medium effort and may replace a missing, mismatched, or ambiguous
   quote. Values stay unchanged. A failed extra call keeps the first grounded
   result. A false or missing switch keeps the existing definition fingerprint.
+- Add a **Retry evidence quotes** checkbox to the workbench. It controls the
+  optional evidence-quote retry for **Run DocLayout** and **Extract again**, and
+  starts off unless `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`.
 
 ### Documentation
 

@@ -101,19 +101,19 @@ It excludes the uploaded source and chat. Annotations are raster copies with
 estimated source contours/rectangles. They contain no searchable PDF text layer.
 
 Switching tabs and downloading files reuse the result without new OCR calls.
-Changing the upload, page range, refinement, or header/footer setting clears
-session results and chat. Saved artifacts remain on disk. Matching documents,
+Changing the upload, page range, refinement, header/footer, or evidence-retry
+setting clears session results and chat. Saved artifacts remain on disk. Matching documents,
 options, and definitions reuse saved runs. In Extracted information, **More actions →
 Extract again** requests new extraction from saved Markdown. **Download data (JSON)**
 exports the saved record without changing it. Debug shows conversion metadata and raw output.
 
-To allow one quote-only retry inside that extraction, set
-`DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` in the launching process and restart.
-The default `false` makes no second call. The retry may replace a failed evidence
-quote and leaves the extracted value unchanged. It is stored on the same run.
-**Extract again** remains the control that starts a new full extraction from saved
-Markdown. See [configuration](configuration.md#downstream-field-workflow) for the
-accepted values and the failure issue.
+Turn on **Retry evidence quotes** in the sidebar before **Run DocLayout** or
+**Extract again**. The box starts off unless `DOCLAYOUT_GROUNDING_RETRY_ENABLED`
+is exactly `true` at launch. The retry may replace a failed evidence quote and
+leaves the extracted value unchanged. It is stored on the same run. **Extract
+again** still starts a new full extraction from saved Markdown and uses the
+checkbox as it stands. See
+[configuration](configuration.md#downstream-field-workflow) for the failure issue.
 
 The result caption shows stored device/providers, fallback stages, retained and
 eligible regions, initial matched/Sol-only/V3-only counts and reasons, and final

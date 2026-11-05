@@ -49,9 +49,11 @@ The directory `doclayout/prompts/fields/` is separate from conversion prompts:
 
 `gpt-6-sol`, medium reasoning, receives the complete raw Markdown and strict schema
 in one logical Responses API call by default. No PDFs, images, or chunk JSON are
-supplied to the field model. Setting `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` may
-add one quote-only call that resends the same raw Markdown and still receives no
-PDFs, images, or chunk JSON. The switch defaults to false. Definitions are
+supplied to the field model. The sidebar checkbox **Retry evidence quotes**, or
+`DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`, may add one quote-only call that
+resends the same raw Markdown and still receives no PDFs, images, or chunk JSON.
+The switch defaults to false. The checkbox controls **Run DocLayout** and
+**Extract again**. Definitions are
 snapshotted and hashed per run; edits affect the next explicit run, not historical
 records. Business fields are not duplicated in Python or expanded into database
 columns.

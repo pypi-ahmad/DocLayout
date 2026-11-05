@@ -5,9 +5,10 @@
 ## Data flow
 
 The v3.1.0 pipeline (`sol-layout-v3/v4`) attempts PP-DocLayoutV3 on each rendered page,
-then sends the same whole image to the selected page model with a compact `given_layout` prior.
-The GUI chooses `gpt-6-luna` or `gpt-6.1-sol` for that call and defaults to Luna.
-CLI and API calls use `gpt-6.1-sol` when no model is set.
+then sends the same whole image to the page model with a compact `given_layout` prior.
+When `page_model` is omitted, page reading and extra refinement use `gpt-6.1-sol`.
+The workbench has no model dropdown. Accepted page models are `gpt-6-luna` and
+`gpt-6.1-sol`.
 Validated model blocks are assigned one-to-one to qualifying V3 geometry before
 existing processors run. If V3 fails, the page model receives the image without the prior.
 See the [layout integration record](layout-v3-plan.md) for source locations,
@@ -26,10 +27,10 @@ The workflow has excess whitespace on the right. In the lifecycle viewer,
 the Export control is partly clipped at 1440 px despite passing automated
 containment checks. The diagram remains readable.
 
-- [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only field extraction with the selected model, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Luna or Sol reading, contour matching, and exports.
+- [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only `gpt-6-sol` field extraction, optional Luna classification, local persistence, and review.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page model reading, contour matching, and exports.
 - [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and an independent approval request.
-- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed the selected page model; validated blocks feed local exports and document chat.
+- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed the page model; validated blocks feed local exports and document chat.
 - [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through the page model; a page-model request or schema failure terminates conversion.
 
 
@@ -163,10 +164,9 @@ these checks.
 Only the GUI batch workflow automatically invokes business-field extraction.
 CLI/library conversion and HTTP conversion do not create field records. The batch
 layer snapshots raw Markdown before export image renaming and passes that text to
-the selected field model at medium effort. The GUI defaults page reading, extra
-refinement, and field extraction to `gpt-6-luna`. CLI, API, and a definition loaded
-without an explicit field model use `gpt-6.1-sol`. Classification remains
-`gpt-6-luna` at medium effort when enabled.
+`gpt-6-sol` at medium effort. Page reading and extra refinement use `gpt-6.1-sol`
+when no model is set. Classification remains `gpt-6-luna` at medium effort when
+enabled.
 Images and chunks are not sent to either downstream model stage.
 
 Classification is disabled by default. When enabled with category definitions and
@@ -176,10 +176,13 @@ reason, and at most one exact quote. Assignment requires score >= 0.75, reason
 unknown, ambiguous, unsupported, or low-score results fall out with local reasons.
 
 One field request extracts all fields and distinct authorization requests.
-`DOCLAYOUT_GROUNDING_RETRY_ENABLED` defaults to `false` and then adds no second call.
-Set to `true`, `extract_fields` may make one more call with the same snapshotted
-model and medium effort. That call may replace a quote that misses the Markdown,
-maps to no single block, or was omitted for a populated field. Extracted values
+The sidebar checkbox **Retry evidence quotes** sets the quote-retry switch for
+**Run DocLayout** and **Extract again**. It starts off unless
+`DOCLAYOUT_GROUNDING_RETRY_ENABLED` is exactly `true` at launch. An off switch
+adds no second call. When the switch is on, `extract_fields` may make one more
+call with the same snapshotted model and medium effort. That call may replace a
+quote that misses the Markdown, maps to no single block, or was omitted for a
+populated field. Extracted values
 stay as first returned. If the extra call fails, the first grounded result remains
 and the run records `Evidence retry failed; first grounded result retained.`
 A true setting appends `grounding-retry-v1` to the definition fingerprint.

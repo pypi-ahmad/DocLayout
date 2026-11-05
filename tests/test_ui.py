@@ -41,6 +41,45 @@ def test_sidebar_navigation_buttons(tmp_path, monkeypatch, model_dict):
     assert app.sidebar.button[0].proto.type == "primary"
 
 
+def test_quote_retry_checkbox_reaches_extraction(
+    temp_doc, model_dict, extraction_service, monkeypatch, tmp_path
+):
+    from streamlit.testing.v1 import AppTest
+
+    fields = Mock(
+        return_value={
+            "status": "success",
+            "records": [],
+            "document_issues": [],
+            "classification": {"status": "disabled"},
+        }
+    )
+    monkeypatch.setattr("doclayout.ui.batch.extract_fields", fields)
+    monkeypatch.setattr("doclayout.scripts.common.load_models", lambda: model_dict)
+    monkeypatch.setattr("doclayout.settings.settings.OUTPUT_DIR", str(tmp_path))
+    app = AppTest.from_file(
+        "doclayout/scripts/streamlit_app.py", default_timeout=20
+    ).run()
+    app.sidebar.checkbox(key="grounding_retry").check().run()
+    app.file_uploader[0].set_value(
+        [("source.pdf", Path(temp_doc.name).read_bytes(), "application/pdf")]
+    ).run()
+    next(b for b in app.button if b.label == "Run DocLayout").click().run()
+    assert not app.exception
+    assert fields.call_count == 1
+    assert fields.call_args.args[2].grounding_retry is True
+    assert extraction_service.call_count >= 1
+    review = AppTest.from_file(
+        "doclayout/scripts/app_pages/review.py", default_timeout=20
+    )
+    review.session_state["grounding_retry"] = False
+    review.run()
+    next(b for b in review.button if b.label == "Extract again").click().run()
+    assert not review.exception and not review.error
+    assert fields.call_count == 2
+    assert fields.call_args.args[2].grounding_retry is False
+
+
 def test_single_extraction_all_exports(temp_doc, model_dict, extraction_service):
     upload = prepare_upload(Path(temp_doc.name).read_bytes(), "source.pdf")
     assert upload.count == 2

@@ -34,9 +34,11 @@ missing, mismatched, or ambiguous evidence quote. Extracted values stay unchange
 The default `false` makes no extra call. Any other value raises `ValueError` with
 the message `DOCLAYOUT_GROUNDING_RETRY_ENABLED must be true or false.` A true
 setting appends `grounding-retry-v1` to the definition fingerprint, so those runs
-do not reuse a one-call snapshot. Set the variable before launch and restart after
-a change. `load_definition` snapshots the flag, and the workbench has no control
-for it. If the extra call fails, the run keeps the first grounded result and adds
+do not reuse a one-call snapshot. The sidebar checkbox **Retry evidence quotes**
+sets the switch for **Run DocLayout** and **Extract again**. It starts off unless
+this variable is exactly `true` at launch. A caller that omits the choice still
+reads the variable. If the extra call fails, the run keeps the first grounded
+result and adds
 the document issue `Evidence retry failed; first grounded result retained.`
 
 Artifacts live under `OUTPUT_DIR/field_extraction/`, normally

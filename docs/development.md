@@ -83,8 +83,9 @@ Browser tests run Streamlit with mocked extraction. They cover clipboard downloa
 multi-file all-page processing, saved Extracted information, two-way block highlighting,
 summary navigation and missing-value toggling without repeated model calls.
 `tests/test_field_summary.py` covers readable labels, preserved values, partial records,
-request selection, and unsuccessful runs. Field tests cover the selected-model
-extraction contract, the default-off quote retry, classification routing, quote
+request selection, and unsuccessful runs. Field tests cover the `gpt-6-sol`
+extraction contract, the default-off quote retry, the **Retry evidence quotes**
+checkbox, classification routing, quote
 grounding, SQLite exports, cache reuse, and explicit extraction retries.
 `tests/test_launcher.py` checks port cleanup using mocked listeners and processes;
 it does not stop a real application. Sidebar tests exercise both navigation buttons.
