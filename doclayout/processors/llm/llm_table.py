@@ -41,7 +41,7 @@ class LLMTableProcessor(BaseLLMComplexBlockProcessor):
     table_rewriting_prompt: Annotated[
         str,
         "The prompt to use for rewriting text.",
-        "Default is a string containing the GPT-6 Sol rewriting prompt.",
+        "Default is a string containing the GPT-6.1 Sol rewriting prompt.",
     ] = """You are a text correction expert specializing in accurately reproducing text from images.
 You will receive an image and an html representation of the table in the image.
 Your task is to correct any errors in the html representation.  The html representation should be as faithful to the original table image as possible.  The table image may be rotated, but ensure the html representation is not rotated.  Make sure to include HTML for the full table, including the opening and closing table tags.

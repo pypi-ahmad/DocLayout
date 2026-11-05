@@ -18,7 +18,7 @@ def test_api_path(api, temp_doc):
     response = api.post("/doclayout", json={"filepath": temp_doc.name})
     assert response.status_code == 200
     assert response.json()["success"] is True
-    assert response.json()["metadata"]["extraction"]["model"] == "gpt-6-sol"
+    assert response.json()["metadata"]["extraction"]["model"] == "gpt-6.1-sol"
 
 
 def test_api_rejects_removed_config(api, temp_doc):

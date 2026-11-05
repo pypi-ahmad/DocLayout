@@ -41,7 +41,7 @@ class BaseLLMProcessor(BaseProcessor):
 
     max_concurrency: Annotated[
         int,
-        "The maximum number of concurrent requests to make to the GPT-6 Sol model.",
+        "The maximum number of concurrent requests to make to the GPT-6.1 Sol model.",
     ] = 3
     image_expansion_ratio: Annotated[
         float,

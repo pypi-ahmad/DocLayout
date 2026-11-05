@@ -21,6 +21,7 @@ from doclayout.schema.layout import (
 )
 from doclayout.schema.polygon import PolygonBox
 from doclayout.schema.registry import get_block_class
+from doclayout.services.openai import OpenAIService
 
 
 class DocumentBuilder(BaseBuilder):
@@ -37,7 +38,14 @@ class DocumentBuilder(BaseBuilder):
         engine = layout_engine or layout.get_layout_engine()
         audit = LayoutAudit(
             manifest=layout.pipeline_manifest(
-                {"highres_image_dpi": self.highres_image_dpi}
+                {
+                    "highres_image_dpi": self.highres_image_dpi,
+                    "page_model": (
+                        extraction_service.model
+                        if isinstance(extraction_service, OpenAIService)
+                        else "gpt-6.1-sol"
+                    ),
+                }
             )
         )
 

@@ -749,7 +749,7 @@ def test_initial_final_and_annotation_counts_are_distinct(build):
     result = annotations(document)
     assert result["page_counts"][0] == {"contours": 1, "rectangles": 1, "skipped": 0}
     summary = layout.layout_summary({"layout": metadata})
-    assert "initial eligible=1, matched=1, Sol-only=1, V3-only=0" in summary
+    assert "initial eligible=1, matched=1, model-only=1, V3-only=0" in summary
     assert "source footprints:" in summary
     for image in result["pages"].values():
         image.close()

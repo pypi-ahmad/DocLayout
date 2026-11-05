@@ -53,7 +53,7 @@ class LLMTableMergeProcessor(BaseLLMComplexBlockProcessor):
     table_merge_prompt: Annotated[
         str,
         "The prompt to use for rewriting text.",
-        "Default is a string containing the GPT-6 Sol rewriting prompt.",
+        "Default is a string containing the GPT-6.1 Sol rewriting prompt.",
     ] = """You're a text correction expert specializing in accurately reproducing tables from PDFs.
 You'll receive two images of tables from successive pages of a PDF.  Table 1 is from the first page, and Table 2 is from the second page.  Both tables may actually be part of the same larger table. Your job is to decide if Table 2 should be merged with Table 1, and how they should be joined.  The should only be merged if they're part of the same larger table, and Table 2 cannot be interpreted without merging.
 

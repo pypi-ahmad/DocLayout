@@ -13,7 +13,10 @@ from doclayout.ui.documents import prepare_upload, run_document
 from doclayout.usage import cost_summary, response_usage
 
 
-@pytest.mark.parametrize("model,expected", [("gpt-6-sol", 14.7), ("gpt-6-luna", 0.735)])
+@pytest.mark.parametrize(
+    "model,expected",
+    [("gpt-6.1-sol", 14.6), ("gpt-6-sol", 14.7), ("gpt-6-luna", 0.735)],
+)
 def test_rates_without_double_counting_cache(model, expected):
     entry = response_usage(
         {
@@ -33,8 +36,8 @@ def test_rates_without_double_counting_cache(model, expected):
 
 
 def test_unknown_usage_is_partial_not_free():
-    valid = response_usage({"input_tokens": 100, "output_tokens": 20}, "gpt-6-sol")
-    unknown = response_usage(None, "gpt-6-sol")
+    valid = response_usage({"input_tokens": 100, "output_tokens": 20}, "gpt-6.1-sol")
+    unknown = response_usage(None, "gpt-6.1-sol")
     summary = cost_summary([valid, unknown])
     assert summary["estimated_cost_usd"] == pytest.approx(0.0004)
     assert not summary["complete"]
@@ -43,14 +46,14 @@ def test_unknown_usage_is_partial_not_free():
 
 def test_invalid_counts_and_unpriced_models():
     for usage, model in [
-        ({"input_tokens": True, "output_tokens": 1}, "gpt-6-sol"),
+        ({"input_tokens": True, "output_tokens": 1}, "gpt-6.1-sol"),
         (
             {
                 "input_tokens": 1,
                 "output_tokens": 1,
                 "input_tokens_details": {"cached_tokens": 2},
             },
-            "gpt-6-sol",
+            "gpt-6.1-sol",
         ),
         ({"input_tokens": 1, "output_tokens": 1}, "unknown-model"),
     ]:
@@ -85,12 +88,100 @@ def test_conversion_cost_metadata_and_isolation(monkeypatch, page_result, temp_d
     second = PdfConverter({"extraction_service": service})
     output = first(temp_doc.name)
     assert output.metadata["cost"]["requests"] == 2
-    assert output.metadata["cost"]["estimated_cost_usd"] == pytest.approx(0.000712)
+    assert output.metadata["cost"]["estimated_cost_usd"] == pytest.approx(0.000706)
     assert output.metadata["cost"]["complete"]
     assert len(first.extraction_service.usage) == 2
     assert second.extraction_service.usage == service.usage == []
     # Reusing the converter starts a new run rather than duplicating prior costs.
     assert first(temp_doc.name).metadata["cost"]["requests"] == 2
+
+
+@pytest.mark.parametrize("page_model", ["gpt-6-luna", "gpt-6.1-sol"])
+@pytest.mark.parametrize("refinement_model", ["gpt-6-luna", "gpt-6.1-sol"])
+@pytest.mark.parametrize("field_model", ["gpt-6-luna", "gpt-6.1-sol"])
+def test_independent_stage_models(
+    monkeypatch, page_result, temp_doc, page_model, refinement_model, field_model
+):
+    from doclayout.fields import extract_fields, load_definition
+
+    service, client, _ = mock_service(monkeypatch, page_result)
+    converter = PdfConverter(
+        {"extraction_service": service},
+        processor_list=[],
+        config={
+            "page_model": page_model,
+            "refinement_model": refinement_model,
+            "use_llm": True,
+        },
+    )
+    refinement_service = converter.llm_service
+    assert isinstance(refinement_service, OpenAIService)
+    assert isinstance(converter.extraction_service, OpenAIService)
+    converter.processor_list = [
+        Mock(
+            side_effect=lambda document: refinement_service(
+                "refinement",
+                document.pages[0].highres_image,
+                document.pages[0],
+                ExtractedPage,
+            )
+        )
+    ]
+    output = converter(temp_doc.name)
+    requests = client.responses.parse.call_args_list
+    assert [request.kwargs["model"] for request in requests] == [
+        page_model,
+        page_model,
+        refinement_model,
+    ]
+    assert all(
+        request.kwargs["reasoning"] == {"effort": "medium"} for request in requests
+    )
+    assert output.metadata["extraction"]["model"] == page_model
+    assert output.metadata["refinement"] == {"enabled": True, "model": refinement_model}
+    per_request = {"gpt-6.1-sol": 0.000353, "gpt-6-luna": 0.0000178}
+    assert output.metadata["cost"]["estimated_cost_usd"] == pytest.approx(
+        2 * per_request[page_model] + per_request[refinement_model]
+    )
+    assert refinement_service.usage is converter.extraction_service.usage
+    assert service.model == "gpt-6.1-sol" and service.usage == []
+    isolated = PdfConverter({"extraction_service": service})
+    assert isinstance(isolated.extraction_service, OpenAIService)
+    assert isolated.extraction_service.usage == []
+    client.responses.create.return_value = SimpleNamespace(
+        status="completed",
+        output=[],
+        output_text='{"records":[],"document_issues":[]}',
+        usage=None,
+    )
+    usage = []
+    definition = load_definition(enabled=False, extraction_model=field_model)
+    extract_fields("Raw Markdown", {}, definition, client=client, usage=usage)
+    assert client.responses.create.call_count == 1
+    field_request = client.responses.create.call_args.kwargs
+    assert field_request["model"] == field_model
+    assert field_request["reasoning"] == {"effort": "medium"}
+    assert field_request["input"][1] == {"role": "user", "content": "Raw Markdown"}
+    assert usage[0]["model"] == field_model
+
+
+@pytest.mark.parametrize("page_model", ["gpt-6-luna", "gpt-6.1-sol"])
+def test_disabled_refinement_makes_only_page_calls(
+    monkeypatch, page_result, temp_doc, page_model
+):
+    service, client, _ = mock_service(monkeypatch, page_result)
+    converter = PdfConverter(
+        {"extraction_service": service},
+        config={"page_model": page_model, "refinement_model": "gpt-6-luna"},
+    )
+    assert converter.llm_service is None
+    output = converter(temp_doc.name)
+    assert client.responses.parse.call_count == 2
+    assert all(
+        call.kwargs["model"] == page_model
+        for call in client.responses.parse.call_args_list
+    )
+    assert output.metadata["refinement"] == {"enabled": False, "model": None}
 
 
 def test_failed_run_retains_reported_cost(monkeypatch, page_result, temp_doc):
@@ -102,7 +193,7 @@ def test_failed_run_retains_reported_cost(monkeypatch, page_result, temp_doc):
         run_document(
             upload, {"page_range": "0"}, {"extraction_service": service}, ledger
         )
-    assert cost_summary(ledger)["estimated_cost_usd"] == pytest.approx(0.000356)
+    assert cost_summary(ledger)["estimated_cost_usd"] == pytest.approx(0.000353)
     assert cost_summary(ledger)["complete"]
 
 
@@ -114,7 +205,8 @@ def test_transport_failure_marks_unknown_request(monkeypatch, page_result):
     assert cost_summary(service.usage)["unknown_requests"] == 1
 
 
-def test_cost_panel_retains_total_across_reruns():
+@pytest.mark.parametrize("historical", [False, True])
+def test_cost_panel_retains_total_across_reruns(historical):
     from streamlit.testing.v1 import AppTest
 
     app = AppTest.from_string("""
@@ -122,13 +214,33 @@ import streamlit as st
 from doclayout.ui.costs import show_costs
 from doclayout.usage import response_usage
 entries = st.session_state.setdefault("usage", [
-    response_usage({"input_tokens": 1000000, "output_tokens": 0}, "gpt-6-sol"),
+    response_usage({"input_tokens": 1000000, "output_tokens": 0}, "gpt-6.1-sol"),
     response_usage({"input_tokens": 0, "output_tokens": 1000000}, "gpt-6-luna"),
 ])
 st.button("Rerun")
 show_costs(st.sidebar.empty(), entries)
-""").run()
+""")
+    if historical:
+        app.session_state["usage"] = [
+            response_usage(
+                {"input_tokens": 1000000, "output_tokens": 0}, "gpt-6.1-sol"
+            ),
+            response_usage({"input_tokens": 0, "output_tokens": 1000000}, "gpt-6-luna"),
+            response_usage(
+                {
+                    "input_tokens": 1000000,
+                    "output_tokens": 0,
+                    "input_tokens_details": {"cached_tokens": 1000000},
+                },
+                "gpt-6-sol",
+            ),
+        ]
+    app.run()
     assert not app.exception
-    assert app.metric[0].value == "$2.500000"
+    expected = "$2.700000" if historical else "$2.500000"
+    assert app.metric[0].value == expected
+    labels = [element.value for element in app.markdown]
+    assert "GPT-6.1 Sol: $2.000000" in labels
+    assert ("GPT-6 Sol (historical): $0.200000" in labels) == historical
     app.button[0].click().run()
-    assert app.metric[0].value == "$2.500000"
+    assert app.metric[0].value == expected

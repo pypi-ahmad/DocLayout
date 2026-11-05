@@ -161,7 +161,7 @@ def test_actual_responses_payload_preserves_whole_image_and_contract(
         _, _, image = build_page([region([20, 10, 180, 30])], [], service=service)
         client.responses.parse.assert_called_once()
         request = client.responses.parse.call_args.kwargs
-        assert request["model"] == "gpt-6-sol"
+        assert request["model"] == "gpt-6.1-sol"
         assert request["reasoning"] == {"effort": "medium"}
         assert request["store"] is False and request["text_format"] is ExtractedPage
         content = request["input"][1]["content"]

@@ -1,4 +1,4 @@
-"""Run a bounded, billable GPT-6 Sol evaluation on local PDFs."""
+"""Run a bounded, billable GPT-6.1 Sol evaluation on local PDFs."""
 
 import argparse
 import json
@@ -11,6 +11,7 @@ from postprocess import postprocess
 
 from doclayout.converters.pdf import PdfConverter
 from doclayout.models import create_model_dict, shutdown_models
+from doclayout.services.openai import OpenAIService
 
 
 def work(task):
@@ -53,7 +54,7 @@ def work(task):
                     "latency_ms": round((time.monotonic() - start) * 1000, 1),
                     "chars": len(text),
                     "error": error,
-                    "model": "gpt-6-sol",
+                    "model": OpenAIService.model,
                 }
             )
     finally:

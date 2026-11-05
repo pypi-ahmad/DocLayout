@@ -8,6 +8,7 @@ from typing import Annotated, Literal, Optional, Tuple
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
 
+from doclayout.config.validation import conversion_models
 from doclayout.schema import BlockTypes
 from doclayout.schema.blocks.base import BlockId, BlockOutput
 from doclayout.schema.document import Document
@@ -49,6 +50,7 @@ class BaseRenderer:
                 ``assign_config``.
         """
         assign_config(self, config)
+        self.conversion_models = conversion_models(config)
 
         self.block_config = {
             "keep_pageheader_in_output": self.keep_pageheader_in_output,
@@ -184,15 +186,20 @@ class BaseRenderer:
         """
         from doclayout.usage import cost_summary
 
+        page_model, refinement_model = self.conversion_models
         metadata = {
             "usage": document.usage,
             "cost": cost_summary(document.usage),
             "extraction": {
                 "method": "openai",
-                "model": "gpt-6-sol",
+                "model": page_model,
                 "geometry": "model-estimated",
             },
             "table_of_contents": document.table_of_contents,
+            "refinement": {
+                "enabled": refinement_model is not None,
+                "model": refinement_model,
+            },
             "page_stats": self.generate_page_stats(document, document_output),
         }
         if document.debug_data_path is not None:

@@ -162,7 +162,8 @@ runpy.run_path({str(root / "doclayout/scripts/streamlit_app.py")!r}, run_name="_
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(headless=True)
                 context = browser.new_context(
-                    permissions=["clipboard-read", "clipboard-write"]
+                    viewport={"width": 1440, "height": 1200},
+                    permissions=["clipboard-read", "clipboard-write"],
                 )
                 page = context.new_page()
                 page.goto(url)

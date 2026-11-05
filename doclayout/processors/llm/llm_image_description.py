@@ -18,7 +18,7 @@ class LLMImageDescriptionProcessor(BaseLLMSimpleBlockProcessor):
     image_description_prompt: Annotated[
         str,
         "The prompt to use for generating image descriptions.",
-        "Default is a string containing the GPT-6 Sol prompt.",
+        "Default is a string containing the GPT-6.1 Sol prompt.",
     ] = """You are a document analysis expert who specializes in creating text descriptions for images.
 You will receive an image of a picture or figure.  Your job will be to create a short description of the image.
 **Instructions:**

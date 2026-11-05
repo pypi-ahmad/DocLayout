@@ -77,8 +77,8 @@ def test_cli_preparation_failure_preserves_outputs(
         )
     result = CliRunner().invoke(command, args)
     assert result.exit_code == 0, result.output
-    assert "Sol fallback stage=preparation" in result.output
-    assert "Sol-only=" in result.output and "not pure inference" in result.output
+    assert "Page model fallback stage=preparation" in result.output
+    assert "model-only=" in result.output and "not pure inference" in result.output
     assert previous.read_text("utf-8") == "Historical output"
     assert len(list(destination.rglob("*.md"))) > 1
     assert extraction_service.called
@@ -163,7 +163,7 @@ def test_failed_batch_preparation_uses_fallback_for_uncached_jobs(
         )
     )
     assert statuses[0] == "Preparing layout model…"
-    assert statuses[-1].startswith("Sol fallback") and "PRIVATE" not in str(results)
+    assert statuses[-1].startswith("Page model fallback") and "PRIVATE" not in str(results)
     assert len(results) == worker.call_count == 2
     assert all(
         isinstance(c.args[3]["layout_engine"], layout.SolFallbackEngine)
@@ -230,7 +230,7 @@ def test_saved_layout_summary_uses_metadata_only():
     assert "not pure inference" in summary and "not recorded" in summary
     pages["1"]["status"] = "sol_fallback"
     assert batch.layout_summary({"layout": {"page_runtime": pages}}).endswith(
-        "Sol fallback: 1 page(s)"
+        "Page model fallback: 1 page(s)"
     )
 
 
@@ -290,7 +290,7 @@ def test_gui_preparation_failure_and_retry(
     assert all("layout" not in c.label.lower() for c in app.checkbox)
     next(b for b in app.button if b.label == "Run DocLayout").click().run()
     assert not app.exception and not app.error
-    assert any("Sol fallback" in w.value for w in app.warning)
+    assert any("Page model fallback" in w.value for w in app.warning)
     assert extraction_service.call_count == 2
     assert prepare.call_count == 1
     next(c for c in app.checkbox if c.label == "Debug").check().run()

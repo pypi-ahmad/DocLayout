@@ -4,6 +4,7 @@ from decimal import Decimal
 
 # USD per million tokens: ordinary input, cached input, cache writes, output.
 MODEL_RATES = {
+    "gpt-6.1-sol": ("2.00", "0.10", "2.50", "10.00"),
     "gpt-6-sol": ("2.00", "0.20", "2.50", "10.00"),
     "gpt-6-luna": ("0.10", "0.01", "0.125", "0.50"),
 }

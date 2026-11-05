@@ -21,7 +21,7 @@ def test_converter_uses_one_extraction_per_page(
 ):
     result = converter(model_dict)(temp_doc.name)
     assert extraction_service.call_count == 2
-    assert result.metadata["extraction"]["model"] == "gpt-6-sol"
+    assert result.metadata["extraction"]["model"] == "gpt-6.1-sol"
 
 
 def test_table_filter(model_dict, temp_doc):

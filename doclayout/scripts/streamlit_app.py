@@ -24,4 +24,16 @@ for page in navigation_pages:
         width="stretch",
     ):
         st.switch_page(page)
+st.session_state.setdefault(
+    "grounding_retry",
+    os.getenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "false").lower() == "true",
+)
+st.sidebar.checkbox(
+    "Retry evidence quotes",
+    key="grounding_retry",
+    help=(
+        "One extra field call may replace a missing, mismatched, or ambiguous "
+        "quote. Values stay unchanged."
+    ),
+)
 current_page.run()

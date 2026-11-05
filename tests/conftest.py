@@ -13,7 +13,7 @@ from doclayout.providers.pdf import PdfProvider
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--run-integration", action="store_true", help="Run billable GPT-6 Sol tests"
+        "--run-integration", action="store_true", help="Run billable GPT-6.1 Sol tests"
     )
 
 

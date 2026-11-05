@@ -73,7 +73,7 @@ class Definition:
     grounding_retry: bool = False
 
 
-def load_definition(directory=DEFINITIONS, *, enabled=None):
+def load_definition(directory=DEFINITIONS, *, enabled=None, grounding_retry=None):
     """Read and validate a snapshot without creating clients or making requests.
 
     Args:
@@ -81,6 +81,8 @@ def load_definition(directory=DEFINITIONS, *, enabled=None):
             classification template.
         enabled (bool | None): Override classification activation; None reads
             DOCLAYOUT_CLASSIFICATION_ENABLED from the process environment.
+        grounding_retry (bool | None): Override the quote-retry switch; None reads
+            DOCLAYOUT_GROUNDING_RETRY_ENABLED from the process environment.
 
     Returns:
         Definition: Validated instructions and their cache fingerprint.
@@ -144,10 +146,11 @@ def load_definition(directory=DEFINITIONS, *, enabled=None):
         snapshot_parts.append(
             [CLASSIFICATION_MODEL, "medium", "classification-json-v2"]
         )
-    retry_switch = os.getenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "false").lower()
-    if retry_switch not in {"true", "false"}:
-        raise ValueError("DOCLAYOUT_GROUNDING_RETRY_ENABLED must be true or false.")
-    grounding_retry = retry_switch == "true"
+    if grounding_retry is None:
+        retry_switch = os.getenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "false").lower()
+        if retry_switch not in {"true", "false"}:
+            raise ValueError("DOCLAYOUT_GROUNDING_RETRY_ENABLED must be true or false.")
+        grounding_retry = retry_switch == "true"
     if grounding_retry:
         snapshot_parts.append("grounding-retry-v1")
     snapshot = compact(snapshot_parts)

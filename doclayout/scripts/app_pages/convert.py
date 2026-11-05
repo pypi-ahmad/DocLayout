@@ -120,7 +120,8 @@ options = {
     "keep_pageheader_in_output": headers,
     "keep_pagefooter_in_output": headers,
 }
-scope = (upload_id, start, end, refine, headers)
+grounding_retry = bool(st.session_state.get("grounding_retry", False))
+scope = (upload_id, start, end, refine, headers, grounding_retry)
 if st.session_state.get("scope") != scope:
     for key in ("result", "chat", "chat_usage", "batch_receipts", "result_document"):
         st.session_state.pop(key, None)
@@ -130,7 +131,7 @@ if not valid:
     st.sidebar.error("End page must be at least Start page.")
 if st.sidebar.button("Run DocLayout", type="primary", disabled=not valid):
     try:
-        definition = load_definition()
+        definition = load_definition(grounding_retry=grounding_retry)
         st.session_state.batch_receipts = []
         progress = st.progress(0, text="Processing documents…")
         models = load_models()

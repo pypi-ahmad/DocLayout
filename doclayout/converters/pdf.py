@@ -10,7 +10,7 @@ from typing import Annotated, Any, Dict, List, Optional, Tuple, Type, Union, cas
 
 from doclayout.builders.document import DocumentBuilder
 from doclayout.builders.structure import StructureBuilder
-from doclayout.config.validation import validate_config
+from doclayout.config.validation import conversion_models, validate_config
 from doclayout.converters import BaseConverter
 from doclayout.processors import BaseProcessor
 from doclayout.processors.blank_page import BlankPageProcessor
@@ -124,7 +124,9 @@ class PdfConverter(BaseConverter):
         """
         validate_config(config)
         if llm_service is not None:
-            raise ValueError("llm_service was removed; all tasks use gpt-6-sol")
+            raise ValueError(
+                "llm_service was removed; use page_model and refinement_model"
+            )
         super().__init__(config)
 
         if config is None:
@@ -155,8 +157,19 @@ class PdfConverter(BaseConverter):
                 "Pass create_model_dict() artifacts with extraction_service"
             )
         if isinstance(self.extraction_service, OpenAIService):
-            self.extraction_service = self.extraction_service.configured(self.config)
-        self.llm_service = self.extraction_service if self.use_llm else None
+            page_model, refinement_model = conversion_models(self.config)
+            self.extraction_service = self.extraction_service.configured(
+                self.config, model=page_model
+            )
+            self.llm_service = (
+                self.extraction_service.configured(
+                    self.config, model=refinement_model, share_usage=True
+                )
+                if refinement_model is not None
+                else None
+            )
+        else:
+            self.llm_service = self.extraction_service if self.use_llm else None
         self.artifact_dict["llm_service"] = self.llm_service
 
         self.renderer = renderer_class

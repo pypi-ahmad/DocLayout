@@ -45,7 +45,7 @@ def test_responses_contract(monkeypatch):
         "text": "hello"
     }
     kwargs = client.responses.parse.call_args.kwargs
-    assert kwargs["model"] == "gpt-6-sol"
+    assert kwargs["model"] == "gpt-6.1-sol"
     assert kwargs["text_format"] is Result
     assert kwargs["store"] is False
     assert kwargs["reasoning"] == {"effort": "medium"}

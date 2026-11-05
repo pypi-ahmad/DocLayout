@@ -434,11 +434,50 @@ def test_fingerprint_has_no_model_initialization(monkeypatch):
         layout, "model_files", Mock(side_effect=AssertionError("network"))
     )
     a = layout.pipeline_manifest({"highres_image_dpi": 192})
+    assert a["extraction_model"] == "gpt-6.1-sol"
     assert a == layout.pipeline_manifest({"highres_image_dpi": 192})
     assert (
         a["fingerprint"]
         != layout.pipeline_manifest({"highres_image_dpi": 96})["fingerprint"]
     )
+    assert (
+        a["fingerprint"]
+        != layout.pipeline_manifest(
+            {"highres_image_dpi": 192, "page_model": "gpt-6-luna"}
+        )["fingerprint"]
+    )
+
+
+def test_refinement_selection_only_affects_active_conversion():
+    from doclayout.ui.batch import conversion_id
+
+    luna = {"page_model": "gpt-6-luna", "refinement_model": "gpt-6-luna"}
+    sol = {**luna, "refinement_model": "gpt-6.1-sol"}
+    assert layout.pipeline_manifest(luna) == layout.pipeline_manifest(sol)
+    assert conversion_id("sample.pdf", b"pdf", luna) == conversion_id(
+        "sample.pdf", b"pdf", sol
+    )
+    assert layout.pipeline_manifest({}) == layout.pipeline_manifest(
+        {"page_model": "gpt-6.1-sol", "refinement_model": "gpt-6.1-sol"}
+    )
+    assert conversion_id("sample.pdf", b"pdf", {}) == conversion_id(
+        "sample.pdf",
+        b"pdf",
+        {"page_model": "gpt-6.1-sol", "refinement_model": "gpt-6.1-sol"},
+    )
+    assert (
+        layout.pipeline_manifest({**luna, "use_llm": True})["fingerprint"]
+        != (layout.pipeline_manifest({**sol, "use_llm": True})["fingerprint"])
+    )
+
+
+@pytest.mark.parametrize("key", ["page_model", "refinement_model"])
+def test_unsupported_model_rejected_before_requests(key, model_dict):
+    from doclayout.converters.pdf import PdfConverter
+
+    with pytest.raises(ValueError, match="Model must be"):
+        PdfConverter(model_dict, config={key: "gpt-6-sol"})
+    model_dict["extraction_service"].assert_not_called()
 
 
 def test_merge_lineage_retains_original_match():

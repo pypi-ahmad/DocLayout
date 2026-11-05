@@ -27,7 +27,7 @@ class LLMEquationProcessor(BaseLLMSimpleBlockProcessor):
     equation_latex_prompt: Annotated[
         str,
         "The prompt to use for generating LaTeX from equations.",
-        "Default is a string containing the GPT-6 Sol prompt.",
+        "Default is a string containing the GPT-6.1 Sol prompt.",
     ] = r"""You're an expert mathematician who is good at writing LaTeX code and html for equations.
 You'll receive an image of a math block, along with the text extracted from the block.  It may contain one or more equations. Your job is to write html that represents the content of the image, with the equations in LaTeX format.
 

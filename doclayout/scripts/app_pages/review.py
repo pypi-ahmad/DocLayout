@@ -114,7 +114,15 @@ with st.expander("More actions"):
     if st.button("Extract again", disabled=document is None):
         try:
             with st.spinner("Extracting saved Markdown…"):
-                new_id, usage = retry_fields(store, document["id"], load_definition())
+                new_id, usage = retry_fields(
+                    store,
+                    document["id"],
+                    load_definition(
+                        grounding_retry=bool(
+                            st.session_state.get("grounding_retry", False)
+                        )
+                    ),
+                )
             st.session_state.setdefault("session_usage", []).extend(usage)
             st.session_state.pending_review_run = new_id
             st.rerun()

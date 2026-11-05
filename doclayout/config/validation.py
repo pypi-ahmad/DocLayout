@@ -1,5 +1,35 @@
 """Reject retired model and OCR controls at every configuration boundary."""
 
+DEFAULT_MODEL = "gpt-6.1-sol"
+MODEL_CHOICES = ("gpt-6-luna", "gpt-6.1-sol")
+
+
+def validate_model(model):
+    """Reject unsupported stage models before any provider request."""
+    if model not in MODEL_CHOICES:
+        raise ValueError("Model must be gpt-6-luna or gpt-6.1-sol.")
+    return model
+
+
+def conversion_models(config=None):
+    """Resolve page reading and enabled refinement models from conversion settings."""
+    if config is None:
+        config = {}
+    elif not isinstance(config, dict):
+        config = config.model_dump()
+    page = validate_model(
+        config.get("PdfConverter_page_model", config.get("page_model", DEFAULT_MODEL))
+    )
+    refinement = validate_model(
+        config.get(
+            "PdfConverter_refinement_model",
+            config.get("refinement_model", DEFAULT_MODEL),
+        )
+    )
+    enabled = config.get("PdfConverter_use_llm", config.get("use_llm", False))
+    return page, refinement if enabled else None
+
+
 REMOVED = {
     "mode",
     "force_ocr",
@@ -64,6 +94,7 @@ def validate_config(config):
     if config is None:
         return
     values = config if isinstance(config, dict) else config.model_dump()
+    conversion_models(values)
     invalid = sorted(
         key
         for key in values
@@ -90,6 +121,6 @@ def validate_config(config):
         raise ValueError(
             "Removed configuration: "
             + ", ".join(invalid)
-            + ". Every page now uses gpt-6-sol. Use OPENAI_API_KEY/OPENAI_BASE_URL "
+            + ". Supported models are gpt-6-luna and gpt-6.1-sol. Use OPENAI_API_KEY/OPENAI_BASE_URL "
             "in the environment; use_llm enables optional extra refinement."
         )

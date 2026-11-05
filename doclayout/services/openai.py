@@ -1,14 +1,14 @@
 # Modified for DocLayout; see NOTICE for a summary of changes.
-"""Shared GPT-6 Sol client for extraction and optional refinement."""
+"""Shared model client for page reading and optional refinement."""
 
 from copy import copy
 from importlib.resources import files
 from threading import BoundedSemaphore, Lock
-from typing import Annotated, ClassVar
+from typing import Annotated
 
 from openai import OpenAI
 
-from doclayout.config.validation import validate_config
+from doclayout.config.validation import DEFAULT_MODEL, validate_config, validate_model
 from doclayout.credentials import CredentialsError, openai_credentials
 from doclayout.services import BaseService
 from doclayout.usage import response_usage
@@ -28,7 +28,8 @@ class ExtractionError(RuntimeError):
 
 class OpenAIService(BaseService):
     """Send whole-page image requests through the shared bounded API client."""
-    model: ClassVar[str] = "gpt-6-sol"
+
+    model: str = DEFAULT_MODEL
     timeout: Annotated[int, "API request timeout in seconds."] = 180
     max_output_tokens: Annotated[int, "Maximum output tokens per request."] = 32768
     _requests = BoundedSemaphore(3)
@@ -36,6 +37,7 @@ class OpenAIService(BaseService):
     def __init__(self, config=None):
         validate_config(config)
         super().__init__(config)
+        validate_model(self.model)
         if self.timeout <= 0 or self.max_output_tokens <= 0 or self.max_retries < 0:
             raise ValueError(
                 "API timeout/output limits must be positive; retries nonnegative"
@@ -52,13 +54,15 @@ class OpenAIService(BaseService):
                 "Could not initialize the API client. Check OPENAI_API_KEY and OPENAI_BASE_URL."
             ) from None
 
-    def configured(self, config):
+    def configured(self, config, *, model=None, share_usage=False):
         """Share the HTTP client without mutating another converter's settings."""
         validate_config(config)
         service = copy(self)
-        service.usage = []
-        service._usage_lock = Lock()
+        if not share_usage:
+            service.usage = []
+            service._usage_lock = Lock()
         assign_config(service, config)
+        service.model = validate_model(self.model if model is None else model)
         if (
             service.timeout <= 0
             or service.max_output_tokens <= 0
@@ -92,7 +96,7 @@ class OpenAIService(BaseService):
         try:
             with self._requests:
                 response = client.responses.parse(
-                    model="gpt-6-sol",
+                    model=self.model,
                     input=[
                         {
                             "role": "system",
@@ -115,7 +119,7 @@ class OpenAIService(BaseService):
                 block.update_metadata(llm_tokens_used=response.usage.total_tokens)
             if response.status != "completed" or response.output_parsed is None:
                 raise ExtractionError(
-                    f"GPT-6 Sol returned {response.status} without a complete parsed result (refusal or output limit)"
+                    f"{self.model} returned {response.status} without a complete parsed result (refusal or output limit)"
                 )
             return response.output_parsed.model_dump()
         except Exception as exc:
@@ -124,7 +128,7 @@ class OpenAIService(BaseService):
             if isinstance(exc, ExtractionError):
                 raise
             raise ExtractionError(
-                f"GPT-6 Sol request failed: {type(exc).__name__}"
+                f"{self.model} request failed: {type(exc).__name__}"
             ) from None
 
         finally:

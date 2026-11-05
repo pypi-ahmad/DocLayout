@@ -10,7 +10,7 @@ from doclayout.services.openai import OpenAIService
 from doclayout.usage import cost_message
 
 
-@click.command(cls=CustomClickPrinter, help="Convert a document using GPT-6 Sol.")
+@click.command(cls=CustomClickPrinter, help="Convert a document using GPT-6.1 Sol.")
 @click.argument("fpath", type=click.Path(exists=True, dir_okay=False))
 @ConfigParser.common_options
 def convert_single_cli(fpath, **kwargs):

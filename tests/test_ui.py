@@ -23,6 +23,7 @@ def test_sidebar_navigation_buttons(tmp_path, monkeypatch, model_dict):
     app = AppTest.from_file("doclayout/scripts/streamlit_app.py", default_timeout=15)
     app.run()
     assert not app.exception
+    assert app.sidebar.checkbox(key="grounding_retry").value is False
     buttons = list(app.sidebar.button)
     assert [b.label for b in buttons[:2]] == [
         "Convert documents",

@@ -786,6 +786,11 @@ def test_grounding_retry_fingerprint(monkeypatch):
     monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "true")
     on = load_definition(enabled=False)
     assert on.grounding_retry is True and on.version != off.version
+    chosen_off = load_definition(enabled=False, grounding_retry=False)
+    assert chosen_off.grounding_retry is False and chosen_off.version == off.version
+    monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "false")
+    chosen_on = load_definition(enabled=False, grounding_retry=True)
+    assert chosen_on.grounding_retry is True and chosen_on.version == on.version
     monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "yes")
     with pytest.raises(ValueError, match="DOCLAYOUT_GROUNDING_RETRY_ENABLED"):
         load_definition()

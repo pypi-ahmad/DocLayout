@@ -38,10 +38,19 @@ def conversion_id(filename, data, options):
     page metadata records fallback, and a saved fallback result remains reusable.
     Computing the identity never loads weights or contacts the model Hub.
     """
+    effective_options = dict(options)
+    # The pipeline fingerprint records active models; defaults need no extra keys.
+    for key in (
+        "page_model",
+        "PdfConverter_page_model",
+        "refinement_model",
+        "PdfConverter_refinement_model",
+    ):
+        effective_options.pop(key, None)
     return hashlib.sha256(
         data
         + filename.encode()
-        + compact(options).encode()
+        + compact(effective_options).encode()
         + pipeline_manifest(options)["fingerprint"].encode()
     ).hexdigest()
 
@@ -49,7 +58,7 @@ def conversion_id(filename, data, options):
 def layout_readiness(engine):
     """Return the actual exercised device or the engine's safe readiness text."""
     if engine.status.startswith("Failed:"):
-        return "Sol fallback · V3 unavailable"
+        return "Page model fallback · V3 unavailable"
     device = engine.actual_device
     return f"PP-DocLayoutV3 · {device.upper()}" if device else engine.status
 
@@ -332,6 +341,7 @@ def process_batch(
         dict: Per-file receipts in completion order, not upload order.
     """
     files = list(files)
+    options = dict(options)
     if prepared is not None and len(files) != 1:
         raise ValueError("Prepared upload requires exactly one file")
     if not files:

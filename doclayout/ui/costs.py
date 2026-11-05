@@ -21,9 +21,14 @@ def show_costs(container, entries):
         label = "Estimated total" if total["complete"] else "Known subtotal (partial)"
         st.metric(label, f"${total['estimated_cost_usd']:.6f}")
         for model, label in (
-            ("gpt-6-sol", "GPT-6 Sol"),
+            ("gpt-6.1-sol", "GPT-6.1 Sol"),
+            ("gpt-6-sol", "GPT-6 Sol (historical)"),
             ("gpt-6-luna", "GPT-6 Luna"),
         ):
+            if model == "gpt-6-sol" and not any(
+                entry.get("model") == model for entry in entries
+            ):
+                continue
             summary = cost_summary(
                 [entry for entry in entries if entry.get("model") == model]
             )

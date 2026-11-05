@@ -14,7 +14,7 @@ class LLMHandwritingProcessor(BaseLLMSimpleBlockProcessor):
     handwriting_generation_prompt: Annotated[
         str,
         "The prompt to use for OCRing handwriting.",
-        "Default is a string containing the GPT-6 Sol prompt.",
+        "Default is a string containing the GPT-6.1 Sol prompt.",
     ] = """You are an expert editor specializing in accurately reproducing text from images.
 You will receive an image of a text block. Your task is to generate markdown to properly represent the content of the image.  Do not omit any text present in the image - make sure everything is included in the markdown representation.  The markdown representation should be as faithful to the original image as possible.
 

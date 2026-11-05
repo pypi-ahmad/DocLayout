@@ -164,7 +164,7 @@ class SolFallbackEngine:
     """Conversion-local fallback after failed preparation; no repeated probes."""
 
     actual_device = None
-    status = "Sol fallback · V3 unavailable"
+    status = "Page model fallback · V3 unavailable"
 
     def prepare(self):
         """Already prepared for Sol-only operation; do not retry the failed engine."""
@@ -300,8 +300,16 @@ def pipeline_manifest(config=None):
     Returns:
         dict: Public provenance, excluding raw configuration or credentials.
     """
+    from doclayout.config.validation import DEFAULT_MODEL, conversion_models
     from doclayout.schema.extraction import PAGE_PROMPT, ExtractedPage
     from doclayout.services.openai import SYSTEM_PROMPT
+
+    page_model, refinement_model = conversion_models(config)
+    effective_config = dict(config or {})
+    for key in ("page_model", "PdfConverter_page_model"):
+        effective_config.pop(key, None)
+    for key in ("refinement_model", "PdfConverter_refinement_model"):
+        effective_config.pop(key, None)
 
     def digest(value):
         return hashlib.sha256(value.encode()).hexdigest()
@@ -320,6 +328,7 @@ def pipeline_manifest(config=None):
             pass
     manifest = {
         "pipeline": PIPELINE,
+        "extraction_model": page_model,
         "execution_policy": EXECUTION_POLICY,
         "fallback_policy": FALLBACK_POLICY,
         "given_layout_version": PRIOR_VERSION,
@@ -343,8 +352,14 @@ def pipeline_manifest(config=None):
         "render_dpi": (config or {}).get("highres_image_dpi", 192),
         "prompts": {"page": digest(PAGE_PROMPT), "system": digest(SYSTEM_PROMPT)},
         "schema": digest(json.dumps(ExtractedPage.model_json_schema(), sort_keys=True)),
-        "config_sha256": digest(json.dumps(config or {}, sort_keys=True, default=str)),
+        "config_sha256": digest(
+            json.dumps(effective_config, sort_keys=True, default=str)
+        ),
     }
+    if refinement_model is not None and (
+        page_model != DEFAULT_MODEL or refinement_model != DEFAULT_MODEL
+    ):
+        manifest["refinement_model"] = refinement_model
     manifest["fingerprint"] = digest(json.dumps(manifest, sort_keys=True))
     return manifest
 
@@ -1384,20 +1399,20 @@ def layout_summary(metadata):
             final = audit.get("final_counts", {}).get(str(page_id))
         lines.append(
             f"Page {int(page_id) + 1}: {device} · {page.get('provider', 'not recorded')} "
-            f"({execution}) · Sol fallback stage={page.get('failure_stage', 'not recorded') or 'none'} · "
+            f"({execution}) · Page model fallback stage={page.get('failure_stage', 'not recorded') or 'none'} · "
             f"CPU fallback stage={page.get('cpu_fallback_stage') or 'none recorded'} · "
             f"initial eligible={page.get('prior_region_count', 'not recorded')}, "
-            f"matched={page['matched_count']}, Sol-only={page.get('sol_only_count', 'not recorded')}, "
+            f"matched={page['matched_count']}, model-only={page.get('sol_only_count', 'not recorded')}, "
             f"V3-only={page.get('unmatched_v3_count', 'not recorded')} · "
             f"initial geometry: {counts(page.get('geometry_counts'))} · "
-            f"Sol-only reasons: {counts(page.get('sol_only_reasons'))} · "
+            f"Model-only reasons: {counts(page.get('sol_only_reasons'))} · "
             f"V3-only reasons: {counts(page.get('unmatched_v3_reasons'))} · "
             f"final visible blocks={final['visible_blocks'] if final else 'not recorded'}, "
             f"source footprints: {counts(final['geometry_counts'] if final else None)}"
         )
     fallback = sum(p.get("status") == "sol_fallback" for p in values)
     if fallback:
-        lines.append(f"Sol fallback: {fallback} page(s)")
+        lines.append(f"Page model fallback: {fallback} page(s)")
     if audit.get("annotations"):
         overlay = audit["annotations"]
         lines.append(
