@@ -739,3 +739,236 @@ def test_same_filename_different_documents_keep_distinct_exports(tmp_path):
             store.document_dir(document_id) / "runs" / run_id / "source_001.json"
         ).exists()
     assert len(set(ids)) == 2
+
+
+def retry_definition():
+    return replace(load_definition(enabled=False), grounding_retry=True)
+
+
+def invented_payload():
+    value = payload()
+    value["records"][0]["evidence"][0]["quote"] = "invented"
+    return value
+
+
+_GOOD_CORRECTION = {
+    "corrections": [
+        {
+            "record_index": 0,
+            "field_path": "/member/member_id",
+            "quote": "Member ID: 00042",
+        }
+    ]
+}
+_MEMBER = "/member/member_id"
+_MARKDOWN = "Member ID: 00042"
+
+
+def test_grounding_retry_fingerprint(monkeypatch):
+    monkeypatch.delenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", raising=False)
+    off = load_definition(enabled=False)
+    monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "false")
+    explicit_off = load_definition(enabled=False)
+    assert off.grounding_retry is False and off.version == explicit_off.version
+    parts = compact(
+        [
+            off.prompt,
+            off.schema,
+            off.classification,
+            off.enabled,
+            "fields-v2",
+            off.extraction_model,
+            off.extraction_reasoning_effort,
+        ]
+    )
+    assert off.version == hashlib.sha256(parts.encode()).hexdigest()
+    assert "grounding-retry-v1" not in parts
+    monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "true")
+    on = load_definition(enabled=False)
+    assert on.grounding_retry is True and on.version != off.version
+    monkeypatch.setenv("DOCLAYOUT_GROUNDING_RETRY_ENABLED", "yes")
+    with pytest.raises(ValueError, match="DOCLAYOUT_GROUNDING_RETRY_ENABLED"):
+        load_definition()
+
+
+def test_grounding_retry_disabled_makes_one_call():
+    usage = []
+    client = client_for(invented_payload())
+    result = extract_fields(
+        _MARKDOWN, chunks(), load_definition(enabled=False), client=client, usage=usage
+    )
+    assert client.responses.create.call_count == 1
+    assert result["records"][0]["status"] == "needs_review"
+    assert "grounding_retry" not in result
+    assert len(usage) == 1
+
+
+def test_grounding_retry_replaces_bad_quote():
+    definition = retry_definition()
+    usage = []
+    client = client_for(invented_payload(), _GOOD_CORRECTION)
+    result = extract_fields(_MARKDOWN, chunks(), definition, client=client, usage=usage)
+    second = client.responses.create.call_args_list[1].kwargs
+    schema = second["text"]["format"]["schema"]["properties"]
+    evidence = result["records"][0]["evidence"][0]
+    assert client.responses.create.call_count == 2
+    assert second["model"] == definition.extraction_model
+    assert second["reasoning"]["effort"] == definition.extraction_reasoning_effort
+    assert second["input"][1]["content"] == _MARKDOWN
+    assert "corrections" in schema and "records" not in schema
+    assert second["store"] is False and "tools" not in second
+    assert result["status"] == "success"
+    assert result["grounding_retry"] == "completed"
+    assert len(usage) == 2
+    assert result["records"][0]["fields"]["member"]["member_id"] == "00042"
+    assert evidence["quote"] == _MARKDOWN and evidence["verified"] is True
+    assert evidence["locations"]
+    assert "_source_index" not in result["records"][0]
+
+
+def test_grounding_retry_keeps_review_when_quote_stays_bad():
+    correction = copy.deepcopy(_GOOD_CORRECTION)
+    correction["corrections"][0]["quote"] = "still invented"
+    client = client_for(invented_payload(), correction)
+    result = extract_fields(_MARKDOWN, chunks(), retry_definition(), client=client)
+    assert client.responses.create.call_count == 2
+    assert result["status"] == "needs_review"
+    assert result["grounding_retry"] == "completed"
+    assert result["records"][0]["fields"]["member"]["member_id"] == "00042"
+    assert any(
+        issue["reason"] == "Evidence quote/path does not match source Markdown."
+        for issue in result["records"][0]["issues"]
+    )
+
+
+def test_grounding_retry_skips_valid_quote():
+    client = client_for(payload())
+    result = extract_fields(_MARKDOWN, chunks(), retry_definition(), client=client)
+    assert client.responses.create.call_count == 1
+    assert result["status"] == "success"
+    assert result["grounding_retry"] == "not_needed"
+
+
+def test_grounding_retry_skips_multipage_block():
+    blocks = chunks()
+    blocks["metadata"] = {"layout": {"blocks": {"page/0/Text/1": {"multi_page": True}}}}
+    client = client_for(payload())
+    result = extract_fields(_MARKDOWN, blocks, retry_definition(), client=client)
+    reasons = {issue["reason"] for issue in result["records"][0]["issues"]}
+    assert client.responses.create.call_count == 1
+    assert result["status"] == "needs_review"
+    assert result["grounding_retry"] == "not_needed"
+    assert "Quote verified, but merged block spans multiple source pages." in reasons
+    assert reasons.isdisjoint(
+        {
+            "Evidence quote/path does not match source Markdown.",
+            "Quote verified, but PDF block mapping is missing or ambiguous.",
+            "Populated field has no verified source quote.",
+        }
+    )
+
+
+def test_grounding_retry_failure_keeps_first_result():
+    bad = invented_payload()
+    first = SimpleNamespace(
+        status="completed", output=[], output_text=json.dumps(bad), usage=None
+    )
+    client = SimpleNamespace(
+        responses=SimpleNamespace(
+            create=Mock(side_effect=[first, RuntimeError("boom")])
+        )
+    )
+    usage = []
+    result = extract_fields(
+        _MARKDOWN, chunks(), retry_definition(), client=client, usage=usage
+    )
+    assert client.responses.create.call_count == 2
+    assert result["records"][0]["evidence"][0]["quote"] == "invented"
+    assert any(
+        issue["reason"] == "Evidence quote/path does not match source Markdown."
+        for issue in result["records"][0]["issues"]
+    )
+    assert result["document_issues"] == [
+        "Evidence retry failed; first grounded result retained."
+    ]
+    assert result["grounding_retry"] == "failed"
+    assert result["status"] == "needs_review"
+    assert len(usage) == 2
+    assert "boom" not in json.dumps(result)
+
+
+def test_grounding_retry_appends_missing_quote():
+    value = payload()
+    value["records"][0]["evidence"] = []
+    client = client_for(value, _GOOD_CORRECTION)
+    result = extract_fields(_MARKDOWN, chunks(), retry_definition(), client=client)
+    evidence = result["records"][0]["evidence"]
+    assert client.responses.create.call_count == 2
+    assert result["status"] == "success"
+    assert len(evidence) == 1
+    assert evidence[0]["verified"] is True and evidence[0]["locations"]
+    assert result["records"][0]["fields"]["member"]["member_id"] == "00042"
+
+
+def test_grounding_retry_uses_presort_record_index():
+    first = copy.deepcopy(payload())
+    second = copy.deepcopy(payload())
+    first["records"][0]["fields"]["member"]["member_id"] = "111"
+    first["records"][0]["evidence"][0]["quote"] = "NOT-IN-SOURCE"
+    second["records"][0]["fields"]["member"]["member_id"] = "222"
+    second["records"][0]["evidence"][0]["quote"] = "BETA 222"
+    body = {
+        "records": [first["records"][0], second["records"][0]],
+        "document_issues": [],
+    }
+    blocks = {
+        "blocks": [
+            {
+                "id": "page/0/Text/1",
+                "page": 0,
+                "html": "<p>ALPHA 111</p>",
+                "bbox": [10, 10, 90, 30],
+            },
+            {
+                "id": "page/0/Text/2",
+                "page": 0,
+                "html": "<p>BETA 222</p>",
+                "bbox": [10, 40, 90, 60],
+            },
+        ],
+        "page_info": {"0": {"bbox": [0, 0, 100, 100]}},
+    }
+    correction = {
+        "corrections": [
+            {"record_index": 0, "field_path": _MEMBER, "quote": "ALPHA 111"}
+        ]
+    }
+    client = client_for(body, correction)
+    result = extract_fields(
+        "ALPHA 111\n\nBETA 222", blocks, retry_definition(), client=client
+    )
+    by_id = {
+        record["fields"]["member"]["member_id"]: record for record in result["records"]
+    }
+    assert client.responses.create.call_count == 2
+    assert result["status"] == "success"
+    assert by_id["111"]["evidence"][0]["quote"] == "ALPHA 111"
+    assert by_id["111"]["evidence"][0]["verified"] is True
+    assert by_id["111"]["evidence"][0]["locations"][0]["block_id"] == "page/0/Text/1"
+    assert by_id["222"]["evidence"][0]["quote"] == "BETA 222"
+
+
+def test_grounding_retry_runs_for_ambiguous_mapping():
+    blocks = chunks()
+    blocks["blocks"].append(copy.deepcopy(blocks["blocks"][0]))
+    correction = copy.deepcopy(_GOOD_CORRECTION)
+    client = client_for(payload(), correction)
+    result = extract_fields(_MARKDOWN, blocks, retry_definition(), client=client)
+    assert client.responses.create.call_count == 2
+    assert result["status"] == "needs_review"
+    assert result["grounding_retry"] == "completed"
+    assert any(
+        issue["reason"]
+        == "Quote verified, but PDF block mapping is missing or ambiguous."
+        for issue in result["records"][0]["issues"]
+    )

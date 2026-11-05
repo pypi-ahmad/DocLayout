@@ -5,6 +5,14 @@ GitHub hosts release assets; PyPI publication is deferred.
 
 ## Unreleased
 
+### Changes
+
+- Add an optional evidence-quote retry for field extraction. It stays off unless
+  `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`. One extra call uses the snapshotted
+  model and medium effort and may replace a missing, mismatched, or ambiguous
+  quote. Values stay unchanged. A failed extra call keeps the first grounded
+  result. A false or missing switch keeps the existing definition fingerprint.
+
 ### Documentation
 
 - Add a contributor runbook, first-day onboarding path, offline source tutorial,

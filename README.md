@@ -21,8 +21,10 @@ and local HTTP API provide other ways to convert documents.
 - Preview navigation, copying, and downloads reuse completed session results
   without repeating OCR.
 - Upload multiple files with three active document jobs; batches process all pages.
-- Extract authorization fields from raw Markdown with Sol/medium, storing JSON
-  and SQLite records. Classification is explicitly off by default. A separate
+- Extract authorization fields from raw Markdown with Sol/medium. The default is
+  one field call. `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` may add one quote-only
+  call. Results are stored as JSON and SQLite records. Classification is
+  explicitly off by default. A separate
   persistent Extracted information page presents grouped summaries and service
   tables. Its source view links fields to PDF regions in both directions.
   See the [field extraction guide](docs/field-extraction.md).

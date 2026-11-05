@@ -73,8 +73,10 @@ successful model download alone.
 
 The GUI batch workflow snapshots raw Markdown before export naming changes.
 [`extract_fields`](../doclayout/fields.py) uses that Markdown for an optional
-classification request and one logical field request, then local quote checks
-and block mapping. [`FieldStore`](../doclayout/field_store.py) saves manifests,
+classification request, one logical field request, and one optional quote-only
+retry when `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`. The switch defaults to
+false. Local quote checks and block mapping follow.
+[`FieldStore`](../doclayout/field_store.py) saves manifests,
 runs, and record JSON. A field-only retry reads the saved Markdown and chunks;
 it does not invoke page conversion.
 

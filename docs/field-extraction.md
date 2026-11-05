@@ -48,10 +48,13 @@ The directory `doclayout/prompts/fields/` is separate from conversion prompts:
 - `classification.md` is a general template without invented categories.
 
 `gpt-6-sol`, medium reasoning, receives the complete raw Markdown and strict schema
-in one logical Responses API call. No PDFs, images, or chunk JSON are supplied to
-the field model. Definitions are snapshotted and hashed per run; edits affect the
-next explicit run, not historical records. Business fields are not duplicated in
-Python or expanded into database columns.
+in one logical Responses API call by default. No PDFs, images, or chunk JSON are
+supplied to the field model. Setting `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` may
+add one quote-only call that resends the same raw Markdown and still receives no
+PDFs, images, or chunk JSON. The switch defaults to false. Definitions are
+snapshotted and hashed per run; edits affect the next explicit run, not historical
+records. Business fields are not duplicated in Python or expanded into database
+columns.
 
 The definition includes request, member, referring/servicing provider, facility,
 service-date, diagnosis, procedure, selected-option, priority, and note fields.
@@ -73,7 +76,9 @@ service date also populates `service_start_date`; `service_end_date` stays null.
 
 Extraction model and reasoning effort are included in the definition snapshot and
 fingerprint. Sol runs do not reuse cached Luna results. Historical records retain
-their original model, values, and evidence; retries create new runs.
+their original model, values, and evidence. `retry_fields` and **Extract again**
+create a new full extraction run. The grounding retry, when enabled, happens inside
+one `extract_fields` call and does not by itself create a second stored run.
 
 Quotes are checked against Markdown with whitespace normalization. The application
 resolves geometry locally from existing block IDs and page bounds. Missing or
@@ -84,8 +89,24 @@ Quotes must preserve exact HTML tag order; role headings distinguish identical
 participation checkboxes. A rejected quote produces a specific warning without an
 additional no-verified-quote warning for that same failure. Independent issues remain.
 
+When grounding retry is enabled, a second call may replace quotes for three
+failure reasons: `Evidence quote/path does not match source Markdown.`,
+`Quote verified, but PDF block mapping is missing or ambiguous.`, and
+`Populated field has no verified source quote.` These reasons are not retried:
+`Quote verified, but merged block spans multiple source pages.` and
+`Source block geometry is invalid.` Any other issue text is not retried either.
+The outcome key `grounding_retry` is `not_needed` when no listed failure is
+present, `completed` after the second grounding pass, or `failed` when the retry
+call or that second pass raises. A failed retry keeps the first grounded result
+and adds the document issue `Evidence retry failed; first grounded result retained.`
+An over-budget retry request takes that same failed path. The key is absent when
+the switch is false.
+
 Requests use `store=false`, a 180-second timeout, 32,768 output tokens, and at most
-two SDK transport retries. No automatic repair or verifier-model call is made.
+two SDK transport retries. Those SDK retries repeat a transport failure. They do
+not repair evidence. Evidence repair is the optional call controlled by
+`DOCLAYOUT_GROUNDING_RETRY_ENABLED`, which defaults to false. When false, no
+evidence-repair call is made.
 The complete serialized request has a conservative 900,000-byte safety budget,
 configurable downward using `DOCLAYOUT_FIELD_MAX_INPUT_BYTES`. This byte budget is
 not the model's token capacity. Oversized inputs and incomplete responses go to

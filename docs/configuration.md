@@ -14,6 +14,7 @@ for the field schema and persisted review workflow.
 | Process environment variable | Default | Meaning |
 | --- | --- | --- |
 | `DOCLAYOUT_CLASSIFICATION_ENABLED` | `false` | Explicitly enable classification; only `true` or `false`, case insensitive |
+| `DOCLAYOUT_GROUNDING_RETRY_ENABLED` | `false` | Allow one quote-only evidence retry after grounding; only `true` or `false`, case insensitive |
 | `DOCLAYOUT_FIELD_MAX_INPUT_BYTES` | `900000` | Maximum serialized downstream request bytes; integer from 1 to 900000 |
 
 Set these variables in the launching process. They are read with `os.getenv`, not
@@ -27,6 +28,16 @@ medium reasoning, `store=false`, a
 budget includes reasoning; the classification response itself is compact strict
 JSON. Its score must be >= 0.75, its category supported, and its quote verified.
 No model fallback is configured. Oversized requests go to review without splitting.
+`DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` allows one extra call after grounding.
+That call uses the snapshotted field model and medium effort. It may replace a
+missing, mismatched, or ambiguous evidence quote. Extracted values stay unchanged.
+The default `false` makes no extra call. Any other value raises `ValueError` with
+the message `DOCLAYOUT_GROUNDING_RETRY_ENABLED must be true or false.` A true
+setting appends `grounding-retry-v1` to the definition fingerprint, so those runs
+do not reuse a one-call snapshot. Set the variable before launch and restart after
+a change. `load_definition` snapshots the flag, and the workbench has no control
+for it. If the extra call fails, the run keeps the first grounded result and adds
+the document issue `Evidence retry failed; first grounded result retained.`
 
 Artifacts live under `OUTPUT_DIR/field_extraction/`, normally
 `conversion_results/field_extraction/`. Originals and previews are retained locally;
@@ -110,7 +121,7 @@ regardless of `OUTPUT_IMAGE_FORMAT`.
 | Task | Model | Request defaults |
 | --- | --- | --- |
 | Page extraction and optional refinement | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries |
-| Markdown field extraction | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries |
+| Markdown field extraction | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries; one call unless `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` |
 | Optional classification (off by default) | `gpt-6-luna` | Medium reasoning; strict JSON; 180-second timeout; two SDK retries |
 | Chat draft and verification | `gpt-6-luna` | Medium reasoning; 8,192 output tokens; 60-second timeout; no retries |
 
