@@ -84,15 +84,16 @@ multi-file all-page processing, saved Extracted information, two-way block highl
 summary navigation and missing-value toggling without repeated model calls.
 `tests/test_field_summary.py` covers readable labels, preserved values, partial records,
 request selection, and unsuccessful runs. Field tests cover the `gpt-6-sol`
-extraction contract, the default-off quote retry, the **Retry evidence quotes**
-checkbox, classification routing, quote
+extraction contract, the default-off quote retry, classification routing, quote
 grounding, SQLite exports, cache reuse, and explicit extraction retries.
 `tests/test_launcher.py` checks port cleanup using mocked listeners and processes;
-it does not stop a real application. Sidebar tests exercise both navigation buttons.
+it does not stop a real application. Sidebar tests exercise both navigation buttons
+and the default-off **Retry evidence quotes** checkbox, including the choice passed
+to **Run DocLayout** and **Extract again**.
 
 Layout tests use injected engines and tensor fixtures, without downloading weights.
 They cover CUDA execution verification, CPU fallback, explicit CUDA failure,
-ScatterND placement, initialization races, matching/order, exports, and Sol fallback
+ScatterND placement, initialization races, matching/order, exports, and page-model fallback
 across entry points. Saved field-only retries must not prepare V3 or reconvert pages.
 The [layout integration record](layout-v3-plan.md) separates these offline checks
 from dated hardware observations; a passing fake-provider test is not a GPU test.

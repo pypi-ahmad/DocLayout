@@ -18,7 +18,7 @@ WeasyPrint requires native libraries for Office/HTML/EPUB conversion. Follow its
 Installing Python dependencies alone may not provide those libraries. Document
 providers can download a font on first use. At first preparation, V3 downloads
 its pinned weights unless they are already present. V3 can run on CPU. If layout
-remains unavailable, conversion uses Sol with explicit fallback provenance.
+remains unavailable, conversion uses the page model and records fallback provenance.
 
 ### Installing the application package
 
@@ -42,8 +42,8 @@ available package index or local cache even when DocLayout comes from GitHub.
 Configure credentials before running extraction. DocLayout accepts
 environment variables or `.env` in the launch folder. See the
 [configuration guide](configuration.md#credentials-and-environment) for precedence,
-model choices, request defaults, and controls. Extra refinement is optional;
-page extraction always uses Sol.
+model choices, request defaults, and controls. Extra refinement is optional.
+Page reading uses `gpt-6.1-sol` unless the converter config sets `page_model`.
 
 ## Browser workbench
 
@@ -67,11 +67,11 @@ information. The active page is highlighted. Switching pages does not call a mod
    If new conversion is needed, “Preparing layout model…” appears while pinned
    weights are checked/downloaded and the provider is exercised. Conversion waits
    for an exercised “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” state, or
-   continues with “Sol fallback · V3 unavailable” if preparation fails. Up to three file jobs
+   continues with “Page model fallback · V3 unavailable” if preparation fails. Up to three file jobs
    then run at once. V3 analyzes each whole page before the same image and layout
-   prior go to Sol. If page analysis fails, Sol receives the whole image without
+   prior go to the page model. If page analysis fails, the page model receives the whole image without
    that prior. Completed raw
-   Markdown goes to Sol/medium for authorization-field extraction.
+   Markdown goes to `gpt-6-sol` at medium effort for authorization-field extraction.
 5. Select a document to inspect its conversion tabs. Click **View extracted
    information** for its saved request details, or open **Extracted information**
    in the sidebar. **Summary** shows readable sections and service tables;
@@ -116,22 +116,22 @@ checkbox as it stands. See
 [configuration](configuration.md#downstream-field-workflow) for the failure issue.
 
 The result caption shows stored device/providers, fallback stages, retained and
-eligible regions, initial matched/Sol-only/V3-only counts and reasons, and final
+eligible regions, initial matched, model-only, and V3-only counts and reasons, and final
 visible source geometry usage. Missing historical diagnostics say not recorded.
 Summed page-analysis time includes queue wait and any in-call preparation/fallback,
 not just model kernels; separately performed readiness preparation is excluded.
 Annotations draw simplified V3 contours, V3 rectangles when contours are unusable,
-and Sol rectangles for unmatched content, respecting visibility and source lineage.
+and page-model rectangles for unmatched content, respecting visibility and source lineage.
 They are not character locations or lossless mask boundaries. V3-only detections
 remain separate metadata, not duplicate extracted blocks. These capabilities do
 not promise better Markdown accuracy.
 
-There is no layout switch. Failed V3 preparation or inference uses whole-page Sol
-instead, with “Sol fallback · V3 unavailable” and saved per-page provenance.
-Unassigned or incompatible V3 associations keep Sol content and geometry. A
-qualified split/merge or tied match can still be assigned, with a warning; Sol
+There is no layout switch. Failed V3 preparation or inference uses whole-page reading
+with the page model, shows “Page model fallback · V3 unavailable”, and saves per-page provenance.
+Unassigned or incompatible V3 associations keep the page model's content and geometry. A
+qualified split/merge or tied match can still be assigned, with a warning; page-model
 text is never divided between regions without reliable offsets.
-Sol/API/validation failures still fail conversion. Saved results, including fallback
+A page-model, API, or validation failure still fails conversion. Saved results, including fallback
 results, are reused without silently reconverting after V3 recovers. Field-only
 retries still use saved Markdown. Previewing or changing tabs does not retry
 loading. See [layout settings](configuration.md#local-layout-inference) for the
@@ -158,7 +158,8 @@ removes its local history and usage details. The Session API cost sidebar
 retains costs from cleared chats, previous uploads, repeat extractions, and failed
 requests in this browser session. Chat costs include both draft and verification
 requests. Field and enabled-classification usage also enters this ledger. The
-sidebar shows GPT-6 Sol and GPT-6 Luna subtotals, not a stage breakdown. A new browser session
+sidebar shows GPT-6.1 Sol and GPT-6 Luna subtotals. A GPT-6 Sol line appears only
+when that model was used in the session. The ledger is not a stage breakdown. A new browser session
 starts a new total. Reopening saved records does not replay their historical
 charges into that total.
 
@@ -330,7 +331,7 @@ image values are base64 strings. Clients must check HTTP status: 401 for missing
 or invalid authentication, 403 for disallowed filepath access, 413 for resource
 limits, 422 for invalid fields, 429 while busy, and 500 for conversion failures.
 Malformed multipart requests may return 400. Errors omit private exception detail.
-Ordinary V3 preparation/inference failures continue to Sol and can return a normal
+Ordinary V3 preparation/inference failures continue with the page model and can return a normal
 successful response with fallback metadata. A defensive HTTP 503 handler remains
 for a layout error that escapes the shared conversion boundary.
 The API process runs one conversion at a time. GUI chat, annotations, and ZIP
@@ -343,8 +344,8 @@ see [security limits](configuration.md#security-and-resource-limits).
 | --- | --- |
 | Credentials unavailable | Check the launch folder's `.env`; after changing Windows environment variables, open a new terminal and restart the app |
 | Model request fails | Check endpoint support, model access, quota, timeout, and structured-output support |
-| Sol fallback / V3 unavailable | Conversion uses Sol content and boxes. Check runtime dependencies, pinned files and cache access for future conversions. Offline mode requires complete files; saved fallback results are not automatically reconverted |
-| CPU shown despite a GPU | `auto` requires successful CUDA execution and kernel verification, otherwise it uses working CPU. Explicit `cuda` rejects a failed CUDA engine without substituting CPU; conversion then uses Sol fallback |
+| Page model fallback / V3 unavailable | Conversion continues with the page model. Check runtime dependencies, pinned files and cache access for future conversions. Offline mode requires complete files; saved fallback results are not automatically reconverted |
+| CPU shown despite a GPU | `auto` requires successful CUDA execution and kernel verification, otherwise it uses working CPU. Explicit `cuda` rejects a failed CUDA engine without substituting CPU; conversion then uses page-model fallback |
 | Sol-only blocks on a successful V3 page | Inspect matching reasons in layout metadata. Filtering, incompatible classes, low overlap, or an already reserved region can prevent a match; this is not always a detector miss |
 | Contour falls back to a rectangle | A valid V3 AABB remains usable when contour decoding or export validation fails. Inspect the recorded contour reason; do not treat this alone as engine failure |
 | Match count differs from overlay count | Initial counts describe reconciliation. Final counts describe visible source footprints; overlays count drawn polygon parts after processing and visibility settings |

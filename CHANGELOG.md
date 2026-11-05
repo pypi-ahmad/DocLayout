@@ -15,6 +15,11 @@ GitHub hosts release assets; PyPI publication is deferred.
 - Add a **Retry evidence quotes** checkbox to the workbench. It controls the
   optional evidence-quote retry for **Run DocLayout** and **Extract again**, and
   starts off unless `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true`.
+- Read each page with `gpt-6.1-sol` when `page_model` is omitted. A converter
+  config may set `page_model` and `refinement_model` to `gpt-6-luna` or
+  `gpt-6.1-sol`. The workbench has no model dropdown. Field extraction stays
+  `gpt-6-sol`. Layout fallback status text is
+  `Page model fallback · V3 unavailable`.
 
 ### Documentation
 
@@ -23,8 +28,9 @@ GitHub hosts release assets; PyPI publication is deferred.
   export, and CLI interfaces without changing runtime behavior.
 - Record the earlier local five-diagram Archify validation while retaining the
   later source-checked diagram artifacts already on `main`.
-- Describe the selected Luna or Sol page model, page-model fallback, and the
-  default-off evidence-quote retry in the architecture and development guides.
+- Record the default `gpt-6.1-sol` page model, accepted `page_model` and
+  `refinement_model` values, the **Retry evidence quotes** checkbox, and the
+  page-model fallback status.
 - Document renderer helpers and export methods, add an offline mixed-layout
   tutorial capstone, and update the measured docstring coverage audit.
 

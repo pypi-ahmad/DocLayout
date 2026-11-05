@@ -7,11 +7,12 @@ and local HTTP API provide other ways to convert documents.
 
 ## Features
 
-- PP-DocLayoutV3 attempts local layout detection before GPT-6 Sol reads each
-  whole page. Sol supplies text and HTML; accepted V3 matches supply mask-derived
-  contours (or V3 rectangles when contours are unusable) and relative reading order.
-  Unmatched content keeps Sol geometry; V3-only regions remain diagnostic evidence.
-  If V3 cannot run, conversion continues with Sol and records the fallback.
+- PP-DocLayoutV3 attempts local layout detection before GPT-6.1 Sol reads each
+  whole page. The page model supplies text and HTML; accepted V3 matches supply
+  mask-derived contours (or V3 rectangles when contours are unusable) and relative
+  reading order. Unmatched content keeps the page model's geometry; V3-only regions
+  remain diagnostic evidence. If V3 cannot run, conversion continues with the page
+  model and records the fallback.
 - Markdown has a native rendered view and an exact raw view. The separate HTML
   preview uses a white page, serif typography, embedded crops, and MathML.
 - Download Markdown, HTML, JSON, chunks, annotated page images, or an annotated

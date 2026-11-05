@@ -2,6 +2,7 @@
   "schema_version": 1,
   "diagram_type": "workflow",
   "meta": {
+    "output": "docs/diagrams/doclayout-workflow.html",
     "title": "DocLayout conversion workflow",
     "quality_profile": "showcase",
     "viewBox": [
@@ -21,7 +22,7 @@
           "renderers",
           "file_export"
         ],
-        "note": "Prepare V3 once; render at 192 DPI, analyze the page, then send the whole image to Sol. Layout failure keeps Sol content and geometry."
+        "note": "Prepare V3 once; render at 192 DPI, analyze each page, then send it to Luna or Sol. Failed layout keeps model content and geometry."
       },
       {
         "id": "validation-and-failure",
@@ -91,7 +92,7 @@
   "groups": [
     {
       "id": "inference_group",
-      "label": "V3 + Sol",
+      "label": "V3 + Model",
       "lane": "inference",
       "fromCol": 2,
       "toCol": 3,
@@ -137,7 +138,7 @@
       "lane": "inference",
       "col": 2,
       "type": "cloud",
-      "label": "GPT-6 Sol",
+      "label": "Luna or Sol",
       "sublabel": "whole-page JSON",
       "tag": "structured"
     },
@@ -257,8 +258,8 @@
       "dot": "cyan",
       "title": "Validation & Assembly",
       "items": [
-        "Sol failure stops conversion; V3 failure uses Sol boxes",
-        "Matched V3 contours persist; Sol keeps text and HTML"
+        "Model failure stops conversion; V3 failure uses model boxes",
+        "Matched V3 contours persist; the model keeps text and HTML"
       ]
     },
     {

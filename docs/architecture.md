@@ -182,10 +182,10 @@ The sidebar checkbox **Retry evidence quotes** sets the quote-retry switch for
 adds no second call. When the switch is on, `extract_fields` may make one more
 call with the same snapshotted model and medium effort. That call may replace a
 quote that misses the Markdown, maps to no single block, or was omitted for a
-populated field. Extracted values
-stay as first returned. If the extra call fails, the first grounded result remains
-and the run records `Evidence retry failed; first grounded result retained.`
-A true setting appends `grounding-retry-v1` to the definition fingerprint.
+populated field. Extracted values stay unchanged. If the extra call fails, the
+first grounded result remains and the run records
+`Evidence retry failed; first grounded result retained.`
+Turning the switch on appends `grounding-retry-v1` to the definition fingerprint.
 Local code checks source quotes and maps unique matching blocks to existing PDF
 coordinates. Missing or ambiguous mappings require review. A multi-page block or
 invalid block geometry stays in review and is not sent for a replacement quote.

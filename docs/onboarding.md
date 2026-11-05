@@ -30,7 +30,7 @@ environment issue, not evidence that extraction works or fails. See
 | --- | --- | --- |
 | Input and page rendering | [`providers/`](../doclayout/providers), [`PdfConverter`](../doclayout/converters/pdf.py) | Selected pages and rendered image bounds |
 | Local layout | [`layout.py`](../doclayout/layout.py), [`layout_geometry.py`](../doclayout/layout_geometry.py) | Pinned ONNX inference, masks, contours, order, and fallback evidence |
-| Whole-page reading | [`services/openai.py`](../doclayout/services/openai.py), [`schema/extraction.py`](../doclayout/schema/extraction.py) | Sol request, HTML/text, and response validation |
+| Whole-page reading | [`services/openai.py`](../doclayout/services/openai.py), [`schema/extraction.py`](../doclayout/schema/extraction.py) | `gpt-6.1-sol` request by default, HTML/text, and response validation |
 | Assembly | [`builders/document.py`](../doclayout/builders/document.py), [`layout.py`](../doclayout/layout.py) | Source blocks, one-to-one layout reconciliation, lineage |
 | Rendering | [`renderers/`](../doclayout/renderers) | HTML assembly, Markdown conversion, JSON trees, and flat chunks |
 | Download assembly | [`ui/exports.py`](../doclayout/ui/exports.py) | Annotated images/PDFs and ZIP downloads |

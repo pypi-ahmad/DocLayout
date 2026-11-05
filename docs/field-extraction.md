@@ -106,9 +106,10 @@ the switch is false.
 
 Requests use `store=false`, a 180-second timeout, 32,768 output tokens, and at most
 two SDK transport retries. Those SDK retries repeat a transport failure. They do
-not repair evidence. Evidence repair is the optional call controlled by
-`DOCLAYOUT_GROUNDING_RETRY_ENABLED`, which defaults to false. When false, no
-evidence-repair call is made.
+not repair evidence. Evidence repair is the optional call set by the sidebar
+checkbox **Retry evidence quotes**, or by `DOCLAYOUT_GROUNDING_RETRY_ENABLED`
+when a caller omits that choice. The switch defaults to false. While it is off,
+no evidence-repair call is made.
 The complete serialized request has a conservative 900,000-byte safety budget,
 configurable downward using `DOCLAYOUT_FIELD_MAX_INPUT_BYTES`. This byte budget is
 not the model's token capacity. Oversized inputs and incomplete responses go to

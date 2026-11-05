@@ -262,7 +262,7 @@ clients can close without destroying the process-shared engine.
 
 | Setting | Default | Behavior |
 | --- | --- | --- |
-| `DOCLAYOUT_LAYOUT_DEVICE` | `auto` | `auto`, `cuda` or `cpu`; explicit `cuda` forbids a replacement CPU session. Conversion uses Sol if the engine fails; no GUI toggle |
+| `DOCLAYOUT_LAYOUT_DEVICE` | `auto` | `auto`, `cuda` or `cpu`; explicit `cuda` forbids a replacement CPU session. Conversion continues with the page model if the engine fails; no GUI toggle |
 | `DOCLAYOUT_LAYOUT_CACHE_DIR` | `<BASE_DIR>/cache/pp-doclayoutv3` | Writable dedicated Hugging Face cache |
 | `DOCLAYOUT_LAYOUT_MODEL_DIR` | unset | Exact directory for pinned `inference.onnx` and `inference.yml`; overrides the Hub cache for artifact resolution |
 | `DOCLAYOUT_LAYOUT_OFFLINE` | `false` | True prohibits network resolution of missing weights |
@@ -277,12 +277,12 @@ missing files if online, verifies SHA-256 and labels, and initializes/tests the
 provider. Warm cache resolution is local-first; repeated pages reuse the session.
 No inference promise is made by merely downloading files. Offline misses, corrupt
 files and total runtime failure are typed engine errors. Conversion records
-`sol_fallback` and continues through Sol rather than failing silently or presenting
+`sol_fallback` and continues with the page model rather than failing silently or presenting
 an unavailable model as an empty successful detection.
 The GUI prepares on the first explicit Run needing an uncached conversion, before
 dispatching file jobs. It shows “Preparing layout model…” while the worker loads,
 then “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” for the actual device.
-Preparation failure shows “Sol fallback · V3 unavailable”; new jobs use Sol while
+Preparation failure shows “Page model fallback · V3 unavailable”; new jobs use the page model while
 saved jobs remain reusable. Status rendering stays on the UI thread. Opening
 the GUI, saved-only batches, previews, downloads and field-only retries do not
 initialize weights. No progress percentage or speculative memory estimate is shown.

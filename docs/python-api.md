@@ -12,9 +12,9 @@ source and tests before editing them. The
 
 | Entry point | Input and result | Ownership and effects |
 | --- | --- | --- |
-| [`create_model_dict()`](../doclayout/models.py) | No arguments; returns the conversion artifact dictionary | Creates an owned Sol client and borrows a process-cached, lazy V3 engine. It does not prepare or download the model. |
-| [`PdfConverter`](../doclayout/converters/pdf.py) | Artifacts plus optional processor paths, renderer path, and config; calling it with a PDF path or `BytesIO` returns the selected renderer's output | Validates configuration, renders provider pages, runs extraction and processors, then renders the result. Whole-page Sol requests may incur cost. |
-| [`shutdown_models()`](../doclayout/models.py) | Artifact dictionary; returns `None` | Closes the owned Sol client. The shared layout engine is not closed here. |
+| [`create_model_dict()`](../doclayout/models.py) | No arguments; returns the conversion artifact dictionary | Creates an owned page-reading client and borrows a process-cached, lazy V3 engine. The default model is `gpt-6.1-sol`. It does not prepare or download the layout model. |
+| [`PdfConverter`](../doclayout/converters/pdf.py) | Artifacts plus optional processor paths, renderer path, and config; calling it with a PDF path or `BytesIO` returns the selected renderer's output | Validates configuration, renders provider pages, runs extraction and processors, then renders the result. `page_model` and `refinement_model` accept `gpt-6-luna` or `gpt-6.1-sol`. Whole-page model requests may incur cost. |
+| [`shutdown_models()`](../doclayout/models.py) | Artifact dictionary; returns `None` | Closes the owned page-reading client. The shared layout engine is not closed here. |
 | [`save_output()`](../doclayout/output.py) | Rendered output, directory, basename | Writes selected local output artifacts. Use an output directory, not a source directory. |
 
 The [Python usage example](usage.md#python-library) shows the lifecycle, including
@@ -61,7 +61,7 @@ The serialized polygon may differ from the original V3 contour.
 
 | Entry point | Input and result | Boundary |
 | --- | --- | --- |
-| [`load_definition()`](../doclayout/fields.py) | Field-definition directory and optional enablement; returns a validated `Definition` | Loads/snapshots Markdown instructions and JSON schema. Classification is off by default. |
+| [`load_definition()`](../doclayout/fields.py) | Field-definition directory plus optional classification and quote-retry switches; returns a validated `Definition` | Loads/snapshots Markdown instructions and JSON schema. Classification and quote retry are off by default. An omitted quote-retry switch reads `DOCLAYOUT_GROUNDING_RETRY_ENABLED`. |
 | [`extract_fields()`](../doclayout/fields.py) | Raw Markdown, local chunks, definition, optional client and usage ledger; returns an outcome dictionary | Sends raw Markdown to the model, then verifies quotes and maps evidence locally. It does not reconvert the PDF. |
 | [`FieldStore`](../doclayout/field_store.py) | Optional local root; manages document manifests, runs, SQLite records, and JSON exports | `save_result()` records a run; `run()` loads records; `export_run()` rebuilds JSON without a model request. |
 | [`retry_fields()`](../doclayout/ui/batch.py) | Store, saved document ID, definition, optional client | Reuses saved raw Markdown and chunks. Do not route retries through `PdfConverter`. |
@@ -75,7 +75,7 @@ and administrative correctness still requires document-level review.
 - Invalid converter configuration raises `ValueError`. Sol or response-validation
   failure is not a V3 miss and should not be reported as layout fallback.
 - A direct layout-engine caller must handle `LayoutModelUnavailable`; normal
-  conversion records a visible Sol fallback for a failed V3 page. A valid empty
+  conversion records page-model fallback for a failed V3 page. A valid empty
   detection result is not a runtime failure.
 - Old saved layout records without contours remain readable. Do not rewrite
   historical provenance when adding new metadata fields.

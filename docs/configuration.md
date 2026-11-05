@@ -92,9 +92,9 @@ DocLayout after editing credentials: the GUI caches its extraction client.
 Variables changed in Windows settings are inherited by newly launched terminals
 and applications; DocLayout does not read or modify the Windows registry.
 
-The endpoint must support Responses, image input, and structured output for
-`gpt-6-sol` for conversion and Markdown field extraction; chat and enabled
-classification also require `gpt-6-luna`.
+The endpoint must support Responses, image input, and structured output for the
+page model (`gpt-6.1-sol` by default, or `gpt-6-luna`), for `gpt-6-sol` field
+extraction, and for `gpt-6-luna` chat and classification.
 Credentials do not belong
 in CLI flags, configuration JSON, source code, or Git.
 
@@ -122,19 +122,22 @@ regardless of `OUTPUT_IMAGE_FORMAT`.
 
 | Task | Model | Request defaults |
 | --- | --- | --- |
-| Page extraction and optional refinement | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries |
-| Markdown field extraction | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries; one call unless `DOCLAYOUT_GROUNDING_RETRY_ENABLED=true` |
+| Page extraction and optional refinement | `gpt-6.1-sol` when omitted | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries. `page_model` and `refinement_model` accept `gpt-6-luna` or `gpt-6.1-sol` |
+| Markdown field extraction | `gpt-6-sol` | Medium reasoning; 32,768 output tokens; 180-second timeout; two SDK retries; one call unless the quote-retry switch is on |
 | Optional classification (off by default) | `gpt-6-luna` | Medium reasoning; strict JSON; 180-second timeout; two SDK retries |
 | Chat draft and verification | `gpt-6-luna` | Medium reasoning; 8,192 output tokens; 60-second timeout; no retries |
 
-Model names, reasoning effort, and chat request limits are fixed in code. The
-Sol settings below are configurable. `use_llm=False` disables extra refinement;
-every selected page still uses Sol extraction. There is no local OCR fallback.
+Field extraction, classification, and chat models are fixed in code. Page reading
+and extra refinement use `gpt-6.1-sol` unless a converter config sets `page_model`
+or `refinement_model`. The workbench has no model dropdown. `use_llm=False`
+disables extra refinement. Every selected page still sends one page-model request.
+There is no local OCR fallback.
 
 ## Local layout inference
 
 The v3.1.0 pipeline (`sol-layout-v3/v4`) runs pinned PP-DocLayoutV3 before each whole-page
-Sol request, which includes a compact `given_layout` prior. It uses the official
+model request, which includes a compact `given_layout` prior. The default page model
+is `gpt-6.1-sol`. It uses the official
 `PaddlePaddle/PP-DocLayoutV3_onnx` artifact with direct ONNX Runtime. The Windows
 AMD64 base dependency is `onnxruntime-gpu==1.30.0`, including CPU execution; there
 is no layout extra or GUI on/off switch. NumPy and OpenCV are already base dependencies.
@@ -161,7 +164,7 @@ conversion fingerprints; historical saved results and field retries are unchange
 
 | Setting | Default | Purpose |
 | --- | --- | --- |
-| `DOCLAYOUT_LAYOUT_DEVICE` | `auto` | `auto` verifies CUDA, then tries CPU on failure; `cuda` never substitutes a CPU session; `cpu` skips CUDA. If the selected engine cannot run, conversion uses Sol with fallback provenance |
+| `DOCLAYOUT_LAYOUT_DEVICE` | `auto` | `auto` verifies CUDA, then tries CPU on failure; `cuda` never substitutes a CPU session; `cpu` skips CUDA. If the selected engine cannot run, conversion continues with the page model and records fallback provenance |
 | `DOCLAYOUT_LAYOUT_CACHE_DIR` | `<BASE_DIR>/cache/pp-doclayoutv3` | Dedicated, writable Hugging Face model cache |
 | `DOCLAYOUT_LAYOUT_MODEL_DIR` | Unset | Exact pinned model directory; overrides Hub cache resolution. Existing files are verified, not silently replaced |
 | `DOCLAYOUT_LAYOUT_OFFLINE` | `false` | Refuse network downloads; pinned files must already be cached |
@@ -176,8 +179,8 @@ additional CLI worker processes each own their own engine.
 
 Missing offline files, corrupt artifacts, unavailable dependencies, unsupported
 outputs or provider failure produce a typed error from the low-level engine.
-Conversion catches layout errors and keeps Sol content, boxes and order. GUI
-readiness shows “Sol fallback · V3 unavailable”; per-page metadata records the
+Conversion catches layout errors and keeps the page model's content, boxes, and order. GUI
+readiness shows “Page model fallback · V3 unavailable”; per-page metadata records the
 failure stage, unavailable provider, null device/order-source and fallback status.
 No failed layout output is presented as a successful empty detection. Failed
 preparation is not reprobed for every page. Repair configuration/files before new
@@ -402,6 +405,7 @@ DocLayout uses these user-supplied USD rates per million tokens, defined in
 
 | Model | Input | Cached input | Cache writes | Output |
 | --- | ---: | ---: | ---: | ---: |
+| gpt-6.1-sol | $2.00 | $0.10 | $2.50 | $10.00 |
 | gpt-6-sol | $2.00 | $0.20 | $2.50 | $10.00 |
 | gpt-6-luna | $0.10 | $0.01 | $0.125 | $0.50 |
 
