@@ -5,9 +5,11 @@
 ## Data flow
 
 The v3.1.0 pipeline (`sol-layout-v3/v4`) attempts PP-DocLayoutV3 on each rendered page,
-then sends the same whole image to Sol with a compact `given_layout` prior.
-Validated Sol blocks are assigned one-to-one to qualifying V3 geometry before
-existing processors run. If V3 fails, Sol receives the image without the prior.
+then sends the same whole image to the selected page model with a compact `given_layout` prior.
+The GUI chooses `gpt-6-luna` or `gpt-6.1-sol` for that call and defaults to Luna.
+CLI and API calls use `gpt-6.1-sol` when no model is set.
+Validated model blocks are assigned one-to-one to qualifying V3 geometry before
+existing processors run. If V3 fails, the page model receives the image without the prior.
 See the [layout integration record](layout-v3-plan.md) for source locations,
 the exact matching rules, and dated runtime evidence.
 
@@ -24,11 +26,11 @@ The workflow has excess whitespace on the right. In the lifecycle viewer,
 the Export control is partly clipped at 1440 px despite passing automated
 containment checks. The diagram remains readable.
 
-- [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only Sol field extraction, optional Luna classification, local persistence, and review.
-- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Sol, contour matching, and exports.
+- [System architecture](diagrams/doclayout-architecture.html) (`architecture`): Shared conversion, GUI-only field extraction with the selected model, optional Luna classification, local persistence, and review.
+- [Conversion workflow](diagrams/doclayout-workflow.html) (`workflow`): V3 guide, whole-page Luna or Sol reading, contour matching, and exports.
 - [Chat verification sequence](diagrams/doclayout-sequence.html) (`sequence`): Grounded Luna chat request, deterministic local quote check, and an independent approval request.
-- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed Sol; validated blocks feed local exports and document chat.
-- [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through Sol; Sol request/schema failures terminate conversion.
+- [Data flow](diagrams/doclayout-dataflow.html) (`dataflow`): Page images and layout priors feed the selected page model; validated blocks feed local exports and document chat.
+- [Processing lifecycle](diagrams/doclayout-lifecycle.html) (`lifecycle`): Layout failure continues through the page model; a page-model request or schema failure terminates conversion.
 
 
 ## Extraction
@@ -39,8 +41,8 @@ extraction can reuse them.
 
 The document builder renders each selected page at 192 DPI by default. PDFium
 renders pages one at a time. A process-shared, batch-one V3 engine analyzes each
-image. The page worker then sends the whole image and layout prior to Sol, or
-the image alone if V3 fails. The shared Sol service permits at most three
+image. The page worker then sends the whole image and layout prior to the selected
+page model, or the image alone if V3 fails. The shared page service permits at most three
 concurrent requests per process.
 Every selected page goes through image extraction, including pages with embedded
 PDF text.
@@ -53,22 +55,22 @@ detections are discarded. Ready engines do no additional warm-up. GUI, file/fold
 CLI, legacy single-file CLI, Python Pdf/OCR/Table converters and HTTP routes share
 this gate. Importing modules or creating API clients does not load weights.
 
-Sol returns ordered blocks with type, HTML, and estimated bounds normalized
+The page model returns ordered blocks with type, HTML, and estimated bounds normalized
 to 0 to 1000. Pydantic validation rejects invalid geometry and inconsistent blank
 pages. The app sanitizes HTML and reconciles qualified V3 matches
-into page-space contours/AABBs and relative order, retaining Sol-only text and geometry
+into page-space contours/AABBs and relative order, retaining model-only text and geometry
 otherwise. Unmatched V3 regions are metadata only, never duplicate text. Structure
 processors then prepare the document for rendering. Optional refinement uses the
-same Sol service. If refinement fails, the app keeps the extracted content and
+selected refinement model on the same service and is off unless enabled. If refinement fails, the app keeps the extracted content and
 records errors. A page extraction failure aborts the document.
 
-Reconciliation preserves every validated Sol block's HTML and semantic type.
+Reconciliation preserves every validated model block's HTML and semantic type.
 Accepted matches use concave contour IoU, or V3 AABB IoU with an explicit contour
-fallback reason. Compatible text-family disagreements preserve Sol semantics.
-Candidates sort by IoU, V3 confidence, raw row, and Sol ordinal; greedy reservation
+fallback reason. Compatible text-family disagreements preserve the model block's semantics.
+Candidates sort by IoU, V3 confidence, raw row, and model ordinal; greedy reservation
 uses each endpoint once. Ties and split/merge overlaps are warnings, not vetoes.
 All matched slots are globally reordered by model key and deterministic tie-breakers;
-Sol-only relative order stays intact. Unmatched placement remains fallback behavior.
+model-only relative order stays intact. Unmatched placement remains fallback behavior.
 The matcher cannot recognize every incorrect detection, and its thresholds are
 not calibrated accuracy guarantees. Later processors can group, merge, relabel,
 or hide blocks, including headers/footers; final metadata and renderers use that
@@ -112,25 +114,25 @@ and extraction runs locally. Extracted information can reopen those runs after r
 
 The GUI queues all uploads with three active file jobs. Multiple uploads use all
 pages; one upload retains page selection. A process-wide PDFium lock protects local
-rendering, and the Sol service permits three page requests at once. V3 inference
+rendering, and the page service permits three page requests at once. V3 inference
 is serialized independently of API requests and needs local model files and
 memory. If layout remains unavailable after provider selection, conversion uses
-whole-page Sol with explicit fallback provenance. Batch preflight checks existing conversion identities first.
+whole-page reading with explicit fallback provenance. Batch preflight checks existing conversion identities first.
 Only a Run needing new conversion prepares the engine, before file jobs start;
 cached-only batches and saved field retries skip preparation. Preparation runs in
 a worker; the Streamlit thread displays “Preparing layout model…”, then the actual
 “PP-DocLayoutV3 · CUDA” or “PP-DocLayoutV3 · CPU” state. Failed preparation shows
-“Sol fallback · V3 unavailable” and file jobs continue without per-page reprobes.
+“Page model fallback · V3 unavailable” and file jobs continue without per-page reprobes.
 Explicit Run needing new conversion may retry; passive
 reruns do not. There is no layout toggle.
 
 CUDA readiness means successful execution with verified CUDA kernels, not that
 every node runs on GPU. `auto` falls back to working CPU; explicit `cuda` rejects
-a failed CUDA engine without substituting CPU. Conversion then falls back to Sol.
+a failed CUDA engine without substituting CPU. Conversion then continues with the page model.
 The engine's reentrant lock serializes preparation and inference. HTTP retains
 its authentication/admission checks. GUI, CLI, HTTP and library conversion catch
-layout preparation/inference errors and continue with Sol. Direct low-level engine
-callers still receive `LayoutModelUnavailable`. Sol errors and invalid structured
+layout preparation/inference errors and continue with the page model. Direct low-level engine
+callers still receive `LayoutModelUnavailable`. Page-model errors and invalid structured
 responses are not caught by the layout fallback boundary.
 
 Raw ONNX returns rectangles, page-grid masks, class IDs/scores and model order keys.
@@ -161,7 +163,10 @@ these checks.
 Only the GUI batch workflow automatically invokes business-field extraction.
 CLI/library conversion and HTTP conversion do not create field records. The batch
 layer snapshots raw Markdown before export image renaming and passes that text to
-Sol/medium for extraction. Classification remains Luna/medium when enabled.
+the selected field model at medium effort. The GUI defaults page reading, extra
+refinement, and field extraction to `gpt-6-luna`. CLI, API, and a definition loaded
+without an explicit field model use `gpt-6.1-sol`. Classification remains
+`gpt-6-luna` at medium effort when enabled.
 Images and chunks are not sent to either downstream model stage.
 
 Classification is disabled by default. When enabled with category definitions and
@@ -170,10 +175,18 @@ reason, and at most one exact quote. Assignment requires score >= 0.75, reason
 `matched`, and verified evidence. Accepted non-target categories skip extraction;
 unknown, ambiguous, unsupported, or low-score results fall out with local reasons.
 
-One logical field request extracts all fields and distinct authorization requests.
+One field request extracts all fields and distinct authorization requests.
+`DOCLAYOUT_GROUNDING_RETRY_ENABLED` defaults to `false` and then adds no second call.
+Set to `true`, `extract_fields` may make one more call with the same snapshotted
+model and medium effort. That call may replace a quote that misses the Markdown,
+maps to no single block, or was omitted for a populated field. Extracted values
+stay as first returned. If the extra call fails, the first grounded result remains
+and the run records `Evidence retry failed; first grounded result retained.`
+A true setting appends `grounding-retry-v1` to the definition fingerprint.
 Local code checks source quotes and maps unique matching blocks to existing PDF
-coordinates. Missing or ambiguous mappings require review. Neither schema validation
-nor quote matching establishes semantic accuracy.
+coordinates. Missing or ambiguous mappings require review. A multi-page block or
+invalid block geometry stays in review and is not sent for a replacement quote.
+Neither schema validation nor quote matching establishes semantic accuracy.
 
 SQLite stores definition snapshots, document manifests, run results, and a stable
 ten-column extraction table with JSON business fields. JSON export retries make no
@@ -212,8 +225,8 @@ schema lives in JSON; field definitions are loaded and hashed for each explicit 
 | `schema` | Pages, blocks, polygons, extraction validation |
 | `processors` | Document processing and optional refinement |
 | `renderers` | Markdown, HTML, hierarchical/flat JSON representations |
-| `services` | Shared Sol client and request accounting |
-| `layout.py` | Pinned ONNX runtime, provider checks, Sol fallback, matching and provenance |
+| `services` | Shared page-model client and request accounting |
+| `layout.py` | Pinned ONNX runtime, provider checks, page-model fallback, matching and provenance |
 | `ui` | Session helpers, exports, clipboard, chat, batch jobs, field review |
 | `fields.py`, `field_store.py` | Markdown extraction, classification, evidence checks, SQLite/JSON persistence |
 | `scripts` | CLI, Streamlit, and HTTP entry points |
